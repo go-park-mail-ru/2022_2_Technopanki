@@ -1,12 +1,12 @@
 package main
 
 import (
-	jobflow "HeadHunter/handlers"
+	"HeadHunter/network"
 	"log"
 )
 
 func main() {
-	router := jobflow.InitRoutes()
+	router := network.InitRoutes()
 	RunErr := router.Run("localhost:8080")
 	if RunErr != nil {
 		log.Fatal(RunErr)

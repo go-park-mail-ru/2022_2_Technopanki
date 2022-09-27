@@ -2,7 +2,6 @@ package handlers
 
 import (
 	jobflow "HeadHunter"
-	"HeadHunter/entity"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -20,15 +19,6 @@ func GetVacancies(c *gin.Context) {
 		}
 	}
 }
-func PostVacancies(c *gin.Context) {
-	var newVacancy entity.Vacancy
-	if err := c.BindJSON(&newVacancy); err != nil {
-		return
-	}
-	jobflow.Vacancies = append(jobflow.Vacancies, newVacancy)
-	c.IndentedJSON(http.StatusCreated, newVacancy)
-	return
-}
 
 func GetVacancyByID(c *gin.Context) {
 	id := c.Param("id")
@@ -41,3 +31,13 @@ func GetVacancyByID(c *gin.Context) {
 	}
 	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Vacancy not found"})
 }
+
+//func PostVacancies(c *gin.Context) {
+//	var newVacancy entity.Vacancy
+//	if err := c.BindJSON(&newVacancy); err != nil {
+//		return
+//	}
+//	jobflow.Vacancies = append(jobflow.Vacancies, newVacancy)
+//	c.IndentedJSON(http.StatusCreated, newVacancy)
+//	return
+//}

@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"HeadHunter/service"
+	"HeadHunter/jwt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -11,13 +11,13 @@ type signInInput struct {
 	Password string `json:"password" binding:"required"`
 }
 
-func signIn(c *gin.Context) {
+func SignIn(c *gin.Context) {
 	var input signInInput
 	if err := c.BindJSON(&input); err != nil {
 		errorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	token, err := service.GenerateToken(input.Email, input.Password)
+	token, err := jwt.GenerateToken(input.Email, input.Password)
 	if err != nil {
 		errorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -28,6 +28,6 @@ func signIn(c *gin.Context) {
 	})
 }
 
-func signUp(c *gin.Context) {
+func SignUp(c *gin.Context) {
 
 }

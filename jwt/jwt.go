@@ -1,7 +1,7 @@
-package service
+package jwt
 
 import (
-	"HeadHunter/database"
+	"HeadHunter"
 	"HeadHunter/errorHandler"
 	"github.com/dgrijalva/jwt-go"
 	"time"
@@ -18,7 +18,7 @@ type tokenClaims struct {
 }
 
 func GenerateToken(email, password string) (string, error) {
-	employer, err := database.GetEmployer(email, password)
+	employer, err := jobflow.GetEmployer(email, password)
 	if err != nil {
 		return "", err
 	}

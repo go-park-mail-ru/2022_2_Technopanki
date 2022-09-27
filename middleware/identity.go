@@ -1,7 +1,7 @@
-package handlers
+package middleware
 
 import (
-	"HeadHunter/service"
+	"HeadHunter/jwt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
@@ -22,7 +22,7 @@ func UserIdentity(c *gin.Context) {
 		errorResponse(c, http.StatusUnauthorized, "invalid auth header")
 		return
 	}
-	ID, err := service.ParseToken(headerParts[1])
+	ID, err := jwt.ParseToken(headerParts[1])
 	if err != nil {
 		errorResponse(c, http.StatusUnauthorized, err.Error())
 	}
