@@ -1,0 +1,19 @@
+GET http://localhost:8080/employers
+Authorization: Bearer 
+###
+
+POST http://localhost:8080/login
+###
+
+POST http://localhost:8080/employers
+Content-Type: application/json
+
+{
+    "id": "2",
+    "name": "Alex Inc.",
+    "email": "alex@mail.ru",
+    "password": "12345"
+}
+###
+
+DELETE http://localhost:8080/employers/1
