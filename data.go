@@ -1,15 +1,25 @@
 package jobflow
 
-import "HeadHunter/entity"
+import (
+	"HeadHunter/entity"
+	"HeadHunter/errorHandler"
+)
 
-var Employers = []entity.Employer{
-	{
+func GetEmployer(email, password string) (entity.Employer, error) {
+	if employer, ok := Employers[email]; ok && employer.Password == password {
+		return employer, nil
+	}
+	return errorHandler.ReturnErrorCase[entity.Employer]("the user is not found")
+}
+
+var Employers = map[string]entity.Employer{
+	"vkjob@mail.ru": {
 		ID:       "1",
 		Name:     "VK",
 		Email:    "vkjob@mail.ru",
 		Password: "123",
 	},
-	{
+	"yandexjob@yandex.ru": {
 		ID:       "2",
 		Name:     "Yandex",
 		Email:    "yandexjob@yandex.ru",
