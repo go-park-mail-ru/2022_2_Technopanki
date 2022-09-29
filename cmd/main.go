@@ -1,7 +1,7 @@
 package main
 
 import (
-	"HeadHunter/network"
+	"HeadHunter/internal/network"
 	"log"
 )
 

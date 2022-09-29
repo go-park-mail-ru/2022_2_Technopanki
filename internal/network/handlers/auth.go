@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"HeadHunter/jwt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -17,15 +16,15 @@ func SignIn(c *gin.Context) {
 		errorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	token, err := jwt.GenerateToken(input.Email, input.Password)
-	if err != nil {
-		errorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
+	//token, err := jwt.GenerateToken(input.Email, input.Password)
+	//if err != nil {
+	//	errorResponse(c, http.StatusInternalServerError, err.Error())
+	//	return
+	//}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"token": token,
-	})
+	//c.JSON(http.StatusOK, map[string]interface{}{
+	//	"token": token,
+	//})
 }
 
 func SignUp(c *gin.Context) {
