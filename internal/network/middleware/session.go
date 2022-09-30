@@ -27,7 +27,7 @@ var sessionMap map[string]UserSession
 
 func setNewTokenInCookie(c *gin.Context) string {
 	token := uuid.NewString()
-	c.SetCookie("session", token, 100, "/", "localhost", false, true)
+	c.SetCookie("session", token, 100, "/", "localhost", false, false)
 
 	return token
 }
@@ -36,7 +36,7 @@ func Session(c *gin.Context) {
 	sessionToken, err := c.Cookie("session")
 	if err != nil {
 		if err == http.ErrNoCookie {
-			setNewTokenInCookie(c)
+			c.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
 
