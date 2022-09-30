@@ -1,7 +1,12 @@
 package handlers
 
 import (
+	"HeadHunter/internal/entity"
+	"HeadHunter/internal/network/sessions"
+	"HeadHunter/internal/storage"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"net/http"
 	"time"
 )
@@ -11,13 +16,6 @@ type signInInput struct {
 	Password string `json:"password" binding:"required"`
 }
 
-type signUpInput struct {
-	Email    string `json:"email"`
-	Name     string `json:"name"`
-	Surname  string `json:"surname"`
-	Password string `json:"password"`
-}
-
 func SignIn(c *gin.Context) {
 	var input = signInInput{}
 	if err := c.BindJSON(&input); err != nil {
@@ -25,27 +23,41 @@ func SignIn(c *gin.Context) {
 		return
 	}
 
+	if storage.UserStorage.IsUserInStorage(input.Email) {
+		token := sessions.SessionsStore.NewSession(input.Email)
+		c.SetCookie("session", token, 100, "/", "localhost", false, false)
+	} else {
+		c.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
 }
 
-//func setNewTokenInCookie(c *gin.Context) string {
-//	token := uuid.NewString()
-//	c.SetCookie("session", token, 100, "/", "localhost", false, false)
-//
-//	return token
-//}
-
-var store = sessions{}
-
 func SignUp(c *gin.Context) {
-	var input = signUpInput{}
+	var input = entity.User{}
 	if err := c.BindJSON(&input); err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
-	token := SessionsMap.NewSession(input.Email)
+	input.ID = uuid.NewString()
+	storage.UserStorage.AddUser(input)
 
-	c.SetCookie("session", token, int(time.Hour*10), "/", "localhost", false, false)
+	token := sessions.SessionsStore.NewSession(input.Email)
+
+	expiration := time.Now().Add(time.Hour * 24 * 3)
+	cookie := http.Cookie{
+		Name:     "token",
+		Value:    token,
+		Expires:  expiration,
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		Path:     "/",
+		Secure:   true,
+	}
+	http.SetCookie(c.Writer, &cookie)
+
+	fmt.Println(c.Request)
+	//c.SetCookie("newCookie", token, 3600, "/", "localhost", false, false)
 
 	c.JSON(http.StatusOK, gin.H{
 		"token": token,

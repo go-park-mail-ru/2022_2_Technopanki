@@ -1,36 +1,11 @@
 package middleware
 
 import (
-	"HeadHunter/internal/entity"
+	"HeadHunter/internal/network/sessions"
+	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"net/http"
-	"time"
 )
-
-// token -> user email
-
-type UserSession struct {
-	User      entity.User
-	ExpiresAt time.Time
-}
-
-func (u *UserSession) isExpired() bool {
-	return u.ExpiresAt.Unix() <= time.Now().Unix()
-}
-
-func (u *UserSession) updateSession() {
-	u.ExpiresAt = time.Now().Add(time.Minute)
-}
-
-var sessionMap map[string]UserSession
-
-func setNewTokenInCookie(c *gin.Context) string {
-	token := uuid.NewString()
-	c.SetCookie("session", token, 100, "/", "localhost", false, false)
-
-	return token
-}
 
 func Session(c *gin.Context) {
 	sessionToken, err := c.Cookie("session")
@@ -44,13 +19,14 @@ func Session(c *gin.Context) {
 		return
 	}
 
-	userSession := sessionMap[sessionToken]
-	if userSession.isExpired() {
-		delete(sessionMap, sessionToken)
+	userSession := sessions.SessionsStore.GetSession(sessions.Token(sessionToken))
+	if userSession.IsExpired() {
+		newToken := sessions.SessionsStore.UpdateSession(sessions.Token(sessionToken))
 
-		token := setNewTokenInCookie(c)
-
-		sessionMap[token] = userSession
-		userSession.updateSession()
+		newUserSession := sessions.SessionsStore.GetSession(sessions.Token(newToken))
+		if newUserSession.IsExpired() {
+			fmt.Println("LOGICAL ERROR IN SESSION MIDDLEWARE")
+		}
+		c.SetCookie("session", newToken, int(newUserSession.ExpiresAt), "/", "localhost", false, false)
 	}
 }

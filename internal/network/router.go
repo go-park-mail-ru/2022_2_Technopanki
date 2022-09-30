@@ -2,6 +2,7 @@ package network
 
 import (
 	"HeadHunter/internal/network/handlers"
+	"HeadHunter/internal/network/middleware"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -21,7 +22,7 @@ func InitRoutes() *gin.Engine {
 		auth.POST("/sign-in", handlers.SignIn)
 	}
 
-	api := router.Group("/api")
+	api := router.Group("/api", middleware.Session)
 	{
 		vacancies := api.Group("/vacancy")
 		{
