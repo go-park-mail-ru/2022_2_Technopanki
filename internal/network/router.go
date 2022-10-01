@@ -20,6 +20,7 @@ func InitRoutes() *gin.Engine {
 	{
 		auth.POST("/sign-up", handlers.SignUp)
 		auth.POST("/sign-in", handlers.SignIn)
+		auth.POST("/logout", handlers.Logout)
 	}
 
 	api := router.Group("/api", middleware.Session)

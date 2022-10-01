@@ -2,31 +2,25 @@ package middleware
 
 import (
 	"HeadHunter/internal/network/sessions"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
+// Добавить mutex, userSession убрать, шифрование пароля пользователя
 func Session(c *gin.Context) {
 	sessionToken, err := c.Cookie("session")
 	if err != nil {
-		if err == http.ErrNoCookie {
-			c.AbortWithStatus(http.StatusUnauthorized)
-			return
-		}
-
-		c.AbortWithStatus(http.StatusBadRequest)
+		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}
 
-	userSession := sessions.SessionsStore.GetSession(sessions.Token(sessionToken))
+	userSession, err := sessions.SessionsStore.GetSession(sessions.Token(sessionToken))
+	if err != nil {
+		c.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
 	if userSession.IsExpired() {
-		newToken := sessions.SessionsStore.UpdateSession(sessions.Token(sessionToken))
-
-		newUserSession := sessions.SessionsStore.GetSession(sessions.Token(newToken))
-		if newUserSession.IsExpired() {
-			fmt.Println("LOGICAL ERROR IN SESSION MIDDLEWARE")
-		}
-		c.SetCookie("session", newToken, int(newUserSession.ExpiresAt), "/", "localhost", false, false)
+		c.AbortWithStatus(http.StatusUnauthorized)
+		return
 	}
 }
