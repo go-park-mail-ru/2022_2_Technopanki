@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Добавить mutex, userSession убрать, шифрование пароля пользователя
 func Session(c *gin.Context) {
 	sessionToken, err := c.Cookie("session")
 	if err != nil {

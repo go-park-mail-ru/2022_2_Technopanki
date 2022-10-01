@@ -7,18 +7,17 @@ import (
 )
 
 var (
-	ErrBadRequest        = errors.New("bad request")
-	ErrEmptyHeader       = errors.New("empty header")
-	ErrInvalidAuthHeader = errors.New("invalid auth header")
-	ErrUnauthorized      = errors.New("unauthorized")
+	ErrBadRequest         = errors.New("bad request")
+	ErrUnauthorized       = errors.New("unauthorized")
+	ErrServiceUnavailable = errors.New("service unavailable")
+	ErrUserExists         = errors.New("user already exists")
 )
 
 var errorToCode = map[error]int{
-	ErrBadRequest:        http.StatusBadRequest,
-	ErrEmptyHeader:       http.StatusUnauthorized,
-	ErrInvalidAuthHeader: http.StatusUnauthorized,
-	http.ErrNoCookie:     http.StatusUnauthorized,
-	ErrUnauthorized:      http.StatusUnauthorized,
+	ErrBadRequest:         http.StatusBadRequest,
+	ErrUnauthorized:       http.StatusUnauthorized,
+	ErrServiceUnavailable: http.StatusServiceUnavailable,
+	ErrUserExists:         http.StatusBadRequest,
 }
 
 func ConvertError(err error) int {

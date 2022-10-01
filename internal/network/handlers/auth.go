@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"HeadHunter/internal/entity"
+	"HeadHunter/internal/network/middleware"
 	"HeadHunter/internal/network/sessions"
 	"HeadHunter/internal/storage"
 	"github.com/gin-gonic/gin"
@@ -13,13 +14,13 @@ import (
 func SignIn(c *gin.Context) {
 	var input = entity.User{}
 	if err := c.BindJSON(&input); err != nil {
-		c.AbortWithStatus(http.StatusBadRequest)
+		_ = c.Error(middleware.ErrBadRequest)
 		return
 	}
 
 	user := storage.UserStorage.FindByEmail(input.Email)
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
-		c.AbortWithStatus(http.StatusUnauthorized)
+		_ = c.Error(middleware.ErrUnauthorized)
 		return
 	}
 
@@ -30,22 +31,20 @@ func SignIn(c *gin.Context) {
 func SignUp(c *gin.Context) {
 	var input = entity.User{}
 	if err := c.BindJSON(&input); err != nil {
-		c.AbortWithStatus(http.StatusBadRequest)
+		_ = c.Error(middleware.ErrBadRequest)
 		return
 	}
 
 	input.ID = uuid.NewString()
 	user := storage.UserStorage.FindByEmail(input.Email)
 	if user.Email == input.Email {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"message": "User already exists",
-		})
+		_ = c.Error(middleware.ErrUserExists)
 		return
 	}
 
 	err := storage.UserStorage.AddUser(input)
 	if err != nil {
-		c.AbortWithStatus(http.StatusServiceUnavailable)
+		_ = c.Error(middleware.ErrServiceUnavailable)
 		return
 	}
 
@@ -61,7 +60,7 @@ func SignUp(c *gin.Context) {
 func Logout(c *gin.Context) {
 	token, err := c.Cookie("session")
 	if err != nil {
-		c.AbortWithStatus(http.StatusBadRequest)
+		_ = c.Error(middleware.ErrBadRequest)
 		return
 	}
 	c.SetCookie("session", token, -1, "/", "localhost", false, true)
