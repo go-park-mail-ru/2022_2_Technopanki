@@ -7,6 +7,10 @@ import (
 )
 
 func GetVacancies(c *gin.Context) {
+	_, check := c.Get("cookie")
+	if !check {
+		return
+	}
 	id := c.Query("id")
 	if id == "" {
 		c.IndentedJSON(http.StatusOK, jobflow.Vacancies)
@@ -18,18 +22,6 @@ func GetVacancies(c *gin.Context) {
 			}
 		}
 	}
-}
-
-func GetVacancyByID(c *gin.Context) {
-	id := c.Param("id")
-
-	for _, v := range jobflow.Vacancies {
-		if v.ID == id {
-			c.IndentedJSON(http.StatusOK, v)
-			return
-		}
-	}
-	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Vacancy not found"})
 }
 
 //func PostVacancies(c *gin.Context) {

@@ -27,8 +27,7 @@ func InitRoutes() *gin.Engine {
 	{
 		vacancies := api.Group("/vacancy")
 		{
-			vacancies.GET("/", handlers.GetVacancies)
-			vacancies.GET("/:id", handlers.GetVacancyByID)
+			vacancies.GET("/", handlers.GetVacancies, middleware.ErrorHandler())
 		}
 	}
 
