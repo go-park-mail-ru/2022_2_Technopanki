@@ -14,10 +14,10 @@ type Users struct {
 
 func (u *Users) FindByEmail(email string) entity.User {
 	u.mutex.RLock()
+	defer u.mutex.RUnlock()
 	if val, exists := u.Values[email]; exists {
 		return val
 	}
-	u.mutex.RUnlock()
 
 	return entity.User{}
 }
@@ -30,8 +30,8 @@ func (u *Users) AddUser(user entity.User) error {
 	user.Password = string(encryptedPassword)
 
 	u.mutex.Lock()
+	defer u.mutex.Unlock()
 	u.Values[user.Email] = user
-	u.mutex.Unlock()
 
 	return nil
 }
