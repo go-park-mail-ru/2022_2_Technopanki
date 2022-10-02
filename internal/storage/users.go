@@ -2,7 +2,7 @@ package storage
 
 import (
 	"HeadHunter/internal/entity"
-	"errors"
+	"HeadHunter/internal/errorHandler"
 	"golang.org/x/crypto/bcrypt"
 	"sync"
 )
@@ -22,8 +22,7 @@ func (u *Users) FindByEmail(email string) (entity.User, error) {
 		return val, nil
 	}
 
-	// TODO: error
-	return entity.User{}, errors.New("user not exists")
+	return entity.User{}, errorHandler.ErrUserNotExists
 }
 
 func (u *Users) AddUser(user entity.User) error {

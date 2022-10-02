@@ -1,7 +1,7 @@
 package sessions
 
 import (
-	"errors"
+	"HeadHunter/internal/errorHandler"
 	"github.com/google/uuid"
 	"sync"
 	"time"
@@ -35,8 +35,7 @@ func (s *Store) GetSession(token Token) (Session, error) {
 		return val, nil
 	}
 
-	// TODO: error
-	return Session{}, errors.New("no session with this token")
+	return Session{}, errorHandler.ErrNoSuitableSession
 }
 
 func (s *Store) DeleteSession(token Token) error {
@@ -48,8 +47,7 @@ func (s *Store) DeleteSession(token Token) error {
 		return nil
 	}
 
-	// TODO: error
-	return errors.New("error")
+	return errorHandler.ErrCannotDeleteSession
 }
 
 var SessionsStore = Store{

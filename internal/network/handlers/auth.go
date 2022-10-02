@@ -20,12 +20,7 @@ func SignIn(c *gin.Context) {
 
 	user, err := storage.UserStorage.FindByEmail(input.Email)
 	if err != nil {
-		if err.Error() == "user not exists" {
-			c.AbortWithStatus(http.StatusUnauthorized)
-			return
-		}
-
-		c.AbortWithStatus(http.StatusServiceUnavailable)
+		_ = c.Error(err)
 		return
 	}
 
@@ -45,7 +40,6 @@ func SignUp(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
-
 	input.ID = uuid.NewString()
 	_, err := storage.UserStorage.FindByEmail(input.Email)
 	if err == nil {
@@ -71,10 +65,9 @@ func Logout(c *gin.Context) {
 		return
 	}
 
-	// TODO: error
 	err = sessions.SessionsStore.DeleteSession(sessions.Token(token))
 	if err != nil {
-		c.AbortWithStatus(http.StatusBadRequest)
+		_ = c.Error(err)
 		return
 	}
 

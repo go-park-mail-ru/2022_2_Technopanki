@@ -15,12 +15,12 @@ func Session(c *gin.Context) {
 
 	userSession, err := sessions.SessionsStore.GetSession(sessions.Token(sessionToken))
 	if err != nil {
-		_ = c.Error(errorHandler.ErrUnauthorized)
+		_ = c.Error(err)
 		return
 	}
 	if userSession.IsExpired() {
 		_ = c.Error(errorHandler.ErrUnauthorized)
 		return
 	}
-	c.Set("cookie", "verification value")
+	c.Set("userID", userSession.Email)
 }

@@ -9,7 +9,7 @@ import (
 )
 
 func GetVacancies(c *gin.Context) {
-	_, check := c.Get("cookie")
+	_, check := c.Get("userID")
 	if !check {
 		return
 	}
@@ -27,7 +27,7 @@ func GetVacancies(c *gin.Context) {
 	}
 }
 
-//func PostVacancies(c *gin.Context) {
+//func PostVacancy(c *gin.Context) {
 //	var newVacancy entity.Vacancy
 //	if err := c.BindJSON(&newVacancy); err != nil {
 //		return
