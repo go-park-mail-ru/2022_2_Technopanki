@@ -25,21 +25,21 @@ func (s *Store) NewSession(email string) string {
 	token := uuid.NewString()
 
 	s.mutex.Lock()
+	defer s.mutex.Unlock()
 	s.Values[Token(token)] = Session{
 		Email:     email,
 		ExpiresAt: time.Now().Unix() + s.DefaultExpiresAt,
 	}
-	s.mutex.Unlock()
 
 	return token
 }
 
 func (s *Store) GetSession(token Token) (Session, error) {
 	s.mutex.RLock()
+	defer s.mutex.RUnlock()
 	if val, ok := s.Values[token]; ok {
 		return val, nil
 	}
-	s.mutex.RUnlock()
 
 	return Session{}, errors.New("no session with this token")
 }

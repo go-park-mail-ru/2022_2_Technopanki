@@ -21,4 +21,5 @@ func Session(c *gin.Context) {
 		_ = c.Error(ErrUnauthorized)
 		return
 	}
+	c.Set("cookie", "verification value")
 }
