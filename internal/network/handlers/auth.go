@@ -36,7 +36,7 @@ func SignIn(c *gin.Context) {
 
 	token := sessions.SessionsStore.NewSession(input.Email)
 	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", "localhost", false, true)
-	c.JSON(http.StatusOK, input)
+	c.Status(http.StatusOK)
 }
 
 func SignUp(c *gin.Context) {
@@ -47,7 +47,7 @@ func SignUp(c *gin.Context) {
 	}
 
 	input.ID = uuid.NewString()
-	user, err := storage.UserStorage.FindByEmail(input.Email)
+	_, err := storage.UserStorage.FindByEmail(input.Email)
 	if err == nil {
 		_ = c.Error(errorHandler.ErrUserExists)
 		return
@@ -61,8 +61,7 @@ func SignUp(c *gin.Context) {
 
 	token := sessions.SessionsStore.NewSession(input.Email)
 	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", "localhost", false, true)
-	c.JSON(http.StatusOK, user)
-	return
+	c.Status(http.StatusOK)
 }
 
 func Logout(c *gin.Context) {
@@ -72,6 +71,7 @@ func Logout(c *gin.Context) {
 		return
 	}
 
+	// TODO: error
 	err = sessions.SessionsStore.DeleteSession(sessions.Token(token))
 	if err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
@@ -79,4 +79,5 @@ func Logout(c *gin.Context) {
 	}
 
 	c.SetCookie("session", token, -1, "/", "localhost", false, true)
+	c.AbortWithStatus(http.StatusOK)
 }

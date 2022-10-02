@@ -7,6 +7,8 @@ import (
 	"sync"
 )
 
+var COST = 10
+
 type Users struct {
 	// maps user email to entity.User
 	Values map[string]entity.User
@@ -20,12 +22,12 @@ func (u *Users) FindByEmail(email string) (entity.User, error) {
 		return val, nil
 	}
 
-	// TODO: переделать ошибки
+	// TODO: error
 	return entity.User{}, errors.New("user not exists")
 }
 
 func (u *Users) AddUser(user entity.User) error {
-	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), 14)
+	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), COST)
 	if err != nil {
 		return err
 	}
@@ -38,10 +40,6 @@ func (u *Users) AddUser(user entity.User) error {
 	return nil
 }
 
-func NewUsersStorage() Users {
-	return Users{
-		Values: make(map[string]entity.User, 0),
-	}
+var UserStorage = Users{
+	Values: make(map[string]entity.User, 0),
 }
-
-var UserStorage = NewUsersStorage()
