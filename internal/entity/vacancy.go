@@ -3,11 +3,11 @@ package entity
 import "time"
 
 type Vacancy struct {
-	ID            string    `json:"-"`
+	ID            int       `json:"-"`
 	Title         string    `json:"title"`
 	Description   string    `json:"description"`
-	MinimalSalary int       `json:"minimal salary"`
-	MaximumSalary int       `json:"maximum salary"`
+	MinimalSalary int       `json:"minimal_salary"`
+	MaximumSalary int       `json:"maximum_salary"`
 	EmployerID    int       `json:"-"`
 	Date          time.Time `json:"date"`
 }

@@ -2,8 +2,10 @@ package handlers
 
 import (
 	jobflow "HeadHunter"
+	"HeadHunter/internal/errorHandler"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 func GetVacancies(c *gin.Context) {
@@ -11,15 +13,16 @@ func GetVacancies(c *gin.Context) {
 	if !check {
 		return
 	}
-	id := c.Query("id")
-	if id == "" {
+	id, err := strconv.Atoi(c.Query("id"))
+	if err != nil {
+		_ = c.Error(errorHandler.ErrInvalidQuery)
+	}
+	if id == 0 {
 		c.IndentedJSON(http.StatusOK, jobflow.Vacancies)
 	} else {
-		for _, v := range jobflow.Vacancies {
-			if v.ID == id {
-				c.IndentedJSON(http.StatusOK, v)
-				return
-			}
+		if elem, ok := jobflow.Vacancies[id]; ok {
+			c.IndentedJSON(http.StatusOK, elem)
+			return
 		}
 	}
 }
