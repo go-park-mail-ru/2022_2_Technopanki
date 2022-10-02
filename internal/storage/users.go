@@ -2,6 +2,7 @@ package storage
 
 import (
 	"HeadHunter/internal/entity"
+	"errors"
 	"golang.org/x/crypto/bcrypt"
 	"sync"
 )
@@ -12,14 +13,15 @@ type Users struct {
 	mutex  sync.RWMutex
 }
 
-func (u *Users) FindByEmail(email string) entity.User {
+func (u *Users) FindByEmail(email string) (entity.User, error) {
 	u.mutex.RLock()
 	defer u.mutex.RUnlock()
 	if val, exists := u.Values[email]; exists {
-		return val
+		return val, nil
 	}
 
-	return entity.User{}
+	// TODO: переделать ошибки
+	return entity.User{}, errors.New("user not exists")
 }
 
 func (u *Users) AddUser(user entity.User) error {

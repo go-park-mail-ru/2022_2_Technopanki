@@ -15,12 +15,6 @@ type Store struct {
 	mutex            sync.RWMutex
 }
 
-func NewStore() Store {
-	return Store{
-		Values: make(map[Token]Session),
-	}
-}
-
 func (s *Store) NewSession(email string) string {
 	token := uuid.NewString()
 
@@ -44,4 +38,18 @@ func (s *Store) GetSession(token Token) (Session, error) {
 	return Session{}, errors.New("no session with this token")
 }
 
-var SessionsStore = NewStore()
+func (s *Store) DeleteSession(token Token) error {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	if _, ok := s.Values[token]; ok {
+		delete(s.Values, token)
+		return nil
+	}
+
+	return errors.New("error")
+}
+
+var SessionsStore = Store{
+	Values: make(map[Token]Session),
+}

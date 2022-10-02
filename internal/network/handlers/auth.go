@@ -18,14 +18,25 @@ func SignIn(c *gin.Context) {
 		return
 	}
 
-	user := storage.UserStorage.FindByEmail(input.Email)
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
+	user, err := storage.UserStorage.FindByEmail(input.Email)
+	if err != nil {
+		if err.Error() == "user not exists" {
+			c.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+
+		c.AbortWithStatus(http.StatusServiceUnavailable)
+		return
+	}
+
+	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
 		_ = c.Error(errorHandler.ErrUnauthorized)
 		return
 	}
 
 	token := sessions.SessionsStore.NewSession(input.Email)
 	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", "localhost", false, true)
+	c.JSON(http.StatusOK, input)
 }
 
 func SignUp(c *gin.Context) {
@@ -36,13 +47,13 @@ func SignUp(c *gin.Context) {
 	}
 
 	input.ID = uuid.NewString()
-	user := storage.UserStorage.FindByEmail(input.Email)
-	if user.Email == input.Email {
+	user, err := storage.UserStorage.FindByEmail(input.Email)
+	if err == nil {
 		_ = c.Error(errorHandler.ErrUserExists)
 		return
 	}
 
-	err := storage.UserStorage.AddUser(input)
+	err = storage.UserStorage.AddUser(input)
 	if err != nil {
 		_ = c.Error(errorHandler.ErrServiceUnavailable)
 		return
@@ -50,10 +61,7 @@ func SignUp(c *gin.Context) {
 
 	token := sessions.SessionsStore.NewSession(input.Email)
 	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", "localhost", false, true)
-
-	c.JSON(http.StatusOK, gin.H{
-		"token": token,
-	})
+	c.JSON(http.StatusOK, user)
 	return
 }
 
@@ -63,5 +71,12 @@ func Logout(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
+
+	err = sessions.SessionsStore.DeleteSession(sessions.Token(token))
+	if err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
 	c.SetCookie("session", token, -1, "/", "localhost", false, true)
 }
