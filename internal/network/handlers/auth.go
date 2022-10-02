@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"HeadHunter/internal/entity"
-	"HeadHunter/internal/network/middleware"
+	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/network/sessions"
 	"HeadHunter/internal/storage"
 	"github.com/gin-gonic/gin"
@@ -14,13 +14,13 @@ import (
 func SignIn(c *gin.Context) {
 	var input = entity.User{}
 	if err := c.BindJSON(&input); err != nil {
-		_ = c.Error(middleware.ErrBadRequest)
+		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
 
 	user := storage.UserStorage.FindByEmail(input.Email)
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
-		_ = c.Error(middleware.ErrUnauthorized)
+		_ = c.Error(errorHandler.ErrUnauthorized)
 		return
 	}
 
@@ -31,20 +31,20 @@ func SignIn(c *gin.Context) {
 func SignUp(c *gin.Context) {
 	var input = entity.User{}
 	if err := c.BindJSON(&input); err != nil {
-		_ = c.Error(middleware.ErrBadRequest)
+		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
 
 	input.ID = uuid.NewString()
 	user := storage.UserStorage.FindByEmail(input.Email)
 	if user.Email == input.Email {
-		_ = c.Error(middleware.ErrUserExists)
+		_ = c.Error(errorHandler.ErrUserExists)
 		return
 	}
 
 	err := storage.UserStorage.AddUser(input)
 	if err != nil {
-		_ = c.Error(middleware.ErrServiceUnavailable)
+		_ = c.Error(errorHandler.ErrServiceUnavailable)
 		return
 	}
 
@@ -60,7 +60,7 @@ func SignUp(c *gin.Context) {
 func Logout(c *gin.Context) {
 	token, err := c.Cookie("session")
 	if err != nil {
-		_ = c.Error(middleware.ErrBadRequest)
+		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
 	c.SetCookie("session", token, -1, "/", "localhost", false, true)
