@@ -1,10 +1,10 @@
 package jobflow
 
 import (
-	entity2 "HeadHunter/internal/entity"
+	"HeadHunter/internal/entity"
 )
 
-var Vacancies = []entity2.Vacancy{
+var Vacancies = []entity.Vacancy{
 	{
 		ID:            "1",
 		Title:         "Android-разработчик",
