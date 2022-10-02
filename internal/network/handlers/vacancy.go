@@ -13,9 +13,11 @@ func GetVacancies(c *gin.Context) {
 	if !check {
 		return
 	}
-	id, err := strconv.Atoi(c.Query("id"))
-	if err != nil {
+	idStr := c.Query("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil && idStr != "" {
 		_ = c.Error(errorHandler.ErrInvalidQuery)
+		return
 	}
 	if id == 0 {
 		c.IndentedJSON(http.StatusOK, jobflow.Vacancies)
