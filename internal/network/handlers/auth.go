@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"HeadHunter/internal/entity"
+	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/network/sessions"
 	"HeadHunter/internal/storage"
@@ -17,7 +18,11 @@ func SignIn(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
-
+	inputValidity := validation.IsValidateAuthData(input)
+	if inputValidity != nil {
+		_ = c.Error(inputValidity)
+		return
+	}
 	user, err := storage.UserStorage.FindByEmail(input.Email)
 	if err != nil {
 		_ = c.Error(err)
@@ -38,6 +43,11 @@ func SignUp(c *gin.Context) {
 	var input = entity.User{}
 	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+	inputValidity := validation.IsValidate(input)
+	if inputValidity != nil {
+		_ = c.Error(inputValidity)
 		return
 	}
 	input.ID = uuid.NewString()
