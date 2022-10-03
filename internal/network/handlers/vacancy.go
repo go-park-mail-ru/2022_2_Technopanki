@@ -9,7 +9,7 @@ import (
 )
 
 func GetVacancies(c *gin.Context) {
-	_, check := c.Get("userID")
+	_, check := c.Get("userEmail")
 	if !check {
 		return
 	}
@@ -28,13 +28,3 @@ func GetVacancies(c *gin.Context) {
 		}
 	}
 }
-
-//func PostVacancy(c *gin.Context) {
-//	var newVacancy entity.Vacancy
-//	if err := c.BindJSON(&newVacancy); err != nil {
-//		return
-//	}
-//	jobflow.Vacancies = append(jobflow.Vacancies, newVacancy)
-//	c.IndentedJSON(http.StatusCreated, newVacancy)
-//	return
-//}

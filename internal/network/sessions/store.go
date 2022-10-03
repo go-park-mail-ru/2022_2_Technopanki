@@ -35,7 +35,7 @@ func (s *Store) GetSession(token Token) (Session, error) {
 		return val, nil
 	}
 
-	return Session{}, errorHandler.ErrNoSuitableSession
+	return Session{}, errorHandler.ErrSessionNotFound
 }
 
 func (s *Store) DeleteSession(token Token) error {

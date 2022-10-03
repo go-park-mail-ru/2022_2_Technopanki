@@ -22,5 +22,5 @@ func Session(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrUnauthorized)
 		return
 	}
-	c.Set("userID", userSession.Email)
+	c.Set("userEmail", userSession.Email)
 }

@@ -12,15 +12,19 @@ var (
 	ErrUserExists          = errors.New("user already exists")
 	ErrUserNotExists       = errors.New("user not exists")
 	ErrInvalidQuery        = errors.New("invalid query")
-	ErrNoSuitableSession   = errors.New("no session with this token")
+	ErrSessionNotFound     = errors.New("session with this token not found")
 	ErrCannotDeleteSession = errors.New("cannot delete session")
 
-	InvalidUserName        = errors.New("invalid user name")
-	InvalidUserSurname     = errors.New("invalid user surname")
-	InvalidUserEmail       = errors.New("invalid user email")
-	InvalidUserPassword    = errors.New("invalid user password")
-	InvalidUserRole        = errors.New("invalid user role")
-	InvalidValidatePattern = errors.New("invalid validate pattern")
+	IncorrectNameLength    = errors.New("длина имени должна быть между 3 и 20 символами")
+	IncorrectSurnameLength = errors.New("длина фамилии должна быть между 3 и 20 символами")
+
+	InvalidEmailFormat   = errors.New("email должен содержать @")
+	IncorrectEmailLength = errors.New("длина email должна быть между 8 and 30 символами")
+
+	InvalidPasswordFormat   = errors.New("пароль должен содержать буквы латиницы, цифры и спецсимволы(!#%^$)")
+	IncorrectPasswordLength = errors.New("длина пароля должна быть между 8 и 20 символами")
+
+	InvalidUserRole = errors.New("invalid input user role")
 )
 
 var errorToCode = map[error]int{
@@ -30,14 +34,18 @@ var errorToCode = map[error]int{
 	ErrUserExists:          http.StatusBadRequest,
 	ErrUserNotExists:       http.StatusUnauthorized,
 	ErrInvalidQuery:        http.StatusBadRequest,
-	ErrNoSuitableSession:   http.StatusUnauthorized,
+	ErrSessionNotFound:     http.StatusUnauthorized,
 	ErrCannotDeleteSession: http.StatusBadRequest,
 
-	InvalidUserName:     http.StatusBadRequest,
-	InvalidUserSurname:  http.StatusBadRequest,
-	InvalidUserEmail:    http.StatusBadRequest,
-	InvalidUserPassword: http.StatusBadRequest,
-	InvalidUserRole:     http.StatusBadRequest,
+	IncorrectNameLength:    http.StatusBadRequest,
+	IncorrectSurnameLength: http.StatusBadRequest,
+	InvalidUserRole:        http.StatusBadRequest,
+
+	InvalidEmailFormat:   http.StatusBadRequest,
+	IncorrectEmailLength: http.StatusBadRequest,
+
+	InvalidPasswordFormat:   http.StatusBadRequest,
+	IncorrectPasswordLength: http.StatusBadRequest,
 }
 
 func ConvertError(err error) int {

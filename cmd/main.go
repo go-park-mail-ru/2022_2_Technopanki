@@ -7,8 +7,8 @@ import (
 
 func main() {
 	router := network.InitRoutes()
-	RunErr := router.Run("localhost:8080")
-	if RunErr != nil {
-		log.Fatal(RunErr)
+	runErr := router.Run("localhost:8080")
+	if runErr != nil {
+		log.Fatal(runErr)
 	}
 }
