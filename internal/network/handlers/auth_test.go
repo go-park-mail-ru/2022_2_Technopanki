@@ -23,7 +23,7 @@ func Test_SignUp(t *testing.T) {
 		{
 			name: "Success case",
 			inputBody: `{
-    			"email": "example@mail.ru",
+    			"email": "example2@mail.ru",
     			"name": "Zahar",
     			"surname": "Urvancev",
     			"password": "111abc!!",
@@ -65,7 +65,7 @@ func Test_SignUp(t *testing.T) {
     			"email": "invalid_example@mail.ru",
     			"name": "Zahar",
     			"surname": "Urvancev",
-    			"password": "111",
+    			"password": "1a!",
     			"role": "applicant"
 			}`,
 			expectedStatusCode:   400,
@@ -100,7 +100,7 @@ func Test_SignUp(t *testing.T) {
 
 			router.ServeHTTP(recorder, req)
 
-			if tc.isValid {
+			if tc.isValid && len(recorder.Result().Cookies()) > 0 {
 				_, sessionTokenErr := uuid.Parse(recorder.Result().Cookies()[0].Value)
 				assert.NoError(t, sessionTokenErr)
 			} else {
