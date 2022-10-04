@@ -1,52 +1,42 @@
 package handlers
 
-//func TestGetVacancies(t *testing.T) {
-//	gin.SetMode(gin.TestMode)
+//func Test_GetVacancies(t *testing.T) {
+//	testTable := []struct {
+//		name                 string
+//		inputQuery           int
+//		expectedStatusCode   int
+//		expectedResponseBody string
+//	}{
+//		{
+//			name:                 "Success case",
+//			inputQuery:           5,
+//			expectedStatusCode:   200,
+//			expectedResponseBody: "",
+//		},
+//	}
+//	for _, testCase := range testTable {
+//		tc := testCase
+//		t.Run(tc.name, func(t *testing.T) {
+//			t.Parallel()
+//			router := gin.New()
+//			router.POST("/auth/sign-up", SignUp, middleware.ErrorHandler())
+//			recorder := httptest.NewRecorder()
 //
-//	t.Run("Success", func(t *testing.T) {
-//		uid, _ := uuid.NewRandom()
+//			req, reqErr := http.NewRequest("POST", "/auth/sign-up?id=",
+//				bytes.NewBufferString(""))
+//			require.NoError(t, reqErr)
 //
-//		mockUserResp := &model.User{
-//			UID:   uid,
-//			Email: "bob@bob.com",
-//			Name:  "Bobby Bobson",
-//		}
+//			router.ServeHTTP(recorder, req)
 //
-//		mockUserService := new(mocks.MockUserService)
-//		mockUserService.On("Get", mock.AnythingOfType("*gin.Context"), uid).Return(mockUserResp, nil)
+//			if len(recorder.Result().Cookies()) > 0 {
+//				_, sessionTokenErr := uuid.Parse(recorder.Result().Cookies()[0].Value)
+//				assert.NoError(t, sessionTokenErr)
+//			} else {
+//				assert.Equal(t, []*http.Cookie{}, recorder.Result().Cookies())
+//			}
 //
-//		// a response recorder for getting written http response
-//		rr := httptest.NewRecorder()
-//
-//		// use a middleware to set context for test
-//		// the only claims we care about in this test
-//		// is the UID
-//		router := gin.Default()
-//		router.Use(func(c *gin.Context) {
-//			c.Set("user", &model.User{
-//				UID: uid,
-//			},
-//			)
+//			assert.Equal(t, tc.expectedStatusCode, recorder.Code)
+//			assert.Equal(t, tc.expectedResponseBody, recorder.Body.String())
 //		})
-//
-//		NewHandler(&Config{
-//			R:           router,
-//			UserService: mockUserService,
-//		})
-//
-//		request, err := http.NewRequest(http.MethodGet, "/me", nil)
-//		assert.NoError(t, err)
-//
-//		router.ServeHTTP(rr, request)
-//
-//		respBody, err := json.Marshal(gin.H{
-//			"user": mockUserResp,
-//		})
-//		assert.NoError(t, err)
-//
-//		assert.Equal(t, 200, rr.Code)
-//		assert.Equal(t, respBody, rr.Body.Bytes())
-//		mockUserService.AssertExpectations(t) // assert that UserService.Get was called
-//	})
-//
+//	}
 //}

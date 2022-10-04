@@ -18,7 +18,6 @@ func Test_SignUp(t *testing.T) {
 		inputBody            string
 		expectedStatusCode   int
 		expectedResponseBody string
-		isValid              bool
 	}{
 		{
 			name: "Success case",
@@ -31,7 +30,6 @@ func Test_SignUp(t *testing.T) {
 			}`,
 			expectedStatusCode:   200,
 			expectedResponseBody: "",
-			isValid:              true,
 		},
 		{
 			name: "Invalid name",
@@ -44,7 +42,6 @@ func Test_SignUp(t *testing.T) {
 			}`,
 			expectedStatusCode:   400,
 			expectedResponseBody: "{\"error\":\"длина имени должна быть между 3 и 20 символами\"}",
-			isValid:              false,
 		},
 		{
 			name: "Invalid surname",
@@ -57,7 +54,6 @@ func Test_SignUp(t *testing.T) {
 			}`,
 			expectedStatusCode:   400,
 			expectedResponseBody: "{\"error\":\"длина фамилии должна быть между 3 и 20 символами\"}",
-			isValid:              false,
 		},
 		{
 			name: "Invalid password 1",
@@ -70,7 +66,6 @@ func Test_SignUp(t *testing.T) {
 			}`,
 			expectedStatusCode:   400,
 			expectedResponseBody: "{\"error\":\"длина пароля должна быть между 8 и 20 символами\"}",
-			isValid:              false,
 		},
 		{
 			name: "Invalid password 2",
@@ -83,7 +78,6 @@ func Test_SignUp(t *testing.T) {
 			}`,
 			expectedStatusCode:   400,
 			expectedResponseBody: "{\"error\":\"пароль должен содержать буквы латиницы, цифры и спецсимволы(!#%^$)\"}",
-			isValid:              false,
 		},
 	}
 	for _, testCase := range testTable {
@@ -100,7 +94,7 @@ func Test_SignUp(t *testing.T) {
 
 			router.ServeHTTP(recorder, req)
 
-			if tc.isValid && len(recorder.Result().Cookies()) > 0 {
+			if len(recorder.Result().Cookies()) > 0 {
 				_, sessionTokenErr := uuid.Parse(recorder.Result().Cookies()[0].Value)
 				assert.NoError(t, sessionTokenErr)
 			} else {
