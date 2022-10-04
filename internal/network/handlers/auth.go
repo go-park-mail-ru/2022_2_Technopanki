@@ -82,5 +82,7 @@ func Logout(c *gin.Context) {
 	}
 
 	c.SetCookie("session", token, -1, "/", "localhost", false, true)
-	c.AbortWithStatus(http.StatusOK)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "unauthorized",
+	})
 }
