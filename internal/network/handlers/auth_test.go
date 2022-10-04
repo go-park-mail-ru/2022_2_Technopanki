@@ -106,3 +106,65 @@ func Test_SignUp(t *testing.T) {
 		})
 	}
 }
+
+func Test_SignIn(t *testing.T) {
+	testTable := []struct {
+		name                 string
+		inputBody            string
+		expectedStatusCode   int
+		expectedResponseBody string
+	}{
+		{
+			name: "Success case",
+			inputBody: `{
+    			"email": "example@mail.ru",
+    			"password": "123456!!a"
+			}`,
+			expectedStatusCode:   200,
+			expectedResponseBody: "",
+		},
+		{
+			name: "user does not exist",
+			inputBody: `{
+    			"email": "examplee@mail.ru",
+    			"password": "123456!!a"
+			}`,
+			expectedStatusCode:   401,
+			expectedResponseBody: "{\"error\":\"пользователя с таким email не существует\"}",
+		},
+		{
+			name: "invalid json",
+			inputBody: `{
+    			"email": "examplee@mail.ru",
+    			"password": "123456!!a",
+			}`,
+			expectedStatusCode:   400,
+			expectedResponseBody: "",
+		},
+	}
+	for _, testCase := range testTable {
+		tc := testCase
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			router := gin.New()
+			router.POST("/auth/sign-in", SignIn, middleware.ErrorHandler())
+			recorder := httptest.NewRecorder()
+
+			req, reqErr := http.NewRequest("POST", "/auth/sign-in",
+				bytes.NewBufferString(tc.inputBody))
+			require.NoError(t, reqErr)
+
+			router.ServeHTTP(recorder, req)
+
+			if len(recorder.Result().Cookies()) > 0 {
+				_, sessionTokenErr := uuid.Parse(recorder.Result().Cookies()[0].Value)
+				assert.NoError(t, sessionTokenErr)
+			} else {
+				assert.Equal(t, []*http.Cookie{}, recorder.Result().Cookies())
+			}
+
+			assert.Equal(t, tc.expectedStatusCode, recorder.Code)
+			assert.Equal(t, tc.expectedResponseBody, recorder.Body.String())
+		})
+	}
+}
