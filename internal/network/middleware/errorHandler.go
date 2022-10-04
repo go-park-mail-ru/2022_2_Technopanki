@@ -10,7 +10,7 @@ func ErrorHandler() gin.HandlerFunc {
 		if len(c.Errors) > 0 {
 			c.Next()
 			rawErr := c.Errors.Last()
-			c.AbortWithStatusJSON(errorHandler.ConvertError(rawErr.Err), gin.H{"error:": rawErr.Error()})
+			c.AbortWithStatusJSON(errorHandler.ConvertError(rawErr.Err), gin.H{"error": rawErr.Error()})
 		}
 		return
 	}
