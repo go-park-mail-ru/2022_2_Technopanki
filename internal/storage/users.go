@@ -41,5 +41,13 @@ func (u *Users) AddUser(user entity.User) error {
 }
 
 var UserStorage = Users{
-	Values: make(map[string]entity.User, 0),
+	Values: map[string]entity.User{
+		"example@mail.ru": {
+			Name:     "Zakhar",
+			Surname:  "Urvancev",
+			Email:    "example@mail.ru",
+			Password: "123456!!a",
+			Role:     "applicant",
+		},
+	},
 }
