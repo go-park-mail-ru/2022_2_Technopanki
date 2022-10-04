@@ -25,6 +25,8 @@ func GetVacancies(c *gin.Context) {
 		if elem, ok := jobflow.Vacancies[id]; ok {
 			c.IndentedJSON(http.StatusOK, elem)
 			return
+		} else {
+			_ = c.Error(errorHandler.ErrVacancyNotFound)
 		}
 	}
 }

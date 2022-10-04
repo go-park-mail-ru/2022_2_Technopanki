@@ -14,6 +14,7 @@ var (
 	ErrInvalidQuery        = errors.New("invalid query")
 	ErrSessionNotFound     = errors.New("session with this token not found")
 	ErrCannotDeleteSession = errors.New("cannot delete session")
+	ErrVacancyNotFound     = errors.New("vacancy not found")
 
 	IncorrectNameLength    = errors.New("длина имени должна быть между 3 и 20 символами")
 	IncorrectSurnameLength = errors.New("длина фамилии должна быть между 3 и 20 символами")
@@ -36,6 +37,7 @@ var errorToCode = map[error]int{
 	ErrInvalidQuery:        http.StatusBadRequest,
 	ErrSessionNotFound:     http.StatusUnauthorized,
 	ErrCannotDeleteSession: http.StatusBadRequest,
+	ErrVacancyNotFound:     http.StatusNotFound,
 
 	IncorrectNameLength:    http.StatusBadRequest,
 	IncorrectSurnameLength: http.StatusBadRequest,

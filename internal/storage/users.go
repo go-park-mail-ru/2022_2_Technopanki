@@ -7,7 +7,7 @@ import (
 	"sync"
 )
 
-// The cost of the password encryption algorithm
+//COST The cost of the password encryption algorithm
 var COST = 10
 
 type Users struct {
