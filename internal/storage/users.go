@@ -40,6 +40,16 @@ func (u *Users) AddUser(user entity.User) error {
 	return nil
 }
 
+var password, _ = bcrypt.GenerateFromPassword([]byte("123456!!a"), COST)
+
 var UserStorage = Users{
-	Values: make(map[string]entity.User, 0),
+	Values: map[string]entity.User{
+		"example@mail.ru": {
+			Name:     "Zakhar",
+			Surname:  "Urvancev",
+			Email:    "example@mail.ru",
+			Password: string(password),
+			Role:     "applicant",
+		},
+	},
 }

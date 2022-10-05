@@ -31,10 +31,6 @@ func IsValidateAuthData(user entity.User) error {
 		return errorHandler.IncorrectEmailLength
 	}
 
-	if len(user.Email) < 8 || len(user.Email) > 20 {
-		return errorHandler.IncorrectPasswordLength
-	}
-
 	if !verifyPassword(user.Password) {
 		return errorHandler.InvalidPasswordFormat
 	}
