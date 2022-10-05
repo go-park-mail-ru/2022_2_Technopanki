@@ -22,7 +22,7 @@ func InitRoutes() *gin.Engine {
 		auth.POST("/logout", middleware.Session, handlers.Logout, middleware.ErrorHandler())
 	}
 
-	api := router.Group("/api", middleware.Session)
+	api := router.Group("/api")
 	{
 		vacancies := api.Group("/vacancy")
 		{
