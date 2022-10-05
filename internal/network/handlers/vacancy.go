@@ -20,10 +20,6 @@ import (
 // @Failure 404 {body} string "vacancy not found"
 // @Router /api/vacancy/ [get]
 func GetVacancies(c *gin.Context) {
-	_, check := c.Get("userEmail")
-	if !check {
-		return
-	}
 	idStr := c.Query("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil && idStr != "" {

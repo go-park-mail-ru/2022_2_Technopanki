@@ -114,3 +114,17 @@ func Logout(c *gin.Context) {
 	}
 	c.SetCookie("session", token, -1, "/", jobflow.Domain, false, true)
 }
+
+func AuthCheck(c *gin.Context) {
+	email, ok := c.Get("userEmail")
+	if ok {
+		_ = c.Error(errorHandler.ErrUnauthorized)
+		return
+	}
+	user, err := storage.UserStorage.FindByEmail(email.(string))
+	if err != nil {
+		_ = c.Error(err)
+		return
+	}
+	c.JSON(http.StatusOK, entity.User{Name: user.Name, Surname: user.Surname})
+}
