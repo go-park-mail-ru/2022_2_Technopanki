@@ -16,8 +16,8 @@ import (
 // @Accept  json
 // @Produce  json
 // @Success 200 {object} entity.Vacancy
-// @Failure 400 {string} string "invalid query"
-// @Failure 404 {string} string "vacancy not found"
+// @Failure 400 {body} string "invalid query"
+// @Failure 404 {body} string "vacancy not found"
 // @Router /api/vacancy/ [get]
 func GetVacancies(c *gin.Context) {
 	_, check := c.Get("userEmail")
