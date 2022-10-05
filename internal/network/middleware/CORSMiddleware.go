@@ -8,7 +8,8 @@ import (
 func CORSMiddleware() gin.HandlerFunc {
 	config := cors.DefaultConfig()
 
-	config.AllowOrigins = []string{"http://localhost:8000"}
+	config.AllowOrigins = []string{"http://localhost:8000", "http://95.163.208.72:8000",
+		"http://localhost:80", "http://95.163.208.72:80"}
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
 	config.AllowCredentials = true
 
