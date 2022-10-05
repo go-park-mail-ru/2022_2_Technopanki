@@ -36,7 +36,7 @@ func SignIn(c *gin.Context) {
 
 	token := sessions.SessionsStore.NewSession(input.Email)
 	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", "localhost", false, true)
-	c.Status(http.StatusOK)
+	c.JSON(http.StatusOK, gin.H{"name": user.Name, "surname": user.Surname})
 }
 
 func SignUp(c *gin.Context) {
