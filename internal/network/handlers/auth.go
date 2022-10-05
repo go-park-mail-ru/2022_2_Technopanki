@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	jobflow "HeadHunter"
 	"HeadHunter/internal/entity"
 	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/errorHandler"
@@ -35,7 +36,7 @@ func SignIn(c *gin.Context) {
 	}
 
 	token := sessions.SessionsStore.NewSession(input.Email)
-	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", "localhost", false, true)
+	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", jobflow.Domain, false, true)
 	c.JSON(http.StatusOK, gin.H{"name": user.Name, "surname": user.Surname})
 }
 
@@ -64,7 +65,7 @@ func SignUp(c *gin.Context) {
 	}
 
 	token := sessions.SessionsStore.NewSession(input.Email)
-	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", "localhost", false, true)
+	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", jobflow.Domain, false, true)
 	c.Status(http.StatusOK)
 }
 
@@ -81,5 +82,5 @@ func Logout(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("session", token, -1, "/", "localhost", false, true)
+	c.SetCookie("session", token, -1, "/", jobflow.Domain, false, true)
 }
