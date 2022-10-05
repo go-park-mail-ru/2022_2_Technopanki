@@ -117,7 +117,7 @@ func Logout(c *gin.Context) {
 
 func AuthCheck(c *gin.Context) {
 	email, ok := c.Get("userEmail")
-	if ok {
+	if !ok {
 		_ = c.Error(errorHandler.ErrUnauthorized)
 		return
 	}

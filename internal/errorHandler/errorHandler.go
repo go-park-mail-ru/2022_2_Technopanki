@@ -16,14 +16,14 @@ var (
 	ErrCannotDeleteSession = errors.New("cannot delete session")
 	ErrVacancyNotFound     = errors.New("vacancy not found")
 
-	IncorrectNameLength    = errors.New("длина имени должна быть между 3 и 20 символами")
-	IncorrectSurnameLength = errors.New("длина фамилии должна быть между 3 и 20 символами")
+	IncorrectNameLength    = errors.New("Длина имени должна быть между 3 и 20 символами")
+	IncorrectSurnameLength = errors.New("Длина фамилии должна быть между 3 и 20 символами")
 
 	InvalidEmailFormat   = errors.New("email должен содержать @")
-	IncorrectEmailLength = errors.New("длина email должна быть между 8 and 30 символами")
+	IncorrectEmailLength = errors.New("Длина email должна быть между 8 and 30 символами")
 
-	InvalidPasswordFormat   = errors.New("пароль должен содержать буквы латиницы, цифры и спецсимволы(!#%^$)")
-	IncorrectPasswordLength = errors.New("длина пароля должна быть между 8 и 20 символами")
+	InvalidPasswordFormat   = errors.New("Пароль должен содержать буквы латиницы, цифры и спецсимволы(!#%^$)")
+	IncorrectPasswordLength = errors.New("Длина пароля должна быть между 8 и 20 символами")
 
 	InvalidUserRole = errors.New("invalid input user role")
 )
