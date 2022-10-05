@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	jobflow "HeadHunter"
 	"HeadHunter/internal/entity"
 	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/errorHandler"
@@ -23,6 +24,7 @@ import (
 // @Failure 400 {string} string "bad request"
 // @Failure 401 {string} string "unauthorized"
 // @Router /auth/sign-in [post]
+
 func SignIn(c *gin.Context) {
 	var input = entity.User{}
 	if err := c.BindJSON(&input); err != nil {
@@ -46,8 +48,8 @@ func SignIn(c *gin.Context) {
 	}
 
 	token := sessions.SessionsStore.NewSession(input.Email)
-	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", "localhost", false, true)
-	c.Status(http.StatusOK)
+	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", jobflow.Domain, false, true)
+	c.JSON(http.StatusOK, gin.H{"name": user.Name, "surname": user.Surname})
 }
 
 // @Summary      SignUp
@@ -61,6 +63,7 @@ func SignIn(c *gin.Context) {
 // @Failure 400 {string} string "bad request"
 // @Failure 503 {string} string "service unavailable"
 // @Router  /auth/sign-up [post]
+
 func SignUp(c *gin.Context) {
 	var input = entity.User{}
 	if err := c.BindJSON(&input); err != nil {
@@ -86,7 +89,7 @@ func SignUp(c *gin.Context) {
 	}
 
 	token := sessions.SessionsStore.NewSession(input.Email)
-	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", "localhost", false, true)
+	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", jobflow.Domain, false, true)
 	c.Status(http.StatusOK)
 }
 
@@ -99,6 +102,7 @@ func SignUp(c *gin.Context) {
 // @Success 200 {string} string "unauthorized"
 // @Failure 400 {string} string "bad request"
 // @Router       /auth/logout [post]
+
 func Logout(c *gin.Context) {
 	token, err := c.Cookie("session")
 	if err != nil {
@@ -111,9 +115,5 @@ func Logout(c *gin.Context) {
 		_ = c.Error(err)
 		return
 	}
-
-	c.SetCookie("session", token, -1, "/", "localhost", false, true)
-	c.JSON(http.StatusOK, gin.H{
-		"message": "unauthorized",
-	})
+	c.SetCookie("session", token, -1, "/", jobflow.Domain, false, true)
 }

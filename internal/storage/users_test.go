@@ -22,7 +22,7 @@ func Test_FindByEmail(t *testing.T) {
 				Name:     "Zakhar",
 				Surname:  "Urvancev",
 				Email:    "example@mail.ru",
-				Password: "123456!!a",
+				Password: string(password),
 				Role:     "applicant",
 			},
 			expectedError: nil,

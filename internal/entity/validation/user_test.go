@@ -33,6 +33,11 @@ func Test_VerifyPassword(t *testing.T) {
 			password: "abasd123",
 			expected: false,
 		},
+		{
+			name:     "password with incorrect symbols",
+			password: "??????",
+			expected: false,
+		},
 	}
 	for _, testCase := range testTable {
 		tc := testCase

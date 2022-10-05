@@ -2,11 +2,13 @@ package handlers
 
 import (
 	jobflow "HeadHunter"
+	"HeadHunter/internal/entity"
 	"HeadHunter/internal/errorHandler"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 )
+
 
 // @Summary GetVacancies
 // @Tags Получить вакансии
@@ -18,6 +20,7 @@ import (
 // @Failure 400 {string} string "invalid query"
 // @Failure 404 {string} string "vacancy not found"
 // @Router /api/vacancy/ [get]
+
 func GetVacancies(c *gin.Context) {
 	_, check := c.Get("userEmail")
 	if !check {
@@ -30,7 +33,11 @@ func GetVacancies(c *gin.Context) {
 		return
 	}
 	if id == 0 {
-		c.IndentedJSON(http.StatusOK, jobflow.Vacancies)
+		outputSlice := make([]entity.Vacancy, 0, len(jobflow.Vacancies))
+		for _, elem := range jobflow.Vacancies {
+			outputSlice = append(outputSlice, elem)
+		}
+		c.IndentedJSON(http.StatusOK, outputSlice)
 	} else {
 		if elem, ok := jobflow.Vacancies[id]; ok {
 			c.IndentedJSON(http.StatusOK, elem)

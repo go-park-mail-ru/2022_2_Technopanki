@@ -9,8 +9,9 @@ var (
 	ErrBadRequest          = errors.New("bad request")
 	ErrUnauthorized        = errors.New("unauthorized")
 	ErrServiceUnavailable  = errors.New("service unavailable")
-	ErrUserExists          = errors.New("пользователь с таким email уже существует")
-	ErrUserNotExists       = errors.New("пользователя с таким email не существует")
+	ErrUserExists          = errors.New("Пользователь с таким email уже существует")
+	ErrUserNotExists       = errors.New("Пользователя с таким email не существует")
+
 	ErrInvalidQuery        = errors.New("invalid query")
 	ErrSessionNotFound     = errors.New("session with this token not found")
 	ErrCannotDeleteSession = errors.New("cannot delete session")
