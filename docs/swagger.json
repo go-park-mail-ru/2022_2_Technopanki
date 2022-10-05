@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:8080",
+    "host": "95.163.208.72:8080",
     "basePath": "/",
     "paths": {
         "/api/vacancy/": {
@@ -194,10 +194,16 @@
         "entity.Vacancy": {
             "type": "object",
             "properties": {
+                "city": {
+                    "type": "string"
+                },
                 "date": {
                     "type": "string"
                 },
                 "description": {
+                    "type": "string"
+                },
+                "employer_name": {
                     "type": "string"
                 },
                 "maximum_salary": {

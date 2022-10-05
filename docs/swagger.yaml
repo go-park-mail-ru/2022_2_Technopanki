@@ -15,9 +15,13 @@ definitions:
     type: object
   entity.Vacancy:
     properties:
+      city:
+        type: string
       date:
         type: string
       description:
+        type: string
+      employer_name:
         type: string
       maximum_salary:
         type: integer
@@ -26,7 +30,7 @@ definitions:
       title:
         type: string
     type: object
-host: localhost:8080
+host: 95.163.208.72:8080
 info:
   contact: {}
   description: Swagger API for Golang Project Jobflow.
