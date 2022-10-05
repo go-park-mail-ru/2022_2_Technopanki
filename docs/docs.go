@@ -52,7 +52,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/logout": {
+        "/auth/logout": {
             "post": {
                 "description": "Выход пользователя",
                 "consumes": [
@@ -82,7 +82,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/sign-in": {
+        "/auth/sign-in": {
             "post": {
                 "description": "Вход пользователя",
                 "consumes": [
@@ -98,7 +98,7 @@ const docTemplate = `{
                 "operationId": "login",
                 "parameters": [
                     {
-                        "description": "credentials",
+                        "description": "user data",
                         "name": "input",
                         "in": "body",
                         "required": true,
@@ -109,7 +109,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "token",
+                        "description": "OK",
                         "schema": {
                             "type": "string"
                         }
@@ -129,7 +129,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/sign-up": {
+        "/auth/sign-up": {
             "post": {
                 "description": "Регистрация пользователя",
                 "consumes": [
@@ -156,7 +156,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "token",
+                        "description": "OK",
                         "schema": {
                             "type": "string"
                         }

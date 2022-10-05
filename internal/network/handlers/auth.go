@@ -18,11 +18,11 @@ import (
 // @ID login
 // @Accept       json
 // @Produce      json
-// @Param input body entity.User{} true "credentials"
-// @Success 200 {string} string "token"
+// @Param input body entity.User{} true "user data"
+// @Success 200 {string} string "OK"
 // @Failure 400 {string} string "bad request"
 // @Failure 401 {string} string "unauthorized"
-// @Router       /sign-in [post]
+// @Router /auth/sign-in [post]
 func SignIn(c *gin.Context) {
 	var input = entity.User{}
 	if err := c.BindJSON(&input); err != nil {
@@ -57,10 +57,10 @@ func SignIn(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param input body entity.User{} true "account info"
-// @Success 200 {string} string "token"
+// @Success 200 {string} string "OK"
 // @Failure 400 {string} string "bad request"
 // @Failure 503 {string} string "service unavailable"
-// @Router       /sign-up [post]
+// @Router  /auth/sign-up [post]
 func SignUp(c *gin.Context) {
 	var input = entity.User{}
 	if err := c.BindJSON(&input); err != nil {
@@ -98,7 +98,7 @@ func SignUp(c *gin.Context) {
 // @Produce      json
 // @Success 200 {string} string "unauthorized"
 // @Failure 400 {string} string "bad request"
-// @Router       /logout [post]
+// @Router       /auth/logout [post]
 func Logout(c *gin.Context) {
 	token, err := c.Cookie("session")
 	if err != nil {

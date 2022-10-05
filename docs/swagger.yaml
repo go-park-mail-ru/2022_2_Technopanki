@@ -57,7 +57,7 @@ paths:
       summary: GetVacancies
       tags:
       - Получить вакансии
-  /logout:
+  /auth/logout:
     post:
       consumes:
       - application/json
@@ -77,14 +77,14 @@ paths:
       summary: Logout
       tags:
       - Авторизация
-  /sign-in:
+  /auth/sign-in:
     post:
       consumes:
       - application/json
       description: Вход пользователя
       operationId: login
       parameters:
-      - description: credentials
+      - description: user data
         in: body
         name: input
         required: true
@@ -94,7 +94,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: token
+          description: OK
           schema:
             type: string
         "400":
@@ -108,7 +108,7 @@ paths:
       summary: SignIn
       tags:
       - Авторизация
-  /sign-up:
+  /auth/sign-up:
     post:
       consumes:
       - application/json
@@ -125,7 +125,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: token
+          description: OK
           schema:
             type: string
         "400":

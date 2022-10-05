@@ -45,7 +45,7 @@
                 }
             }
         },
-        "/logout": {
+        "/auth/logout": {
             "post": {
                 "description": "Выход пользователя",
                 "consumes": [
@@ -75,7 +75,7 @@
                 }
             }
         },
-        "/sign-in": {
+        "/auth/sign-in": {
             "post": {
                 "description": "Вход пользователя",
                 "consumes": [
@@ -91,7 +91,7 @@
                 "operationId": "login",
                 "parameters": [
                     {
-                        "description": "credentials",
+                        "description": "user data",
                         "name": "input",
                         "in": "body",
                         "required": true,
@@ -102,7 +102,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "token",
+                        "description": "OK",
                         "schema": {
                             "type": "string"
                         }
@@ -122,7 +122,7 @@
                 }
             }
         },
-        "/sign-up": {
+        "/auth/sign-up": {
             "post": {
                 "description": "Регистрация пользователя",
                 "consumes": [
@@ -149,7 +149,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "token",
+                        "description": "OK",
                         "schema": {
                             "type": "string"
                         }
