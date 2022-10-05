@@ -9,6 +9,18 @@ import (
 	"strconv"
 )
 
+
+// @Summary GetVacancies
+// @Tags Получить вакансии
+// @Description Получить вакансии
+// @ID get-vacancies
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} entity.Vacancy
+// @Failure 400 {string} string "invalid query"
+// @Failure 404 {string} string "vacancy not found"
+// @Router /api/vacancy/ [get]
+
 func GetVacancies(c *gin.Context) {
 	_, check := c.Get("userEmail")
 	if !check {

@@ -11,6 +11,7 @@ var (
 	ErrServiceUnavailable  = errors.New("service unavailable")
 	ErrUserExists          = errors.New("Пользователь с таким email уже существует")
 	ErrUserNotExists       = errors.New("Пользователя с таким email не существует")
+
 	ErrInvalidQuery        = errors.New("invalid query")
 	ErrSessionNotFound     = errors.New("session with this token not found")
 	ErrCannotDeleteSession = errors.New("cannot delete session")
