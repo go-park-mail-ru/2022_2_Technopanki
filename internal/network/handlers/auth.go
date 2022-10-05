@@ -12,6 +12,17 @@ import (
 	"net/http"
 )
 
+// @Summary      SignIn
+// @Description  Вход пользователя
+// @Tags         Авторизация
+// @ID login
+// @Accept       json
+// @Produce      json
+// @Param input body entity.User{} true "credentials"
+// @Success 200 {string} string "token"
+// @Failure 400 {string} string "bad request"
+// @Failure 401 {string} string "unauthorized"
+// @Router       /sign-in [post]
 func SignIn(c *gin.Context) {
 	var input = entity.User{}
 	if err := c.BindJSON(&input); err != nil {
@@ -39,6 +50,17 @@ func SignIn(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
+// @Summary      SignUp
+// @Description  Регистрация пользователя
+// @Tags         Регистрация
+// @ID create-account
+// @Accept       json
+// @Produce      json
+// @Param input body entity.User{} true "account info"
+// @Success 200 {string} string "token"
+// @Failure 400 {string} string "bad request"
+// @Failure 503 {string} string "service unavailable"
+// @Router       /sign-up [post]
 func SignUp(c *gin.Context) {
 	var input = entity.User{}
 	if err := c.BindJSON(&input); err != nil {
@@ -68,6 +90,15 @@ func SignUp(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
+// @Summary      Logout
+// @Description  Выход пользователя
+// @Tags         Авторизация
+// @ID logout
+// @Accept       json
+// @Produce      json
+// @Success 200 {string} string "unauthorized"
+// @Failure 400 {string} string "bad request"
+// @Router       /logout [post]
 func Logout(c *gin.Context) {
 	token, err := c.Cookie("session")
 	if err != nil {

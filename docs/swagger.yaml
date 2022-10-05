@@ -1,0 +1,142 @@
+basePath: /
+definitions:
+  entity.User:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      surname:
+        type: string
+    type: object
+  entity.Vacancy:
+    properties:
+      date:
+        type: string
+      description:
+        type: string
+      maximum_salary:
+        type: integer
+      minimal_salary:
+        type: integer
+      title:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Swagger API for Golang Project Jobflow.
+  title: Jobflow API
+  version: "1.0"
+paths:
+  /api/vacancy/:
+    get:
+      consumes:
+      - application/json
+      description: Получить вакансии
+      operationId: get-vacancies
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Vacancy'
+        "400":
+          description: invalid query
+          schema:
+            type: string
+        "404":
+          description: vacancy not found
+          schema:
+            type: string
+      summary: GetVacancies
+      tags:
+      - Получить вакансии
+  /logout:
+    post:
+      consumes:
+      - application/json
+      description: Выход пользователя
+      operationId: logout
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: unauthorized
+          schema:
+            type: string
+        "400":
+          description: bad request
+          schema:
+            type: string
+      summary: Logout
+      tags:
+      - Авторизация
+  /sign-in:
+    post:
+      consumes:
+      - application/json
+      description: Вход пользователя
+      operationId: login
+      parameters:
+      - description: credentials
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/entity.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: token
+          schema:
+            type: string
+        "400":
+          description: bad request
+          schema:
+            type: string
+        "401":
+          description: unauthorized
+          schema:
+            type: string
+      summary: SignIn
+      tags:
+      - Авторизация
+  /sign-up:
+    post:
+      consumes:
+      - application/json
+      description: Регистрация пользователя
+      operationId: create-account
+      parameters:
+      - description: account info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/entity.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: token
+          schema:
+            type: string
+        "400":
+          description: bad request
+          schema:
+            type: string
+        "503":
+          description: service unavailable
+          schema:
+            type: string
+      summary: SignUp
+      tags:
+      - Регистрация
+swagger: "2.0"
