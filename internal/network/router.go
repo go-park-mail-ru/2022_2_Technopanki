@@ -1,6 +1,7 @@
 package network
 
 import (
+	_ "HeadHunter/docs"
 	"HeadHunter/internal/network/handlers"
 	"HeadHunter/internal/network/middleware"
 	"github.com/gin-gonic/gin"
