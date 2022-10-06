@@ -19,6 +19,11 @@ func Session(c *gin.Context) {
 		return
 	}
 	if userSession.IsExpired() {
+		deleteSessionErr := sessions.SessionsStore.DeleteSession(sessions.Token(sessionToken))
+		if deleteSessionErr != nil {
+			_ = c.Error(deleteSessionErr)
+			return
+		}
 		_ = c.Error(errorHandler.ErrUnauthorized)
 		return
 	}

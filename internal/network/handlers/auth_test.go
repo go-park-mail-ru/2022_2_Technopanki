@@ -53,7 +53,7 @@ func Test_SignUp(t *testing.T) {
     			"role": "applicant"
 			}`,
 			expectedStatusCode:   400,
-			expectedResponseBody: "{\"error\":\"длина email должна быть между 8 and 30 символами\"}",
+			expectedResponseBody: "{\"error\":\"Длина email должна быть между 8 and 30 символами\"}",
 		},
 		{
 			name: "user exists",
@@ -65,7 +65,7 @@ func Test_SignUp(t *testing.T) {
     			"role": "applicant"
 			}`,
 			expectedStatusCode:   400,
-			expectedResponseBody: "{\"error\":\"пользователь с таким email уже существует\"}",
+			expectedResponseBody: "{\"error\":\"Пользователь с таким email уже существует\"}",
 		},
 		{
 			name: "Invalid name",
@@ -77,7 +77,7 @@ func Test_SignUp(t *testing.T) {
     			"role": "applicant"
 			}`,
 			expectedStatusCode:   400,
-			expectedResponseBody: "{\"error\":\"длина имени должна быть между 3 и 20 символами\"}",
+			expectedResponseBody: "{\"error\":\"Длина имени должна быть между 3 и 20 символами\"}",
 		},
 		{
 			name: "Invalid surname",
@@ -89,7 +89,7 @@ func Test_SignUp(t *testing.T) {
     			"role": "applicant"
 			}`,
 			expectedStatusCode:   400,
-			expectedResponseBody: "{\"error\":\"длина фамилии должна быть между 3 и 20 символами\"}",
+			expectedResponseBody: "{\"error\":\"Длина фамилии должна быть между 3 и 20 символами\"}",
 		},
 		{
 			name: "Invalid password 1",
@@ -101,7 +101,7 @@ func Test_SignUp(t *testing.T) {
     			"role": "applicant"
 			}`,
 			expectedStatusCode:   400,
-			expectedResponseBody: "{\"error\":\"длина пароля должна быть между 8 и 20 символами\"}",
+			expectedResponseBody: "{\"error\":\"Длина пароля должна быть между 8 и 20 символами\"}",
 		},
 		{
 			name: "Invalid password 2",
@@ -113,7 +113,7 @@ func Test_SignUp(t *testing.T) {
     			"role": "applicant"
 			}`,
 			expectedStatusCode:   400,
-			expectedResponseBody: "{\"error\":\"пароль должен содержать буквы латиницы, цифры и спецсимволы(!#%^$)\"}",
+			expectedResponseBody: "{\"error\":\"Пароль должен содержать буквы латиницы, цифры и спецсимволы(!#%^$)\"}",
 		},
 		{
 			name: "Invalid role",
@@ -181,7 +181,7 @@ func Test_SignIn(t *testing.T) {
     			"password": "123456!!a"
 			}`,
 			expectedStatusCode:   200,
-			expectedResponseBody: "",
+			expectedResponseBody: "{\"name\":\"Zakhar\",\"surname\":\"Urvancev\"}",
 		},
 		{
 			name: "user does not exist",
@@ -190,7 +190,7 @@ func Test_SignIn(t *testing.T) {
     			"password": "123456!!a"
 			}`,
 			expectedStatusCode:   401,
-			expectedResponseBody: "{\"error\":\"пользователя с таким email не существует\"}",
+			expectedResponseBody: "{\"error\":\"Пользователя с таким email не существует\"}",
 		},
 		{
 			name: "Invalid password 1",
@@ -199,7 +199,7 @@ func Test_SignIn(t *testing.T) {
     			"password": "1a!"
 			}`,
 			expectedStatusCode:   400,
-			expectedResponseBody: "{\"error\":\"длина пароля должна быть между 8 и 20 символами\"}",
+			expectedResponseBody: "{\"error\":\"Длина пароля должна быть между 8 и 20 символами\"}",
 		},
 		{
 			name: "Invalid password 2",
@@ -208,7 +208,7 @@ func Test_SignIn(t *testing.T) {
     			"password": "111asdwwqv"
 			}`,
 			expectedStatusCode:   400,
-			expectedResponseBody: "{\"error\":\"пароль должен содержать буквы латиницы, цифры и спецсимволы(!#%^$)\"}",
+			expectedResponseBody: "{\"error\":\"Пароль должен содержать буквы латиницы, цифры и спецсимволы(!#%^$)\"}",
 		},
 		{
 			name: "invalid json",

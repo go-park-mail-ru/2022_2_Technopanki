@@ -12,7 +12,9 @@ import (
 func InitRoutes() *gin.Engine {
 	router := gin.Default()
 	router.Use(middleware.CORSMiddleware())
-
+	router.NoRoute(func(c *gin.Context) {
+		c.AbortWithStatusJSON(404, gin.H{"error": "invalid route (check HTTP Methods)"})
+	})
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	auth := router.Group("/auth")
 	{
