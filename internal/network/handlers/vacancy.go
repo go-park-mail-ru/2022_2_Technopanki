@@ -6,6 +6,7 @@ import (
 	"HeadHunter/internal/errorHandler"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"sort"
 	"strconv"
 )
 
@@ -28,8 +29,13 @@ func GetVacancies(c *gin.Context) {
 	}
 	if id == 0 {
 		outputSlice := make([]entity.Vacancy, 0, len(jobflow.Vacancies))
-		for _, elem := range jobflow.Vacancies {
-			outputSlice = append(outputSlice, elem)
+		keys := make([]int, 0)
+		for k, _ := range jobflow.Vacancies {
+			keys = append(keys, k)
+		}
+		sort.Ints(keys)
+		for _, k := range keys {
+			outputSlice = append(outputSlice, jobflow.Vacancies[k])
 		}
 		c.IndentedJSON(http.StatusOK, outputSlice)
 	} else {
