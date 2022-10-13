@@ -11,7 +11,7 @@ type Token string
 
 type Store struct {
 	Values           map[Token]Session
-	DefaultExpiresAt int64
+	DefaultExpiresAt time.Duration
 	mutex            sync.RWMutex
 }
 
@@ -22,7 +22,7 @@ func (s *Store) NewSession(email string) string {
 	defer s.mutex.Unlock()
 	s.Values[Token(token)] = Session{
 		Email:     email,
-		ExpiresAt: time.Now().Unix() + s.DefaultExpiresAt,
+		ExpiresAt: time.Now().Unix() + int64(s.DefaultExpiresAt),
 	}
 
 	return token
@@ -51,5 +51,6 @@ func (s *Store) DeleteSession(token Token) error {
 }
 
 var SessionsStore = Store{
-	Values: make(map[Token]Session),
+	Values:           make(map[Token]Session),
+	DefaultExpiresAt: 12 * time.Hour / time.Second,
 }
