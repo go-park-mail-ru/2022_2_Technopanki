@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	jobflow "HeadHunter"
 	"HeadHunter/internal/entity"
 	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/errorHandler"
@@ -9,6 +8,7 @@ import (
 	"HeadHunter/internal/storage"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 )
@@ -47,7 +47,7 @@ func SignIn(c *gin.Context) {
 	}
 
 	token := sessions.SessionsStore.NewSession(input.Email)
-	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", jobflow.Domain, false, true)
+	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", viper.GetString("domain"), false, true)
 	c.JSON(http.StatusOK, gin.H{"name": user.Name, "surname": user.Surname})
 }
 
@@ -87,7 +87,7 @@ func SignUp(c *gin.Context) {
 	}
 
 	token := sessions.SessionsStore.NewSession(input.Email)
-	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", jobflow.Domain, false, true)
+	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", viper.GetString("domain"), false, true)
 	c.Status(http.StatusOK)
 }
 
@@ -112,7 +112,7 @@ func Logout(c *gin.Context) {
 		_ = c.Error(err)
 		return
 	}
-	c.SetCookie("session", token, -1, "/", jobflow.Domain, false, true)
+	c.SetCookie("session", token, -1, "/", viper.GetString("domain"), false, true)
 }
 
 func AuthCheck(c *gin.Context) {

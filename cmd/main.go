@@ -2,6 +2,7 @@ package main
 
 import (
 	"HeadHunter/internal/network"
+	"github.com/spf13/viper"
 	"log"
 )
 
@@ -13,9 +14,19 @@ import (
 // @BasePath  /
 
 func main() {
+	if configErr := initConfig(); configErr != nil {
+		log.Fatal(configErr.Error())
+	}
+
 	router := network.InitRoutes()
-	runErr := router.Run(":8080")
+	runErr := router.Run(viper.GetString("port"))
 	if runErr != nil {
 		log.Fatal(runErr)
 	}
+}
+
+func initConfig() error {
+	viper.AddConfigPath("configs")
+	viper.SetConfigName("config")
+	return viper.ReadInConfig()
 }
