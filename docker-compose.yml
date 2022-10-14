@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./
+    ports:
+      - '8080:8080'
+    container_name: server
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: "jobflowDB"
+      POSTGRES_USER: "jobflowAdmin"
+      POSTGRES_PASSWORD: "12345"
+    ports:
+      -  '9000:5432'

@@ -1,2 +1,10 @@
 domain: "localhost"
 port: ":8080"
+
+db:
+  username: "postgres"
+  host: "localhost"
+  port: "5432"
+  dbname: "postgres"
+  sslmode: "disable"
+  password: "12345"
