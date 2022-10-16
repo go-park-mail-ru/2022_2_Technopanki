@@ -16,7 +16,7 @@ type Users struct {
 	mutex  sync.RWMutex
 }
 
-func (u *Users) FindByEmail(email string) (entity.User, error) {
+func (u *Users) GetUserByEmail(email string) (entity.User, error) {
 	u.mutex.RLock()
 	defer u.mutex.RUnlock()
 	if val, exists := u.Values[email]; exists {
@@ -26,7 +26,7 @@ func (u *Users) FindByEmail(email string) (entity.User, error) {
 	return entity.User{}, errorHandler.ErrUserNotExists
 }
 
-func (u *Users) AddUser(user entity.User) error {
+func (u *Users) CreateUser(user entity.User) error {
 	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), COST)
 	if err != nil {
 		return err

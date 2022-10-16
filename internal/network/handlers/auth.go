@@ -35,7 +35,7 @@ func SignIn(c *gin.Context) {
 		_ = c.Error(inputValidity)
 		return
 	}
-	user, err := storage.UserStorage.FindByEmail(input.Email)
+	user, err := storage.UserStorage.GetUserByEmail(input.Email)
 	if err != nil {
 		_ = c.Error(err)
 		return
@@ -74,13 +74,13 @@ func SignUp(c *gin.Context) {
 		return
 	}
 	input.ID = uuid.NewString()
-	_, err := storage.UserStorage.FindByEmail(input.Email)
+	_, err := storage.UserStorage.GetUserByEmail(input.Email)
 	if err == nil {
 		_ = c.Error(errorHandler.ErrUserExists)
 		return
 	}
 
-	err = storage.UserStorage.AddUser(input)
+	err = storage.UserStorage.CreateUser(input)
 	if err != nil {
 		_ = c.Error(errorHandler.ErrServiceUnavailable)
 		return
@@ -121,7 +121,7 @@ func AuthCheck(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrUnauthorized)
 		return
 	}
-	user, err := storage.UserStorage.FindByEmail(email.(string))
+	user, err := storage.UserStorage.GetUserByEmail(email.(string))
 	if err != nil {
 		_ = c.Error(err)
 		return

@@ -9,7 +9,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func InitRoutes() *gin.Engine {
+func InitRoutes(h *handlers.Handler) *gin.Engine {
 	router := gin.Default()
 	router.Use(middleware.CORSMiddleware())
 	router.NoRoute(func(c *gin.Context) {
@@ -18,10 +18,10 @@ func InitRoutes() *gin.Engine {
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	auth := router.Group("/auth")
 	{
-		auth.GET("/", middleware.Session, handlers.AuthCheck, middleware.ErrorHandler())
-		auth.POST("/sign-up", handlers.SignUp, middleware.ErrorHandler())
-		auth.POST("/sign-in", handlers.SignIn, middleware.ErrorHandler())
-		auth.POST("/logout", middleware.Session, handlers.Logout, middleware.ErrorHandler())
+		auth.GET("/", middleware.Session, h.AuthCheck, middleware.ErrorHandler())
+		auth.POST("/sign-up", h.SignUp, middleware.ErrorHandler())
+		auth.POST("/sign-in", h.SignIn, middleware.ErrorHandler())
+		auth.POST("/logout", middleware.Session, h.Logout, middleware.ErrorHandler())
 	}
 
 	api := router.Group("/api")

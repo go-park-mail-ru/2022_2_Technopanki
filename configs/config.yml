@@ -2,9 +2,9 @@ domain: "localhost"
 port: ":8080"
 
 db:
-  username: "postgres"
+  username: "jobflowAdmin"
   host: "localhost"
-  port: "5432"
-  dbname: "postgres"
+  port: "9000"
+  dbname: "jobflowDB"
   sslmode: "disable"
   password: "12345"

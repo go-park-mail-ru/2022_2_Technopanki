@@ -2,7 +2,10 @@ package main
 
 import (
 	"HeadHunter/internal/network"
+	"HeadHunter/internal/network/handlers"
 	"HeadHunter/internal/repository"
+	"HeadHunter/internal/storage"
+	"HeadHunter/internal/usecases"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 	"log"
@@ -22,20 +25,22 @@ func main() {
 	if configErr := initConfig(); configErr != nil {
 		log.Fatal(configErr.Error())
 	}
-	dataBase := Database{}
-	db, dbErr := repository.NewPostgresDB(repository.Config{
-		Host:     "localhost",
-		Port:     "9000",
-		Username: "jobflowAdmin",
-		Password: "12345",
-		DBName:   "jobflowDB",
-		SSLMode:  "disable",
-	})
-	if dbErr != nil {
-		log.Fatal(dbErr)
-	}
-	dataBase.db = db
-	router := network.InitRoutes()
+	//dataBase := Database{}
+	//db, dbErr := repository.NewPostgresDB(repository.Config{
+	//	Host:     "localhost",
+	//	Port:     "9000",
+	//	Username: "jobflowAdmin",
+	//	Password: "12345",
+	//	DBName:   "jobflowDB",
+	//	SSLMode:  "disable",
+	//})
+	//if dbErr != nil {
+	//	log.Fatal(dbErr)
+	//}
+	//dataBase.db = db
+	useCase := usecases.NewUseCases(&repository.Repository{UserRepository: &storage.UserStorage})
+	handler := handlers.NewHandler(useCase)
+	router := network.InitRoutes(handler)
 	runErr := router.Run(viper.GetString("port"))
 	if runErr != nil {
 		log.Fatal(runErr)
