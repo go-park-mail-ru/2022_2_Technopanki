@@ -6,6 +6,7 @@ import (
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/storage"
 	"HeadHunter/internal/usecases"
+	repository2 "HeadHunter/pkg/repository"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 	"log"
@@ -22,6 +23,7 @@ type Database struct {
 }
 
 func main() {
+	repository2.Connect()
 	if configErr := initConfig(); configErr != nil {
 		log.Fatal(configErr.Error())
 	}
