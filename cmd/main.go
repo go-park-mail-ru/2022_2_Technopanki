@@ -25,7 +25,7 @@ func main() {
 	dataBase := Database{}
 	db, dbErr := repository.NewPostgresDB(repository.Config{
 		Host:     "localhost",
-		Port:     "5432",
+		Port:     "9000",
 		Username: "jobflowAdmin",
 		Password: "12345",
 		DBName:   "jobflowDB",
