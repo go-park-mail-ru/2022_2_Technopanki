@@ -33,7 +33,7 @@ func main() {
 		UserRepository: &storage.UserStorage,
 		Cfg:            &mainConfig,
 	})
-	handler := handlers.NewHandler(useCase)
+	handler := handlers.NewHandlers(useCase)
 	router := network.InitRoutes(handler)
 	runErr := router.Run(viper.GetString("port"))
 	if runErr != nil {

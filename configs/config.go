@@ -2,7 +2,6 @@ package configs
 
 import (
 	repositorypkg "HeadHunter/pkg/repository"
-	"fmt"
 	"github.com/spf13/viper"
 )
 
@@ -26,6 +25,5 @@ func InitConfig(config *Config) error {
 	config.DB.Password = viper.GetString("db.password")
 	config.DB.DBName = viper.GetString("db.dbname")
 	config.DB.SSLMode = viper.GetString("db.sslmode")
-	fmt.Println(config)
 	return nil
 }
