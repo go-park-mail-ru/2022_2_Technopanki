@@ -3,7 +3,7 @@ port: ":8080"
 
 db:
   username: "jobflowAdmin"
-  host: "localhost"
+  host: "jfPostgres"
   port: "9000"
   dbname: "jobflowDB"
   sslmode: "disable"
