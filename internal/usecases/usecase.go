@@ -7,8 +7,10 @@ import (
 )
 
 type UseCases struct {
-	User User
-	Cfg  *configs.Config
+	User    User
+	Vacancy Vacancy
+	Resume  Resume
+	Cfg     *configs.Config
 }
 
 func NewUseCases(repos *repository.Repository) *UseCases {
@@ -23,4 +25,18 @@ type User interface {
 	SignIn(input *entity.User) (string, error)
 	Logout(token string) error
 	AuthCheck(email string) (entity.User, error)
+}
+
+type Vacancy interface { //TODO Сделать юзкейс вакансий
+	Get()
+	Create(entity.Vacancy)
+	Update()
+	Delete()
+}
+
+type Resume interface { //TODO Сделать юзкейс резюме
+	Get()
+	Create(entity.Resume)
+	Update()
+	Delete()
 }
