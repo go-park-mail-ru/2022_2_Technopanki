@@ -69,7 +69,12 @@ func (h *Handler) AuthCheck(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrUnauthorized)
 		return
 	}
-	user, err := h.uc.User.AuthCheck(email.(string))
+	emailStr, ok := email.(string)
+	if !ok {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+	user, err := h.uc.User.AuthCheck(emailStr)
 	if err != nil {
 		_ = c.Error(err)
 		return

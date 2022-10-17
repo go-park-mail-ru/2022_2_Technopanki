@@ -11,13 +11,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type User interface {
-	SignUp(input entity.User) (string, error)
-	SignIn(input *entity.User) (string, error)
-	Logout(token string) error
-	AuthCheck(email string) (entity.User, error)
-}
-
 type UserService struct {
 	ur repository.UserRepository
 }
@@ -47,7 +40,7 @@ func (us *UserService) SignIn(input *entity.User) (string, error) {
 }
 
 func (us *UserService) SignUp(input entity.User) (string, error) {
-	inputValidity := validation.IsValidate(input)
+	inputValidity := validation.IsUserValidate(input)
 	if inputValidity != nil {
 		return "", inputValidity
 	}

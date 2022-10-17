@@ -41,7 +41,7 @@ func IsValidateAuthData(user entity.User) error {
 
 	return nil
 }
-func IsValidate(user entity.User) error {
+func IsUserValidate(user entity.User) error {
 	if len([]rune(user.Name)) > 20 || len([]rune(user.Name)) < 3 {
 		return errorHandler.IncorrectNameLength
 	}
