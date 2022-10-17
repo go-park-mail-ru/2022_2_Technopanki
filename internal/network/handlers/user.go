@@ -5,7 +5,6 @@ import (
 	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/network/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 	"net/http"
 )
 
@@ -20,7 +19,7 @@ func (h *Handler) SignIn(c *gin.Context) {
 		_ = c.Error(err)
 		return
 	}
-	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", viper.GetString("domain"), false, true)
+	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", h.Cfg.Domain, false, true)
 	c.JSON(http.StatusOK, gin.H{"name": input.Name, "surname": input.Surname})
 }
 
@@ -35,7 +34,7 @@ func (h *Handler) SignUp(c *gin.Context) {
 		_ = c.Error(signUpErr)
 		return
 	}
-	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", viper.GetString("domain"), false, true)
+	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", h.Cfg.Domain, false, true)
 	c.Status(http.StatusOK)
 }
 
@@ -60,7 +59,7 @@ func (h *Handler) Logout(c *gin.Context) {
 		_ = c.Error(logoutErr)
 		return
 	}
-	c.SetCookie("session", token, -1, "/", viper.GetString("domain"), false, true)
+	c.SetCookie("session", token, -1, "/", h.Cfg.Domain, false, true)
 }
 
 func (h *Handler) AuthCheck(c *gin.Context) {

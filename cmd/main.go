@@ -1,6 +1,7 @@
 package main
 
 import (
+	"HeadHunter/configs"
 	"HeadHunter/internal/network"
 	"HeadHunter/internal/network/handlers"
 	"HeadHunter/internal/repository"
@@ -18,32 +19,24 @@ import (
 // @host      95.163.208.72:8080
 // @BasePath  /
 func main() {
-	err := repositorypkg.Connect(repositorypkg.DBConfig{
-		Host:     "jfPostgres",
-		Port:     "5432",
-		Username: "jobflowAdmin",
-		Password: "12345",
-		DBName:   "jobflowDB",
-		SSLMode:  "disable",
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	if configErr := initConfig(); configErr != nil {
+	var mainConfig configs.Config
+	if configErr := configs.InitConfig(&mainConfig); configErr != nil {
 		log.Fatal(configErr.Error())
 	}
 
-	useCase := usecases.NewUseCases(&repository.Repository{UserRepository: &storage.UserStorage})
+	err := repositorypkg.Connect(mainConfig.DB)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	useCase := usecases.NewUseCases(&repository.Repository{
+		UserRepository: &storage.UserStorage,
+		Cfg:            mainConfig,
+	})
 	handler := handlers.NewHandler(useCase)
 	router := network.InitRoutes(handler)
 	runErr := router.Run(viper.GetString("port"))
 	if runErr != nil {
 		log.Fatal(runErr)
 	}
-}
-
-func initConfig() error {
-	viper.AddConfigPath("configs")
-	viper.SetConfigName("config")
-	return viper.ReadInConfig()
 }
