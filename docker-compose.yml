@@ -8,9 +8,12 @@ services:
     container_name: server
   postgres:
     image: postgres:latest
+    container_name: jfPostgres
     environment:
       POSTGRES_DB: "jobflowDB"
       POSTGRES_USER: "jobflowAdmin"
       POSTGRES_PASSWORD: "12345"
     ports:
-      -  '9000:5432'
+      -  '5432:5432'
+    volumes:
+      - ./data/db:/var/lib/postgresql/data2

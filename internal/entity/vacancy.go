@@ -1,9 +1,13 @@
 package entity
 
-import "time"
+import (
+	"gorm.io/gorm"
+	"time"
+)
 
 type Vacancy struct {
-	ID            int       `json:"-"`
+	gorm.Model
+	ID            int       `json:"-" gorm:"primary_key"`
 	Title         string    `json:"title"`
 	Description   string    `json:"description"`
 	MinimalSalary int       `json:"minimal_salary"`
