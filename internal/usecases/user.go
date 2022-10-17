@@ -6,7 +6,6 @@ import (
 	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/network/sessions"
 	"HeadHunter/internal/repository"
-	"HeadHunter/internal/storage"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -24,7 +23,7 @@ func (us *UserService) SignIn(input *entity.User) (string, error) {
 	if inputValidity != nil {
 		return "", inputValidity
 	}
-	user, err := storage.UserStorage.GetUserByEmail(input.Email)
+	user, err := us.ur.GetUserByEmail(input.Email)
 	if err != nil {
 		return "", err
 	}
@@ -45,11 +44,11 @@ func (us *UserService) SignUp(input entity.User) (string, error) {
 		return "", inputValidity
 	}
 	input.ID = uuid.NewString()
-	_, err := storage.UserStorage.GetUserByEmail(input.Email)
+	_, err := us.ur.GetUserByEmail(input.Email)
 	if err == nil {
 		return "", errorHandler.ErrUserExists
 	}
-	err = storage.UserStorage.CreateUser(input)
+	err = us.ur.CreateUser(input)
 	if err != nil {
 		return "", errorHandler.ErrServiceUnavailable
 	}
@@ -62,7 +61,7 @@ func (us *UserService) Logout(token string) error {
 }
 
 func (us *UserService) AuthCheck(email string) (entity.User, error) {
-	user, err := storage.UserStorage.GetUserByEmail(email)
+	user, err := us.ur.GetUserByEmail(email)
 	if err != nil {
 		return entity.User{}, err
 	}
