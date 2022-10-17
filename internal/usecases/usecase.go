@@ -8,7 +8,7 @@ import (
 
 type UseCases struct {
 	User User
-	Cfg  configs.Config
+	Cfg  *configs.Config
 }
 
 func NewUseCases(repos *repository.Repository) *UseCases {

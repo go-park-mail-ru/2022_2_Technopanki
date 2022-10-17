@@ -11,5 +11,5 @@ type Handler struct {
 }
 
 func NewHandler(usecases *usecases.UseCases) *Handler {
-	return &Handler{uc: usecases, Cfg: usecases.Cfg}
+	return &Handler{uc: usecases, Cfg: *usecases.Cfg}
 }

@@ -31,7 +31,7 @@ func main() {
 
 	useCase := usecases.NewUseCases(&repository.Repository{
 		UserRepository: &storage.UserStorage,
-		Cfg:            mainConfig,
+		Cfg:            &mainConfig,
 	})
 	handler := handlers.NewHandler(useCase)
 	router := network.InitRoutes(handler)
