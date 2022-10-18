@@ -1,7 +1,6 @@
 package usecases
 
 import (
-	"HeadHunter/configs"
 	"HeadHunter/internal/entity"
 	"HeadHunter/internal/repository"
 )
@@ -10,13 +9,11 @@ type UseCases struct {
 	User    User
 	Vacancy Vacancy
 	Resume  Resume
-	Cfg     *configs.Config
 }
 
 func NewUseCases(repos *repository.Repository) *UseCases {
 	return &UseCases{
 		User: newUserService(repos.UserRepository),
-		Cfg:  repos.Cfg,
 	}
 }
 

@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"HeadHunter/configs"
 	"HeadHunter/internal/entity"
 	"gorm.io/gorm"
 )
@@ -10,13 +9,11 @@ type Repository struct {
 	UserRepository    UserRepository
 	VacancyRepository VacancyRepository
 	ResumeRepository  ResumeRepository
-	Cfg               *configs.Config
 }
 
-func NewPostgresRepository(db *gorm.DB, _cfg *configs.Config) *Repository {
+func NewPostgresRepository(db *gorm.DB) *Repository {
 	return &Repository{
 		UserRepository: NewUserPostgres(db),
-		Cfg:            _cfg,
 	}
 }
 

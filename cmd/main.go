@@ -30,10 +30,8 @@ func main() {
 	}
 
 	useCase := usecases.NewUseCases(&repository.Repository{
-		UserRepository: &storage.UserStorage,
-		Cfg:            &mainConfig,
-	})
-	handler := handlers.NewHandlers(useCase)
+		UserRepository: &storage.UserStorage})
+	handler := handlers.NewHandlers(useCase, &mainConfig)
 	router := network.InitRoutes(handler)
 	runErr := router.Run(viper.GetString("port"))
 	if runErr != nil {

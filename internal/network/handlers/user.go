@@ -15,8 +15,8 @@ type UserHandler struct {
 	User usecases.User
 }
 
-func newUserHandler(usecases *usecases.UseCases) *UserHandler {
-	return &UserHandler{cfg: usecases.Cfg, User: usecases.User}
+func newUserHandler(usecases *usecases.UseCases, _cfg *configs.Config) *UserHandler {
+	return &UserHandler{cfg: _cfg, User: usecases.User}
 }
 func (uh *UserHandler) SignIn(c *gin.Context) {
 	var input = entity.User{}

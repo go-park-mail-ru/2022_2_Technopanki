@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"HeadHunter/configs"
 	"HeadHunter/internal/usecases"
 	"github.com/gin-gonic/gin"
 )
@@ -9,11 +10,12 @@ type Handlers struct {
 	UserHandler    UserH
 	VacancyHandler VacancyH
 	ResumeHandler  ResumeH
+	cfg            *configs.Config
 }
 
-func NewHandlers(usecases *usecases.UseCases) *Handlers {
+func NewHandlers(usecases *usecases.UseCases, _cfg *configs.Config) *Handlers {
 	return &Handlers{
-		UserHandler: newUserHandler(usecases),
+		UserHandler: newUserHandler(usecases, _cfg),
 	}
 }
 
