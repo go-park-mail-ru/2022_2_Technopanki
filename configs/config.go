@@ -1,14 +1,22 @@
 package configs
 
 import (
-	repositorypkg "HeadHunter/pkg/repository"
 	"github.com/spf13/viper"
 )
 
 type Config struct {
 	Domain string
 	Port   string
-	DB     repositorypkg.DBConfig
+	DB     DBConfig
+}
+
+type DBConfig struct {
+	Host     string
+	Port     string
+	Username string
+	Password string
+	DBName   string
+	SSLMode  string
 }
 
 func InitConfig(config *Config) error {

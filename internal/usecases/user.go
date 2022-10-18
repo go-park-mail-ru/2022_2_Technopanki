@@ -19,7 +19,7 @@ func newUserService(userRepos repository.UserRepository) *UserService {
 }
 
 func (us *UserService) SignIn(input *entity.User) (string, error) {
-	inputValidity := validation.IsValidateAuthData(*input)
+	inputValidity := validation.IsAuthDataValid(*input)
 	if inputValidity != nil {
 		return "", inputValidity
 	}
@@ -39,11 +39,10 @@ func (us *UserService) SignIn(input *entity.User) (string, error) {
 }
 
 func (us *UserService) SignUp(input entity.User) (string, error) {
-	inputValidity := validation.IsUserValidate(input)
+	inputValidity := validation.IsUserValid(input)
 	if inputValidity != nil {
 		return "", inputValidity
 	}
-	input.ID = uuid.NewString()
 	_, err := us.ur.GetUserByEmail(input.Email)
 	if err == nil {
 		return "", errorHandler.ErrUserExists
@@ -52,8 +51,9 @@ func (us *UserService) SignUp(input entity.User) (string, error) {
 	if err != nil {
 		return "", errorHandler.ErrServiceUnavailable
 	}
+	input.ID = uuid.NewString()
 	token := sessions.SessionsStore.NewSession(input.Email)
-	return token, us.ur.CreateUser(input)
+	return token, nil
 }
 
 func (us *UserService) Logout(token string) error {
