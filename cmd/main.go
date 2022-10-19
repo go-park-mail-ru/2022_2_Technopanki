@@ -24,7 +24,7 @@ func main() {
 		log.Fatal(configErr.Error())
 	}
 
-	err := repositorypkg.Connect(mainConfig.DB)
+	_, err := repositorypkg.Connect(mainConfig.DB) //TODO добавить базу данных
 	if err != nil {
 		log.Fatal(err)
 	}

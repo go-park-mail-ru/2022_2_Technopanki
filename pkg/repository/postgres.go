@@ -8,9 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var DB *gorm.DB
-
-func Connect(cfg configs.DBConfig) error {
+func Connect(cfg configs.DBConfig) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
 		cfg.Username,
 		cfg.Password,
@@ -19,12 +17,11 @@ func Connect(cfg configs.DBConfig) error {
 		cfg.DBName)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		return err
+		return nil, err
 	}
 	err = db.AutoMigrate(&entity.User{}, &entity.Vacancy{}, &entity.Resume{})
 	if err != nil {
-		return err
+		return nil, err
 	}
-	DB = db
-	return nil
+	return db, nil
 }

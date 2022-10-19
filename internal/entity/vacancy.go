@@ -1,12 +1,10 @@
 package entity
 
 import (
-	"gorm.io/gorm"
 	"time"
 )
 
 type Vacancy struct {
-	gorm.Model
 	ID            int       `json:"-" gorm:"primary_key"`
 	Title         string    `json:"title"`
 	Description   string    `json:"description"`

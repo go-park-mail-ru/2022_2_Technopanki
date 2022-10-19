@@ -43,8 +43,9 @@ func (us *UserService) SignUp(input entity.User) (string, error) {
 	if inputValidity != nil {
 		return "", inputValidity
 	}
-	_, err := us.ur.GetUserByEmail(input.Email)
-	if err == nil {
+	user, err := us.ur.GetUserByEmail(input.Email)
+	var emptyUser entity.User
+	if user != emptyUser {
 		return "", errorHandler.ErrUserExists
 	}
 	err = us.ur.CreateUser(input)
