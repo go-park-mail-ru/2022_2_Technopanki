@@ -18,10 +18,10 @@ func InitRoutes(h *handlers.Handlers) *gin.Engine {
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	auth := router.Group("/auth")
 	{
-		auth.GET("/", middleware.Session, h.UserHandler.AuthCheck, middleware.ErrorHandler())
+		auth.GET("/", h.SessionMiddleware.Session, h.UserHandler.AuthCheck, middleware.ErrorHandler())
 		auth.POST("/sign-up", h.UserHandler.SignUp, middleware.ErrorHandler())
 		auth.POST("/sign-in", h.UserHandler.SignIn, middleware.ErrorHandler())
-		auth.POST("/logout", middleware.Session, h.UserHandler.Logout, middleware.ErrorHandler())
+		auth.POST("/logout", h.SessionMiddleware.Session, h.UserHandler.Logout, middleware.ErrorHandler())
 	}
 
 	api := router.Group("/api")

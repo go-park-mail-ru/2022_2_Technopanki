@@ -1,4 +1,4 @@
-package sessions
+package session
 
 import (
 	"HeadHunter/configs"
@@ -8,12 +8,18 @@ import (
 	"time"
 )
 
-type Token string
+func (s *Session) IsExpired() bool {
+	return time.Now().Unix() > s.ExpiresAt
+}
 
 type Store struct {
 	Values           map[Token]Session
 	DefaultExpiresAt time.Duration
 	mutex            sync.RWMutex
+}
+
+func (s *Store) Expiring() time.Duration {
+	return s.DefaultExpiresAt
 }
 
 func (s *Store) NewSession(email string) string {
@@ -50,13 +56,6 @@ func (s *Store) DeleteSession(token Token) error {
 
 	return errorHandler.ErrCannotDeleteSession
 }
-
-var SessionsStore Store
-
-//var SessionsStore = Store{
-//	Values:           make(map[Token]Session),
-//	DefaultExpiresAt: 12 * time.Hour / time.Second,
-//}
 
 func NewSessionsStore(cfg configs.Config) *Store {
 	return &Store{

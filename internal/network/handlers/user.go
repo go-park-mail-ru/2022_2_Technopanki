@@ -4,7 +4,7 @@ import (
 	"HeadHunter/configs"
 	"HeadHunter/internal/entity"
 	"HeadHunter/internal/errorHandler"
-	"HeadHunter/internal/network/sessions"
+	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -13,10 +13,11 @@ import (
 type UserHandler struct {
 	cfg  *configs.Config
 	User usecases.User
+	sr   session.Repository
 }
 
-func newUserHandler(usecases *usecases.UseCases, _cfg *configs.Config) *UserHandler {
-	return &UserHandler{cfg: _cfg, User: usecases.User}
+func newUserHandler(usecases *usecases.UseCases, _cfg *configs.Config, _sr session.Repository) *UserHandler {
+	return &UserHandler{cfg: _cfg, User: usecases.User, sr: _sr}
 }
 func (uh *UserHandler) SignIn(c *gin.Context) {
 	var input = entity.User{}
@@ -29,7 +30,7 @@ func (uh *UserHandler) SignIn(c *gin.Context) {
 		_ = c.Error(err)
 		return
 	}
-	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", uh.cfg.Domain, false, true)
+	c.SetCookie("session", token, int(uh.sr.Expiring()), "/", uh.cfg.Domain, false, true)
 	c.JSON(http.StatusOK, gin.H{"name": input.Name, "surname": input.Surname})
 }
 
@@ -44,7 +45,7 @@ func (uh *UserHandler) SignUp(c *gin.Context) {
 		_ = c.Error(signUpErr)
 		return
 	}
-	c.SetCookie("session", token, int(sessions.SessionsStore.DefaultExpiresAt), "/", uh.cfg.Domain, false, true)
+	c.SetCookie("session", token, int(uh.sr.Expiring()), "/", uh.cfg.Domain, false, true)
 	c.Status(http.StatusOK)
 }
 

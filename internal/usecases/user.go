@@ -4,18 +4,19 @@ import (
 	"HeadHunter/internal/entity"
 	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/errorHandler"
-	"HeadHunter/internal/network/sessions"
 	"HeadHunter/internal/repository"
+	"HeadHunter/internal/repository/session"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
 	ur repository.UserRepository
+	sr session.Repository
 }
 
-func newUserService(userRepos repository.UserRepository) *UserService {
-	return &UserService{ur: userRepos}
+func newUserService(userRepos repository.UserRepository, sessionRepos session.Repository) *UserService {
+	return &UserService{ur: userRepos, sr: sessionRepos}
 }
 
 func (us *UserService) SignIn(input *entity.User) (string, error) {
@@ -32,7 +33,7 @@ func (us *UserService) SignIn(input *entity.User) (string, error) {
 		return "", errorHandler.ErrUnauthorized
 	}
 
-	token := sessions.SessionsStore.NewSession(input.Email)
+	token := us.sr.NewSession(input.Email)
 	input.Name = user.Name
 	input.Surname = user.Surname
 	return token, nil
@@ -53,12 +54,12 @@ func (us *UserService) SignUp(input entity.User) (string, error) {
 		return "", errorHandler.ErrServiceUnavailable
 	}
 	input.ID = uuid.NewString()
-	token := sessions.SessionsStore.NewSession(input.Email)
+	token := us.sr.NewSession(input.Email)
 	return token, nil
 }
 
 func (us *UserService) Logout(token string) error {
-	return sessions.SessionsStore.DeleteSession(sessions.Token(token))
+	return us.sr.DeleteSession(session.Token(token))
 }
 
 func (us *UserService) AuthCheck(email string) (entity.User, error) {

@@ -2,24 +2,31 @@ package middleware
 
 import (
 	"HeadHunter/internal/errorHandler"
-	"HeadHunter/internal/network/sessions"
+	"HeadHunter/internal/repository/session"
 	"github.com/gin-gonic/gin"
 )
 
-func Session(c *gin.Context) {
+type SessionMiddleware struct {
+	sr session.Repository
+}
+
+func NewSessionMiddleware(sr session.Repository) SessionMiddleware {
+	return SessionMiddleware{sr: sr}
+}
+func (sm *SessionMiddleware) Session(c *gin.Context) {
 	sessionToken, err := c.Cookie("session")
 	if err != nil {
 		_ = c.Error(errorHandler.ErrUnauthorized)
 		return
 	}
 
-	userSession, err := sessions.SessionsStore.GetSession(sessions.Token(sessionToken))
+	userSession, err := sm.sr.GetSession(session.Token(sessionToken))
 	if err != nil {
 		_ = c.Error(err)
 		return
 	}
 	if userSession.IsExpired() {
-		deleteSessionErr := sessions.SessionsStore.DeleteSession(sessions.Token(sessionToken))
+		deleteSessionErr := sm.sr.DeleteSession(session.Token(sessionToken))
 		if deleteSessionErr != nil {
 			_ = c.Error(deleteSessionErr)
 			return

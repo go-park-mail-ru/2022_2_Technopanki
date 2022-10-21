@@ -101,7 +101,7 @@ func Test_IsValidateAuthData(t *testing.T) {
 		tc := testCase
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			result := IsValidateAuthData(tc.user)
+			result := IsAuthDataValid(tc.user)
 			assert.Equal(t, tc.expected, result)
 		})
 
@@ -192,7 +192,7 @@ func Test_IsValidate(t *testing.T) {
 		tc := testCase
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			result := IsValidate(tc.user)
+			result := IsUserValid(tc.user)
 			assert.Equal(t, tc.expected, result)
 		})
 
