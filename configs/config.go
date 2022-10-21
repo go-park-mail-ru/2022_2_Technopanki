@@ -5,9 +5,10 @@ import (
 )
 
 type Config struct {
-	Domain string
-	Port   string
-	DB     DBConfig
+	Domain                 string
+	Port                   string
+	DefaultExpiringSession int64
+	DB                     DBConfig
 }
 
 type DBConfig struct {
@@ -27,6 +28,7 @@ func InitConfig(config *Config) error {
 	}
 	config.Domain = viper.GetString("domain")
 	config.Port = viper.GetString("port")
+	config.DefaultExpiringSession = viper.GetInt64("defaultExpiringSession")
 	config.DB.Host = viper.GetString("db.host")
 	config.DB.Port = viper.GetString("db.port")
 	config.DB.Username = viper.GetString("db.username")

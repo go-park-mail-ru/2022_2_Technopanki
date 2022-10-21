@@ -1,6 +1,7 @@
 package sessions
 
 import (
+	"HeadHunter/configs"
 	"HeadHunter/internal/errorHandler"
 	"github.com/google/uuid"
 	"sync"
@@ -50,7 +51,16 @@ func (s *Store) DeleteSession(token Token) error {
 	return errorHandler.ErrCannotDeleteSession
 }
 
-var SessionsStore = Store{
-	Values:           make(map[Token]Session),
-	DefaultExpiresAt: 12 * time.Hour / time.Second,
+var SessionsStore Store
+
+//var SessionsStore = Store{
+//	Values:           make(map[Token]Session),
+//	DefaultExpiresAt: 12 * time.Hour / time.Second,
+//}
+
+func NewSessionsStore(cfg configs.Config) *Store {
+	return &Store{
+		Values:           make(map[Token]Session),
+		DefaultExpiresAt: time.Duration(cfg.DefaultExpiringSession) * time.Hour / time.Second,
+	}
 }

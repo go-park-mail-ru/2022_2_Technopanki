@@ -30,18 +30,18 @@ func InitRoutes(h *handlers.Handlers) *gin.Engine {
 		{
 			vacancies.GET("/", handlers.GetVacancies, middleware.ErrorHandler()) //TODO заменить на строку ниже
 			//vacancies.GET("/", h.VacancyHandler.Get, middleware.ErrorHandler())
-			vacancies.POST("/", h.VacancyHandler.Create, middleware.ErrorHandler())
-			vacancies.PUT("/", h.VacancyHandler.Update, middleware.ErrorHandler())
-			vacancies.DELETE("/", h.VacancyHandler.Delete, middleware.ErrorHandler())
+			//vacancies.POST("/", h.VacancyHandler.Create, middleware.ErrorHandler())
+			//vacancies.PUT("/", h.VacancyHandler.Update, middleware.ErrorHandler())
+			//vacancies.DELETE("/", h.VacancyHandler.Delete, middleware.ErrorHandler())
 		}
-
-		resumes := api.Group("/resume")
-		{
-			resumes.GET("/", h.ResumeHandler.Get, middleware.ErrorHandler())
-			resumes.POST("/", h.ResumeHandler.Create, middleware.ErrorHandler())
-			resumes.PUT("/", h.ResumeHandler.Update, middleware.ErrorHandler())
-			resumes.DELETE("/", h.ResumeHandler.Delete, middleware.ErrorHandler())
-		}
+		//
+		//resumes := api.Group("/resume")
+		//{
+		//	resumes.GET("/", h.ResumeHandler.Get, middleware.ErrorHandler())
+		//	resumes.POST("/", h.ResumeHandler.Create, middleware.ErrorHandler())
+		//	resumes.PUT("/", h.ResumeHandler.Update, middleware.ErrorHandler())
+		//	resumes.DELETE("/", h.ResumeHandler.Delete, middleware.ErrorHandler())
+		//}
 	}
 
 	return router
