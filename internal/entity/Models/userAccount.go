@@ -4,6 +4,7 @@ import "time"
 
 type UserAccount struct {
 	ID                     uint              `json:"id" gorm:"primaryKey;autoIncrement;"`
+	UUID                   string            `json:"-"`
 	UserType               string            `json:"user_type" gorm:"not null;"`
 	Email                  string            `json:"email" gorm:"not null;"`
 	Password               string            `json:"password" gorm:"not null;"`

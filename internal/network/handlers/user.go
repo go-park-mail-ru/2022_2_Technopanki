@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"HeadHunter/configs"
-	"HeadHunter/internal/entity"
+	"HeadHunter/internal/entity/Models"
 	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases"
@@ -20,7 +20,19 @@ func newUserHandler(usecases *usecases.UseCases, _cfg *configs.Config, _sr sessi
 	return &UserHandler{cfg: _cfg, User: usecases.User, sr: _sr}
 }
 func (uh *UserHandler) SignIn(c *gin.Context) {
-	var input = entity.User{}
+	//var input = entity.User{}
+	//if err := c.BindJSON(&input); err != nil {
+	//	_ = c.Error(errorHandler.ErrBadRequest)
+	//	return
+	//}
+	//token, err := uh.User.SignIn(&input)
+	//if err != nil {
+	//	_ = c.Error(err)
+	//	return
+	//}
+	//c.SetCookie("session", token, int(uh.sr.Expiring()), "/", uh.cfg.Domain, false, true)
+	//c.JSON(http.StatusOK, gin.H{"name": input.Name, "surname": input.Surname})
+	var input = Models.UserAccount{}
 	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
@@ -31,11 +43,15 @@ func (uh *UserHandler) SignIn(c *gin.Context) {
 		return
 	}
 	c.SetCookie("session", token, int(uh.sr.Expiring()), "/", uh.cfg.Domain, false, true)
-	c.JSON(http.StatusOK, gin.H{"name": input.Name, "surname": input.Surname})
+	if input.UserType == "applicant" {
+		c.JSON(http.StatusOK, gin.H{"name": input.ApplicantName, "surname": input.ApplicantSurname})
+	} else if input.UserType == "employer" {
+		c.JSON(http.StatusOK, gin.H{"name": input.CompanyName})
+	}
 }
 
 func (uh *UserHandler) SignUp(c *gin.Context) {
-	var input = entity.User{}
+	var input = Models.UserAccount{}
 	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
@@ -89,5 +105,9 @@ func (uh *UserHandler) AuthCheck(c *gin.Context) {
 		_ = c.Error(err)
 		return
 	}
-	c.JSON(http.StatusOK, entity.User{Name: user.Name, Surname: user.Surname})
+	if user.UserType == "applicant" {
+		c.JSON(http.StatusOK, gin.H{"name": user.ApplicantName, "surname": user.ApplicantSurname})
+	} else if user.UserType == "employer" {
+		c.JSON(http.StatusOK, gin.H{"name": user.CompanyName})
+	}
 }

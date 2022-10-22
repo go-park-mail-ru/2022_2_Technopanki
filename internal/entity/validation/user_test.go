@@ -1,7 +1,7 @@
 package validation
 
 import (
-	"HeadHunter/internal/entity"
+	"HeadHunter/internal/entity/Models"
 	"HeadHunter/internal/errorHandler"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -53,12 +53,12 @@ func Test_VerifyPassword(t *testing.T) {
 func Test_IsValidateAuthData(t *testing.T) {
 	testTable := []struct {
 		name     string
-		user     entity.User
+		user     Models.UserAccount
 		expected error
 	}{
 		{
 			name: "valid user",
-			user: entity.User{
+			user: Models.UserAccount{
 				Email:    "example@mail.com",
 				Password: "123456!a",
 			},
@@ -66,7 +66,7 @@ func Test_IsValidateAuthData(t *testing.T) {
 		},
 		{
 			name: "invalid email format",
-			user: entity.User{
+			user: Models.UserAccount{
 				Email:    "examplemail.com",
 				Password: "123456!a",
 			},
@@ -74,7 +74,7 @@ func Test_IsValidateAuthData(t *testing.T) {
 		},
 		{
 			name: "incorrect email length",
-			user: entity.User{
+			user: Models.UserAccount{
 				Email:    "xmp@ml",
 				Password: "123456!a",
 			},
@@ -82,7 +82,7 @@ func Test_IsValidateAuthData(t *testing.T) {
 		},
 		{
 			name: "invalid password format",
-			user: entity.User{
+			user: Models.UserAccount{
 				Email:    "example@mail.com",
 				Password: "123456a",
 			},
@@ -90,7 +90,7 @@ func Test_IsValidateAuthData(t *testing.T) {
 		},
 		{
 			name: "incorrect password length",
-			user: entity.User{
+			user: Models.UserAccount{
 				Email:    "example@mail.com",
 				Password: "1a!",
 			},
@@ -111,79 +111,82 @@ func Test_IsValidateAuthData(t *testing.T) {
 func Test_IsValidate(t *testing.T) {
 	testTable := []struct {
 		name     string
-		user     entity.User
+		user     Models.UserAccount
 		expected error
 	}{
 		{
 			name: "valid user",
-			user: entity.User{
-				Name:     "Zakhar",
-				Surname:  "Urvancev",
-				Email:    "example@mail.com",
-				Password: "123456!a",
-				Role:     "employer",
+			user: Models.UserAccount{
+				CompanyName: "Mail.ru",
+				Email:       "example@mail.com",
+				Password:    "123456!a",
+				UserType:    "employer",
 			},
 			expected: nil,
 		},
 		{
 			name: "valid user 2",
-			user: entity.User{
-				Name:     "Zakhar",
-				Surname:  "Urvancev",
-				Email:    "example@mail.com",
-				Password: "123456!a",
-				Role:     "applicant",
+			user: Models.UserAccount{
+				ApplicantName:    "Zakhar",
+				ApplicantSurname: "Urvancev",
+				Email:            "example@mail.com",
+				Password:         "123456!a",
+				UserType:         "applicant",
 			},
 			expected: nil,
 		},
 		{
 			name: "invalid user role",
-			user: entity.User{
-				Name:     "Zakhar",
-				Surname:  "Urvancev",
-				Email:    "example@mail.com",
-				Password: "123456!a",
-				Role:     "some_role)",
+			user: Models.UserAccount{
+				ApplicantName:    "Zakhar",
+				ApplicantSurname: "Urvancev",
+				Email:            "example@mail.com",
+				Password:         "123456!a",
+				UserType:         "some_role)",
 			},
-			expected: errorHandler.InvalidUserRole,
+			expected: errorHandler.InvalidUserType,
 		},
 		{
 			name: "incorrect name length 1",
-			user: entity.User{
-				Name:     "Z",
-				Surname:  "Urvancev",
-				Email:    "example@mail.com",
-				Password: "123456!a",
+			user: Models.UserAccount{
+				ApplicantName:    "Z",
+				ApplicantSurname: "Urvancev",
+				Email:            "example@mail.com",
+				Password:         "123456!a",
+				UserType:         "applicant",
 			},
 			expected: errorHandler.IncorrectNameLength,
 		},
 		{
 			name: "incorrect name length 2",
-			user: entity.User{
-				Name:     "Zaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahar",
-				Surname:  "Urvancev",
-				Email:    "example@mail.com",
-				Password: "123456!a",
+			user: Models.UserAccount{
+				ApplicantName:    "Zaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahar",
+				ApplicantSurname: "Urvancev",
+				Email:            "example@mail.com",
+				Password:         "123456!a",
+				UserType:         "applicant",
 			},
 			expected: errorHandler.IncorrectNameLength,
 		},
 		{
 			name: "incorrect surname length 1",
-			user: entity.User{
-				Name:     "Zakhar",
-				Surname:  "U",
-				Email:    "example@mail.com",
-				Password: "123456!a",
+			user: Models.UserAccount{
+				ApplicantName:    "Zakhar",
+				ApplicantSurname: "U",
+				Email:            "example@mail.com",
+				Password:         "123456!a",
+				UserType:         "applicant",
 			},
 			expected: errorHandler.IncorrectSurnameLength,
 		},
 		{
 			name: "incorrect surname length 2",
-			user: entity.User{
-				Name:     "Zakhar",
-				Surname:  "Urvaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaancev",
-				Email:    "example@mail.com",
-				Password: "123456!a",
+			user: Models.UserAccount{
+				ApplicantName:    "Zakhar",
+				ApplicantSurname: "Urvaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaancev",
+				Email:            "example@mail.com",
+				Password:         "123456!a",
+				UserType:         "applicant",
 			},
 			expected: errorHandler.IncorrectSurnameLength,
 		},

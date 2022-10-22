@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"HeadHunter/internal/entity"
+	"HeadHunter/internal/entity/Models"
 	"gorm.io/gorm"
 )
 
@@ -13,12 +13,10 @@ func NewUserPostgres(db *gorm.DB) *UserPostgres {
 	return &UserPostgres{db: db}
 }
 
-func (up *UserPostgres) CreateUser(user entity.User) error {
+func (up *UserPostgres) CreateUser(user Models.UserAccount) error {
 	return nil
 }
 
-func (up *UserPostgres) GetUserByEmail(email string) (entity.User, error) {
-	//var user = entity.User{Email: email}
-	//up.db.First(&user)
-	return entity.User{}, nil
+func (up *UserPostgres) GetUserByEmail(email string) (*Models.UserAccount, error) {
+	return nil, nil
 }

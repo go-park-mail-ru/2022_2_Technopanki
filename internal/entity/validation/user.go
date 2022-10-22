@@ -1,7 +1,7 @@
 package validation
 
 import (
-	"HeadHunter/internal/entity"
+	"HeadHunter/internal/entity/Models"
 	"HeadHunter/internal/errorHandler"
 	"strings"
 )
@@ -21,7 +21,7 @@ func verifyPassword(password string) bool {
 	}
 	return number && special && symbol
 }
-func IsAuthDataValid(user entity.User) error {
+func IsAuthDataValid(user Models.UserAccount) error {
 
 	if strings.Count(user.Email, "@") != 1 {
 		return errorHandler.InvalidEmailFormat
@@ -41,18 +41,21 @@ func IsAuthDataValid(user entity.User) error {
 
 	return nil
 }
-func IsUserValid(user entity.User) error {
-	if len([]rune(user.Name)) > 20 || len([]rune(user.Name)) < 3 {
-		return errorHandler.IncorrectNameLength
-	}
+func IsUserValid(user Models.UserAccount) error {
+	if user.UserType == "applicant" {
+		if len([]rune(user.ApplicantName)) > 20 || len([]rune(user.ApplicantName)) < 3 {
+			return errorHandler.IncorrectNameLength
+		}
 
-	if len([]rune(user.Surname)) > 20 || len([]rune(user.Surname)) < 3 {
-		return errorHandler.IncorrectSurnameLength
+		if len([]rune(user.ApplicantSurname)) > 20 || len([]rune(user.ApplicantSurname)) < 3 {
+			return errorHandler.IncorrectSurnameLength
+		}
+	} else if user.UserType == "employer" {
+		if len([]rune(user.CompanyName)) > 20 || len([]rune(user.CompanyName)) < 2 {
+			return errorHandler.IncorrectNameLength
+		}
+	} else {
+		return errorHandler.InvalidUserType
 	}
-
-	if user.Role != "employer" && user.Role != "applicant" {
-		return errorHandler.InvalidUserRole
-	}
-
 	return IsAuthDataValid(user)
 }

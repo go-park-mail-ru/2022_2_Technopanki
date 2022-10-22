@@ -1,7 +1,7 @@
 package usecases
 
 import (
-	"HeadHunter/internal/entity"
+	"HeadHunter/internal/entity/Models"
 	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/repository"
@@ -19,7 +19,7 @@ func newUserService(userRepos repository.UserRepository, sessionRepos session.Re
 	return &UserService{ur: userRepos, sr: sessionRepos}
 }
 
-func (us *UserService) SignIn(input *entity.User) (string, error) {
+func (us *UserService) SignIn(input *Models.UserAccount) (string, error) {
 	inputValidity := validation.IsAuthDataValid(*input)
 	if inputValidity != nil {
 		return "", inputValidity
@@ -34,26 +34,31 @@ func (us *UserService) SignIn(input *entity.User) (string, error) {
 	}
 
 	token := us.sr.NewSession(input.Email)
-	input.Name = user.Name
-	input.Surname = user.Surname
+	if input.UserType == "applicant" {
+		input.ApplicantName = user.ApplicantName
+		input.ApplicantSurname = user.ApplicantSurname
+	} else if input.UserType == "employer" {
+		input.CompanyName = user.CompanyName
+	} else {
+		return "", errorHandler.InvalidUserType
+	}
 	return token, nil
 }
 
-func (us *UserService) SignUp(input entity.User) (string, error) {
+func (us *UserService) SignUp(input Models.UserAccount) (string, error) {
 	inputValidity := validation.IsUserValid(input)
 	if inputValidity != nil {
 		return "", inputValidity
 	}
 	user, err := us.ur.GetUserByEmail(input.Email)
-	var emptyUser entity.User
-	if user != emptyUser {
+	if user != nil {
 		return "", errorHandler.ErrUserExists
 	}
 	err = us.ur.CreateUser(input)
 	if err != nil {
 		return "", errorHandler.ErrServiceUnavailable
 	}
-	input.ID = uuid.NewString()
+	input.UUID = uuid.NewString()
 	token := us.sr.NewSession(input.Email)
 	return token, nil
 }
@@ -62,10 +67,10 @@ func (us *UserService) Logout(token string) error {
 	return us.sr.DeleteSession(session.Token(token))
 }
 
-func (us *UserService) AuthCheck(email string) (entity.User, error) {
+func (us *UserService) AuthCheck(email string) (Models.UserAccount, error) {
 	user, err := us.ur.GetUserByEmail(email)
 	if err != nil {
-		return entity.User{}, err
+		return Models.UserAccount{}, err
 	}
-	return user, nil
+	return *user, nil
 }

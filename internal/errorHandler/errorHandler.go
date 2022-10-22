@@ -25,7 +25,7 @@ var (
 	InvalidPasswordFormat   = errors.New("Пароль должен содержать буквы латиницы, цифры и спецсимволы(!#%^$)")
 	IncorrectPasswordLength = errors.New("Длина пароля должна быть между 8 и 20 символами")
 
-	InvalidUserRole = errors.New("invalid input user role")
+	InvalidUserType = errors.New("invalid input user type")
 )
 
 var errorToCode = map[error]int{
@@ -41,7 +41,7 @@ var errorToCode = map[error]int{
 
 	IncorrectNameLength:    http.StatusBadRequest,
 	IncorrectSurnameLength: http.StatusBadRequest,
-	InvalidUserRole:        http.StatusBadRequest,
+	InvalidUserType:        http.StatusBadRequest,
 
 	InvalidEmailFormat:   http.StatusBadRequest,
 	IncorrectEmailLength: http.StatusBadRequest,
