@@ -25,14 +25,6 @@ func (sm *SessionMiddleware) Session(c *gin.Context) {
 		_ = c.Error(err)
 		return
 	}
-	if userSession.IsExpired() {
-		deleteSessionErr := sm.sr.DeleteSession(session.Token(sessionToken))
-		if deleteSessionErr != nil {
-			_ = c.Error(deleteSessionErr)
-			return
-		}
-		_ = c.Error(errorHandler.ErrUnauthorized)
-		return
-	}
-	c.Set("userEmail", userSession.Email)
+
+	c.Set("userEmail", userSession)
 }

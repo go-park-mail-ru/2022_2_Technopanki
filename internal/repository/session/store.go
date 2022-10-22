@@ -18,11 +18,18 @@ type Store struct {
 	mutex            sync.RWMutex
 }
 
+func NewSessionsStore(cfg configs.Config) *Store {
+	return &Store{
+		Values:           make(map[Token]Session),
+		DefaultExpiresAt: time.Duration(cfg.DefaultExpiringSession) * time.Hour / time.Second,
+	}
+}
+
 func (s *Store) Expiring() time.Duration {
 	return s.DefaultExpiresAt
 }
 
-func (s *Store) NewSession(email string) string {
+func (s *Store) NewSession(email string) (string, error) {
 	token := uuid.NewString()
 
 	s.mutex.Lock()
@@ -32,17 +39,17 @@ func (s *Store) NewSession(email string) string {
 		ExpiresAt: time.Now().Unix() + int64(s.DefaultExpiresAt),
 	}
 
-	return token
+	return token, nil
 }
 
-func (s *Store) GetSession(token Token) (Session, error) {
+func (s *Store) GetSession(token Token) (string, error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
-	if val, ok := s.Values[token]; ok {
-		return val, nil
+	if val, ok := s.Values[token]; ok && !val.IsExpired() {
+		return val.Email, nil
 	}
 
-	return Session{}, errorHandler.ErrSessionNotFound
+	return "", errorHandler.ErrSessionNotFound
 }
 
 func (s *Store) DeleteSession(token Token) error {
@@ -55,11 +62,4 @@ func (s *Store) DeleteSession(token Token) error {
 	}
 
 	return errorHandler.ErrCannotDeleteSession
-}
-
-func NewSessionsStore(cfg configs.Config) *Store {
-	return &Store{
-		Values:           make(map[Token]Session),
-		DefaultExpiresAt: time.Duration(cfg.DefaultExpiringSession) * time.Hour / time.Second,
-	}
 }

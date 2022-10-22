@@ -26,11 +26,12 @@ func main() {
 		log.Fatal(configErr.Error())
 	}
 
-	_, redisErr := repositorypkg.RedisConnect(mainConfig.Redis)
+	client, redisErr := repositorypkg.RedisConnect(mainConfig.Redis)
 	if redisErr != nil {
 		log.Fatal(redisErr)
 	}
-	sessions := session.NewSessionsStore(mainConfig)
+	//sessions := session.NewSessionsStore(mainConfig)
+	sessions := session.NewRedisStore(mainConfig, client)
 
 	_, DBErr := repositorypkg.DBConnect(mainConfig.DB) //TODO добавить базу данных
 	if DBErr != nil {
@@ -39,11 +40,11 @@ func main() {
 
 	useCase := usecases.NewUseCases(&repository.Repository{
 		UserRepository: &storage.UserStorage}, //TODO добавить нормальнуб бд
-		sessions,                              //TODO добавить нормальные сессии(Redis)
+		sessions, //TODO добавить нормальные сессии(Redis)
 	)
 
 	handler := handlers.NewHandlers(useCase, &mainConfig, sessions)
-	
+
 	router := network.InitRoutes(handler)
 	runErr := router.Run(viper.GetString("port"))
 	if runErr != nil {

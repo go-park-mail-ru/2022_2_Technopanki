@@ -9,8 +9,8 @@ type Session struct {
 }
 
 type Repository interface {
-	NewSession(email string) string
-	GetSession(token Token) (Session, error)
+	NewSession(email string) (string, error)
+	GetSession(token Token) (string, error)
 	DeleteSession(token Token) error
 	Expiring() time.Duration
 }

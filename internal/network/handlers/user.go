@@ -20,18 +20,6 @@ func newUserHandler(usecases *usecases.UseCases, _cfg *configs.Config, _sr sessi
 	return &UserHandler{cfg: _cfg, User: usecases.User, sr: _sr}
 }
 func (uh *UserHandler) SignIn(c *gin.Context) {
-	//var input = entity.User{}
-	//if err := c.BindJSON(&input); err != nil {
-	//	_ = c.Error(errorHandler.ErrBadRequest)
-	//	return
-	//}
-	//token, err := uh.User.SignIn(&input)
-	//if err != nil {
-	//	_ = c.Error(err)
-	//	return
-	//}
-	//c.SetCookie("session", token, int(uh.sr.Expiring()), "/", uh.cfg.Domain, false, true)
-	//c.JSON(http.StatusOK, gin.H{"name": input.Name, "surname": input.Surname})
 	var input = Models.UserAccount{}
 	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)

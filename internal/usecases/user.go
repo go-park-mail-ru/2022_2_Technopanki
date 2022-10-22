@@ -33,7 +33,10 @@ func (us *UserService) SignIn(input *Models.UserAccount) (string, error) {
 		return "", errorHandler.ErrUnauthorized
 	}
 
-	token := us.sr.NewSession(input.Email)
+	token, newSessionErr := us.sr.NewSession(input.Email)
+	if newSessionErr != nil {
+		return "", newSessionErr
+	}
 	if input.UserType == "applicant" {
 		input.ApplicantName = user.ApplicantName
 		input.ApplicantSurname = user.ApplicantSurname
@@ -54,12 +57,17 @@ func (us *UserService) SignUp(input Models.UserAccount) (string, error) {
 	if user != nil {
 		return "", errorHandler.ErrUserExists
 	}
+
 	err = us.ur.CreateUser(input)
 	if err != nil {
 		return "", errorHandler.ErrServiceUnavailable
 	}
 	input.UUID = uuid.NewString()
-	token := us.sr.NewSession(input.Email)
+
+	token, newSessionErr := us.sr.NewSession(input.Email)
+	if newSessionErr != nil {
+		return "", newSessionErr
+	}
 	return token, nil
 }
 
