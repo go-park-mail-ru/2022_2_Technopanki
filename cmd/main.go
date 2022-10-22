@@ -19,22 +19,31 @@ import (
 
 // @host      95.163.208.72:8080
 // @BasePath  /
+
 func main() {
 	var mainConfig configs.Config
 	if configErr := configs.InitConfig(&mainConfig); configErr != nil {
 		log.Fatal(configErr.Error())
 	}
 
-	_, err := repositorypkg.Connect(mainConfig.DB) //TODO добавить базу данных
-	if err != nil {
-		log.Fatal(err)
+	_, redisErr := repositorypkg.RedisConnect(mainConfig.Redis)
+	if redisErr != nil {
+		log.Fatal(redisErr)
 	}
 	sessions := session.NewSessionsStore(mainConfig)
+
+	_, DBErr := repositorypkg.DBConnect(mainConfig.DB) //TODO добавить базу данных
+	if DBErr != nil {
+		log.Fatal(DBErr)
+	}
+
 	useCase := usecases.NewUseCases(&repository.Repository{
 		UserRepository: &storage.UserStorage}, //TODO добавить нормальнуб бд
-		sessions, //TODO добавить нормальные сессии(Redis)
+		sessions,                              //TODO добавить нормальные сессии(Redis)
 	)
+
 	handler := handlers.NewHandlers(useCase, &mainConfig, sessions)
+	
 	router := network.InitRoutes(handler)
 	runErr := router.Run(viper.GetString("port"))
 	if runErr != nil {

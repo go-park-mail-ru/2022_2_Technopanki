@@ -19,7 +19,7 @@ func NewPostgresRepository(db *gorm.DB) *Repository {
 
 type UserRepository interface {
 	CreateUser(user entity.User) error
-	GetUserByEmail(username string) (entity.User, error)
+	GetUserByEmail(email string) (entity.User, error)
 }
 
 type VacancyRepository interface { //TODO Сделать репозиторий вакансий
