@@ -10,5 +10,5 @@ type Session struct {
 }
 
 func (s *Session) IsExpired() bool {
-	return time.Now().Unix() < s.ExpiresAt
+	return time.Now().Unix() > s.ExpiresAt
 }

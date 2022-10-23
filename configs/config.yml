@@ -1,0 +1,10 @@
+domain: "localhost"
+port: ":8080"
+defaultExpiringSession: 12
+db:
+  username: "jobflowAdmin"
+  host: "localhost"
+  port: "5432"
+  dbname: "jobflowDB"
+  sslmode: "disable"
+  password: "12345"

@@ -21,7 +21,7 @@ func verifyPassword(password string) bool {
 	}
 	return number && special && symbol
 }
-func IsValidateAuthData(user entity.User) error {
+func IsAuthDataValid(user entity.User) error {
 
 	if strings.Count(user.Email, "@") != 1 {
 		return errorHandler.InvalidEmailFormat
@@ -41,7 +41,7 @@ func IsValidateAuthData(user entity.User) error {
 
 	return nil
 }
-func IsValidate(user entity.User) error {
+func IsUserValid(user entity.User) error {
 	if len([]rune(user.Name)) > 20 || len([]rune(user.Name)) < 3 {
 		return errorHandler.IncorrectNameLength
 	}
@@ -54,5 +54,5 @@ func IsValidate(user entity.User) error {
 		return errorHandler.InvalidUserRole
 	}
 
-	return IsValidateAuthData(user)
+	return IsAuthDataValid(user)
 }

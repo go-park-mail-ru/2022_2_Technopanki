@@ -1,6 +1,7 @@
 package sessions
 
 import (
+	"HeadHunter/configs"
 	"HeadHunter/internal/errorHandler"
 	"github.com/google/uuid"
 	"sync"
@@ -11,7 +12,7 @@ type Token string
 
 type Store struct {
 	Values           map[Token]Session
-	DefaultExpiresAt int64
+	DefaultExpiresAt time.Duration
 	mutex            sync.RWMutex
 }
 
@@ -22,7 +23,7 @@ func (s *Store) NewSession(email string) string {
 	defer s.mutex.Unlock()
 	s.Values[Token(token)] = Session{
 		Email:     email,
-		ExpiresAt: time.Now().Unix() + s.DefaultExpiresAt,
+		ExpiresAt: time.Now().Unix() + int64(s.DefaultExpiresAt),
 	}
 
 	return token
@@ -50,6 +51,16 @@ func (s *Store) DeleteSession(token Token) error {
 	return errorHandler.ErrCannotDeleteSession
 }
 
-var SessionsStore = Store{
-	Values: make(map[Token]Session),
+var SessionsStore Store
+
+//var SessionsStore = Store{
+//	Values:           make(map[Token]Session),
+//	DefaultExpiresAt: 12 * time.Hour / time.Second,
+//}
+
+func NewSessionsStore(cfg configs.Config) *Store {
+	return &Store{
+		Values:           make(map[Token]Session),
+		DefaultExpiresAt: time.Duration(cfg.DefaultExpiringSession) * time.Hour / time.Second,
+	}
 }
