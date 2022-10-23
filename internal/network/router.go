@@ -34,7 +34,6 @@ func InitRoutes(h *handlers.Handlers) *gin.Engine {
 			//vacancies.PUT("/", h.VacancyHandler.Update, middleware.ErrorHandler())
 			//vacancies.DELETE("/", h.VacancyHandler.Delete, middleware.ErrorHandler())
 		}
-
 		//resumes := api.Group("/resume")
 		//{
 		//	resumes.GET("/", h.ResumeHandler.Get, middleware.ErrorHandler())
