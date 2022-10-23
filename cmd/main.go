@@ -6,7 +6,6 @@ import (
 	"HeadHunter/internal/network/handlers"
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/session"
-	"HeadHunter/internal/storage"
 	"HeadHunter/internal/usecases"
 	repositorypkg "HeadHunter/pkg/repository"
 	"github.com/spf13/viper"
@@ -31,13 +30,13 @@ func main() {
 	}
 	sessions := session.NewRedisStore(mainConfig, client)
 
-	_, DBErr := repositorypkg.DBConnect(mainConfig.DB) //TODO добавить базу данных
+	db, DBErr := repositorypkg.DBConnect(mainConfig.DB) //TODO добавить базу данных
 	if DBErr != nil {
 		log.Fatal(DBErr)
 	}
 
 	useCase := usecases.NewUseCases(&repository.Repository{
-		UserRepository: &storage.UserStorage}, //TODO добавить нормальнуб бд
+		UserRepository: repository.NewUserPostgres(db)}, //TODO добавить нормальнуб бд
 		sessions,
 	)
 

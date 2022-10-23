@@ -53,8 +53,8 @@ func (us *UserService) SignUp(input Models.UserAccount) (string, error) {
 	if inputValidity != nil {
 		return "", inputValidity
 	}
-	user, err := us.ur.GetUserByEmail(input.Email)
-	if user != nil {
+	_, err := us.ur.GetUserByEmail(input.Email)
+	if err == nil {
 		return "", errorHandler.ErrUserExists
 	}
 
