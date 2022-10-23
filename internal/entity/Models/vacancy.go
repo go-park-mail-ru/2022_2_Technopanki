@@ -3,7 +3,7 @@ package Models
 import "time"
 
 type Vacancy struct {
-	ID                uint              `json:"id" gorm:"primaryKey;autoIncrement;"`
+	ID                uint              `json:"id" gorm:"primaryKey;"`
 	PostedByUserId    uint              `json:"postedByUserId" gorm:"not null;"`
 	JobType           string            `json:"jobType" gorm:"not null;"`
 	CreatedDate       time.Time         `json:"createdDate" gorm:"not null;"`

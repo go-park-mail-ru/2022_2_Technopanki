@@ -9,10 +9,9 @@ import (
 )
 
 type Handlers struct {
-	UserHandler    UserH
-	VacancyHandler VacancyH
-	ResumeHandler  ResumeH
-
+	UserHandler       UserH
+	VacancyHandler    VacancyH
+	ResumeHandler     ResumeH
 	SessionMiddleware middleware.SessionMiddleware
 	cfg               *configs.Config
 }

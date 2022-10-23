@@ -19,11 +19,6 @@ import (
 
 // @host      95.163.208.72:8080
 // @BasePath  /
-type Author struct {
-	Name string `json:"name"`
-	Age  int    `json:"age"`
-}
-
 func main() {
 	var mainConfig configs.Config
 	if configErr := configs.InitConfig(&mainConfig); configErr != nil {
@@ -44,7 +39,7 @@ func main() {
 
 	useCase := usecases.NewUseCases(&repository.Repository{
 		UserRepository: &storage.UserStorage}, //TODO добавить нормальнуб бд
-		sessions, //TODO добавить нормальные сессии(Redis)
+		sessions,                              //TODO добавить нормальные сессии(Redis)
 	)
 
 	handler := handlers.NewHandlers(useCase, &mainConfig, sessions)

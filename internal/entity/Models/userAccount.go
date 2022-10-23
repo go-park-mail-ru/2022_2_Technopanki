@@ -3,7 +3,7 @@ package Models
 import "time"
 
 type UserAccount struct {
-	ID                     uint              `json:"id" gorm:"primaryKey;autoIncrement;"`
+	ID                     uint              `json:"id" gorm:"primaryKey;"`
 	UUID                   string            `json:"-"` //TODO убрать
 	UserType               string            `json:"user_type" gorm:"not null;"`
 	Email                  string            `json:"email" gorm:"not null;"`
