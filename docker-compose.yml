@@ -1,13 +1,13 @@
 version: '3.8'
 
 services:
-  backend:
-    build: ./
-    ports:
-      - '8080:8080'
-    container_name: server
-    depends_on:
-      - postgres
+#  backend:
+#    build: ./
+#    ports:
+#      - '8080:8080'
+#    container_name: server
+#    depends_on:
+#      - postgres
   postgres:
     image: postgres:latest
     container_name: jfPostgres

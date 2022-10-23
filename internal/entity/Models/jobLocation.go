@@ -1,7 +1,7 @@
 package Models
 
 type JobLocation struct {
-	ID            uint      `json:"id" gorm:"primaryKey;autoIncrement"`
+	ID            uint      `json:"id" gorm:"primaryKey;"`
 	StreetAddress string    `json:"streetAddress" gorm:"not null;"`
 	City          string    `json:"city" gorm:"not null;"`
 	Country       string    `json:"country" gorm:"not null;"`
