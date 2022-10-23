@@ -3,7 +3,7 @@ package repository
 import (
 	"HeadHunter/configs"
 	"fmt"
-	"github.com/go-redis/redis/v8"
+	"github.com/go-redis/redis"
 )
 
 func RedisConnect(cfg configs.RedisConfig) (*redis.Client, error) {
@@ -14,7 +14,7 @@ func RedisConnect(cfg configs.RedisConfig) (*redis.Client, error) {
 		DB:       0,
 	})
 
-	_, redisErr := client.Ping(client.Context()).Result()
+	redisErr := client.Ping().Err()
 	if redisErr != nil {
 		return &redis.Client{}, redisErr
 	}

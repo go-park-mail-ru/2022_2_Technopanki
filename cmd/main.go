@@ -19,6 +19,10 @@ import (
 
 // @host      95.163.208.72:8080
 // @BasePath  /
+type Author struct {
+	Name string `json:"name"`
+	Age  int    `json:"age"`
+}
 
 func main() {
 	var mainConfig configs.Config

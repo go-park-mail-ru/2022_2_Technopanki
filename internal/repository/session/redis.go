@@ -3,32 +3,29 @@ package session
 import (
 	"HeadHunter/configs"
 	"HeadHunter/internal/errorHandler"
-	"context"
-	"github.com/go-redis/redis/v8"
+	"github.com/go-redis/redis"
 	"github.com/google/uuid"
-	"time"
 )
 
 type RedisStore struct {
-	DefaultExpiresAt time.Duration
+	DefaultExpiresAt int64
 	client           *redis.Client
 }
 
 func NewRedisStore(cfg configs.Config, _redis *redis.Client) *RedisStore {
 	return &RedisStore{
 		client:           _redis,
-		DefaultExpiresAt: time.Duration(cfg.DefaultExpiringSession) * time.Hour / time.Second,
+		DefaultExpiresAt: cfg.DefaultExpiringSession,
 	}
 }
 
-func (rs *RedisStore) Expiring() time.Duration {
+func (rs *RedisStore) Expiring() int64 {
 	return rs.DefaultExpiresAt
 }
 
 func (rs *RedisStore) NewSession(email string) (string, error) {
-	ctx := context.Background()
 	token := uuid.NewString()
-	err := rs.client.Set(ctx, token, email, rs.DefaultExpiresAt).Err()
+	err := rs.client.Do("SETEX", token, rs.DefaultExpiresAt, email).Err()
 	if err != nil {
 		return "", err
 	}
@@ -36,8 +33,7 @@ func (rs *RedisStore) NewSession(email string) (string, error) {
 }
 
 func (rs *RedisStore) GetSession(token Token) (string, error) {
-	ctx := context.Background()
-	result, getErr := rs.client.Get(ctx, string(token)).Result()
+	result, getErr := rs.client.Get(string(token)).Result()
 	if getErr != nil {
 		return "", errorHandler.ErrSessionNotFound
 	}
@@ -45,8 +41,7 @@ func (rs *RedisStore) GetSession(token Token) (string, error) {
 }
 
 func (rs *RedisStore) DeleteSession(token Token) error {
-	ctx := context.Background()
-	err := rs.client.Del(ctx, string(token)).Err()
+	err := rs.client.Del(string(token)).Err()
 	if err != nil {
 		return errorHandler.ErrCannotDeleteSession
 	}

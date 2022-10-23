@@ -1,7 +1,5 @@
 package session
 
-import "time"
-
 type Token string
 type Session struct {
 	Email     string
@@ -12,5 +10,5 @@ type Repository interface {
 	NewSession(email string) (string, error)
 	GetSession(token Token) (string, error)
 	DeleteSession(token Token) error
-	Expiring() time.Duration
+	Expiring() int64
 }

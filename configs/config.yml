@@ -1,6 +1,6 @@
 domain: "localhost"
 port: ":8080"
-defaultExpiringSession: 12
+defaultExpiringSession: 259200
 db:
   username: "jobflowAdmin"
   host: "jfPostgres"
