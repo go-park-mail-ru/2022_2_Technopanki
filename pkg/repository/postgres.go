@@ -2,7 +2,7 @@ package repository
 
 import (
 	"HeadHunter/configs"
-	"HeadHunter/internal/entity/Models"
+	"HeadHunter/internal/entity/models"
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -19,7 +19,7 @@ func DBConnect(cfg configs.DBConfig) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = db.AutoMigrate(&Models.UserAccount{}, &Models.Resume{}, &Models.EducationDetail{}, &Models.ExperienceDetail{}, &Models.JobLocation{}, &Models.Vacancy{}, &Models.Skill{}, &Models.VacancyActivity{})
+	err = db.AutoMigrate(&models.UserAccount{}, &models.Resume{}, &models.EducationDetail{}, &models.ExperienceDetail{}, &models.JobLocation{}, &models.Vacancy{}, &models.Skill{}, &models.VacancyActivity{})
 	if err != nil {
 		return nil, err
 	}

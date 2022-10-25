@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"HeadHunter/configs"
-	"HeadHunter/internal/entity/Models"
+	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases"
@@ -11,16 +11,16 @@ import (
 )
 
 type UserHandler struct {
-	cfg  *configs.Config
-	User usecases.User
-	sr   session.Repository
+	cfg          *configs.Config
+	User         usecases.User
+	sessionRepos session.Repository
 }
 
 func newUserHandler(usecases *usecases.UseCases, _cfg *configs.Config, _sr session.Repository) *UserHandler {
-	return &UserHandler{cfg: _cfg, User: usecases.User, sr: _sr}
+	return &UserHandler{cfg: _cfg, User: usecases.User, sessionRepos: _sr}
 }
 func (uh *UserHandler) SignIn(c *gin.Context) {
-	var input = Models.UserAccount{}
+	var input = models.UserAccount{}
 	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
@@ -30,7 +30,7 @@ func (uh *UserHandler) SignIn(c *gin.Context) {
 		_ = c.Error(err)
 		return
 	}
-	c.SetCookie("session", token, int(uh.sr.Expiring()), "/", uh.cfg.Domain, false, true)
+	c.SetCookie("session", token, int(uh.sessionRepos.Expiring()), "/", uh.cfg.Domain, false, true)
 	if input.UserType == "applicant" {
 		c.JSON(http.StatusOK, gin.H{"name": input.ApplicantName, "surname": input.ApplicantSurname})
 	} else if input.UserType == "employer" {
@@ -39,7 +39,7 @@ func (uh *UserHandler) SignIn(c *gin.Context) {
 }
 
 func (uh *UserHandler) SignUp(c *gin.Context) {
-	var input = Models.UserAccount{}
+	var input = models.UserAccount{}
 	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
@@ -49,7 +49,7 @@ func (uh *UserHandler) SignUp(c *gin.Context) {
 		_ = c.Error(signUpErr)
 		return
 	}
-	c.SetCookie("session", token, int(uh.sr.Expiring()), "/", uh.cfg.Domain, false, true)
+	c.SetCookie("session", token, int(uh.sessionRepos.Expiring()), "/", uh.cfg.Domain, false, true)
 	c.Status(http.StatusOK)
 }
 

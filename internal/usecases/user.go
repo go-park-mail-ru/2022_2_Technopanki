@@ -1,7 +1,7 @@
 package usecases
 
 import (
-	"HeadHunter/internal/entity/Models"
+	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/repository"
@@ -19,7 +19,7 @@ func newUserService(userRepos repository.UserRepository, sessionRepos session.Re
 	return &UserService{ur: userRepos, sr: sessionRepos}
 }
 
-func (us *UserService) SignIn(input *Models.UserAccount) (string, error) {
+func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 	inputValidity := validation.IsAuthDataValid(*input)
 	if inputValidity != nil {
 		return "", inputValidity
@@ -48,7 +48,7 @@ func (us *UserService) SignIn(input *Models.UserAccount) (string, error) {
 	return token, nil
 }
 
-func (us *UserService) SignUp(input Models.UserAccount) (string, error) {
+func (us *UserService) SignUp(input models.UserAccount) (string, error) {
 	inputValidity := validation.IsUserValid(input)
 	if inputValidity != nil {
 		return "", inputValidity
@@ -75,10 +75,10 @@ func (us *UserService) Logout(token string) error {
 	return us.sr.DeleteSession(session.Token(token))
 }
 
-func (us *UserService) AuthCheck(email string) (Models.UserAccount, error) {
+func (us *UserService) AuthCheck(email string) (models.UserAccount, error) {
 	user, err := us.ur.GetUserByEmail(email)
 	if err != nil {
-		return Models.UserAccount{}, err
+		return models.UserAccount{}, err
 	}
 	return *user, nil
 }

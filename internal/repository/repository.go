@@ -2,7 +2,7 @@ package repository
 
 import (
 	"HeadHunter/internal/entity"
-	"HeadHunter/internal/entity/Models"
+	"HeadHunter/internal/entity/models"
 	"gorm.io/gorm"
 )
 
@@ -19,8 +19,8 @@ func NewPostgresRepository(db *gorm.DB) *Repository {
 }
 
 type UserRepository interface {
-	CreateUser(user Models.UserAccount) error
-	GetUserByEmail(email string) (*Models.UserAccount, error)
+	CreateUser(user models.UserAccount) error
+	GetUserByEmail(email string) (*models.UserAccount, error)
 }
 
 type VacancyRepository interface { //TODO Сделать репозиторий вакансий

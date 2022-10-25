@@ -2,7 +2,7 @@ package usecases
 
 import (
 	"HeadHunter/internal/entity"
-	"HeadHunter/internal/entity/Models"
+	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/session"
 )
@@ -20,10 +20,10 @@ func NewUseCases(repos *repository.Repository, session session.Repository) *UseC
 }
 
 type User interface {
-	SignUp(input Models.UserAccount) (string, error)
-	SignIn(input *Models.UserAccount) (string, error)
+	SignUp(input models.UserAccount) (string, error)
+	SignIn(input *models.UserAccount) (string, error)
 	Logout(token string) error
-	AuthCheck(email string) (Models.UserAccount, error)
+	AuthCheck(email string) (models.UserAccount, error)
 }
 
 type Vacancy interface { //TODO Сделать юзкейс вакансий
