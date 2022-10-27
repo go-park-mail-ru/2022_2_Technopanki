@@ -9,7 +9,7 @@ import (
 	"HeadHunter/internal/storage"
 	"HeadHunter/internal/usecases"
 	repositorypkg "HeadHunter/pkg/repository"
-	"github.com/spf13/viper"
+	"fmt"
 	"log"
 )
 
@@ -24,7 +24,7 @@ func main() {
 	if configErr := configs.InitConfig(&mainConfig); configErr != nil {
 		log.Fatal(configErr.Error())
 	}
-
+	fmt.Println(mainConfig)
 	client, redisErr := repositorypkg.RedisConnect(mainConfig.Redis)
 	if redisErr != nil {
 		log.Fatal(redisErr)
@@ -44,7 +44,7 @@ func main() {
 	handler := handlers.NewHandlers(useCase, &mainConfig, sessions)
 
 	router := network.InitRoutes(handler)
-	runErr := router.Run(viper.GetString("port"))
+	runErr := router.Run(mainConfig.Port)
 	if runErr != nil {
 		log.Fatal(runErr)
 	}
