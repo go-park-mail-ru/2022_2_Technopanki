@@ -31,9 +31,6 @@ func (up *UserPostgres) GetUserByEmail(email string) (*models.UserAccount, error
 	var result models.UserAccount
 	query := up.db.Where("email = ?", email).Find(&result)
 	if query.Error != nil {
-		if query.Error.Error() == "record not found" {
-			return nil, errorHandler.ErrUserNotExists
-		}
 		return nil, query.Error
 	}
 	if query.RowsAffected == 0 {
