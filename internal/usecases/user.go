@@ -6,17 +6,18 @@ import (
 	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/session"
+	"fmt"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
-	ur repository.UserRepository
-	sr session.Repository
+	userRep repository.UserRepository
+	sr      session.Repository
 }
 
 func newUserService(userRepos repository.UserRepository, sessionRepos session.Repository) *UserService {
-	return &UserService{ur: userRepos, sr: sessionRepos}
+	return &UserService{userRep: userRepos, sr: sessionRepos}
 }
 
 func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
@@ -24,11 +25,11 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 	if inputValidity != nil {
 		return "", inputValidity
 	}
-	user, err := us.ur.GetUserByEmail(input.Email)
+	user, err := us.userRep.GetUserByEmail(input.Email)
 	if err != nil {
 		return "", err
 	}
-
+	fmt.Println(user)
 	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
 		return "", errorHandler.ErrUnauthorized
 	}
@@ -53,12 +54,16 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 	if inputValidity != nil {
 		return "", inputValidity
 	}
-	user, err := us.ur.GetUserByEmail(input.Email)
+	user, err := us.userRep.GetUserByEmail(input.Email)
+	fmt.Println(user)
 	if err == nil {
 		return "", errorHandler.ErrUserExists
 	}
+	if err != nil && err != errorHandler.ErrUserNotExists {
+		return "", err
+	}
 
-	err = us.ur.CreateUser(*input)
+	err = us.userRep.CreateUser(*input)
 	if err != nil {
 		return "", errorHandler.ErrServiceUnavailable
 	}
@@ -69,15 +74,15 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 		return "", newSessionErr
 	}
 
-	if user.UserType == "applicant" {
-		input.ApplicantName = user.ApplicantName
-		input.ApplicantSurname = user.ApplicantSurname
-	} else if user.UserType == "employer" {
-		input.CompanyName = user.CompanyName
-	} else {
-		return "", errorHandler.InvalidUserType
-	}
-	
+	//if input.UserType == "applicant" {
+	//	input.ApplicantName = user.ApplicantName
+	//	input.ApplicantSurname = user.ApplicantSurname
+	//} else if input.UserType == "employer" {
+	//	input.CompanyName = user.CompanyName
+	//} else {
+	//	return "", errorHandler.InvalidUserType
+	//}
+
 	return token, nil
 }
 
@@ -86,7 +91,7 @@ func (us *UserService) Logout(token string) error {
 }
 
 func (us *UserService) AuthCheck(email string) (models.UserAccount, error) {
-	user, err := us.ur.GetUserByEmail(email)
+	user, err := us.userRep.GetUserByEmail(email)
 	if err != nil {
 		return models.UserAccount{}, err
 	}
