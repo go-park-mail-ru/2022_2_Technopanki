@@ -44,7 +44,3 @@ func (up *UserPostgres) GetUserByEmail(email string) (*models.UserAccount, error
 	fmt.Println(result)
 	return &result, nil
 }
-
-func (up *UserPostgres) IsUserExist(email string) (bool, error) {
-	return true, nil
-}
