@@ -1,7 +1,7 @@
 package validation
 
 import (
-	"HeadHunter/internal/entity/Models"
+	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -53,12 +53,12 @@ func Test_VerifyPassword(t *testing.T) {
 func Test_IsValidateAuthData(t *testing.T) {
 	testTable := []struct {
 		name     string
-		user     Models.UserAccount
+		user     models.UserAccount
 		expected error
 	}{
 		{
 			name: "valid user",
-			user: Models.UserAccount{
+			user: models.UserAccount{
 				Email:    "example@mail.com",
 				Password: "123456!a",
 			},
@@ -66,7 +66,7 @@ func Test_IsValidateAuthData(t *testing.T) {
 		},
 		{
 			name: "invalid email format",
-			user: Models.UserAccount{
+			user: models.UserAccount{
 				Email:    "examplemail.com",
 				Password: "123456!a",
 			},
@@ -74,7 +74,7 @@ func Test_IsValidateAuthData(t *testing.T) {
 		},
 		{
 			name: "incorrect email length",
-			user: Models.UserAccount{
+			user: models.UserAccount{
 				Email:    "xmp@ml",
 				Password: "123456!a",
 			},
@@ -82,7 +82,7 @@ func Test_IsValidateAuthData(t *testing.T) {
 		},
 		{
 			name: "invalid password format",
-			user: Models.UserAccount{
+			user: models.UserAccount{
 				Email:    "example@mail.com",
 				Password: "123456a",
 			},
@@ -90,7 +90,7 @@ func Test_IsValidateAuthData(t *testing.T) {
 		},
 		{
 			name: "incorrect password length",
-			user: Models.UserAccount{
+			user: models.UserAccount{
 				Email:    "example@mail.com",
 				Password: "1a!",
 			},
@@ -111,12 +111,12 @@ func Test_IsValidateAuthData(t *testing.T) {
 func Test_IsValidate(t *testing.T) {
 	testTable := []struct {
 		name     string
-		user     Models.UserAccount
+		user     models.UserAccount
 		expected error
 	}{
 		{
 			name: "valid user",
-			user: Models.UserAccount{
+			user: models.UserAccount{
 				CompanyName: "Mail.ru",
 				Email:       "example@mail.com",
 				Password:    "123456!a",
@@ -126,7 +126,7 @@ func Test_IsValidate(t *testing.T) {
 		},
 		{
 			name: "valid user 2",
-			user: Models.UserAccount{
+			user: models.UserAccount{
 				ApplicantName:    "Zakhar",
 				ApplicantSurname: "Urvancev",
 				Email:            "example@mail.com",
@@ -137,7 +137,7 @@ func Test_IsValidate(t *testing.T) {
 		},
 		{
 			name: "invalid user role",
-			user: Models.UserAccount{
+			user: models.UserAccount{
 				ApplicantName:    "Zakhar",
 				ApplicantSurname: "Urvancev",
 				Email:            "example@mail.com",
@@ -148,7 +148,7 @@ func Test_IsValidate(t *testing.T) {
 		},
 		{
 			name: "incorrect name length 1",
-			user: Models.UserAccount{
+			user: models.UserAccount{
 				ApplicantName:    "Z",
 				ApplicantSurname: "Urvancev",
 				Email:            "example@mail.com",
@@ -159,7 +159,7 @@ func Test_IsValidate(t *testing.T) {
 		},
 		{
 			name: "incorrect name length 2",
-			user: Models.UserAccount{
+			user: models.UserAccount{
 				ApplicantName:    "Zaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahar",
 				ApplicantSurname: "Urvancev",
 				Email:            "example@mail.com",
@@ -170,7 +170,7 @@ func Test_IsValidate(t *testing.T) {
 		},
 		{
 			name: "incorrect surname length 1",
-			user: Models.UserAccount{
+			user: models.UserAccount{
 				ApplicantName:    "Zakhar",
 				ApplicantSurname: "U",
 				Email:            "example@mail.com",
@@ -181,7 +181,7 @@ func Test_IsValidate(t *testing.T) {
 		},
 		{
 			name: "incorrect surname length 2",
-			user: Models.UserAccount{
+			user: models.UserAccount{
 				ApplicantName:    "Zakhar",
 				ApplicantSurname: "Urvaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaancev",
 				Email:            "example@mail.com",

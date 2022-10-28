@@ -1,7 +1,7 @@
 package validation
 
 import (
-	"HeadHunter/internal/entity/Models"
+	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
 	"strings"
 )
@@ -21,7 +21,7 @@ func verifyPassword(password string) bool {
 	}
 	return number && special && symbol
 }
-func IsAuthDataValid(user Models.UserAccount) error {
+func IsAuthDataValid(user models.UserAccount) error {
 
 	if strings.Count(user.Email, "@") != 1 {
 		return errorHandler.InvalidEmailFormat
@@ -41,7 +41,7 @@ func IsAuthDataValid(user Models.UserAccount) error {
 
 	return nil
 }
-func IsUserValid(user Models.UserAccount) error {
+func IsUserValid(user models.UserAccount) error {
 	if user.UserType == "applicant" {
 		if len([]rune(user.ApplicantName)) > 20 || len([]rune(user.ApplicantName)) < 3 {
 			return errorHandler.IncorrectNameLength
