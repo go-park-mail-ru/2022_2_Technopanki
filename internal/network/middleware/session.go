@@ -20,11 +20,11 @@ func (sm *SessionMiddleware) Session(c *gin.Context) {
 		return
 	}
 
-	userSession, err := sm.sr.GetSession(session.Token(sessionToken))
+	userEmail, err := sm.sr.GetSession(session.Token(sessionToken))
 	if err != nil {
 		_ = c.Error(err)
 		return
 	}
 
-	c.Set("userEmail", userSession)
+	c.Set("userEmail", userEmail)
 }
