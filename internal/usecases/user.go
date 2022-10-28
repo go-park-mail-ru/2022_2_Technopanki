@@ -25,12 +25,11 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 	if inputValidity != nil {
 		return "", inputValidity
 	}
-	user, err := us.userRep.GetUserByEmail(input.Email)
-	if err != nil {
-		return "", err
+	user, getErr := us.userRep.GetUserByEmail(input.Email)
+	if getErr != nil {
+		return "", getErr
 	}
-	fmt.Println(user)
-	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
+	if cryptErr := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); cryptErr != nil {
 		return "", errorHandler.ErrUnauthorized
 	}
 
@@ -54,17 +53,17 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 	if inputValidity != nil {
 		return "", inputValidity
 	}
-	user, err := us.userRep.GetUserByEmail(input.Email)
+	user, getErr := us.userRep.GetUserByEmail(input.Email)
 	fmt.Println(user)
-	if err == nil {
+	if getErr == nil {
 		return "", errorHandler.ErrUserExists
 	}
-	if err != nil && err != errorHandler.ErrUserNotExists {
-		return "", err
+	if getErr != nil && getErr != errorHandler.ErrUserNotExists {
+		return "", getErr
 	}
 
-	err = us.userRep.CreateUser(*input)
-	if err != nil {
+	createErr := us.userRep.CreateUser(*input)
+	if createErr != nil {
 		return "", errorHandler.ErrServiceUnavailable
 	}
 	input.UUID = uuid.NewString()
@@ -73,15 +72,6 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 	if newSessionErr != nil {
 		return "", newSessionErr
 	}
-
-	//if input.UserType == "applicant" {
-	//	input.ApplicantName = user.ApplicantName
-	//	input.ApplicantSurname = user.ApplicantSurname
-	//} else if input.UserType == "employer" {
-	//	input.CompanyName = user.CompanyName
-	//} else {
-	//	return "", errorHandler.InvalidUserType
-	//}
 
 	return token, nil
 }

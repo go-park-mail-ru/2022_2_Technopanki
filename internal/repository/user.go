@@ -3,7 +3,6 @@ package repository
 import (
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
-	"fmt"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -37,10 +36,8 @@ func (up *UserPostgres) GetUserByEmail(email string) (*models.UserAccount, error
 		}
 		return nil, query.Error
 	}
-	fmt.Println(query.RowsAffected)
 	if query.RowsAffected == 0 {
 		return nil, errorHandler.ErrUserNotExists
 	}
-	fmt.Println(result)
 	return &result, nil
 }
