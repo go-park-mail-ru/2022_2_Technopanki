@@ -10,8 +10,8 @@ type SessionMiddleware struct {
 	sr session.Repository
 }
 
-func NewSessionMiddleware(sr session.Repository) SessionMiddleware {
-	return SessionMiddleware{sr: sr}
+func NewSessionMiddleware(sr session.Repository) *SessionMiddleware {
+	return &SessionMiddleware{sr: sr}
 }
 func (sm *SessionMiddleware) Session(c *gin.Context) {
 	sessionToken, err := c.Cookie("session")

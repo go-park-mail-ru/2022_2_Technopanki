@@ -4,12 +4,12 @@ import (
 	"HeadHunter/configs"
 	"HeadHunter/internal/network"
 	"HeadHunter/internal/network/handlers"
+	"HeadHunter/internal/network/middleware"
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/storage"
 	"HeadHunter/internal/usecases"
 	repositorypkg "HeadHunter/pkg/repository"
-	"fmt"
 	"log"
 )
 
@@ -24,13 +24,12 @@ func main() {
 	if configErr := configs.InitConfig(&mainConfig); configErr != nil {
 		log.Fatal(configErr.Error())
 	}
-	fmt.Println(mainConfig)
 	client, redisErr := repositorypkg.RedisConnect(mainConfig.Redis)
 	if redisErr != nil {
 		log.Fatal(redisErr)
 	}
 	sessions := session.NewRedisStore(mainConfig, client)
-
+	sessionMiddleware := middleware.NewSessionMiddleware(sessions)
 	_, DBErr := repositorypkg.DBConnect(mainConfig.DB) //TODO добавить базу данных
 	if DBErr != nil {
 		log.Fatal(DBErr)
@@ -43,7 +42,7 @@ func main() {
 
 	handler := handlers.NewHandlers(useCase, &mainConfig, sessions)
 
-	router := network.InitRoutes(handler)
+	router := network.InitRoutes(handler, sessionMiddleware)
 	runErr := router.Run(mainConfig.Port)
 	if runErr != nil {
 		log.Fatal(runErr)

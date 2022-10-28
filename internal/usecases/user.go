@@ -37,10 +37,10 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 	if newSessionErr != nil {
 		return "", newSessionErr
 	}
-	if input.UserType == "applicant" {
+	if user.UserType == "applicant" {
 		input.ApplicantName = user.ApplicantName
 		input.ApplicantSurname = user.ApplicantSurname
-	} else if input.UserType == "employer" {
+	} else if user.UserType == "employer" {
 		input.CompanyName = user.CompanyName
 	} else {
 		return "", errorHandler.InvalidUserType
