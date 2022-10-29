@@ -28,8 +28,8 @@ func main() {
 	if redisErr != nil {
 		log.Fatal(redisErr)
 	}
-	sessions := session.NewRedisStore(mainConfig, client)
-	sessionMiddleware := middleware.NewSessionMiddleware(sessions)
+	redisRepository := session.NewRedisStore(mainConfig, client)
+	sessionMiddleware := middleware.NewSessionMiddleware(redisRepository)
 	_, DBErr := repositorypkg.DBConnect(mainConfig.DB) //TODO добавить базу данных
 	if DBErr != nil {
 		log.Fatal(DBErr)
@@ -37,10 +37,11 @@ func main() {
 
 	useCase := usecases.NewUseCases(&repository.Repository{
 		UserRepository: &storage.UserStorage}, //TODO добавить нормальнуб бд
-		sessions,
+		redisRepository,
+		&mainConfig,
 	)
 
-	handler := handlers.NewHandlers(useCase, &mainConfig, sessions)
+	handler := handlers.NewHandlers(useCase, &mainConfig, redisRepository)
 
 	router := network.InitRoutes(handler, sessionMiddleware)
 	runErr := router.Run(mainConfig.Port)

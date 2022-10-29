@@ -1,6 +1,7 @@
 package validation
 
 import (
+	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
 	"github.com/stretchr/testify/assert"
@@ -101,7 +102,16 @@ func Test_IsValidateAuthData(t *testing.T) {
 		tc := testCase
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			result := IsAuthDataValid(tc.user)
+			result := IsAuthDataValid(tc.user, configs.ValidationConfig{
+				MinNameLength:     2,
+				MaxNameLength:     20,
+				MinSurnameLength:  3,
+				MaxSurnameLength:  20,
+				MinPasswordLength: 8,
+				MaxPasswordLength: 20,
+				MinEmailLength:    8,
+				MaxEmailLength:    30,
+			})
 			assert.Equal(t, tc.expected, result)
 		})
 
@@ -195,7 +205,16 @@ func Test_IsValidate(t *testing.T) {
 		tc := testCase
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			result := IsUserValid(tc.user)
+			result := IsUserValid(tc.user, configs.ValidationConfig{
+				MinNameLength:     2,
+				MaxNameLength:     20,
+				MinSurnameLength:  3,
+				MaxSurnameLength:  20,
+				MinPasswordLength: 8,
+				MaxPasswordLength: 20,
+				MinEmailLength:    8,
+				MaxEmailLength:    30,
+			})
 			assert.Equal(t, tc.expected, result)
 		})
 

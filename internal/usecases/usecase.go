@@ -1,6 +1,7 @@
 package usecases
 
 import (
+	"HeadHunter/configs"
 	"HeadHunter/internal/entity"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/repository"
@@ -13,9 +14,9 @@ type UseCases struct {
 	Resume  Resume
 }
 
-func NewUseCases(repos *repository.Repository, session session.Repository) *UseCases {
+func NewUseCases(repos *repository.Repository, session session.Repository, _cfg *configs.Config) *UseCases {
 	return &UseCases{
-		User: newUserService(repos.UserRepository, session),
+		User: newUserService(repos.UserRepository, session, _cfg),
 	}
 }
 

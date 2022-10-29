@@ -7,11 +7,13 @@ import (
 )
 
 type Config struct {
-	Domain                 string      `yaml:"domain"`
-	Port                   string      `yaml:"port"`
-	DefaultExpiringSession int64       `yaml:"defaultExpiringSession"`
-	DB                     DBConfig    `yaml:"db"`
-	Redis                  RedisConfig `yaml:"redis"`
+	Domain                 string           `yaml:"domain"`
+	Port                   string           `yaml:"port"`
+	DefaultExpiringSession int64            `yaml:"defaultExpiringSession"`
+	DB                     DBConfig         `yaml:"db"`
+	Redis                  RedisConfig      `yaml:"redis"`
+	Validation             ValidationConfig `yaml:"validation"`
+	Cookie                 CookieConfig     `yaml:"cookie"`
 }
 
 type DBConfig struct {
@@ -30,34 +32,29 @@ type RedisConfig struct {
 	DBName   string `yaml:"dbname"`
 }
 
+type ValidationConfig struct {
+	MinNameLength     int `yaml:"minNameLength"`
+	MaxNameLength     int `yaml:"maxNameLength"`
+	MinSurnameLength  int `yaml:"minSurnameLength"`
+	MaxSurnameLength  int `yaml:"maxSurnameLength"`
+	MinPasswordLength int `yaml:"minPasswordLength"`
+	MaxPasswordLength int `yaml:"maxPasswordLength"`
+	MinEmailLength    int `yaml:"minEmailLength"`
+	MaxEmailLength    int `yaml:"maxEmailLength"`
+}
+
+type CookieConfig struct {
+	HTTPOnly bool `yaml:"httpOnly"`
+	Secure   bool `yaml:"secure"`
+}
+
 func InitConfig(config *Config) error {
-	//viper.AddConfigPath("configs")
-	//viper.SetConfigName("config")
-	//if err := viper.ReadInConfig(); err != nil {
-	//	return err
-	//}
-	//config.Domain = viper.GetString("domain")
-	//config.Port = viper.GetString("port")
-	//config.DefaultExpiringSession = viper.GetInt64("defaultExpiringSession")
-	//
-	//config.DB.Host = viper.GetString("db.host")
-	//config.DB.Port = viper.GetString("db.port")
-	//config.DB.Username = viper.GetString("db.username")
-	//config.DB.Password = viper.GetString("db.password")
-	//config.DB.DBName = viper.GetString("db.dbname")
-	//config.DB.SSLMode = viper.GetString("db.sslmode")
-	//
-	//config.Redis.Host = viper.GetString("redis.host")
-	//config.Redis.Port = viper.GetString("redis.port")
-	//config.Redis.Password = viper.GetString("redis.password")
-	//config.Redis.DBName = viper.GetString("redis.dbname")
-
 	filename, fileErr := filepath.Abs("./configs/config.yml")
-	yamlFile, yamlErr := ioutil.ReadFile(filename)
-
 	if fileErr != nil {
 		return fileErr
 	}
+
+	yamlFile, yamlErr := ioutil.ReadFile(filename)
 	if yamlErr != nil {
 		return yamlErr
 	}
