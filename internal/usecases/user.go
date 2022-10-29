@@ -85,3 +85,15 @@ func (us *UserService) AuthCheck(email string) (*models.UserAccount, error) {
 	}
 	return user, nil
 }
+
+func (us *UserService) UpgradeUser(input *models.UserAccount) error {
+	inputValidity := validation.IsMainDataValid(input, us.cfg.Validation)
+	if inputValidity != nil {
+		return inputValidity
+	}
+	dbError := us.userRep.UpgradeUser(input)
+	if dbError != nil {
+		return dbError
+	}
+	return nil
+}

@@ -42,8 +42,7 @@ func IsAuthDataValid(user *models.UserAccount, cfg configs.ValidationConfig) err
 
 	return nil
 }
-
-func IsUserValid(user *models.UserAccount, cfg configs.ValidationConfig) error {
+func IsMainDataValid(user *models.UserAccount, cfg configs.ValidationConfig) error {
 	if user.UserType == "applicant" {
 		if len([]rune(user.ApplicantName)) > cfg.MaxNameLength || len([]rune(user.ApplicantName)) < cfg.MinNameLength {
 			return errorHandler.IncorrectNameLength
@@ -58,6 +57,13 @@ func IsUserValid(user *models.UserAccount, cfg configs.ValidationConfig) error {
 		}
 	} else {
 		return errorHandler.InvalidUserType
+	}
+	return nil
+}
+
+func IsUserValid(user *models.UserAccount, cfg configs.ValidationConfig) error {
+	if mainDataErr := IsMainDataValid(user, cfg); mainDataErr != nil {
+		return mainDataErr
 	}
 	return IsAuthDataValid(user, cfg)
 }

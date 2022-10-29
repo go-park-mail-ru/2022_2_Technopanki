@@ -25,6 +25,7 @@ type User interface {
 	SignIn(input *models.UserAccount) (string, error)
 	Logout(token string) error
 	AuthCheck(email string) (*models.UserAccount, error)
+	UpgradeUser(input *models.UserAccount) error
 }
 
 type Vacancy interface { //TODO Сделать юзкейс вакансий

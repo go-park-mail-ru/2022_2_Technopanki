@@ -25,7 +25,15 @@ func queryUserValidation(query *gorm.DB) error {
 }
 
 func (up *UserPostgres) CreateUser(user *models.UserAccount) error {
-	return up.db.Create(&user).Error
+	return up.db.Create(user).Error
+}
+
+func (up *UserPostgres) UpgradeUser(newUser *models.UserAccount) error {
+	oldUser, getErr := up.GetUserByEmail(newUser.Email)
+	if getErr != nil {
+		return getErr
+	}
+	return up.db.Model(oldUser).Updates(newUser).Error
 }
 
 func (up *UserPostgres) GetUserByEmail(email string) (*models.UserAccount, error) {

@@ -26,6 +26,10 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware) *
 
 	api := router.Group("/api")
 	{
+		user := api.Group("/user")
+		{
+			user.PUT("/", sessionMW.Session, h.UserHandler.UpgradeUser)
+		}
 		vacancies := api.Group("/vacancy")
 		{
 			vacancies.GET("/", handlers.GetVacancies, middleware.ErrorHandler()) //TODO заменить на строку ниже

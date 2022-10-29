@@ -102,3 +102,17 @@ func (uh *UserHandler) AuthCheck(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"name": user.CompanyName})
 	}
 }
+
+func (uh *UserHandler) UpgradeUser(c *gin.Context) {
+	var input models.UserAccount
+	if err := c.BindJSON(&input); err != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+	upgradeErr := uh.userUseCase.UpgradeUser(&input)
+	if upgradeErr != nil {
+		_ = c.Error(upgradeErr)
+		return
+	}
+	c.Status(http.StatusOK)
+}
