@@ -25,3 +25,5 @@ validation:
 cookie:
   httpOnly: true
   secure: false
+crypt:
+  cost: 10

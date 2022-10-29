@@ -8,7 +8,6 @@ import (
 	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/session"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
@@ -30,8 +29,8 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 	if getErr != nil {
 		return "", getErr
 	}
-	if cryptErr := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); cryptErr != nil {
-		return "", errorHandler.ErrUnauthorized
+	if cryptErr := utils.ComparePassword(user, input); cryptErr != nil {
+		return "", cryptErr
 	}
 
 	token, newSessionErr := us.sr.NewSession(input.Email)
@@ -50,14 +49,18 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 	if inputValidity != nil {
 		return "", inputValidity
 	}
-	_, getErr := us.userRep.GetUserByEmail(input.Email)
-	if getErr == nil {
-		return "", errorHandler.ErrUserExists
-	}
-	if getErr != nil && getErr != errorHandler.ErrUserNotExists {
+	isExist, getErr := us.userRep.IsUserExist(input.Email)
+	if getErr != nil {
 		return "", getErr
 	}
-
+	if isExist {
+		return "", errorHandler.ErrUserExists
+	}
+	encryptedPassword, encryptErr := utils.GeneratePassword(input.Password, &us.cfg.Crypt)
+	if encryptErr != nil {
+		return "", encryptErr
+	}
+	input.Password = encryptedPassword
 	createErr := us.userRep.CreateUser(input)
 	if createErr != nil {
 		return "", errorHandler.ErrServiceUnavailable
@@ -75,10 +78,10 @@ func (us *UserService) Logout(token string) error {
 	return us.sr.DeleteSession(session.Token(token))
 }
 
-func (us *UserService) AuthCheck(email string) (models.UserAccount, error) {
+func (us *UserService) AuthCheck(email string) (*models.UserAccount, error) {
 	user, err := us.userRep.GetUserByEmail(email)
 	if err != nil {
-		return models.UserAccount{}, err
+		return nil, err
 	}
-	return *user, nil
+	return user, nil
 }

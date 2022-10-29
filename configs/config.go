@@ -14,6 +14,7 @@ type Config struct {
 	Redis                  RedisConfig      `yaml:"redis"`
 	Validation             ValidationConfig `yaml:"validation"`
 	Cookie                 CookieConfig     `yaml:"cookie"`
+	Crypt                  CryptConfig      `yaml:"crypt"`
 }
 
 type DBConfig struct {
@@ -46,6 +47,11 @@ type ValidationConfig struct {
 type CookieConfig struct {
 	HTTPOnly bool `yaml:"httpOnly"`
 	Secure   bool `yaml:"secure"`
+}
+
+type CryptConfig struct {
+	//COST The cost of the password encryption algorithm
+	COST int `yaml:"cost"`
 }
 
 func InitConfig(config *Config) error {

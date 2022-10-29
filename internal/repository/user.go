@@ -3,38 +3,45 @@ package repository
 import (
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
-
-//COST The cost of the password encryption algorithm
-var COST = 10
 
 type UserPostgres struct {
 	db *gorm.DB
 }
 
-func NewUserPostgres(db *gorm.DB) *UserPostgres {
+func newUserPostgres(db *gorm.DB) *UserPostgres {
 	return &UserPostgres{db: db}
 }
 
-func (up *UserPostgres) CreateUser(user *models.UserAccount) error {
-	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), COST)
-	if err != nil {
-		return err
+func queryUserValidation(query *gorm.DB) error {
+	if query.Error != nil {
+		return query.Error
 	}
-	user.Password = string(encryptedPassword)
+	if query.RowsAffected == 0 {
+		return errorHandler.ErrUserNotExists
+	}
+	return nil
+}
+
+func (up *UserPostgres) CreateUser(user *models.UserAccount) error {
+
 	return up.db.Create(&user).Error
 }
 
 func (up *UserPostgres) GetUserByEmail(email string) (*models.UserAccount, error) {
 	var result models.UserAccount
 	query := up.db.Where("email = ?", email).Find(&result)
-	if query.Error != nil {
-		return nil, query.Error
+	return &result, queryUserValidation(query)
+}
+
+func (up *UserPostgres) IsUserExist(email string) (bool, error) {
+	_, getErr := up.GetUserByEmail(email)
+	if getErr == nil {
+		return true, nil
 	}
-	if query.RowsAffected == 0 {
-		return nil, errorHandler.ErrUserNotExists
+	if getErr == errorHandler.ErrUserNotExists {
+		return false, nil
 	}
-	return &result, nil
+	return false, getErr
 }

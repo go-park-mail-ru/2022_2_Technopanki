@@ -14,13 +14,14 @@ type Repository struct {
 
 func NewPostgresRepository(db *gorm.DB) *Repository {
 	return &Repository{
-		UserRepository: NewUserPostgres(db),
+		UserRepository: newUserPostgres(db),
 	}
 }
 
 type UserRepository interface {
 	CreateUser(user *models.UserAccount) error
 	GetUserByEmail(email string) (*models.UserAccount, error)
+	IsUserExist(email string) (bool, error)
 }
 
 type VacancyRepository interface { //TODO Сделать репозиторий вакансий
