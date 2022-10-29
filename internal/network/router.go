@@ -28,7 +28,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware) *
 	{
 		user := api.Group("/user")
 		{
-			user.PUT("/", sessionMW.Session, h.UserHandler.UpgradeUser)
+			user.PUT("/", sessionMW.Session, h.UserHandler.UpgradeUser, middleware.ErrorHandler())
 		}
 		vacancies := api.Group("/vacancy")
 		{
