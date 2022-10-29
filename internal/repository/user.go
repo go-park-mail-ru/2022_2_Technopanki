@@ -28,11 +28,7 @@ func (up *UserPostgres) CreateUser(user *models.UserAccount) error {
 	return up.db.Create(user).Error
 }
 
-func (up *UserPostgres) UpgradeUser(newUser *models.UserAccount) error {
-	oldUser, getErr := up.GetUserByEmail(newUser.Email)
-	if getErr != nil {
-		return getErr
-	}
+func (up *UserPostgres) UpgradeUser(oldUser, newUser *models.UserAccount) error {
 	return up.db.Model(oldUser).Updates(newUser).Error
 }
 

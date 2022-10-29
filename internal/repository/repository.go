@@ -22,7 +22,7 @@ type UserRepository interface {
 	CreateUser(user *models.UserAccount) error
 	GetUserByEmail(email string) (*models.UserAccount, error)
 	IsUserExist(email string) (bool, error)
-	UpgradeUser(user *models.UserAccount) error
+	UpgradeUser(oldUser, newUser *models.UserAccount) error
 }
 
 type VacancyRepository interface { //TODO Сделать репозиторий вакансий

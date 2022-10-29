@@ -91,7 +91,11 @@ func (us *UserService) UpgradeUser(input *models.UserAccount) error {
 	if inputValidity != nil {
 		return inputValidity
 	}
-	dbError := us.userRep.UpgradeUser(input)
+	oldUser, getErr := us.userRep.GetUserByEmail(input.Email)
+	if getErr != nil {
+		return getErr
+	} //TODO придумать более строгую валидацию
+	dbError := us.userRep.UpgradeUser(oldUser, input)
 	if dbError != nil {
 		return dbError
 	}
