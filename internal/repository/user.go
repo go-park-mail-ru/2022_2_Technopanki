@@ -25,7 +25,6 @@ func queryUserValidation(query *gorm.DB) error {
 }
 
 func (up *UserPostgres) CreateUser(user *models.UserAccount) error {
-
 	return up.db.Create(&user).Error
 }
 

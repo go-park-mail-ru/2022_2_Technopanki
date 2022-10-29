@@ -63,7 +63,7 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 	input.Password = encryptedPassword
 	createErr := us.userRep.CreateUser(input)
 	if createErr != nil {
-		return "", errorHandler.ErrServiceUnavailable
+		return "", errorHandler.ErrCannotCreateUser
 	}
 
 	token, newSessionErr := us.sr.NewSession(input.Email)
