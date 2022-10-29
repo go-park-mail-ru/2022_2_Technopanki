@@ -7,11 +7,11 @@ import (
 )
 
 type SessionMiddleware struct {
-	sr session.Repository
+	sessionRepos session.Repository
 }
 
-func NewSessionMiddleware(sr session.Repository) SessionMiddleware {
-	return SessionMiddleware{sr: sr}
+func NewSessionMiddleware(sr session.Repository) *SessionMiddleware {
+	return &SessionMiddleware{sessionRepos: sr}
 }
 func (sm *SessionMiddleware) Session(c *gin.Context) {
 	sessionToken, err := c.Cookie("session")
@@ -20,11 +20,11 @@ func (sm *SessionMiddleware) Session(c *gin.Context) {
 		return
 	}
 
-	userSession, err := sm.sr.GetSession(session.Token(sessionToken))
+	userEmail, err := sm.sessionRepos.GetSession(session.Token(sessionToken))
 	if err != nil {
 		_ = c.Error(err)
 		return
 	}
 
-	c.Set("userEmail", userSession)
+	c.Set("userEmail", userEmail)
 }

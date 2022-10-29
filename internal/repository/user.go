@@ -18,7 +18,7 @@ func NewUserPostgres(db *gorm.DB) *UserPostgres {
 	return &UserPostgres{db: db}
 }
 
-func (up *UserPostgres) CreateUser(user models.UserAccount) error {
+func (up *UserPostgres) CreateUser(user *models.UserAccount) error {
 	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), COST)
 	if err != nil {
 		return err

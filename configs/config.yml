@@ -13,3 +13,15 @@ redis:
   port: "6379"
   password: "rjf358123QWE"
   dbname: "sessionDB"
+validation:
+  minNameLength: 2
+  maxNameLength: 20
+  minSurnameLength: 2
+  maxSurnameLength: 20
+  minPasswordLength: 8
+  maxPasswordLength: 20
+  minEmailLength: 8
+  maxEmailLength: 30
+cookie:
+  httpOnly: true
+  secure: false

@@ -1,6 +1,7 @@
 package validation
 
 import (
+	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
 	"strings"
@@ -21,13 +22,13 @@ func verifyPassword(password string) bool {
 	}
 	return number && special && symbol
 }
-func IsAuthDataValid(user models.UserAccount) error {
+func IsAuthDataValid(user *models.UserAccount, cfg configs.ValidationConfig) error {
 
 	if strings.Count(user.Email, "@") != 1 {
 		return errorHandler.InvalidEmailFormat
 	}
 
-	if len(user.Email) < 8 || len(user.Email) > 30 {
+	if len(user.Email) < cfg.MinEmailLength || len(user.Email) > cfg.MaxEmailLength {
 		return errorHandler.IncorrectEmailLength
 	}
 
@@ -35,27 +36,28 @@ func IsAuthDataValid(user models.UserAccount) error {
 		return errorHandler.InvalidPasswordFormat
 	}
 
-	if len(user.Password) < 8 || len(user.Password) > 20 {
+	if len(user.Password) < cfg.MinPasswordLength || len(user.Password) > cfg.MaxPasswordLength {
 		return errorHandler.IncorrectPasswordLength
 	}
 
 	return nil
 }
-func IsUserValid(user models.UserAccount) error {
+
+func IsUserValid(user *models.UserAccount, cfg configs.ValidationConfig) error {
 	if user.UserType == "applicant" {
-		if len([]rune(user.ApplicantName)) > 20 || len([]rune(user.ApplicantName)) < 3 {
+		if len([]rune(user.ApplicantName)) > cfg.MaxNameLength || len([]rune(user.ApplicantName)) < cfg.MinNameLength {
 			return errorHandler.IncorrectNameLength
 		}
 
-		if len([]rune(user.ApplicantSurname)) > 20 || len([]rune(user.ApplicantSurname)) < 3 {
+		if len([]rune(user.ApplicantSurname)) > cfg.MaxSurnameLength || len([]rune(user.ApplicantSurname)) < cfg.MinSurnameLength {
 			return errorHandler.IncorrectSurnameLength
 		}
 	} else if user.UserType == "employer" {
-		if len([]rune(user.CompanyName)) > 20 || len([]rune(user.CompanyName)) < 2 {
+		if len([]rune(user.CompanyName)) > cfg.MaxNameLength || len([]rune(user.CompanyName)) < cfg.MinNameLength {
 			return errorHandler.IncorrectNameLength
 		}
 	} else {
 		return errorHandler.InvalidUserType
 	}
-	return IsAuthDataValid(user)
+	return IsAuthDataValid(user, cfg)
 }

@@ -1,27 +1,28 @@
 package usecases
 
 import (
+	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
+	"HeadHunter/internal/entity/utils"
 	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/session"
-	"fmt"
-	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
 	userRep repository.UserRepository
 	sr      session.Repository
+	cfg     *configs.Config
 }
 
-func newUserService(userRepos repository.UserRepository, sessionRepos session.Repository) *UserService {
-	return &UserService{userRep: userRepos, sr: sessionRepos}
+func newUserService(userRepos repository.UserRepository, sessionRepos session.Repository, _cfg *configs.Config) *UserService {
+	return &UserService{userRep: userRepos, sr: sessionRepos, cfg: _cfg}
 }
 
 func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
-	inputValidity := validation.IsAuthDataValid(*input)
+	inputValidity := validation.IsAuthDataValid(input, us.cfg.Validation)
 	if inputValidity != nil {
 		return "", inputValidity
 	}
@@ -37,24 +38,19 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 	if newSessionErr != nil {
 		return "", newSessionErr
 	}
-	if user.UserType == "applicant" {
-		input.ApplicantName = user.ApplicantName
-		input.ApplicantSurname = user.ApplicantSurname
-	} else if user.UserType == "employer" {
-		input.CompanyName = user.CompanyName
-	} else {
-		return "", errorHandler.InvalidUserType
+
+	if userCopyErr := utils.GetName(input, user); userCopyErr != nil {
+		return "", userCopyErr
 	}
 	return token, nil
 }
 
 func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
-	inputValidity := validation.IsUserValid(*input)
+	inputValidity := validation.IsUserValid(input, us.cfg.Validation)
 	if inputValidity != nil {
 		return "", inputValidity
 	}
-	user, getErr := us.userRep.GetUserByEmail(input.Email)
-	fmt.Println(user)
+	_, getErr := us.userRep.GetUserByEmail(input.Email)
 	if getErr == nil {
 		return "", errorHandler.ErrUserExists
 	}
@@ -62,11 +58,10 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 		return "", getErr
 	}
 
-	createErr := us.userRep.CreateUser(*input)
+	createErr := us.userRep.CreateUser(input)
 	if createErr != nil {
 		return "", errorHandler.ErrServiceUnavailable
 	}
-	input.UUID = uuid.NewString()
 
 	token, newSessionErr := us.sr.NewSession(input.Email)
 	if newSessionErr != nil {

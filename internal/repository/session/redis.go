@@ -27,7 +27,7 @@ func (rs *RedisStore) NewSession(email string) (string, error) {
 	token := uuid.NewString()
 	err := rs.client.Do("SETEX", token, rs.DefaultExpiresAt, email).Err()
 	if err != nil {
-		return "", err
+		return "", errorHandler.ErrCannotCreateSession
 	}
 	return token, nil
 }

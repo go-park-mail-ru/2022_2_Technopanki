@@ -11,26 +11,27 @@ import (
 )
 
 type UserHandler struct {
-	cfg  *configs.Config
-	User usecases.User
-	sr   session.Repository
+	cfg          *configs.Config
+	userUseCase  usecases.User
+	sessionRepos session.Repository
 }
 
-func newUserHandler(usecases *usecases.UseCases, _cfg *configs.Config, _sr session.Repository) *UserHandler {
-	return &UserHandler{cfg: _cfg, User: usecases.User, sr: _sr}
+func newUserHandler(useCases *usecases.UseCases, _cfg *configs.Config, _sr session.Repository) *UserHandler {
+	return &UserHandler{cfg: _cfg, userUseCase: useCases.User, sessionRepos: _sr}
 }
 func (uh *UserHandler) SignIn(c *gin.Context) {
-	var input = models.UserAccount{}
+	var input models.UserAccount
 	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
-	token, err := uh.User.SignIn(&input)
+	token, err := uh.userUseCase.SignIn(&input)
 	if err != nil {
 		_ = c.Error(err)
 		return
 	}
-	c.SetCookie("session", token, int(uh.sr.Expiring()), "/", uh.cfg.Domain, false, true)
+	c.SetCookie("session", token, int(uh.sessionRepos.Expiring()), "/", uh.cfg.Domain,
+		uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
 	if input.UserType == "applicant" {
 		c.JSON(http.StatusOK, gin.H{"name": input.ApplicantName, "surname": input.ApplicantSurname})
 	} else if input.UserType == "employer" {
@@ -39,22 +40,19 @@ func (uh *UserHandler) SignIn(c *gin.Context) {
 }
 
 func (uh *UserHandler) SignUp(c *gin.Context) {
-	var input = models.UserAccount{}
+	var input models.UserAccount
 	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
-	token, signUpErr := uh.User.SignUp(&input)
+	token, signUpErr := uh.userUseCase.SignUp(&input)
 	if signUpErr != nil {
 		_ = c.Error(signUpErr)
 		return
 	}
-	c.SetCookie("session", token, int(uh.sr.Expiring()), "/", uh.cfg.Domain, false, true)
-	if input.UserType == "applicant" {
-		c.JSON(http.StatusOK, gin.H{"name": input.ApplicantName, "surname": input.ApplicantSurname})
-	} else if input.UserType == "employer" {
-		c.JSON(http.StatusOK, gin.H{"name": input.CompanyName})
-	}
+	c.SetCookie("session", token, int(uh.cfg.DefaultExpiringSession), "/",
+		uh.cfg.Domain, uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
+	c.Status(http.StatusOK)
 }
 
 // @Summary      Logout
@@ -73,12 +71,13 @@ func (uh *UserHandler) Logout(c *gin.Context) {
 		return
 	}
 
-	logoutErr := uh.User.Logout(token)
+	logoutErr := uh.userUseCase.Logout(token)
 	if logoutErr != nil {
 		_ = c.Error(logoutErr)
 		return
 	}
-	c.SetCookie("session", token, -1, "/", uh.cfg.Domain, false, true)
+	c.SetCookie("session", token, -1, "/",
+		uh.cfg.Domain, uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
 }
 
 func (uh *UserHandler) AuthCheck(c *gin.Context) {
@@ -92,7 +91,7 @@ func (uh *UserHandler) AuthCheck(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
-	user, err := uh.User.AuthCheck(emailStr)
+	user, err := uh.userUseCase.AuthCheck(emailStr)
 	if err != nil {
 		_ = c.Error(err)
 		return
