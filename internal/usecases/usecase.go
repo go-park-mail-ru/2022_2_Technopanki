@@ -31,6 +31,7 @@ type User interface {
 	GetUserSafety(id uint) (*models.UserAccount, error)
 	GetUserByEmail(email string) (*models.UserAccount, error)
 	UploadUserImage(user *models.UserAccount, file *multipart.File, imageExt string) error
+	DeleteUserImage(user *models.UserAccount) error
 }
 
 type Vacancy interface { //TODO Сделать юзкейс вакансий

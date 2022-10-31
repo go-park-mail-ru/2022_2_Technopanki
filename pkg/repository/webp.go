@@ -31,7 +31,7 @@ func UploadWebpImage(path, name string, image *image.Image) (err error) {
 	return nil
 }
 
-func DeleteImage(path, name string) error {
+func DeleteWebpImage(path, name string) error {
 	removeErr := os.Remove(strings.Join([]string{path, name}, ""))
 	if removeErr != nil {
 		return removeErr

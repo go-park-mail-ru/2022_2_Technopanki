@@ -159,3 +159,15 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, file *multipart
 	return images.UploadUserAvatar(user.Image, &img, &us.cfg.Image)
 
 }
+
+func (us *UserService) DeleteUserImage(user *models.UserAccount) error {
+	if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
+		return errorHandler.ErrBadRequest
+	}
+	deleteErr := images.DeleteUserAvatar(user.Image, &us.cfg.Image)
+	if deleteErr != nil {
+		return deleteErr
+	}
+	user.Image = fmt.Sprintf("basic_%s_avatar.webp", user.UserType)
+	return nil
+}

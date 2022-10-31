@@ -31,7 +31,11 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware) *
 			user.GET("/", sessionMW.Session, h.UserHandler.GetUser, middleware.ErrorHandler())
 			user.GET("/safety", h.UserHandler.GetUserSafety, middleware.ErrorHandler())
 			user.POST("/", sessionMW.Session, h.UserHandler.UpdateUser, middleware.ErrorHandler())
-			user.POST("/image", sessionMW.Session, h.UserHandler.UploadUserImage, middleware.ErrorHandler())
+			image := user.Group("/image")
+			{
+				image.POST("/", sessionMW.Session, h.UserHandler.UploadUserImage, middleware.ErrorHandler())
+				image.DELETE("/", sessionMW.Session, h.UserHandler.DeleteUserImage, middleware.ErrorHandler())
+			}
 		}
 		vacancies := api.Group("/vacancy")
 		{

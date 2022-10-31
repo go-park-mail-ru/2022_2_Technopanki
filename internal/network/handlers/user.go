@@ -199,7 +199,8 @@ func (uh *UserHandler) UploadUserImage(c *gin.Context) {
 	}
 	form, formErr := c.MultipartForm()
 	if formErr != nil {
-		_ = c.Error(errorHandler.ErrBadRequest)
+		_ = c.Error(formErr)
+		//_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
 	var fileName string
@@ -229,6 +230,33 @@ func (uh *UserHandler) UploadUserImage(c *gin.Context) {
 	uploadErr := uh.userUseCase.UploadUserImage(user, &file, imgExt)
 	if uploadErr != nil {
 		_ = c.Error(uploadErr)
+		return
+	}
+	c.Status(http.StatusOK)
+}
+
+func (uh *UserHandler) DeleteUserImage(c *gin.Context) {
+	email, ok := c.Get("userEmail")
+	if !ok {
+		_ = c.Error(errorHandler.ErrUnauthorized)
+		return
+	}
+	emailStr, ok := email.(string)
+	if !ok {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+
+	user, getUserErr := uh.userUseCase.GetUserByEmail(emailStr)
+
+	if getUserErr != nil {
+		_ = c.Error(errorHandler.ErrUserNotExists)
+		return
+	}
+
+	deleteErr := uh.userUseCase.DeleteUserImage(user)
+	if deleteErr != nil {
+		_ = c.Error(deleteErr)
 		return
 	}
 	c.Status(http.StatusOK)
