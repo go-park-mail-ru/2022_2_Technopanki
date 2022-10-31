@@ -135,11 +135,17 @@ func (uh *UserHandler) UpdateUser(c *gin.Context) {
 }
 
 func (uh *UserHandler) GetUser(c *gin.Context) {
-	_, ok := c.Get("userEmail")
+	email, ok := c.Get("userEmail")
 	if !ok {
 		_ = c.Error(errorHandler.ErrUnauthorized)
 		return
 	}
+	emailStr, ok := email.(string)
+	if !ok {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+
 	idStr := c.Query("id")
 	id, queryErr := strconv.Atoi(idStr)
 	if queryErr != nil {
@@ -149,6 +155,10 @@ func (uh *UserHandler) GetUser(c *gin.Context) {
 	user, getErr := uh.userUseCase.GetUser(uint(id))
 	if getErr != nil {
 		_ = c.Error(getErr)
+		return
+	}
+	if user.Email != emailStr {
+		_ = c.Error(errorHandler.ErrUnauthorized)
 		return
 	}
 	c.JSON(http.StatusOK, user)
@@ -189,7 +199,7 @@ func (uh *UserHandler) UploadUserImage(c *gin.Context) {
 	}
 	form, formErr := c.MultipartForm()
 	if formErr != nil {
-		_ = c.Error(formErr)
+		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
 	var fileName string
@@ -197,6 +207,10 @@ func (uh *UserHandler) UploadUserImage(c *gin.Context) {
 	for key := range form.File {
 		fileName = key
 		arr := strings.Split(fileName, ".")
+		if len(arr) < 2 {
+			_ = c.Error(errorHandler.ErrBadRequest)
+			return
+		}
 		imgExt = arr[len(arr)-1]
 	}
 	file, _, fileErr := c.Request.FormFile(fileName)
@@ -215,6 +229,7 @@ func (uh *UserHandler) UploadUserImage(c *gin.Context) {
 	uploadErr := uh.userUseCase.UploadUserImage(user, &file, imgExt)
 	if uploadErr != nil {
 		_ = c.Error(uploadErr)
+		return
 	}
 	c.Status(http.StatusOK)
 }

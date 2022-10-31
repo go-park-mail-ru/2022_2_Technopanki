@@ -16,6 +16,7 @@ var (
 	ErrVacancyNotFound    = errors.New("vacancy not found")
 	ErrResumeNotFound     = errors.New("resume not found")
 
+	ErrInvalidFileFormat   = errors.New("invalid file format")
 	IncorrectNameLength    = errors.New("Длина имени должна быть между 3 и 20 символами")
 	IncorrectSurnameLength = errors.New("Длина фамилии должна быть между 3 и 20 символами")
 
@@ -39,6 +40,7 @@ var errorToCode = map[error]int{
 	ErrVacancyNotFound:    http.StatusNotFound,
 	ErrResumeNotFound:     http.StatusNotFound,
 
+	ErrInvalidFileFormat:   http.StatusBadRequest,
 	IncorrectNameLength:    http.StatusBadRequest,
 	IncorrectSurnameLength: http.StatusBadRequest,
 	InvalidUserType:        http.StatusBadRequest,

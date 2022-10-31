@@ -9,7 +9,6 @@ import (
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/images"
 	"HeadHunter/internal/repository/session"
-	"errors"
 	"fmt"
 	"github.com/google/uuid"
 	"image"
@@ -147,18 +146,16 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, file *multipart
 	case "gif":
 		img, decodeErr = gif.Decode(*file)
 	default:
-		decodeErr = errors.New("unsupported file type")
+		decodeErr = errorHandler.ErrInvalidFileFormat
 	}
 	if decodeErr != nil {
 		return decodeErr
 	}
 
-	if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) {
+	if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
 		user.Image = fmt.Sprintf("%s.webp", uuid.NewString())
 	}
-	if user.Image == "" {
-		return errors.New("blabla")
-	}
+
 	return images.UploadUserAvatar(user.Image, &img, &us.cfg.Image)
 
 }
