@@ -28,7 +28,6 @@ type User interface {
 	UpdateUser(input *models.UserAccount) error
 	GetUser(id uint) (*models.UserAccount, error)
 	GetUserSafety(id uint) (*models.UserAccount, error)
-	GetUserImage(id uint)
 	UpdateUserImage()
 }
 

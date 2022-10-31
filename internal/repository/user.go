@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"HeadHunter/internal/entity/constants"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
 	"gorm.io/gorm"
@@ -14,28 +15,18 @@ func newUserPostgres(db *gorm.DB) *UserPostgres {
 	return &UserPostgres{db: db}
 }
 
-func queryUserValidation(query *gorm.DB) error {
-	if query.Error != nil {
-		return query.Error
-	}
-	if query.RowsAffected == 0 {
-		return errorHandler.ErrUserNotExists
-	}
-	return nil
-}
-
 func (up *UserPostgres) CreateUser(user *models.UserAccount) error {
 	return up.db.Create(user).Error
 }
 
-func (up *UserPostgres) UpgradeUser(oldUser, newUser *models.UserAccount) error {
+func (up *UserPostgres) UpdateUser(oldUser, newUser *models.UserAccount) error {
 	return up.db.Model(oldUser).Updates(newUser).Error
 }
 
 func (up *UserPostgres) GetUserByEmail(email string) (*models.UserAccount, error) {
 	var result models.UserAccount
 	query := up.db.Where("email = ?", email).Find(&result)
-	return &result, queryUserValidation(query)
+	return &result, queryUserValidation(query, "user")
 }
 
 func (up *UserPostgres) IsUserExist(email string) (bool, error) {
@@ -51,18 +42,14 @@ func (up *UserPostgres) IsUserExist(email string) (bool, error) {
 
 func (up *UserPostgres) GetUser(id uint) (*models.UserAccount, error) {
 	var result models.UserAccount
-	query := up.db.Find(&result, id)
-	return &result, queryUserValidation(query)
+	query := up.db.Select(append(constants.PrivateUserFields, constants.SafeUserFields...)).Find(&result, id)
+	return &result, queryUserValidation(query, "user")
 }
 
-func (up *UserPostgres) GetUserSafety(id uint, safeFields []string) (*models.UserAccount, error) {
+func (up *UserPostgres) GetUserSafety(id uint, allowedFields []string) (*models.UserAccount, error) {
 	var result models.UserAccount
-	query := up.db.Select(safeFields).Find(&result, id)
-	return &result, queryUserValidation(query)
-}
-
-func (up *UserPostgres) GetUserImage(id uint) {
-
+	query := up.db.Select(append(constants.SafeUserFields, allowedFields...)).Find(&result, id)
+	return &result, queryUserValidation(query, "user")
 }
 
 func (up *UserPostgres) UpdateUserImage() {

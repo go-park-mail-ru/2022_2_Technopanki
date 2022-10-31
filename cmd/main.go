@@ -35,10 +35,10 @@ func main() {
 		log.Fatal(DBErr)
 	}
 
-	PostgresRepository := repository.NewPostgresRepository(db)
+	postgresRepository := repository.NewPostgresRepository(db)
 
 	useCase := usecases.NewUseCases(
-		&repository.Repository{UserRepository: PostgresRepository.UserRepository},
+		&repository.Repository{UserRepository: postgresRepository.UserRepository},
 		redisRepository,
 		&mainConfig,
 	)

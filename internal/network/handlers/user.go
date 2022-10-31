@@ -105,14 +105,24 @@ func (uh *UserHandler) AuthCheck(c *gin.Context) {
 }
 
 func (uh *UserHandler) UpdateUser(c *gin.Context) {
+	email, ok := c.Get("userEmail")
+	if !ok {
+		_ = c.Error(errorHandler.ErrUnauthorized)
+		return
+	}
+	emailStr, ok := email.(string)
 	var input models.UserAccount
 	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
-	upgradeErr := uh.userUseCase.UpdateUser(&input)
-	if upgradeErr != nil {
-		_ = c.Error(upgradeErr)
+	if emailStr != input.Email {
+		_ = c.Error(errorHandler.ErrUnauthorized)
+		return
+	}
+	updateErr := uh.userUseCase.UpdateUser(&input)
+	if updateErr != nil {
+		_ = c.Error(updateErr)
 		return
 	}
 	c.Status(http.StatusOK)
@@ -126,7 +136,7 @@ func (uh *UserHandler) GetUser(c *gin.Context) {
 	}
 	idStr := c.Query("id")
 	id, queryErr := strconv.Atoi(idStr)
-	if queryErr != nil && idStr != "" {
+	if queryErr != nil {
 		_ = c.Error(errorHandler.ErrInvalidQuery)
 		return
 	}
@@ -139,11 +149,18 @@ func (uh *UserHandler) GetUser(c *gin.Context) {
 }
 
 func (uh *UserHandler) GetUserSafety(c *gin.Context) {
-
-}
-
-func (uh *UserHandler) GetUserImage(c *gin.Context) {
-
+	idStr := c.Query("id")
+	id, queryErr := strconv.Atoi(idStr)
+	if queryErr != nil {
+		_ = c.Error(errorHandler.ErrInvalidQuery)
+		return
+	}
+	user, getErr := uh.userUseCase.GetUserSafety(uint(id))
+	if getErr != nil {
+		_ = c.Error(getErr)
+		return
+	}
+	c.JSON(http.StatusOK, user)
 }
 
 func (uh *UserHandler) UpdateUserImage(c *gin.Context) {

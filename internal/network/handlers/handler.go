@@ -28,7 +28,6 @@ type UserH interface {
 	UpdateUser(c *gin.Context)
 	GetUser(c *gin.Context)
 	GetUserSafety(c *gin.Context)
-	GetUserImage(c *gin.Context)
 	UpdateUserImage(c *gin.Context)
 }
 

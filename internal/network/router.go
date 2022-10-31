@@ -29,8 +29,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware) *
 		user := api.Group("/user")
 		{
 			user.GET("/", sessionMW.Session, h.UserHandler.GetUser, middleware.ErrorHandler())
-			//user.GET("/safety", h.UserHandler.GetUserSafety, middleware.ErrorHandler()) TODO узнать у Сани лучший вариант
-			user.GET("/image", h.UserHandler.GetUserImage, middleware.ErrorHandler())
+			user.GET("/safety", h.UserHandler.GetUserSafety, middleware.ErrorHandler())
 			user.PUT("/", sessionMW.Session, h.UserHandler.UpdateUser, middleware.ErrorHandler())
 			user.PUT("/image", sessionMW.Session, h.UserHandler.UpdateUserImage, middleware.ErrorHandler())
 		}
