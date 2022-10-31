@@ -12,13 +12,8 @@ var (
 	ErrUserExists         = errors.New("Пользователь с таким email уже существует")
 	ErrUserNotExists      = errors.New("Пользователя с таким email не существует")
 	ErrInvalidQuery       = errors.New("invalid query")
-	ErrCannotCreateUser   = errors.New("cannot create user")
-
-	ErrCannotCreateSession = errors.New("cannot create session")
-	ErrSessionNotFound     = errors.New("session with this token not found")
-	ErrCannotDeleteSession = errors.New("cannot delete session")
-
-	ErrVacancyNotFound = errors.New("vacancy not found")
+	ErrSessionNotFound    = errors.New("session with this token not found")
+	ErrVacancyNotFound    = errors.New("vacancy not found")
 
 	IncorrectNameLength    = errors.New("Длина имени должна быть между 3 и 20 символами")
 	IncorrectSurnameLength = errors.New("Длина фамилии должна быть между 3 и 20 символами")
@@ -39,13 +34,8 @@ var errorToCode = map[error]int{
 	ErrUserExists:         http.StatusBadRequest,
 	ErrUserNotExists:      http.StatusUnauthorized,
 	ErrInvalidQuery:       http.StatusBadRequest,
-	ErrCannotCreateUser:   http.StatusServiceUnavailable,
-
-	ErrCannotCreateSession: http.StatusInternalServerError,
-	ErrSessionNotFound:     http.StatusUnauthorized,
-	ErrCannotDeleteSession: http.StatusInternalServerError,
-
-	ErrVacancyNotFound: http.StatusNotFound,
+	ErrSessionNotFound:    http.StatusUnauthorized,
+	ErrVacancyNotFound:    http.StatusNotFound,
 
 	IncorrectNameLength:    http.StatusBadRequest,
 	IncorrectSurnameLength: http.StatusBadRequest,

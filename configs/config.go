@@ -2,7 +2,7 @@ package configs
 
 import (
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 )
 
@@ -67,7 +67,7 @@ func InitConfig(config *Config) error {
 		return fileErr
 	}
 
-	yamlFile, yamlErr := ioutil.ReadFile(filename)
+	yamlFile, yamlErr := os.ReadFile(filename)
 	if yamlErr != nil {
 		return yamlErr
 	}

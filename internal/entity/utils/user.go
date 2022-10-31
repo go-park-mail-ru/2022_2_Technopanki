@@ -5,7 +5,7 @@ import (
 	"HeadHunter/internal/errorHandler"
 )
 
-func GetName(user, reference *models.UserAccount) error {
+func FillUser(user, reference *models.UserAccount) error {
 	if reference.UserType == "applicant" {
 		user.ApplicantName = reference.ApplicantName
 		user.ApplicantSurname = reference.ApplicantSurname

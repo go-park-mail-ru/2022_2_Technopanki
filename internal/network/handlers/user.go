@@ -12,13 +12,13 @@ import (
 )
 
 type UserHandler struct {
-	cfg          *configs.Config
-	userUseCase  usecases.User
-	sessionRepos session.Repository
+	cfg         *configs.Config
+	userUseCase usecases.User
+	sessionRepo session.Repository
 }
 
 func newUserHandler(useCases *usecases.UseCases, _cfg *configs.Config, _sr session.Repository) *UserHandler {
-	return &UserHandler{cfg: _cfg, userUseCase: useCases.User, sessionRepos: _sr}
+	return &UserHandler{cfg: _cfg, userUseCase: useCases.User, sessionRepo: _sr}
 }
 func (uh *UserHandler) SignIn(c *gin.Context) {
 	var input models.UserAccount
@@ -31,7 +31,7 @@ func (uh *UserHandler) SignIn(c *gin.Context) {
 		_ = c.Error(err)
 		return
 	}
-	c.SetCookie("session", token, int(uh.sessionRepos.Expiring()), "/", uh.cfg.Domain,
+	c.SetCookie("session", token, int(uh.cfg.DefaultExpiringSession), "/", uh.cfg.Domain,
 		uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
 	if input.UserType == "applicant" {
 		c.JSON(http.StatusOK, gin.H{"name": input.ApplicantName, "surname": input.ApplicantSurname})

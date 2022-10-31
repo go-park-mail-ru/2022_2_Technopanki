@@ -3,6 +3,7 @@ package session
 import (
 	"HeadHunter/configs"
 	"HeadHunter/internal/errorHandler"
+	"fmt"
 	"github.com/go-redis/redis"
 	"github.com/google/uuid"
 )
@@ -27,7 +28,7 @@ func (rs *RedisStore) NewSession(email string) (string, error) {
 	token := uuid.NewString()
 	err := rs.client.Do("SETEX", token, rs.DefaultExpiresAt, email).Err()
 	if err != nil {
-		return "", errorHandler.ErrCannotCreateSession
+		return "", fmt.Errorf("creating session error: %w", err)
 	}
 	return token, nil
 }
@@ -43,7 +44,7 @@ func (rs *RedisStore) GetSession(token Token) (string, error) {
 func (rs *RedisStore) DeleteSession(token Token) error {
 	err := rs.client.Del(string(token)).Err()
 	if err != nil {
-		return errorHandler.ErrCannotDeleteSession
+		return fmt.Errorf("deleting session error: %w", err)
 	}
 	return nil
 }
