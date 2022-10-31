@@ -27,3 +27,7 @@ cookie:
   secure: false
 crypt:
   cost: 10
+image:
+  path: "data/image/"
+  defaultEmployerAvatar: "basic_employer_avatar"
+  defaultApplicantAvatar: "basic_applicant_avatar"

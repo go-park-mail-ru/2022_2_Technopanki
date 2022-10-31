@@ -25,7 +25,11 @@ type UserH interface {
 	SignIn(c *gin.Context)
 	Logout(c *gin.Context)
 	AuthCheck(c *gin.Context)
-	UpgradeUser(c *gin.Context)
+	UpdateUser(c *gin.Context)
+	GetUser(c *gin.Context)
+	GetUserSafety(c *gin.Context)
+	GetUserImage(c *gin.Context)
+	UpdateUserImage(c *gin.Context)
 }
 
 type VacancyH interface {

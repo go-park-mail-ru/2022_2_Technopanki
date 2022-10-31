@@ -37,8 +37,8 @@ func main() {
 
 	PostgresRepository := repository.NewPostgresRepository(db)
 
-	useCase := usecases.NewUseCases(&repository.Repository{
-		UserRepository: PostgresRepository.UserRepository},
+	useCase := usecases.NewUseCases(
+		&repository.Repository{UserRepository: PostgresRepository.UserRepository},
 		redisRepository,
 		&mainConfig,
 	)

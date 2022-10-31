@@ -23,6 +23,10 @@ type UserRepository interface {
 	GetUserByEmail(email string) (*models.UserAccount, error)
 	IsUserExist(email string) (bool, error)
 	UpgradeUser(oldUser, newUser *models.UserAccount) error
+	GetUser(id uint) (*models.UserAccount, error)
+	GetUserSafety(id uint, safeFields []string) (*models.UserAccount, error)
+	GetUserImage(id uint)
+	UpdateUserImage()
 }
 
 type VacancyRepository interface { //TODO Сделать репозиторий вакансий

@@ -8,6 +8,7 @@ import (
 	"HeadHunter/internal/usecases"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 type UserHandler struct {
@@ -103,16 +104,48 @@ func (uh *UserHandler) AuthCheck(c *gin.Context) {
 	}
 }
 
-func (uh *UserHandler) UpgradeUser(c *gin.Context) {
+func (uh *UserHandler) UpdateUser(c *gin.Context) {
 	var input models.UserAccount
 	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
-	upgradeErr := uh.userUseCase.UpgradeUser(&input)
+	upgradeErr := uh.userUseCase.UpdateUser(&input)
 	if upgradeErr != nil {
 		_ = c.Error(upgradeErr)
 		return
 	}
 	c.Status(http.StatusOK)
+}
+
+func (uh *UserHandler) GetUser(c *gin.Context) {
+	_, ok := c.Get("userEmail")
+	if !ok {
+		_ = c.Error(errorHandler.ErrUnauthorized)
+		return
+	}
+	idStr := c.Query("id")
+	id, queryErr := strconv.Atoi(idStr)
+	if queryErr != nil && idStr != "" {
+		_ = c.Error(errorHandler.ErrInvalidQuery)
+		return
+	}
+	user, getErr := uh.userUseCase.GetUser(uint(id))
+	if getErr != nil {
+		_ = c.Error(getErr)
+		return
+	}
+	c.JSON(http.StatusOK, user)
+}
+
+func (uh *UserHandler) GetUserSafety(c *gin.Context) {
+
+}
+
+func (uh *UserHandler) GetUserImage(c *gin.Context) {
+
+}
+
+func (uh *UserHandler) UpdateUserImage(c *gin.Context) {
+
 }

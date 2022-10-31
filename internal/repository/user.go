@@ -48,3 +48,23 @@ func (up *UserPostgres) IsUserExist(email string) (bool, error) {
 	}
 	return false, getErr
 }
+
+func (up *UserPostgres) GetUser(id uint) (*models.UserAccount, error) {
+	var result models.UserAccount
+	query := up.db.Find(&result, id)
+	return &result, queryUserValidation(query)
+}
+
+func (up *UserPostgres) GetUserSafety(id uint, safeFields []string) (*models.UserAccount, error) {
+	var result models.UserAccount
+	query := up.db.Select(safeFields).Find(&result, id)
+	return &result, queryUserValidation(query)
+}
+
+func (up *UserPostgres) GetUserImage(id uint) {
+
+}
+
+func (up *UserPostgres) UpdateUserImage() {
+
+}

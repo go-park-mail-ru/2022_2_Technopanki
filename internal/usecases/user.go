@@ -8,16 +8,17 @@ import (
 	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/session"
+	"github.com/google/uuid"
 )
 
 type UserService struct {
-	userRep repository.UserRepository
-	sr      session.Repository
-	cfg     *configs.Config
+	userRep    repository.UserRepository
+	sessionRep session.Repository
+	cfg        *configs.Config
 }
 
 func newUserService(userRepos repository.UserRepository, sessionRepos session.Repository, _cfg *configs.Config) *UserService {
-	return &UserService{userRep: userRepos, sr: sessionRepos, cfg: _cfg}
+	return &UserService{userRep: userRepos, sessionRep: sessionRepos, cfg: _cfg}
 }
 
 func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
@@ -33,7 +34,7 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 		return "", cryptErr
 	}
 
-	token, newSessionErr := us.sr.NewSession(input.Email)
+	token, newSessionErr := us.sessionRep.NewSession(input.Email)
 	if newSessionErr != nil {
 		return "", newSessionErr
 	}
@@ -65,8 +66,8 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 	if createErr != nil {
 		return "", errorHandler.ErrCannotCreateUser
 	}
-
-	token, newSessionErr := us.sr.NewSession(input.Email)
+	input.Image = uuid.NewString()
+	token, newSessionErr := us.sessionRep.NewSession(input.Email)
 	if newSessionErr != nil {
 		return "", newSessionErr
 	}
@@ -75,7 +76,7 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 }
 
 func (us *UserService) Logout(token string) error {
-	return us.sr.DeleteSession(session.Token(token))
+	return us.sessionRep.DeleteSession(session.Token(token))
 }
 
 func (us *UserService) AuthCheck(email string) (*models.UserAccount, error) {
@@ -86,7 +87,7 @@ func (us *UserService) AuthCheck(email string) (*models.UserAccount, error) {
 	return user, nil
 }
 
-func (us *UserService) UpgradeUser(input *models.UserAccount) error {
+func (us *UserService) UpdateUser(input *models.UserAccount) error {
 	inputValidity := validation.IsMainDataValid(input, us.cfg.Validation)
 	if inputValidity != nil {
 		return inputValidity
@@ -100,4 +101,23 @@ func (us *UserService) UpgradeUser(input *models.UserAccount) error {
 		return dbError
 	}
 	return nil
+}
+
+func (us *UserService) GetUser(id uint) (*models.UserAccount, error) {
+	return us.userRep.GetUser(id)
+}
+
+func (us *UserService) GetUserSafety(id uint) (*models.UserAccount, error) {
+	safeFields := []string{"email", "user_type", "contact_number", "description", "date_of_birth",
+		"applicant_name", "applicant_surname", "company_name", "applicant_current_salary",
+		"business_type", "company_website_url", "resumes", "vacancies"}
+	return us.userRep.GetUserSafety(id, safeFields)
+}
+
+func (us *UserService) GetUserImage(id uint) {
+
+}
+
+func (us *UserService) UpdateUserImage() {
+
 }

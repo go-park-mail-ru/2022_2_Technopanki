@@ -15,6 +15,7 @@ type Config struct {
 	Validation             ValidationConfig `yaml:"validation"`
 	Cookie                 CookieConfig     `yaml:"cookie"`
 	Crypt                  CryptConfig      `yaml:"crypt"`
+	Image                  ImageConfig      `yaml:"image"`
 }
 
 type DBConfig struct {
@@ -52,6 +53,12 @@ type CookieConfig struct {
 type CryptConfig struct {
 	//COST The cost of the password encryption algorithm
 	COST int `yaml:"cost"`
+}
+
+type ImageConfig struct {
+	Path                   string `yaml:"path"`
+	DefaultEmployerAvatar  string `yaml:"defaultEmployerAvatar"`
+	DefaultApplicantAvatar string `yaml:"defaultApplicantAvatar"`
 }
 
 func InitConfig(config *Config) error {
