@@ -41,7 +41,7 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 		return "", newSessionErr
 	}
 
-	if userCopyErr := utils.GetName(input, user); userCopyErr != nil {
+	if userCopyErr := utils.FillUser(input, user); userCopyErr != nil {
 		return "", userCopyErr
 	}
 	return token, nil
