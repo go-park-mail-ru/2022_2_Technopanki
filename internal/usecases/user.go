@@ -7,9 +7,16 @@ import (
 	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/repository"
+	"HeadHunter/internal/repository/images"
 	"HeadHunter/internal/repository/session"
+	"errors"
 	"fmt"
 	"github.com/google/uuid"
+	"image"
+	"image/gif"
+	"image/jpeg"
+	"image/png"
+	"mime/multipart"
 )
 
 type UserService struct {
@@ -63,11 +70,11 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 		return "", encryptErr
 	}
 	input.Password = encryptedPassword
+	input.Image = fmt.Sprintf("basic_%s_avatar.webp", input.UserType)
 	createErr := us.userRep.CreateUser(input)
 	if createErr != nil {
 		return "", fmt.Errorf("creating session user: %w", createErr)
 	}
-	input.Image = uuid.NewString()
 	token, newSessionErr := us.sessionRepo.NewSession(input.Email)
 	if newSessionErr != nil {
 		return "", newSessionErr
@@ -123,6 +130,35 @@ func (us *UserService) GetUserSafety(id uint) (*models.UserAccount, error) {
 	return us.userRep.GetUserSafety(id, []string{}) //TODO добавить поле в бд
 }
 
-func (us *UserService) UpdateUserImage() {
+func (us *UserService) GetUserByEmail(email string) (*models.UserAccount, error) {
+	return us.userRep.GetUserByEmail(email)
+}
+
+func (us *UserService) UploadUserImage(user *models.UserAccount, file *multipart.File, imageExt string) error {
+	var img image.Image
+	var decodeErr error
+	switch imageExt {
+	case "jpeg":
+		img, decodeErr = jpeg.Decode(*file)
+	case "jpg":
+		img, decodeErr = jpeg.Decode(*file)
+	case "png":
+		img, decodeErr = png.Decode(*file)
+	case "gif":
+		img, decodeErr = gif.Decode(*file)
+	default:
+		decodeErr = errors.New("unsupported file type")
+	}
+	if decodeErr != nil {
+		return decodeErr
+	}
+
+	if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) {
+		user.Image = fmt.Sprintf("%s.webp", uuid.NewString())
+	}
+	if user.Image == "" {
+		return errors.New("blabla")
+	}
+	return images.UploadUserAvatar(user.Image, &img, &us.cfg.Image)
 
 }

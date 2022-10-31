@@ -9,6 +9,8 @@ services:
     depends_on:
       - postgres
       - redis
+    volumes:
+      - .data/image:/backend/data/image
   postgres:
     image: postgres:latest
     container_name: jfPostgres

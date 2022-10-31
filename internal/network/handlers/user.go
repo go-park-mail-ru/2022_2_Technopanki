@@ -7,8 +7,10 @@ import (
 	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases"
 	"github.com/gin-gonic/gin"
+	"mime/multipart"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type UserHandler struct {
@@ -111,6 +113,10 @@ func (uh *UserHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 	emailStr, ok := email.(string)
+	if !ok {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
 	var input models.UserAccount
 	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
@@ -163,6 +169,52 @@ func (uh *UserHandler) GetUserSafety(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-func (uh *UserHandler) UpdateUserImage(c *gin.Context) {
+func (uh *UserHandler) UploadUserImage(c *gin.Context) {
+	email, ok := c.Get("userEmail")
+	if !ok {
+		_ = c.Error(errorHandler.ErrUnauthorized)
+		return
+	}
+	emailStr, ok := email.(string)
+	if !ok {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
 
+	user, getUserErr := uh.userUseCase.GetUserByEmail(emailStr)
+
+	if getUserErr != nil {
+		_ = c.Error(errorHandler.ErrUserNotExists)
+		return
+	}
+	form, formErr := c.MultipartForm()
+	if formErr != nil {
+		_ = c.Error(formErr)
+		return
+	}
+	var fileName string
+	var imgExt string
+	for key := range form.File {
+		fileName = key
+		arr := strings.Split(fileName, ".")
+		imgExt = arr[len(arr)-1]
+	}
+	file, _, fileErr := c.Request.FormFile(fileName)
+	if fileErr != nil {
+		_ = c.Error(fileErr)
+		return
+	}
+
+	defer func(file multipart.File) {
+		err := file.Close()
+		if err != nil {
+			_ = c.Error(err)
+		}
+	}(file)
+
+	uploadErr := uh.userUseCase.UploadUserImage(user, &file, imgExt)
+	if uploadErr != nil {
+		_ = c.Error(uploadErr)
+	}
+	c.Status(http.StatusOK)
 }

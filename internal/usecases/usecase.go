@@ -6,6 +6,7 @@ import (
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/session"
+	"mime/multipart"
 )
 
 type UseCases struct {
@@ -28,7 +29,8 @@ type User interface {
 	UpdateUser(input *models.UserAccount) error
 	GetUser(id uint) (*models.UserAccount, error)
 	GetUserSafety(id uint) (*models.UserAccount, error)
-	UpdateUserImage()
+	GetUserByEmail(email string) (*models.UserAccount, error)
+	UploadUserImage(user *models.UserAccount, file *multipart.File, imageExt string) error
 }
 
 type Vacancy interface { //TODO Сделать юзкейс вакансий

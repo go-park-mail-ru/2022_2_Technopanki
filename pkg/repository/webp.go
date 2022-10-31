@@ -1,41 +1,40 @@
 package repository
 
-//import (
-//	"HeadHunter/configs"
-//	"github.com/kolesa-team/go-webp/decoder"
-//	"github.com/kolesa-team/go-webp/webp"
-//	"image/jpeg"
-//	"log"
-//	"os"
-//)
-//
-//func GetImage(path, name string, cfg *configs.ImageConfig) (err error) {
-//	file, err := os.Open("test_data/images/m4_q75.webp")
-//	if err != nil {
-//		log.Fatalln(err)
-//	}
-//
-//	output, err := os.Create("example/output_decode.jpg")
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//	defer output.Close()
-//
-//	img, err := webp.Decode(file, &decoder.Options{})
-//	if err != nil {
-//		log.Fatalln(err)
-//	}
-//
-//	if err = jpeg.Encode(output, img, &jpeg.Options{Quality: 75}); err != nil {
-//		log.Fatalln(err)
-//	}
-//	return nil
-//}
-//
-//func DeleteImage(path, name string, cfg *configs.ImageConfig) (err error) {
-//	return nil
-//}
-//
-//func CreateImage(path, name string, cfg *configs.ImageConfig) (err error) {
-//	return nil
-//}
+import (
+	"github.com/kolesa-team/go-webp/encoder"
+	"github.com/kolesa-team/go-webp/webp"
+	"image"
+	"os"
+	"strings"
+)
+
+func UploadWebpImage(path, name string, image *image.Image) (err error) {
+	resultImage, createErr := os.Create(strings.Join([]string{path, name}, ""))
+	if createErr != nil {
+		return createErr
+	}
+	defer func(resultImage *os.File) {
+		closeErr := resultImage.Close()
+		if closeErr != nil {
+			err = closeErr
+		}
+	}(resultImage)
+
+	options, optionErr := encoder.NewLossyEncoderOptions(encoder.PresetDefault, 75)
+	if optionErr != nil {
+		return optionErr
+	}
+
+	if encodingErr := webp.Encode(resultImage, *image, options); err != nil {
+		return encodingErr
+	}
+	return nil
+}
+
+func DeleteImage(path, name string) (err error) {
+	removeErr := os.Remove(strings.Join([]string{path, name}, ""))
+	if removeErr != nil {
+		return removeErr
+	}
+	return nil
+}

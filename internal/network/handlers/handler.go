@@ -28,7 +28,7 @@ type UserH interface {
 	UpdateUser(c *gin.Context)
 	GetUser(c *gin.Context)
 	GetUserSafety(c *gin.Context)
-	UpdateUserImage(c *gin.Context)
+	UploadUserImage(c *gin.Context)
 }
 
 type VacancyH interface {
