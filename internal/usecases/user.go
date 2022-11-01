@@ -71,7 +71,7 @@ func (us *UserService) SignUp(input models.UserAccount) (string, error) {
 }
 
 func (us *UserService) Logout(token string) error {
-	return us.sessionRepo.DeleteSession(session.Token(token))
+	return us.sessionRepo.DeleteSession(token)
 }
 
 func (us *UserService) AuthCheck(email string) (models.UserAccount, error) {

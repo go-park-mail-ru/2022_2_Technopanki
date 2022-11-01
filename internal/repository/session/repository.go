@@ -1,6 +1,5 @@
 package session
 
-type Token string
 type Session struct {
 	Email     string
 	ExpiresAt int
@@ -8,7 +7,6 @@ type Session struct {
 
 type Repository interface {
 	NewSession(email string) (string, error)
-	GetSession(token Token) (string, error)
-	DeleteSession(token Token) error
-	Expiring() int
+	GetSession(token string) (string, error)
+	DeleteSession(token string) error
 }
