@@ -8,16 +8,18 @@ import (
 	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/session"
+	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
-	userRep repository.UserRepository
-	sr      session.Repository
-	cfg     *configs.Config
+  userRep     repository.UserRepository
+  sessionRepo session.Repository
+  cfg         *configs.Config
 }
 
 func newUserService(userRepos repository.UserRepository, sessionRepos session.Repository, _cfg *configs.Config) *UserService {
-	return &UserService{userRep: userRepos, sr: sessionRepos, cfg: _cfg}
+	return &UserService{userRep: userRepos, sessionRepo: sessionRepos, cfg: _cfg}
 }
 
 func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
@@ -38,7 +40,12 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 		return "", newSessionErr
 	}
 
-	if userCopyErr := utils.GetName(input, user); userCopyErr != nil {
+	token, newSessionErr := us.sessionRepo.NewSession(input.Email)
+	if newSessionErr != nil {
+		return "", newSessionErr
+	}
+
+	if userCopyErr := utils.FillUser(input, user); userCopyErr != nil {
 		return "", userCopyErr
 	}
 	return token, nil
@@ -70,20 +77,19 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 	if newSessionErr != nil {
 		return "", newSessionErr
 	}
-
 	return token, nil
 }
 
 func (us *UserService) Logout(token string) error {
-	return us.sr.DeleteSession(session.Token(token))
+	return us.sessionRepo.DeleteSession(token)
 }
 
-func (us *UserService) AuthCheck(email string) (*models.UserAccount, error) {
-	user, err := us.userRep.GetUserByEmail(email)
+func (us *UserService) AuthCheck(email string) (models.UserAccount, error) {
+	user, err := us.ur.GetUserByEmail(email)
 	if err != nil {
-		return nil, err
+		return models.UserAccount{}, err
 	}
-	return user, nil
+	return *user, nil
 }
 
 func (us *UserService) UpgradeUser(input *models.UserAccount) error {

@@ -2,14 +2,14 @@ package configs
 
 import (
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 )
 
 type Config struct {
 	Domain                 string           `yaml:"domain"`
 	Port                   string           `yaml:"port"`
-	DefaultExpiringSession int64            `yaml:"defaultExpiringSession"`
+	DefaultExpiringSession int              `yaml:"defaultExpiringSession"`
 	DB                     DBConfig         `yaml:"db"`
 	Redis                  RedisConfig      `yaml:"redis"`
 	Validation             ValidationConfig `yaml:"validation"`
@@ -60,11 +60,11 @@ func InitConfig(config *Config) error {
 		return fileErr
 	}
 
-	yamlFile, yamlErr := ioutil.ReadFile(filename)
+	yamlFile, yamlErr := os.ReadFile(filename)
 	if yamlErr != nil {
 		return yamlErr
 	}
-
+  
 	marshalErr := yaml.Unmarshal(yamlFile, config)
 	if marshalErr != nil {
 		return marshalErr

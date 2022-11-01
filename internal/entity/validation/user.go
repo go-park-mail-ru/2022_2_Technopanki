@@ -1,69 +1,71 @@
 package validation
 
 import (
-	"HeadHunter/configs"
-	"HeadHunter/internal/entity/models"
-	"HeadHunter/internal/errorHandler"
-	"strings"
+  "HeadHunter/configs"
+  "HeadHunter/internal/entity/models"
+  "HeadHunter/internal/errorHandler"
+  "strings"
 )
 
 func verifyPassword(password string) bool {
-	var special, number, symbol bool
-	for _, c := range password {
-		if c >= '0' && c <= '9' {
-			number = true
-		} else if strings.Contains("!#%^$", string(c)) {
-			special = true
-		} else if c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z' {
-			symbol = true
-		} else {
-			return false
-		}
-	}
-	return number && special && symbol
+  var special, number, symbol bool
+  for _, c := range password {
+    if c >= '0' && c <= '9' {
+      number = true
+    } else if strings.Contains("!#%^$", string(c)) {
+      special = true
+    } else if c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z' {
+      symbol = true
+    } else {
+      return false
+    }
+  }
+  return number && special && symbol
 }
+
 func IsAuthDataValid(user *models.UserAccount, cfg configs.ValidationConfig) error {
 
-	if strings.Count(user.Email, "@") != 1 {
-		return errorHandler.InvalidEmailFormat
-	}
+  if strings.Count(user.Email, "@") != 1 {
+    return errorHandler.InvalidEmailFormat
+  }
 
-	if len(user.Email) < cfg.MinEmailLength || len(user.Email) > cfg.MaxEmailLength {
-		return errorHandler.IncorrectEmailLength
-	}
+  if len(user.Email) < cfg.MinEmailLength || len(user.Email) > cfg.MaxEmailLength {
+    return errorHandler.IncorrectEmailLength
+  }
 
-	if !verifyPassword(user.Password) {
-		return errorHandler.InvalidPasswordFormat
-	}
+  if !verifyPassword(user.Password) {
+    return errorHandler.InvalidPasswordFormat
+  }
 
-	if len(user.Password) < cfg.MinPasswordLength || len(user.Password) > cfg.MaxPasswordLength {
-		return errorHandler.IncorrectPasswordLength
-	}
+  if len(user.Password) < cfg.MinPasswordLength || len(user.Password) > cfg.MaxPasswordLength {
+    return errorHandler.IncorrectPasswordLength
+  }
 
-	return nil
+  return nil
 }
-func IsMainDataValid(user *models.UserAccount, cfg configs.ValidationConfig) error {
-	if user.UserType == "applicant" {
-		if len([]rune(user.ApplicantName)) > cfg.MaxNameLength || len([]rune(user.ApplicantName)) < cfg.MinNameLength {
-			return errorHandler.IncorrectNameLength
-		}
 
-		if len([]rune(user.ApplicantSurname)) > cfg.MaxSurnameLength || len([]rune(user.ApplicantSurname)) < cfg.MinSurnameLength {
-			return errorHandler.IncorrectSurnameLength
-		}
-	} else if user.UserType == "employer" {
-		if len([]rune(user.CompanyName)) > cfg.MaxNameLength || len([]rune(user.CompanyName)) < cfg.MinNameLength {
-			return errorHandler.IncorrectNameLength
-		}
-	} else {
-		return errorHandler.InvalidUserType
-	}
-	return nil
+func IsMainDataValid(user *models.UserAccount, cfg configs.ValidationConfig) error {
+  if user.UserType == "applicant" {
+    if len([]rune(user.ApplicantName)) > cfg.MaxNameLength || len([]rune(user.ApplicantName)) < cfg.MinNameLength {
+      return errorHandler.IncorrectNameLength
+    }
+
+    if len([]rune(user.ApplicantSurname)) > cfg.MaxSurnameLength || len([]rune(user.ApplicantSurname)) < cfg.MinSurnameLength {
+      return errorHandler.IncorrectSurnameLength
+    }
+  } else if user.UserType == "employer" {
+    if len([]rune(user.CompanyName)) > cfg.MaxNameLength || len([]rune(user.CompanyName)) < cfg.MinNameLength {
+      return errorHandler.IncorrectNameLength
+    }
+  } else {
+    return errorHandler.InvalidUserType
+  }
+  return nil
 }
 
 func IsUserValid(user *models.UserAccount, cfg configs.ValidationConfig) error {
-	if mainDataErr := IsMainDataValid(user, cfg); mainDataErr != nil {
-		return mainDataErr
-	}
-	return IsAuthDataValid(user, cfg)
+  if mainDataErr := IsMainDataValid(user, cfg); mainDataErr != nil {
+    return mainDataErr
+  }
+  return IsAuthDataValid(user, cfg)
 }
