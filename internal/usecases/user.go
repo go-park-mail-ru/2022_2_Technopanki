@@ -1,25 +1,29 @@
 package usecases
 
 import (
-	"HeadHunter/internal/entity"
+	"HeadHunter/configs"
+	"HeadHunter/internal/entity/models"
+	"HeadHunter/internal/entity/utils"
 	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/errorHandler"
-	"HeadHunter/internal/network/sessions"
 	"HeadHunter/internal/repository"
+	"HeadHunter/internal/repository/session"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
-	ur repository.UserRepository
+	ur          repository.UserRepository
+	sessionRepo session.Repository
+	cfg         *configs.Config
 }
 
-func newUserService(userRepos repository.UserRepository) *UserService {
-	return &UserService{ur: userRepos}
+func newUserService(userRepos repository.UserRepository, sessionRepos session.Repository, _cfg *configs.Config) *UserService {
+	return &UserService{ur: userRepos, sessionRepo: sessionRepos, cfg: _cfg}
 }
 
-func (us *UserService) SignIn(input *entity.User) (string, error) {
-	inputValidity := validation.IsAuthDataValid(*input)
+func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
+	inputValidity := validation.IsAuthDataValid(*input, us.cfg.Validation)
 	if inputValidity != nil {
 		return "", inputValidity
 	}
@@ -32,39 +36,48 @@ func (us *UserService) SignIn(input *entity.User) (string, error) {
 		return "", errorHandler.ErrUnauthorized
 	}
 
-	token := sessions.SessionsStore.NewSession(input.Email)
-	input.Name = user.Name
-	input.Surname = user.Surname
+	token, newSessionErr := us.sessionRepo.NewSession(input.Email)
+	if newSessionErr != nil {
+		return "", newSessionErr
+	}
+
+	if userCopyErr := utils.FillUser(input, user); userCopyErr != nil {
+		return "", userCopyErr
+	}
 	return token, nil
 }
 
-func (us *UserService) SignUp(input entity.User) (string, error) {
-	inputValidity := validation.IsUserValid(input)
+func (us *UserService) SignUp(input models.UserAccount) (string, error) {
+	inputValidity := validation.IsUserValid(input, us.cfg.Validation)
 	if inputValidity != nil {
 		return "", inputValidity
 	}
 	user, err := us.ur.GetUserByEmail(input.Email)
-	var emptyUser entity.User
-	if user != emptyUser {
+	if user != nil {
 		return "", errorHandler.ErrUserExists
 	}
+
 	err = us.ur.CreateUser(input)
 	if err != nil {
 		return "", errorHandler.ErrServiceUnavailable
 	}
-	input.ID = uuid.NewString()
-	token := sessions.SessionsStore.NewSession(input.Email)
+	input.UUID = uuid.NewString()
+
+	token, newSessionErr := us.sessionRepo.NewSession(input.Email)
+	if newSessionErr != nil {
+		return "", newSessionErr
+	}
 	return token, nil
 }
 
 func (us *UserService) Logout(token string) error {
-	return sessions.SessionsStore.DeleteSession(sessions.Token(token))
+	return us.sessionRepo.DeleteSession(token)
 }
 
-func (us *UserService) AuthCheck(email string) (entity.User, error) {
+func (us *UserService) AuthCheck(email string) (models.UserAccount, error) {
 	user, err := us.ur.GetUserByEmail(email)
 	if err != nil {
-		return entity.User{}, err
+		return models.UserAccount{}, err
 	}
-	return user, nil
+	return *user, nil
 }

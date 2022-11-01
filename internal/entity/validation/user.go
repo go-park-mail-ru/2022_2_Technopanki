@@ -1,7 +1,8 @@
 package validation
 
 import (
-	"HeadHunter/internal/entity"
+	"HeadHunter/configs"
+	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
 	"strings"
 )
@@ -21,13 +22,13 @@ func verifyPassword(password string) bool {
 	}
 	return number && special && symbol
 }
-func IsAuthDataValid(user entity.User) error {
+func IsAuthDataValid(user models.UserAccount, cfg configs.ValidationConfig) error {
 
 	if strings.Count(user.Email, "@") != 1 {
 		return errorHandler.InvalidEmailFormat
 	}
 
-	if len(user.Email) < 8 || len(user.Email) > 30 {
+	if len(user.Email) < cfg.MinEmailLength || len(user.Email) > cfg.MaxEmailLength {
 		return errorHandler.IncorrectEmailLength
 	}
 
@@ -35,24 +36,27 @@ func IsAuthDataValid(user entity.User) error {
 		return errorHandler.InvalidPasswordFormat
 	}
 
-	if len(user.Password) < 8 || len(user.Password) > 20 {
+	if len(user.Password) < cfg.MinPasswordLength || len(user.Password) > cfg.MaxPasswordLength {
 		return errorHandler.IncorrectPasswordLength
 	}
 
 	return nil
 }
-func IsUserValid(user entity.User) error {
-	if len([]rune(user.Name)) > 20 || len([]rune(user.Name)) < 3 {
-		return errorHandler.IncorrectNameLength
-	}
+func IsUserValid(user models.UserAccount, cfg configs.ValidationConfig) error {
+	if user.UserType == "applicant" {
+		if len([]rune(user.ApplicantName)) > cfg.MaxNameLength || len([]rune(user.ApplicantName)) < cfg.MinNameLength {
+			return errorHandler.IncorrectNameLength
+		}
 
-	if len([]rune(user.Surname)) > 20 || len([]rune(user.Surname)) < 3 {
-		return errorHandler.IncorrectSurnameLength
+		if len([]rune(user.ApplicantSurname)) > cfg.MaxSurnameLength || len([]rune(user.ApplicantSurname)) < cfg.MinSurnameLength {
+			return errorHandler.IncorrectSurnameLength
+		}
+	} else if user.UserType == "employer" {
+		if len([]rune(user.CompanyName)) > cfg.MaxNameLength || len([]rune(user.CompanyName)) < cfg.MinNameLength {
+			return errorHandler.IncorrectNameLength
+		}
+	} else {
+		return errorHandler.InvalidUserType
 	}
-
-	if user.Role != "employer" && user.Role != "applicant" {
-		return errorHandler.InvalidUserRole
-	}
-
-	return IsAuthDataValid(user)
+	return IsAuthDataValid(user, cfg)
 }

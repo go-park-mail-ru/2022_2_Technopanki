@@ -1,8 +1,11 @@
 package usecases
 
 import (
+	"HeadHunter/configs"
 	"HeadHunter/internal/entity"
+	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/repository"
+	"HeadHunter/internal/repository/session"
 )
 
 type UseCases struct {
@@ -11,17 +14,17 @@ type UseCases struct {
 	Resume  Resume
 }
 
-func NewUseCases(repos *repository.Repository) *UseCases {
+func NewUseCases(repos *repository.Repository, session session.Repository, _cfg *configs.Config) *UseCases {
 	return &UseCases{
-		User: newUserService(repos.UserRepository),
+		User: newUserService(repos.UserRepository, session, _cfg),
 	}
 }
 
 type User interface {
-	SignUp(input entity.User) (string, error)
-	SignIn(input *entity.User) (string, error)
+	SignUp(input models.UserAccount) (string, error)
+	SignIn(input *models.UserAccount) (string, error)
 	Logout(token string) error
-	AuthCheck(email string) (entity.User, error)
+	AuthCheck(email string) (models.UserAccount, error)
 }
 
 type Vacancy interface { //TODO Сделать юзкейс вакансий

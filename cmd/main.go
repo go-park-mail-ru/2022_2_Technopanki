@@ -4,12 +4,12 @@ import (
 	"HeadHunter/configs"
 	"HeadHunter/internal/network"
 	"HeadHunter/internal/network/handlers"
-	"HeadHunter/internal/network/sessions"
+	"HeadHunter/internal/network/middleware"
 	"HeadHunter/internal/repository"
+	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/storage"
 	"HeadHunter/internal/usecases"
 	repositorypkg "HeadHunter/pkg/repository"
-	"github.com/spf13/viper"
 	"log"
 )
 
@@ -24,17 +24,27 @@ func main() {
 	if configErr := configs.InitConfig(&mainConfig); configErr != nil {
 		log.Fatal(configErr.Error())
 	}
-	sessions.SessionsStore = *sessions.NewSessionsStore(mainConfig)
-	_, err := repositorypkg.Connect(mainConfig.DB) //TODO добавить базу данных
-	if err != nil {
-		log.Fatal(err)
+	client, redisErr := repositorypkg.RedisConnect(mainConfig.Redis)
+	if redisErr != nil {
+		log.Fatal(redisErr)
+	}
+	redisRepository := session.NewRedisStore(mainConfig, client)
+	sessionMiddleware := middleware.NewSessionMiddleware(redisRepository)
+	_, DBErr := repositorypkg.DBConnect(mainConfig.DB) //TODO добавить базу данных
+	if DBErr != nil {
+		log.Fatal(DBErr)
 	}
 
 	useCase := usecases.NewUseCases(&repository.Repository{
-		UserRepository: &storage.UserStorage})
-	handler := handlers.NewHandlers(useCase, &mainConfig)
-	router := network.InitRoutes(handler)
-	runErr := router.Run(viper.GetString("port"))
+		UserRepository: &storage.UserStorage}, //TODO добавить нормальнуб бд
+		redisRepository,
+		&mainConfig,
+	)
+
+	handler := handlers.NewHandlers(useCase, &mainConfig, redisRepository)
+
+	router := network.InitRoutes(handler, sessionMiddleware)
+	runErr := router.Run(mainConfig.Port)
 	if runErr != nil {
 		log.Fatal(runErr)
 	}

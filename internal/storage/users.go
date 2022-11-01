@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"HeadHunter/internal/entity"
+	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
 	"golang.org/x/crypto/bcrypt"
 	"sync"
@@ -12,21 +12,21 @@ var COST = 10
 
 type Users struct {
 	// maps user email to entity.User
-	Values map[string]entity.User
+	Values map[string]models.UserAccount
 	mutex  sync.RWMutex
 }
 
-func (u *Users) GetUserByEmail(email string) (entity.User, error) {
+func (u *Users) GetUserByEmail(email string) (*models.UserAccount, error) {
 	u.mutex.RLock()
 	defer u.mutex.RUnlock()
 	if val, exists := u.Values[email]; exists {
-		return val, nil
+		return &val, nil
 	}
 
-	return entity.User{}, errorHandler.ErrUserNotExists
+	return nil, errorHandler.ErrUserNotExists
 }
 
-func (u *Users) CreateUser(user entity.User) error {
+func (u *Users) CreateUser(user models.UserAccount) error {
 	encryptedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), COST)
 	if err != nil {
 		return err
@@ -43,13 +43,19 @@ func (u *Users) CreateUser(user entity.User) error {
 var password, _ = bcrypt.GenerateFromPassword([]byte("123456!!a"), COST)
 
 var UserStorage = Users{
-	Values: map[string]entity.User{
+	Values: map[string]models.UserAccount{
 		"example@mail.ru": {
-			Name:     "Zakhar",
-			Surname:  "Urvancev",
-			Email:    "example@mail.ru",
-			Password: string(password),
-			Role:     "applicant",
+			ApplicantName:    "Zakhar",
+			ApplicantSurname: "Urvancev",
+			Email:            "example@mail.ru",
+			Password:         string(password),
+			UserType:         "applicant",
+		},
+		"example_employer@mail.ru": {
+			CompanyName: "Employer inc.",
+			Email:       "example_employer@mail.ru",
+			Password:    string(password),
+			UserType:    "employer",
 		},
 	},
 }

@@ -1,10 +1,27 @@
 domain: "localhost"
 port: ":8080"
-defaultExpiringSession: 12
+defaultExpiringSession: 259200
 db:
   username: "jobflowAdmin"
-  host: "localhost"
+  host: "jfPostgres"
   port: "5432"
   dbname: "jobflowDB"
   sslmode: "disable"
   password: "12345"
+redis:
+  host: "jfRedis"
+  port: "6379"
+  password: "rjf358123QWE"
+  dbname: "sessionDB"
+validation:
+  minNameLength: 2
+  maxNameLength: 20
+  minSurnameLength: 2
+  maxSurnameLength: 20
+  minPasswordLength: 8
+  maxPasswordLength: 20
+  minEmailLength: 8
+  maxEmailLength: 30
+cookie:
+  httpOnly: true
+  secure: false

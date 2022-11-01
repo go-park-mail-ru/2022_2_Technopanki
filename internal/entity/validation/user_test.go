@@ -1,7 +1,8 @@
 package validation
 
 import (
-	"HeadHunter/internal/entity"
+	"HeadHunter/configs"
+	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -53,12 +54,12 @@ func Test_VerifyPassword(t *testing.T) {
 func Test_IsValidateAuthData(t *testing.T) {
 	testTable := []struct {
 		name     string
-		user     entity.User
+		user     models.UserAccount
 		expected error
 	}{
 		{
 			name: "valid user",
-			user: entity.User{
+			user: models.UserAccount{
 				Email:    "example@mail.com",
 				Password: "123456!a",
 			},
@@ -66,7 +67,7 @@ func Test_IsValidateAuthData(t *testing.T) {
 		},
 		{
 			name: "invalid email format",
-			user: entity.User{
+			user: models.UserAccount{
 				Email:    "examplemail.com",
 				Password: "123456!a",
 			},
@@ -74,7 +75,7 @@ func Test_IsValidateAuthData(t *testing.T) {
 		},
 		{
 			name: "incorrect email length",
-			user: entity.User{
+			user: models.UserAccount{
 				Email:    "xmp@ml",
 				Password: "123456!a",
 			},
@@ -82,7 +83,7 @@ func Test_IsValidateAuthData(t *testing.T) {
 		},
 		{
 			name: "invalid password format",
-			user: entity.User{
+			user: models.UserAccount{
 				Email:    "example@mail.com",
 				Password: "123456a",
 			},
@@ -90,7 +91,7 @@ func Test_IsValidateAuthData(t *testing.T) {
 		},
 		{
 			name: "incorrect password length",
-			user: entity.User{
+			user: models.UserAccount{
 				Email:    "example@mail.com",
 				Password: "1a!",
 			},
@@ -101,7 +102,16 @@ func Test_IsValidateAuthData(t *testing.T) {
 		tc := testCase
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			result := IsValidateAuthData(tc.user)
+			result := IsAuthDataValid(tc.user, configs.ValidationConfig{
+				MinNameLength:     2,
+				MaxNameLength:     20,
+				MinSurnameLength:  3,
+				MaxSurnameLength:  20,
+				MinPasswordLength: 8,
+				MaxPasswordLength: 20,
+				MinEmailLength:    8,
+				MaxEmailLength:    30,
+			})
 			assert.Equal(t, tc.expected, result)
 		})
 
@@ -111,79 +121,82 @@ func Test_IsValidateAuthData(t *testing.T) {
 func Test_IsValidate(t *testing.T) {
 	testTable := []struct {
 		name     string
-		user     entity.User
+		user     models.UserAccount
 		expected error
 	}{
 		{
 			name: "valid user",
-			user: entity.User{
-				Name:     "Zakhar",
-				Surname:  "Urvancev",
-				Email:    "example@mail.com",
-				Password: "123456!a",
-				Role:     "employer",
+			user: models.UserAccount{
+				CompanyName: "Mail.ru",
+				Email:       "example@mail.com",
+				Password:    "123456!a",
+				UserType:    "employer",
 			},
 			expected: nil,
 		},
 		{
 			name: "valid user 2",
-			user: entity.User{
-				Name:     "Zakhar",
-				Surname:  "Urvancev",
-				Email:    "example@mail.com",
-				Password: "123456!a",
-				Role:     "applicant",
+			user: models.UserAccount{
+				ApplicantName:    "Zakhar",
+				ApplicantSurname: "Urvancev",
+				Email:            "example@mail.com",
+				Password:         "123456!a",
+				UserType:         "applicant",
 			},
 			expected: nil,
 		},
 		{
 			name: "invalid user role",
-			user: entity.User{
-				Name:     "Zakhar",
-				Surname:  "Urvancev",
-				Email:    "example@mail.com",
-				Password: "123456!a",
-				Role:     "some_role)",
+			user: models.UserAccount{
+				ApplicantName:    "Zakhar",
+				ApplicantSurname: "Urvancev",
+				Email:            "example@mail.com",
+				Password:         "123456!a",
+				UserType:         "some_role)",
 			},
-			expected: errorHandler.InvalidUserRole,
+			expected: errorHandler.InvalidUserType,
 		},
 		{
 			name: "incorrect name length 1",
-			user: entity.User{
-				Name:     "Z",
-				Surname:  "Urvancev",
-				Email:    "example@mail.com",
-				Password: "123456!a",
+			user: models.UserAccount{
+				ApplicantName:    "Z",
+				ApplicantSurname: "Urvancev",
+				Email:            "example@mail.com",
+				Password:         "123456!a",
+				UserType:         "applicant",
 			},
 			expected: errorHandler.IncorrectNameLength,
 		},
 		{
 			name: "incorrect name length 2",
-			user: entity.User{
-				Name:     "Zaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahar",
-				Surname:  "Urvancev",
-				Email:    "example@mail.com",
-				Password: "123456!a",
+			user: models.UserAccount{
+				ApplicantName:    "Zaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahar",
+				ApplicantSurname: "Urvancev",
+				Email:            "example@mail.com",
+				Password:         "123456!a",
+				UserType:         "applicant",
 			},
 			expected: errorHandler.IncorrectNameLength,
 		},
 		{
 			name: "incorrect surname length 1",
-			user: entity.User{
-				Name:     "Zakhar",
-				Surname:  "U",
-				Email:    "example@mail.com",
-				Password: "123456!a",
+			user: models.UserAccount{
+				ApplicantName:    "Zakhar",
+				ApplicantSurname: "U",
+				Email:            "example@mail.com",
+				Password:         "123456!a",
+				UserType:         "applicant",
 			},
 			expected: errorHandler.IncorrectSurnameLength,
 		},
 		{
 			name: "incorrect surname length 2",
-			user: entity.User{
-				Name:     "Zakhar",
-				Surname:  "Urvaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaancev",
-				Email:    "example@mail.com",
-				Password: "123456!a",
+			user: models.UserAccount{
+				ApplicantName:    "Zakhar",
+				ApplicantSurname: "Urvaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaancev",
+				Email:            "example@mail.com",
+				Password:         "123456!a",
+				UserType:         "applicant",
 			},
 			expected: errorHandler.IncorrectSurnameLength,
 		},
@@ -192,7 +205,16 @@ func Test_IsValidate(t *testing.T) {
 		tc := testCase
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			result := IsValidate(tc.user)
+			result := IsUserValid(tc.user, configs.ValidationConfig{
+				MinNameLength:     2,
+				MaxNameLength:     20,
+				MinSurnameLength:  3,
+				MaxSurnameLength:  20,
+				MinPasswordLength: 8,
+				MaxPasswordLength: 20,
+				MinEmailLength:    8,
+				MaxEmailLength:    30,
+			})
 			assert.Equal(t, tc.expected, result)
 		})
 

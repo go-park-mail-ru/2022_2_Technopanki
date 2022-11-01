@@ -6,15 +6,14 @@ import (
 )
 
 var (
-	ErrBadRequest          = errors.New("bad request")
-	ErrUnauthorized        = errors.New("unauthorized")
-	ErrServiceUnavailable  = errors.New("service unavailable")
-	ErrUserExists          = errors.New("Пользователь с таким email уже существует")
-	ErrUserNotExists       = errors.New("Пользователя с таким email не существует")
-	ErrInvalidQuery        = errors.New("invalid query")
-	ErrSessionNotFound     = errors.New("session with this token not found")
-	ErrCannotDeleteSession = errors.New("cannot delete session")
-	ErrVacancyNotFound     = errors.New("vacancy not found")
+	ErrBadRequest         = errors.New("bad request")
+	ErrUnauthorized       = errors.New("unauthorized")
+	ErrServiceUnavailable = errors.New("service unavailable")
+	ErrUserExists         = errors.New("Пользователь с таким email уже существует")
+	ErrUserNotExists      = errors.New("Пользователя с таким email не существует")
+	ErrInvalidQuery       = errors.New("invalid query")
+	ErrSessionNotFound    = errors.New("session with this token not found")
+	ErrVacancyNotFound    = errors.New("vacancy not found")
 
 	IncorrectNameLength    = errors.New("Длина имени должна быть между 3 и 20 символами")
 	IncorrectSurnameLength = errors.New("Длина фамилии должна быть между 3 и 20 символами")
@@ -25,23 +24,22 @@ var (
 	InvalidPasswordFormat   = errors.New("Пароль должен содержать буквы латиницы, цифры и спецсимволы(!#%^$)")
 	IncorrectPasswordLength = errors.New("Длина пароля должна быть между 8 и 20 символами")
 
-	InvalidUserRole = errors.New("invalid input user role")
+	InvalidUserType = errors.New("invalid input user type")
 )
 
 var errorToCode = map[error]int{
-	ErrBadRequest:          http.StatusBadRequest,
-	ErrUnauthorized:        http.StatusUnauthorized,
-	ErrServiceUnavailable:  http.StatusServiceUnavailable,
-	ErrUserExists:          http.StatusBadRequest,
-	ErrUserNotExists:       http.StatusUnauthorized,
-	ErrInvalidQuery:        http.StatusBadRequest,
-	ErrSessionNotFound:     http.StatusUnauthorized,
-	ErrCannotDeleteSession: http.StatusBadRequest,
-	ErrVacancyNotFound:     http.StatusNotFound,
+	ErrBadRequest:         http.StatusBadRequest,
+	ErrUnauthorized:       http.StatusUnauthorized,
+	ErrServiceUnavailable: http.StatusServiceUnavailable,
+	ErrUserExists:         http.StatusBadRequest,
+	ErrUserNotExists:      http.StatusUnauthorized,
+	ErrInvalidQuery:       http.StatusBadRequest,
+	ErrSessionNotFound:    http.StatusUnauthorized,
+	ErrVacancyNotFound:    http.StatusNotFound,
 
 	IncorrectNameLength:    http.StatusBadRequest,
 	IncorrectSurnameLength: http.StatusBadRequest,
-	InvalidUserRole:        http.StatusBadRequest,
+	InvalidUserType:        http.StatusBadRequest,
 
 	InvalidEmailFormat:   http.StatusBadRequest,
 	IncorrectEmailLength: http.StatusBadRequest,

@@ -1,4 +1,4 @@
-package Models
+package models
 
 type Resume struct {
 	ID               uint             `json:"id" gorm:"primaryKey;"`

@@ -1,4 +1,4 @@
-package Models
+package models
 
 type JobLocation struct {
 	ID            uint      `json:"id" gorm:"primaryKey;"`
