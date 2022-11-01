@@ -116,3 +116,18 @@ func (uh *UserHandler) UpgradeUser(c *gin.Context) {
 	}
 	c.Status(http.StatusOK)
 }
+
+func (uh *UserHandler) GetUserId(c *gin.Context) uint {
+	userEmail, ok := c.Get("userEmail")
+	if !ok {
+		_ = c.Error(errorHandler.ErrUserNotExists)
+		return 0
+	}
+	emailString := userEmail.(string)
+	userId, userIdErr := uh.userUseCase.GetUserId(emailString)
+	if userIdErr != nil {
+		_ = c.Error(userIdErr)
+		return 0
+	}
+	return userId
+}

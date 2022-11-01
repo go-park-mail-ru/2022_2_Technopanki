@@ -14,7 +14,8 @@ type Repository struct {
 
 func NewPostgresRepository(db *gorm.DB) *Repository {
 	return &Repository{
-		UserRepository: newUserPostgres(db),
+		UserRepository:    newUserPostgres(db),
+		VacancyRepository: newVacancyPostgres(db),
 	}
 }
 
@@ -26,10 +27,11 @@ type UserRepository interface {
 }
 
 type VacancyRepository interface { //TODO Сделать репозиторий вакансий
-	Get()
-	Create(entity.Vacancy)
-	Update()
-	Delete()
+	GetAll() ([]models.Vacancy, error)
+	GetById(uint, int) (*models.Vacancy, error)
+	Create(userId uint, vacancy *models.Vacancy) (uint, error)
+	Update(uint, int, *models.UpdateVacancy) error
+	Delete(uint, int) error
 }
 
 type ResumeRepository interface { //TODO Сделать репозиторий резюме

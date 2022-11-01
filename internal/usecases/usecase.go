@@ -16,7 +16,8 @@ type UseCases struct {
 
 func NewUseCases(repos *repository.Repository, session session.Repository, _cfg *configs.Config) *UseCases {
 	return &UseCases{
-		User: newUserService(repos.UserRepository, session, _cfg),
+		User:    newUserService(repos.UserRepository, session, _cfg),
+		Vacancy: newVacancyService(repos.VacancyRepository),
 	}
 }
 
@@ -26,13 +27,15 @@ type User interface {
 	Logout(token string) error
 	AuthCheck(email string) (*models.UserAccount, error)
 	UpgradeUser(input *models.UserAccount) error
+	GetUserId(email string) (uint, error)
 }
 
 type Vacancy interface { //TODO Сделать юзкейс вакансий
-	Get()
-	Create(entity.Vacancy)
-	Update()
-	Delete()
+	GetAll() ([]models.Vacancy, error)
+	GetById(uint, int) (*models.Vacancy, error)
+	Create(uint, *models.Vacancy) (uint, error)
+	Update(uint, int, *models.UpdateVacancy) error
+	Delete(uint, int) error
 }
 
 type Resume interface { //TODO Сделать юзкейс резюме

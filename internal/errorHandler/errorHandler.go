@@ -6,13 +6,17 @@ import (
 )
 
 var (
-	ErrBadRequest         = errors.New("bad request")
-	ErrUnauthorized       = errors.New("unauthorized")
-	ErrServiceUnavailable = errors.New("service unavailable")
-	ErrUserExists         = errors.New("Пользователь с таким email уже существует")
-	ErrUserNotExists      = errors.New("Пользователя с таким email не существует")
-	ErrInvalidQuery       = errors.New("invalid query")
-	ErrCannotCreateUser   = errors.New("cannot create user")
+	ErrBadRequest              = errors.New("bad request")
+	ErrInvalidId               = errors.New("invalid id param")
+	ErrUnauthorized            = errors.New("unauthorized")
+	ErrServiceUnavailable      = errors.New("service unavailable")
+	ErrUserExists              = errors.New("Пользователь с таким email уже существует")
+	ErrUserNotExists           = errors.New("Пользователя с таким email не существует")
+	ErrVacancyNotExist         = errors.New("Такой вакансии не существует")
+	ErrInvalidQuery            = errors.New("invalid query")
+	ErrCannotCreateUser        = errors.New("cannot create user")
+	ErrCannotDeleteVacancy     = errors.New("cannot delete vacancy")
+	ErrUpdateStructHasNoValues = errors.New("update structure has no values")
 
 	ErrCannotCreateSession = errors.New("cannot create session")
 	ErrSessionNotFound     = errors.New("session with this token not found")
@@ -33,19 +37,21 @@ var (
 )
 
 var errorToCode = map[error]int{
-	ErrBadRequest:         http.StatusBadRequest,
-	ErrUnauthorized:       http.StatusUnauthorized,
-	ErrServiceUnavailable: http.StatusServiceUnavailable,
-	ErrUserExists:         http.StatusBadRequest,
-	ErrUserNotExists:      http.StatusUnauthorized,
-	ErrInvalidQuery:       http.StatusBadRequest,
-	ErrCannotCreateUser:   http.StatusServiceUnavailable,
-
+	ErrBadRequest:          http.StatusBadRequest,
+	ErrInvalidId:           http.StatusBadRequest,
+	ErrUnauthorized:        http.StatusUnauthorized,
+	ErrServiceUnavailable:  http.StatusServiceUnavailable,
+	ErrUserExists:          http.StatusBadRequest,
+	ErrUserNotExists:       http.StatusUnauthorized,
+	ErrInvalidQuery:        http.StatusBadRequest,
+	ErrCannotCreateUser:    http.StatusServiceUnavailable,
+	ErrCannotDeleteVacancy: http.StatusServiceUnavailable,
 	ErrCannotCreateSession: http.StatusInternalServerError,
 	ErrSessionNotFound:     http.StatusUnauthorized,
 	ErrCannotDeleteSession: http.StatusInternalServerError,
 
-	ErrVacancyNotFound: http.StatusNotFound,
+	ErrVacancyNotFound:         http.StatusNotFound,
+	ErrUpdateStructHasNoValues: http.StatusInternalServerError,
 
 	IncorrectNameLength:    http.StatusBadRequest,
 	IncorrectSurnameLength: http.StatusBadRequest,

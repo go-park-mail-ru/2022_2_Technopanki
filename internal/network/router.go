@@ -33,10 +33,11 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware) *
 		vacancies := api.Group("/vacancy")
 		{
 			vacancies.GET("/", handlers.GetVacancies, middleware.ErrorHandler()) //TODO заменить на строку ниже
-			//vacancies.GET("/", h.VacancyHandler.Get, middleware.ErrorHandler())
-			//vacancies.POST("/", h.VacancyHandler.Create, middleware.ErrorHandler())
-			//vacancies.PUT("/", h.VacancyHandler.Update, middleware.ErrorHandler())
-			//vacancies.DELETE("/", h.VacancyHandler.Delete, middleware.ErrorHandler())
+			vacancies.GET("/", h.VacancyHandler.GetAll, middleware.ErrorHandler())
+			vacancies.GET("/:id", h.VacancyHandler.GetById, middleware.ErrorHandler())
+			vacancies.POST("/", h.VacancyHandler.Create, middleware.ErrorHandler())
+			vacancies.PUT("/:id", h.VacancyHandler.Update, middleware.ErrorHandler())
+			vacancies.DELETE("/:id", h.VacancyHandler.Delete, middleware.ErrorHandler())
 		}
 		//
 		//resumes := api.Group("/resume")

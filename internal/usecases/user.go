@@ -101,3 +101,12 @@ func (us *UserService) UpgradeUser(input *models.UserAccount) error {
 	}
 	return nil
 }
+
+func (us *UserService) GetUserId(email string) (uint, error) {
+	user, getErr := us.userRep.GetUserByEmail(email)
+	if getErr != nil {
+		return 0, getErr
+	}
+	userId := user.ID
+	return userId, nil
+}

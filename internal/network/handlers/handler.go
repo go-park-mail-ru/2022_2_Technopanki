@@ -26,10 +26,12 @@ type UserH interface {
 	Logout(c *gin.Context)
 	AuthCheck(c *gin.Context)
 	UpgradeUser(c *gin.Context)
+	GetUserId(c *gin.Context) uint
 }
 
 type VacancyH interface {
-	Get(c *gin.Context)
+	GetAll(c *gin.Context)
+	GetById(c *gin.Context)
 	Create(c *gin.Context)
 	Update(c *gin.Context)
 	Delete(c *gin.Context)
