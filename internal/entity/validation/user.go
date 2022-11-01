@@ -22,6 +22,7 @@ func verifyPassword(password string) bool {
 	}
 	return number && special && symbol
 }
+
 func IsAuthDataValid(user *models.UserAccount, cfg configs.ValidationConfig) error {
 
 	if strings.Count(user.Email, "@") != 1 {
@@ -42,6 +43,7 @@ func IsAuthDataValid(user *models.UserAccount, cfg configs.ValidationConfig) err
 
 	return nil
 }
+
 func IsMainDataValid(user *models.UserAccount, cfg configs.ValidationConfig) error {
 	if user.UserType == "applicant" {
 		if len([]rune(user.ApplicantName)) > cfg.MaxNameLength || len([]rune(user.ApplicantName)) < cfg.MinNameLength {
