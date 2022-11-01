@@ -8,7 +8,7 @@ import (
 )
 
 type RedisStore struct {
-	DefaultExpiresAt uint
+	DefaultExpiresAt int
 	client           *redis.Client
 }
 
@@ -19,7 +19,7 @@ func NewRedisStore(cfg configs.Config, _redis *redis.Client) *RedisStore {
 	}
 }
 
-func (rs *RedisStore) Expiring() uint {
+func (rs *RedisStore) Expiring() int {
 	return rs.DefaultExpiresAt
 }
 

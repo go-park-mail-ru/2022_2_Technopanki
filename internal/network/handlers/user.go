@@ -30,7 +30,7 @@ func (uh *UserHandler) SignIn(c *gin.Context) {
 		_ = c.Error(err)
 		return
 	}
-	c.SetCookie("session", token, int(uh.cfg.DefaultExpiringSession), "/", uh.cfg.Domain,
+	c.SetCookie("session", token, uh.cfg.DefaultExpiringSession, "/", uh.cfg.Domain,
 		uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
 	if input.UserType == "applicant" {
 		c.JSON(http.StatusOK, gin.H{"name": input.ApplicantName, "surname": input.ApplicantSurname})
@@ -50,7 +50,7 @@ func (uh *UserHandler) SignUp(c *gin.Context) {
 		_ = c.Error(signUpErr)
 		return
 	}
-	c.SetCookie("session", token, int(uh.cfg.DefaultExpiringSession), "/",
+	c.SetCookie("session", token, uh.cfg.DefaultExpiringSession, "/",
 		uh.cfg.Domain, uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
 	c.Status(http.StatusOK)
 }
