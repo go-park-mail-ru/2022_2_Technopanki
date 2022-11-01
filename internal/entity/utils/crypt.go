@@ -9,7 +9,7 @@ import (
 
 func ComparePassword(user, input *models.UserAccount) error {
 	if cryptErr := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); cryptErr != nil {
-		return errorHandler.ErrUnauthorized
+		return errorHandler.ErrWrongAnswer
 	}
 	return nil
 }
