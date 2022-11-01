@@ -2,14 +2,13 @@ package session
 
 import (
 	"HeadHunter/configs"
-	"HeadHunter/internal/errorHandler"
 	"fmt"
 	"github.com/go-redis/redis"
 	"github.com/google/uuid"
 )
 
 type RedisStore struct {
-	DefaultExpiresAt int64
+	DefaultExpiresAt uint
 	client           *redis.Client
 }
 
@@ -20,7 +19,7 @@ func NewRedisStore(cfg configs.Config, _redis *redis.Client) *RedisStore {
 	}
 }
 
-func (rs *RedisStore) Expiring() int64 {
+func (rs *RedisStore) Expiring() uint {
 	return rs.DefaultExpiresAt
 }
 
@@ -36,7 +35,7 @@ func (rs *RedisStore) NewSession(email string) (string, error) {
 func (rs *RedisStore) GetSession(token Token) (string, error) {
 	result, getErr := rs.client.Get(string(token)).Result()
 	if getErr != nil {
-		return "", errorHandler.ErrSessionNotFound
+		return "", fmt.Errorf("getting session error: %w", getErr)
 	}
 	return result, nil
 }

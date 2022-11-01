@@ -9,7 +9,7 @@ import (
 type Config struct {
 	Domain                 string           `yaml:"domain"`
 	Port                   string           `yaml:"port"`
-	DefaultExpiringSession int64            `yaml:"defaultExpiringSession"`
+	DefaultExpiringSession uint             `yaml:"defaultExpiringSession"`
 	DB                     DBConfig         `yaml:"db"`
 	Redis                  RedisConfig      `yaml:"redis"`
 	Validation             ValidationConfig `yaml:"validation"`

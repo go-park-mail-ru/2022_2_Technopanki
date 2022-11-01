@@ -13,13 +13,13 @@ import (
 )
 
 type UserService struct {
-	ur  repository.UserRepository
-	sr  session.Repository
-	cfg *configs.Config
+	ur          repository.UserRepository
+	sessionRepo session.Repository
+	cfg         *configs.Config
 }
 
 func newUserService(userRepos repository.UserRepository, sessionRepos session.Repository, _cfg *configs.Config) *UserService {
-	return &UserService{ur: userRepos, sr: sessionRepos, cfg: _cfg}
+	return &UserService{ur: userRepos, sessionRepo: sessionRepos, cfg: _cfg}
 }
 
 func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
@@ -36,7 +36,7 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 		return "", errorHandler.ErrUnauthorized
 	}
 
-	token, newSessionErr := us.sr.NewSession(input.Email)
+	token, newSessionErr := us.sessionRepo.NewSession(input.Email)
 	if newSessionErr != nil {
 		return "", newSessionErr
 	}
@@ -63,7 +63,7 @@ func (us *UserService) SignUp(input models.UserAccount) (string, error) {
 	}
 	input.UUID = uuid.NewString()
 
-	token, newSessionErr := us.sr.NewSession(input.Email)
+	token, newSessionErr := us.sessionRepo.NewSession(input.Email)
 	if newSessionErr != nil {
 		return "", newSessionErr
 	}
@@ -71,7 +71,7 @@ func (us *UserService) SignUp(input models.UserAccount) (string, error) {
 }
 
 func (us *UserService) Logout(token string) error {
-	return us.sr.DeleteSession(session.Token(token))
+	return us.sessionRepo.DeleteSession(session.Token(token))
 }
 
 func (us *UserService) AuthCheck(email string) (models.UserAccount, error) {

@@ -7,11 +7,9 @@ import (
 )
 
 func RedisConnect(cfg configs.RedisConfig) (*redis.Client, error) {
-	address := fmt.Sprintf("%s:%s", cfg.Host, cfg.Port)
 	client := redis.NewClient(&redis.Options{
-		Addr:     address,
+		Addr:     fmt.Sprintf("%s:%s", cfg.Host, cfg.Port),
 		Password: cfg.Password,
-		DB:       0,
 	})
 
 	redisErr := client.Ping().Err()
