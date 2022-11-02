@@ -30,7 +30,7 @@ type User interface {
 	GetUser(id uint) (*models.UserAccount, error)
 	GetUserSafety(id uint) (*models.UserAccount, error)
 	GetUserByEmail(email string) (*models.UserAccount, error)
-	UploadUserImage(user *models.UserAccount, file *multipart.File, imageExt string) error
+	UploadUserImage(user *models.UserAccount, fileHeader *multipart.FileHeader) (string, error)
 	DeleteUserImage(user *models.UserAccount) error
 }
 

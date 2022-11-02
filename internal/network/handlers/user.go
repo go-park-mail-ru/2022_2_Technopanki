@@ -7,10 +7,8 @@ import (
 	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases"
 	"github.com/gin-gonic/gin"
-	"mime/multipart"
 	"net/http"
 	"strconv"
-	"strings"
 )
 
 type UserHandler struct {
@@ -190,41 +188,18 @@ func (uh *UserHandler) UploadUserImage(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrUserNotExists)
 		return
 	}
-	form, formErr := c.MultipartForm()
-	if formErr != nil {
-		_ = c.Error(formErr)
-		return
-	}
-	var fileName string
-	var imgExt string
-	for key := range form.File {
-		fileName = key
-		arr := strings.Split(fileName, ".")
-		if len(arr) < 2 {
-			_ = c.Error(errorHandler.ErrBadRequest)
-			return
-		}
-		imgExt = arr[len(arr)-1]
-	}
-	file, _, fileErr := c.Request.FormFile(fileName)
+
+	file, fileErr := c.FormFile(user.Image)
 	if fileErr != nil {
 		_ = c.Error(fileErr)
 		return
 	}
 
-	defer func(file multipart.File) {
-		err := file.Close()
-		if err != nil {
-			_ = c.Error(err)
-		}
-	}(file)
-
-	uploadErr := uh.userUseCase.UploadUserImage(user, &file, imgExt)
+	newFileName, uploadErr := uh.userUseCase.UploadUserImage(user, file)
 	if uploadErr != nil {
 		_ = c.Error(uploadErr)
-		return
 	}
-	c.Status(http.StatusOK)
+	c.JSON(http.StatusOK, gin.H{"filename": newFileName})
 }
 
 func (uh *UserHandler) DeleteUserImage(c *gin.Context) {

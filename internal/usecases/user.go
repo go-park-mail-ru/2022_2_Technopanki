@@ -9,6 +9,7 @@ import (
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/images"
 	"HeadHunter/internal/repository/session"
+	"errors"
 	"fmt"
 	"github.com/google/uuid"
 	"image"
@@ -16,6 +17,7 @@ import (
 	"image/jpeg"
 	"image/png"
 	"mime/multipart"
+	"strings"
 )
 
 type UserService struct {
@@ -132,30 +134,41 @@ func (us *UserService) GetUserByEmail(email string) (*models.UserAccount, error)
 	return us.userRep.GetUserByEmail(email)
 }
 
-func (us *UserService) UploadUserImage(user *models.UserAccount, file *multipart.File, imageExt string) error {
+func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *multipart.FileHeader) (string, error) {
+	nameWithExt := strings.Split(fileHeader.Filename, ".")
+	if len(nameWithExt) != 2 {
+		return "", errors.New("incorrect fileName format")
+	}
+	imageExt := nameWithExt[1]
+	
+	file, fileErr := fileHeader.Open()
+	if fileErr != nil {
+		return "", fileErr
+	}
+
 	var img image.Image
 	var decodeErr error
 	switch imageExt {
 	case "jpeg":
-		img, decodeErr = jpeg.Decode(*file)
+		img, decodeErr = jpeg.Decode(file)
 	case "jpg":
-		img, decodeErr = jpeg.Decode(*file)
+		img, decodeErr = jpeg.Decode(file)
 	case "png":
-		img, decodeErr = png.Decode(*file)
+		img, decodeErr = png.Decode(file)
 	case "gif":
-		img, decodeErr = gif.Decode(*file)
+		img, decodeErr = gif.Decode(file)
 	default:
 		decodeErr = errorHandler.ErrInvalidFileFormat
 	}
 	if decodeErr != nil {
-		return decodeErr
+		return "", decodeErr
 	}
 
 	if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
 		user.Image = fmt.Sprintf("%s.webp", uuid.NewString())
 	}
 
-	return images.UploadUserAvatar(user.Image, &img, &us.cfg.Image)
+	return user.Image, images.UploadUserAvatar(user.Image, &img, &us.cfg.Image)
 
 }
 
