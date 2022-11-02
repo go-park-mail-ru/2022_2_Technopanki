@@ -22,6 +22,19 @@ type UserHandler struct {
 func newUserHandler(useCases *usecases.UseCases, _cfg *configs.Config, _sr session.Repository) *UserHandler {
 	return &UserHandler{cfg: _cfg, userUseCase: useCases.User, sessionRepo: _sr}
 }
+
+func (uh *UserHandler) getEmailFromContext(c *gin.Context) (string, error) {
+	email, ok := c.Get("userEmail")
+	if !ok {
+		return "", errorHandler.ErrUnauthorized
+	}
+	emailStr, ok := email.(string)
+	if !ok {
+		return "", errorHandler.ErrBadRequest
+	}
+	return emailStr, nil
+}
+
 func (uh *UserHandler) SignIn(c *gin.Context) {
 	var input models.UserAccount
 	if err := c.BindJSON(&input); err != nil {
@@ -84,17 +97,12 @@ func (uh *UserHandler) Logout(c *gin.Context) {
 }
 
 func (uh *UserHandler) AuthCheck(c *gin.Context) {
-	email, ok := c.Get("userEmail")
-	if !ok {
-		_ = c.Error(errorHandler.ErrUnauthorized)
+	email, emailErr := uh.getEmailFromContext(c)
+	if emailErr != nil {
+		_ = c.Error(emailErr)
 		return
 	}
-	emailStr, ok := email.(string)
-	if !ok {
-		_ = c.Error(errorHandler.ErrBadRequest)
-		return
-	}
-	user, err := uh.userUseCase.AuthCheck(emailStr)
+	user, err := uh.userUseCase.AuthCheck(email)
 	if err != nil {
 		_ = c.Error(err)
 		return
@@ -107,14 +115,9 @@ func (uh *UserHandler) AuthCheck(c *gin.Context) {
 }
 
 func (uh *UserHandler) UpdateUser(c *gin.Context) {
-	email, ok := c.Get("userEmail")
-	if !ok {
-		_ = c.Error(errorHandler.ErrUnauthorized)
-		return
-	}
-	emailStr, ok := email.(string)
-	if !ok {
-		_ = c.Error(errorHandler.ErrBadRequest)
+	email, emailErr := uh.getEmailFromContext(c)
+	if emailErr != nil {
+		_ = c.Error(emailErr)
 		return
 	}
 	var input models.UserAccount
@@ -122,7 +125,7 @@ func (uh *UserHandler) UpdateUser(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
-	if emailStr != input.Email {
+	if email != input.Email {
 		_ = c.Error(errorHandler.ErrUnauthorized)
 		return
 	}
@@ -135,14 +138,9 @@ func (uh *UserHandler) UpdateUser(c *gin.Context) {
 }
 
 func (uh *UserHandler) GetUser(c *gin.Context) {
-	email, ok := c.Get("userEmail")
-	if !ok {
-		_ = c.Error(errorHandler.ErrUnauthorized)
-		return
-	}
-	emailStr, ok := email.(string)
-	if !ok {
-		_ = c.Error(errorHandler.ErrBadRequest)
+	email, emailErr := uh.getEmailFromContext(c)
+	if emailErr != nil {
+		_ = c.Error(emailErr)
 		return
 	}
 
@@ -157,7 +155,7 @@ func (uh *UserHandler) GetUser(c *gin.Context) {
 		_ = c.Error(getErr)
 		return
 	}
-	if user.Email != emailStr {
+	if user.Email != email {
 		_ = c.Error(errorHandler.ErrUnauthorized)
 		return
 	}
@@ -166,7 +164,7 @@ func (uh *UserHandler) GetUser(c *gin.Context) {
 
 func (uh *UserHandler) GetUserSafety(c *gin.Context) {
 	idStr := c.Query("id")
-	id, queryErr := strconv.Atoi(idStr)
+	id, queryErr := strconv.ParseUint(idStr, 10, 32)
 	if queryErr != nil {
 		_ = c.Error(errorHandler.ErrInvalidQuery)
 		return
@@ -180,18 +178,13 @@ func (uh *UserHandler) GetUserSafety(c *gin.Context) {
 }
 
 func (uh *UserHandler) UploadUserImage(c *gin.Context) {
-	email, ok := c.Get("userEmail")
-	if !ok {
-		_ = c.Error(errorHandler.ErrUnauthorized)
-		return
-	}
-	emailStr, ok := email.(string)
-	if !ok {
-		_ = c.Error(errorHandler.ErrBadRequest)
+	email, emailErr := uh.getEmailFromContext(c)
+	if emailErr != nil {
+		_ = c.Error(emailErr)
 		return
 	}
 
-	user, getUserErr := uh.userUseCase.GetUserByEmail(emailStr)
+	user, getUserErr := uh.userUseCase.GetUserByEmail(email)
 
 	if getUserErr != nil {
 		_ = c.Error(errorHandler.ErrUserNotExists)
@@ -200,7 +193,6 @@ func (uh *UserHandler) UploadUserImage(c *gin.Context) {
 	form, formErr := c.MultipartForm()
 	if formErr != nil {
 		_ = c.Error(formErr)
-		//_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
 	var fileName string
@@ -236,18 +228,13 @@ func (uh *UserHandler) UploadUserImage(c *gin.Context) {
 }
 
 func (uh *UserHandler) DeleteUserImage(c *gin.Context) {
-	email, ok := c.Get("userEmail")
-	if !ok {
-		_ = c.Error(errorHandler.ErrUnauthorized)
-		return
-	}
-	emailStr, ok := email.(string)
-	if !ok {
-		_ = c.Error(errorHandler.ErrBadRequest)
+	email, emailErr := uh.getEmailFromContext(c)
+	if emailErr != nil {
+		_ = c.Error(emailErr)
 		return
 	}
 
-	user, getUserErr := uh.userUseCase.GetUserByEmail(emailStr)
+	user, getUserErr := uh.userUseCase.GetUserByEmail(email)
 
 	if getUserErr != nil {
 		_ = c.Error(errorHandler.ErrUserNotExists)
