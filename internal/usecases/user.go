@@ -12,6 +12,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/kolesa-team/go-webp/decoder"
+	"github.com/kolesa-team/go-webp/webp"
 	"image"
 	"image/gif"
 	"image/jpeg"
@@ -35,6 +37,7 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 	if inputValidity != nil {
 		return "", inputValidity
 	}
+
 	user, getErr := us.userRep.GetUserByEmail(input.Email)
 	if getErr != nil {
 		return "", getErr
@@ -59,6 +62,7 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 	if inputValidity != nil {
 		return "", inputValidity
 	}
+
 	isExist, getErr := us.userRep.IsUserExist(input.Email)
 	if getErr != nil {
 		return "", getErr
@@ -66,17 +70,22 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 	if isExist {
 		return "", errorHandler.ErrUserExists
 	}
+
 	encryptedPassword, encryptErr := utils.GeneratePassword(input.Password, &us.cfg.Crypt)
 	if encryptErr != nil {
 		return "", encryptErr
 	}
 	input.Password = encryptedPassword
+
 	input.Image = fmt.Sprintf("basic_%s_avatar.webp", input.UserType)
+
 	createErr := us.userRep.CreateUser(input)
 	if createErr != nil {
 		return "", fmt.Errorf("creating session user: %w", createErr)
 	}
+
 	token, newSessionErr := us.sessionRepo.NewSession(input.Email)
+
 	if newSessionErr != nil {
 		return "", newSessionErr
 	}
@@ -100,25 +109,48 @@ func (us *UserService) UpdateUser(input *models.UserAccount) error {
 	if inputValidity != nil {
 		return inputValidity
 	}
+
 	oldUser, getErr := us.userRep.GetUserByEmail(input.Email)
 	if getErr != nil {
 		return getErr
 	}
 
-	var encryptErr error = nil
-	var encryptedPassword string
 	if input.Password != "" {
-		encryptedPassword, encryptErr = utils.GeneratePassword(input.Password, &us.cfg.Crypt)
+		encryptedPassword, encryptErr := utils.GeneratePassword(input.Password, &us.cfg.Crypt)
+
+		if encryptErr != nil {
+			return encryptErr
+		}
+		input.Password = encryptedPassword
 	}
-	if encryptErr != nil {
-		return encryptErr
-	}
-	input.Password = encryptedPassword
 
 	dbError := us.userRep.UpdateUser(oldUser, input)
 	if dbError != nil {
 		return dbError
 	}
+
+	return nil
+}
+
+func (us *UserService) UpdateUserField(input *models.UserAccount, field string) error {
+	if field == "password" {
+		return errorHandler.ErrForbidden
+	}
+	inputValidity := validation.IsMainDataValid(input, us.cfg.Validation)
+	if inputValidity != nil {
+		return inputValidity
+	}
+
+	oldUser, getErr := us.userRep.GetUserByEmail(input.Email)
+	if getErr != nil {
+		return getErr
+	}
+
+	dbError := us.userRep.UpdateUserField(oldUser, input, field)
+	if dbError != nil {
+		return dbError
+	}
+
 	return nil
 }
 
@@ -140,7 +172,7 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 		return "", errors.New("incorrect fileName format")
 	}
 	imageExt := nameWithExt[1]
-	
+
 	file, fileErr := fileHeader.Open()
 	if fileErr != nil {
 		return "", fileErr
@@ -157,6 +189,8 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 		img, decodeErr = png.Decode(file)
 	case "gif":
 		img, decodeErr = gif.Decode(file)
+	case "webp":
+		img, decodeErr = webp.Decode(file, &decoder.Options{})
 	default:
 		decodeErr = errorHandler.ErrInvalidFileFormat
 	}
@@ -166,6 +200,11 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 
 	if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
 		user.Image = fmt.Sprintf("%s.webp", uuid.NewString())
+
+		updateErr := us.UpdateUserField(user, "image")
+		if updateErr != nil {
+			return "", updateErr
+		}
 	}
 
 	return user.Image, images.UploadUserAvatar(user.Image, &img, &us.cfg.Image)

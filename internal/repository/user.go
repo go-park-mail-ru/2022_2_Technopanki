@@ -22,7 +22,9 @@ func (up *UserPostgres) CreateUser(user *models.UserAccount) error {
 func (up *UserPostgres) UpdateUser(oldUser, newUser *models.UserAccount) error {
 	return up.db.Model(oldUser).Updates(newUser).Error
 }
-
+func (up *UserPostgres) UpdateUserField(oldUser, newUser *models.UserAccount, field string) error {
+	return up.db.Model(oldUser).Select(field).Updates(newUser).Error
+}
 func (up *UserPostgres) GetUserByEmail(email string) (*models.UserAccount, error) {
 	var result models.UserAccount
 	query := up.db.Where("email = ?", email).Find(&result)

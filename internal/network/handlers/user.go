@@ -6,6 +6,7 @@ import (
 	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -188,16 +189,45 @@ func (uh *UserHandler) UploadUserImage(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrUserNotExists)
 		return
 	}
-
-	file, fileErr := c.FormFile(user.Image)
+	//form, formErr := c.MultipartForm()
+	//if formErr != nil {
+	//	_ = c.Error(fmt.Errorf("uploadErr:%w", formErr))
+	//	return
+	//}
+	//files := form.File["zahar"]
+	//var (
+	//	newFileName string
+	//	uploadErr   error
+	//)
+	//for _, file := range files {
+	//	log.Println(file.Filename)
+	//	newFileName, uploadErr = uh.userUseCase.UploadUserImage(
+	//		&models.UserAccount{
+	//			Email:    user.Email,
+	//			Image:    user.Image,
+	//			UserType: user.UserType,
+	//		}, file)
+	//	if uploadErr != nil {
+	//		_ = c.Error(fmt.Errorf("uploadErr:%w", uploadErr))
+	//		return
+	//	}
+	//}
+	//c.JSON(http.StatusOK, gin.H{"filename": newFileName})
+	file, fileErr := c.FormFile("zahar")
 	if fileErr != nil {
-		_ = c.Error(fileErr)
+		_ = c.Error(fmt.Errorf("fileErr:%w", fileErr))
 		return
 	}
 
-	newFileName, uploadErr := uh.userUseCase.UploadUserImage(user, file)
+	newFileName, uploadErr := uh.userUseCase.UploadUserImage(
+		&models.UserAccount{
+			Email:    user.Email,
+			Image:    user.Image,
+			UserType: user.UserType,
+		}, file)
 	if uploadErr != nil {
-		_ = c.Error(uploadErr)
+		_ = c.Error(fmt.Errorf("uploadErr:%w", uploadErr))
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{"filename": newFileName})
 }

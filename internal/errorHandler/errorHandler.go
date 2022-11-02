@@ -16,6 +16,7 @@ var (
 	ErrVacancyNotFound    = errors.New("vacancy not found")
 	ErrResumeNotFound     = errors.New("resume not found")
 
+	ErrForbidden           = errors.New("forbidden")
 	ErrWrongAnswer         = errors.New("wrong answer")
 	ErrInvalidFileFormat   = errors.New("invalid file format")
 	IncorrectNameLength    = errors.New("Длина имени должна быть между 3 и 20 символами")
@@ -40,8 +41,9 @@ var errorToCode = map[error]int{
 	ErrSessionNotFound:    http.StatusUnauthorized,
 	ErrVacancyNotFound:    http.StatusNotFound,
 	ErrResumeNotFound:     http.StatusNotFound,
-	ErrWrongAnswer:        http.StatusBadRequest,
 
+	ErrForbidden:           http.StatusForbidden,
+	ErrWrongAnswer:         http.StatusBadRequest,
 	ErrInvalidFileFormat:   http.StatusBadRequest,
 	IncorrectNameLength:    http.StatusBadRequest,
 	IncorrectSurnameLength: http.StatusBadRequest,

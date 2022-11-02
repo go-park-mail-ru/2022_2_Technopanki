@@ -20,7 +20,7 @@ func UploadWebpImage(path, name string, image *image.Image) (err error) {
 		}
 	}(resultImage)
 
-	options, optionErr := encoder.NewLossyEncoderOptions(encoder.PresetDefault, 75)
+	options, optionErr := encoder.NewLossyEncoderOptions(encoder.PresetDefault, 15)
 	if optionErr != nil {
 		return optionErr
 	}
