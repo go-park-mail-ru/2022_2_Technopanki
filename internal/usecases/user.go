@@ -132,8 +132,8 @@ func (us *UserService) UpdateUser(input *models.UserAccount) error {
 	return nil
 }
 
-func (us *UserService) UpdateUserField(input *models.UserAccount, field string) error {
-	if field == "password" {
+func (us *UserService) UpdateUserFields(input *models.UserAccount, field ...string) error {
+	if utils.HasArrayElement[string]("password", field) {
 		return errorHandler.ErrForbidden
 	}
 	inputValidity := validation.IsMainDataValid(input, us.cfg.Validation)
@@ -146,7 +146,7 @@ func (us *UserService) UpdateUserField(input *models.UserAccount, field string) 
 		return getErr
 	}
 
-	dbError := us.userRep.UpdateUserField(oldUser, input, field)
+	dbError := us.userRep.UpdateUserField(oldUser, input, field...)
 	if dbError != nil {
 		return dbError
 	}
@@ -201,7 +201,7 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 	if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
 		user.Image = fmt.Sprintf("%s.webp", uuid.NewString())
 
-		updateErr := us.UpdateUserField(user, "image")
+		updateErr := us.UpdateUserFields(user, "image")
 		if updateErr != nil {
 			return "", updateErr
 		}
@@ -220,5 +220,5 @@ func (us *UserService) DeleteUserImage(user *models.UserAccount) error {
 		return deleteErr
 	}
 	user.Image = fmt.Sprintf("basic_%s_avatar.webp", user.UserType)
-	return nil
+	return us.UpdateUserFields(user, "image")
 }

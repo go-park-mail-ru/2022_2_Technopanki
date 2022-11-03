@@ -190,16 +190,16 @@ func (uh *UserHandler) UploadUserImage(c *gin.Context) {
 		return
 	}
 
-	file, fileErr := c.FormFile("zahar")
+	file, fileErr := c.FormFile("avatar")
 	if fileErr != nil {
-		_ = c.Error(fmt.Errorf("fileErr:%w", fileErr))
+		_ = c.Error(fmt.Errorf("form file error: %w", fileErr))
 		return
 	}
 
 	newFileName, uploadErr := uh.userUseCase.UploadUserImage(
 		user, file)
 	if uploadErr != nil {
-		_ = c.Error(fmt.Errorf("uploadErr:%w", uploadErr))
+		_ = c.Error(uploadErr)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"filename": newFileName})

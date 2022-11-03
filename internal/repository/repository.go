@@ -44,7 +44,7 @@ type UserRepository interface {
 	GetUserByEmail(email string) (*models.UserAccount, error)
 	IsUserExist(email string) (bool, error)
 	UpdateUser(oldUser, newUser *models.UserAccount) error
-	UpdateUserField(oldUser, newUser *models.UserAccount, field string) error
+	UpdateUserField(oldUser, newUser *models.UserAccount, field ...string) error
 	GetUser(id uint) (*models.UserAccount, error)
 	GetUserSafety(id uint, safeFields []string) (*models.UserAccount, error)
 	UpdateUserImage()
