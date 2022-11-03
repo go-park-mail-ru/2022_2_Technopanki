@@ -34,6 +34,14 @@ func (uh *UserHandler) getEmailFromContext(c *gin.Context) (string, error) {
 	return emailStr, nil
 }
 
+func (uh *UserHandler) sendSuccessData(user *models.UserAccount, c *gin.Context) {
+	if user.UserType == "applicant" {
+		c.JSON(http.StatusOK, gin.H{"id": user.ID, "name": user.ApplicantName, "surname": user.ApplicantSurname})
+	} else if user.UserType == "employer" {
+		c.JSON(http.StatusOK, gin.H{"id": user.ID, "name": user.CompanyName})
+	}
+}
+
 func (uh *UserHandler) SignIn(c *gin.Context) {
 	var input models.UserAccount
 	if err := c.BindJSON(&input); err != nil {
@@ -47,11 +55,7 @@ func (uh *UserHandler) SignIn(c *gin.Context) {
 	}
 	c.SetCookie("session", token, uh.cfg.DefaultExpiringSession, "/", uh.cfg.Domain,
 		uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
-	if input.UserType == "applicant" {
-		c.JSON(http.StatusOK, gin.H{"name": input.ApplicantName, "surname": input.ApplicantSurname})
-	} else if input.UserType == "employer" {
-		c.JSON(http.StatusOK, gin.H{"name": input.CompanyName})
-	}
+	uh.sendSuccessData(&input, c)
 }
 
 func (uh *UserHandler) SignUp(c *gin.Context) {
@@ -67,7 +71,7 @@ func (uh *UserHandler) SignUp(c *gin.Context) {
 	}
 	c.SetCookie("session", token, uh.cfg.DefaultExpiringSession, "/",
 		uh.cfg.Domain, uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
-	c.Status(http.StatusOK)
+	uh.sendSuccessData(&input, c)
 }
 
 // @Summary      Logout
@@ -106,11 +110,7 @@ func (uh *UserHandler) AuthCheck(c *gin.Context) {
 		_ = c.Error(err)
 		return
 	}
-	if user.UserType == "applicant" {
-		c.JSON(http.StatusOK, gin.H{"name": user.ApplicantName, "surname": user.ApplicantSurname})
-	} else if user.UserType == "employer" {
-		c.JSON(http.StatusOK, gin.H{"name": user.CompanyName})
-	}
+	uh.sendSuccessData(user, c)
 }
 
 func (uh *UserHandler) UpdateUser(c *gin.Context) {
