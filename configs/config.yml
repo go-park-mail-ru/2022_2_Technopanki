@@ -7,7 +7,7 @@ db:
   port: "5432"
   dbname: "jobflowDB"
   sslmode: "disable"
-  password: "12345"
+  password: "pgjf12345RTY"
 redis:
   host: "jfRedis"
   port: "6379"
