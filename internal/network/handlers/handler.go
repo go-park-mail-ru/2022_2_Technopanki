@@ -30,6 +30,7 @@ type UserH interface {
 	GetUserSafety(c *gin.Context)
 	UploadUserImage(c *gin.Context)
 	DeleteUserImage(c *gin.Context)
+	GetPreview(c *gin.Context)
 }
 
 type VacancyH interface {

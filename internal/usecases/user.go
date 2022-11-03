@@ -115,12 +115,16 @@ func (us *UserService) UpdateUser(input *models.UserAccount) error {
 		return getErr
 	}
 
+	if oldUser.UserType != input.UserType {
+		return errorHandler.ErrBadRequest
+	}
+
 	if input.Password != "" {
 		encryptedPassword, encryptErr := utils.GeneratePassword(input.Password, &us.cfg.Crypt)
-
 		if encryptErr != nil {
 			return encryptErr
 		}
+
 		input.Password = encryptedPassword
 	}
 

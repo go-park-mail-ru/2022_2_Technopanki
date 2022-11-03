@@ -12,6 +12,7 @@ var (
 	ErrUserExists         = errors.New("Пользователь с таким email уже существует")
 	ErrUserNotExists      = errors.New("Пользователя с таким email не существует")
 	ErrInvalidQuery       = errors.New("invalid query")
+	ErrInvalidParam       = errors.New("invalid param")
 	ErrSessionNotFound    = errors.New("session with this token not found")
 	ErrVacancyNotFound    = errors.New("vacancy not found")
 	ErrResumeNotFound     = errors.New("resume not found")
@@ -38,6 +39,7 @@ var errorToCode = map[error]int{
 	ErrUserExists:         http.StatusBadRequest,
 	ErrUserNotExists:      http.StatusUnauthorized,
 	ErrInvalidQuery:       http.StatusBadRequest,
+	ErrInvalidParam:       http.StatusBadRequest,
 	ErrSessionNotFound:    http.StatusUnauthorized,
 	ErrVacancyNotFound:    http.StatusNotFound,
 	ErrResumeNotFound:     http.StatusNotFound,

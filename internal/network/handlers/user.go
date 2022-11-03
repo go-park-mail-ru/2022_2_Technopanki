@@ -36,9 +36,37 @@ func (uh *UserHandler) getEmailFromContext(c *gin.Context) (string, error) {
 
 func (uh *UserHandler) sendSuccessData(user *models.UserAccount, c *gin.Context) {
 	if user.UserType == "applicant" {
-		c.JSON(http.StatusOK, gin.H{"id": user.ID, "name": user.ApplicantName, "surname": user.ApplicantSurname})
+		c.JSON(http.StatusOK, gin.H{
+			"id":        user.ID,
+			"name":      user.ApplicantName,
+			"surname":   user.ApplicantSurname,
+			"user_type": user.UserType,
+			"image":     user.Image})
 	} else if user.UserType == "employer" {
-		c.JSON(http.StatusOK, gin.H{"id": user.ID, "name": user.CompanyName})
+		c.JSON(http.StatusOK, gin.H{
+			"id":        user.ID,
+			"name":      user.CompanyName,
+			"user_type": user.UserType,
+			"image":     user.Image})
+	}
+}
+
+func (uh *UserHandler) sendPreviewData(user *models.UserAccount, c *gin.Context) {
+	if user.UserType == "applicant" {
+		c.JSON(http.StatusOK, gin.H{
+			"id":        user.ID,
+			"name":      user.ApplicantName,
+			"surname":   user.ApplicantSurname,
+			"user_type": user.UserType,
+			"image":     user.Image,
+			"status":    user.Status})
+	} else if user.UserType == "employer" {
+		c.JSON(http.StatusOK, gin.H{
+			"id":        user.ID,
+			"name":      user.CompanyName,
+			"user_type": user.UserType,
+			"image":     user.Image,
+			"status":    user.Status})
 	}
 }
 
@@ -124,10 +152,8 @@ func (uh *UserHandler) UpdateUser(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
-	if email != input.Email {
-		_ = c.Error(errorHandler.ErrUnauthorized)
-		return
-	}
+	input.Email = email
+
 	updateErr := uh.userUseCase.UpdateUser(&input)
 	if updateErr != nil {
 		_ = c.Error(updateErr)
@@ -225,4 +251,18 @@ func (uh *UserHandler) DeleteUserImage(c *gin.Context) {
 		return
 	}
 	c.Status(http.StatusOK)
+}
+
+func (uh *UserHandler) GetPreview(c *gin.Context) {
+	id, paramErr := strconv.Atoi(c.Param("id"))
+	if paramErr != nil {
+		_ = c.Error(errorHandler.ErrInvalidParam)
+		return
+	}
+
+	user, getUserErr := uh.userUseCase.GetUserSafety(uint(id))
+	if getUserErr != nil {
+		_ = c.Error(getUserErr)
+	}
+	uh.sendPreviewData(user, c)
 }
