@@ -57,6 +57,7 @@ func (uh *UserHandler) SignUp(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
+	
 	token, signUpErr := uh.userUseCase.SignUp(&input)
 	if signUpErr != nil {
 		_ = c.Error(signUpErr)
@@ -134,12 +135,12 @@ func (uh *UserHandler) GetUser(c *gin.Context) {
 		return
 	}
 
-	idStr := c.Query("id")
-	id, queryErr := strconv.Atoi(idStr)
-	if queryErr != nil {
-		_ = c.Error(errorHandler.ErrInvalidQuery)
+	id, paramErr := strconv.Atoi(c.Param("id"))
+	if paramErr != nil {
+		_ = c.Error(errorHandler.ErrInvalidParam)
 		return
 	}
+
 	user, getErr := uh.userUseCase.GetUser(uint(id))
 	if getErr != nil {
 		_ = c.Error(getErr)
@@ -153,12 +154,12 @@ func (uh *UserHandler) GetUser(c *gin.Context) {
 }
 
 func (uh *UserHandler) GetUserSafety(c *gin.Context) {
-	idStr := c.Query("id")
-	id, queryErr := strconv.ParseUint(idStr, 10, 32)
-	if queryErr != nil {
-		_ = c.Error(errorHandler.ErrInvalidQuery)
+	id, paramErr := strconv.Atoi(c.Param("id"))
+	if paramErr != nil {
+		_ = c.Error(errorHandler.ErrInvalidParam)
 		return
 	}
+
 	user, getErr := uh.userUseCase.GetUserSafety(uint(id))
 	if getErr != nil {
 		_ = c.Error(getErr)
