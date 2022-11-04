@@ -47,13 +47,14 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware) *
 			//vacancies.DELETE("/", h.VacancyHandler.Delete, middleware.ErrorHandler())
 		}
 		//
-		//resumes := api.Group("/resume")
-		//{
-		//	resumes.GET("/", h.ResumeHandler.Get, middleware.ErrorHandler())
-		//	resumes.POST("/", h.ResumeHandler.Create, middleware.ErrorHandler())
-		//	resumes.PUT("/", h.ResumeHandler.Update, middleware.ErrorHandler())
-		//	resumes.DELETE("/", h.ResumeHandler.Delete, middleware.ErrorHandler())
-		//}
+		resumes := api.Group("/resume")
+		{
+			resumes.GET("/:id", h.ResumeHandler.Get, middleware.ErrorHandler())
+			resumes.GET("/applicant/:user_id", sessionMW.Session, h.ResumeHandler.GetByApplicant, middleware.ErrorHandler())
+			resumes.POST("/", sessionMW.Session, h.ResumeHandler.Create, middleware.ErrorHandler())
+			resumes.PUT("/:id", sessionMW.Session, h.ResumeHandler.Update, middleware.ErrorHandler())
+			resumes.DELETE("/:id", sessionMW.Session, h.ResumeHandler.Delete, middleware.ErrorHandler())
+		}
 	}
 
 	return router
