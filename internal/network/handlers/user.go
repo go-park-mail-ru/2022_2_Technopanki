@@ -49,6 +49,19 @@ func (uh *UserHandler) GetUserId(c *gin.Context) (uint, error) {
 	return userId, nil
 }
 
+func (uh *UserHandler) GetUserId(c *gin.Context) (uint, error) {
+	email, emailErr := uh.getEmailFromContext(c)
+	if emailErr != nil {
+		return 0, emailErr
+	}
+	userId, userIdErr := uh.userUseCase.GetUserId(email)
+	if userIdErr != nil {
+		_ = c.Error(userIdErr)
+		return 0, userIdErr
+	}
+	return userId, nil
+}
+
 func (uh *UserHandler) SignIn(c *gin.Context) {
 	var input models.UserAccount
 	if err := c.BindJSON(&input); err != nil {
