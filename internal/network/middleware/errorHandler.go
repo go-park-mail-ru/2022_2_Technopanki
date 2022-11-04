@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"HeadHunter/internal/errorHandler"
+	"HeadHunter/internal/network/response"
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,7 +10,7 @@ func ErrorHandler() gin.HandlerFunc {
 		if len(c.Errors) > 0 {
 			c.Next()
 			rawErr := c.Errors.Last()
-			c.AbortWithStatusJSON(errorHandler.ConvertError(rawErr.Err), gin.H{"error": rawErr.Error()})
+			response.SendErrorData(rawErr, c)
 		}
 		return
 	}

@@ -4,6 +4,7 @@ import (
 	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
+	"HeadHunter/internal/network/response"
 	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases"
 	"fmt"
@@ -34,42 +35,6 @@ func (uh *UserHandler) getEmailFromContext(c *gin.Context) (string, error) {
 	return emailStr, nil
 }
 
-func (uh *UserHandler) sendSuccessData(user *models.UserAccount, c *gin.Context) {
-	if user.UserType == "applicant" {
-		c.JSON(http.StatusOK, gin.H{
-			"id":        user.ID,
-			"name":      user.ApplicantName,
-			"surname":   user.ApplicantSurname,
-			"user_type": user.UserType,
-			"image":     user.Image})
-	} else if user.UserType == "employer" {
-		c.JSON(http.StatusOK, gin.H{
-			"id":        user.ID,
-			"name":      user.CompanyName,
-			"user_type": user.UserType,
-			"image":     user.Image})
-	}
-}
-
-func (uh *UserHandler) sendPreviewData(user *models.UserAccount, c *gin.Context) {
-	if user.UserType == "applicant" {
-		c.JSON(http.StatusOK, gin.H{
-			"id":        user.ID,
-			"name":      user.ApplicantName,
-			"surname":   user.ApplicantSurname,
-			"user_type": user.UserType,
-			"image":     user.Image,
-			"status":    user.Status})
-	} else if user.UserType == "employer" {
-		c.JSON(http.StatusOK, gin.H{
-			"id":        user.ID,
-			"name":      user.CompanyName,
-			"user_type": user.UserType,
-			"image":     user.Image,
-			"status":    user.Status})
-	}
-}
-
 func (uh *UserHandler) SignIn(c *gin.Context) {
 	var input models.UserAccount
 	if err := c.BindJSON(&input); err != nil {
@@ -83,7 +48,7 @@ func (uh *UserHandler) SignIn(c *gin.Context) {
 	}
 	c.SetCookie("session", token, uh.cfg.DefaultExpiringSession, "/", uh.cfg.Domain,
 		uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
-	uh.sendSuccessData(&input, c)
+	response.SendSuccessData(&input, c)
 }
 
 func (uh *UserHandler) SignUp(c *gin.Context) {
@@ -99,7 +64,7 @@ func (uh *UserHandler) SignUp(c *gin.Context) {
 	}
 	c.SetCookie("session", token, uh.cfg.DefaultExpiringSession, "/",
 		uh.cfg.Domain, uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
-	uh.sendSuccessData(&input, c)
+	response.SendSuccessData(&input, c)
 }
 
 // @Summary      Logout
@@ -138,7 +103,7 @@ func (uh *UserHandler) AuthCheck(c *gin.Context) {
 		_ = c.Error(err)
 		return
 	}
-	uh.sendSuccessData(user, c)
+	response.SendSuccessData(user, c)
 }
 
 func (uh *UserHandler) UpdateUser(c *gin.Context) {
@@ -159,7 +124,7 @@ func (uh *UserHandler) UpdateUser(c *gin.Context) {
 		_ = c.Error(updateErr)
 		return
 	}
-	c.Status(http.StatusOK)
+	response.SendSuccessData(&input, c)
 }
 
 func (uh *UserHandler) GetUser(c *gin.Context) {
@@ -222,13 +187,13 @@ func (uh *UserHandler) UploadUserImage(c *gin.Context) {
 		return
 	}
 
-	newFileName, uploadErr := uh.userUseCase.UploadUserImage(
+	_, uploadErr := uh.userUseCase.UploadUserImage(
 		user, file)
 	if uploadErr != nil {
 		_ = c.Error(uploadErr)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"filename": newFileName})
+	response.SendUploadImageData(user, c)
 }
 
 func (uh *UserHandler) DeleteUserImage(c *gin.Context) {
@@ -264,5 +229,5 @@ func (uh *UserHandler) GetPreview(c *gin.Context) {
 	if getUserErr != nil {
 		_ = c.Error(getUserErr)
 	}
-	uh.sendPreviewData(user, c)
+	response.SendPreviewData(user, c)
 }
