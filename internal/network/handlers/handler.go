@@ -15,8 +15,10 @@ type Handlers struct {
 }
 
 func NewHandlers(usecases *usecases.UseCases, _cfg *configs.Config, _sr session.Repository) *Handlers {
+	userHandler := newUserHandler(usecases, _cfg, _sr)
 	return &Handlers{
-		UserHandler: newUserHandler(usecases, _cfg, _sr),
+		UserHandler:   userHandler,
+		ResumeHandler: newResumeHandler(usecases, _cfg, userHandler),
 	}
 }
 
@@ -25,7 +27,9 @@ type UserH interface {
 	SignIn(c *gin.Context)
 	Logout(c *gin.Context)
 	AuthCheck(c *gin.Context)
+	getEmailFromContext(c *gin.Context) (string, error)
 	UpdateUser(c *gin.Context)
+	GetUserId(c *gin.Context) (uint, error)
 	GetUser(c *gin.Context)
 	GetUserSafety(c *gin.Context)
 	UploadUserImage(c *gin.Context)
@@ -42,6 +46,7 @@ type VacancyH interface {
 
 type ResumeH interface {
 	Get(c *gin.Context)
+	GetByApplicant(c *gin.Context)
 	Create(c *gin.Context)
 	Update(c *gin.Context)
 	Delete(c *gin.Context)
