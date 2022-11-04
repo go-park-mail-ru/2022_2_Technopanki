@@ -39,6 +39,8 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware) *
 			vacancies.POST("/", sessionMW.Session, h.VacancyHandler.CreateVacancy, middleware.ErrorHandler())
 			vacancies.PUT("/:id", sessionMW.Session, h.VacancyHandler.UpdateVacancy, middleware.ErrorHandler())
 			vacancies.DELETE("/:id", sessionMW.Session, h.VacancyHandler.DeleteVacancy, middleware.ErrorHandler())
+			vacancies.POST("/apply", sessionMW.Session, h.VacancyActivityHandler.ApplyForVacancy, middleware.ErrorHandler())
+			vacancies.GET("/applies/:id", sessionMW.Session, h.VacancyActivityHandler.GetAllVacancyApplies, middleware.ErrorHandler())
 		}
 		//
 		//resumes := api.Group("/resume")

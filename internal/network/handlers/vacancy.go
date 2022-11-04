@@ -39,7 +39,7 @@ func (vh *VacancyHandler) GetAllVacancies(c *gin.Context) {
 func (vh *VacancyHandler) GetVacancyById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		_ = c.Error(errorHandler.ErrInvalidQuery)
+		_ = c.Error(errorHandler.ErrInvalidParam)
 		return
 	}
 	vacancy, err := vh.vacancyUseCase.GetById(id)
@@ -52,8 +52,12 @@ func (vh *VacancyHandler) GetVacancyById(c *gin.Context) {
 }
 
 func (vh *VacancyHandler) GetUserVacancies(c *gin.Context) {
-	userId := vh.userHandler.GetUserId(c)
-	vacancies, GetErr := vh.vacancyUseCase.GetByUserId(userId)
+	companyId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		_ = c.Error(errorHandler.ErrInvalidParam)
+		return
+	}
+	vacancies, GetErr := vh.vacancyUseCase.GetByUserId(companyId)
 	if GetErr != nil {
 		_ = c.Error(GetErr)
 		return
@@ -90,7 +94,7 @@ func (vh *VacancyHandler) DeleteVacancy(c *gin.Context) {
 	userId := vh.userHandler.GetUserId(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		_ = c.Error(errorHandler.ErrInvalidQuery)
+		_ = c.Error(errorHandler.ErrInvalidParam)
 		return
 	}
 	deleteErr := vh.vacancyUseCase.Delete(userId, id)
@@ -107,7 +111,7 @@ func (vh *VacancyHandler) UpdateVacancy(c *gin.Context) {
 	userId := vh.userHandler.GetUserId(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		_ = c.Error(errorHandler.ErrInvalidQuery)
+		_ = c.Error(errorHandler.ErrInvalidParam)
 		return
 	}
 	var input models.UpdateVacancy
@@ -138,7 +142,7 @@ func GetVacancies(c *gin.Context) {
 	idStr := c.Query("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil && idStr != "" {
-		_ = c.Error(errorHandler.ErrInvalidQuery)
+		_ = c.Error(errorHandler.ErrInvalidParam)
 		return
 	}
 	if id == 0 {
