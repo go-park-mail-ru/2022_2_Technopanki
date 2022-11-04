@@ -14,28 +14,32 @@ type Repository struct {
 	ResumeRepository  ResumeRepository
 }
 
-func queryUserValidation(query *gorm.DB, object string) error {
+func notFound(object string) error {
+	switch object {
+	case "user":
+		return errorHandler.ErrUserNotExists
+	default:
+		return fmt.Errorf("%s not found", object)
+	}
+}
+
+func queryValidation(query *gorm.DB, object string) error {
 	if query.Error != nil {
+		if query.Error.Error() == "record not found" {
+			return notFound(object)
+		}
 		return fmt.Errorf("postgre query error: %s", query.Error.Error())
 	}
 	if query.RowsAffected == 0 {
-		switch object {
-		case "user":
-			return errorHandler.ErrUserNotExists
-		case "vacancy":
-			return errorHandler.ErrVacancyNotFound
-		case "resume":
-			return errorHandler.ErrResumeNotFound
-		default:
-			return fmt.Errorf("record not found: %s", object)
-		}
+		return notFound(object)
 	}
 	return nil
 }
 
 func NewPostgresRepository(db *gorm.DB) *Repository {
 	return &Repository{
-		UserRepository: newUserPostgres(db),
+		UserRepository:   newUserPostgres(db),
+		ResumeRepository: newResumePostgres(db),
 	}
 }
 
@@ -58,8 +62,9 @@ type VacancyRepository interface { //TODO Сделать репозиторий 
 }
 
 type ResumeRepository interface { //TODO Сделать репозиторий резюме
-	Get()
-	Create(entity.Resume)
-	Update()
-	Delete()
+	Get(id uint) (*models.Resume, error)
+	GetByApplicant(userId uint) ([]*models.Resume, error)
+	Create(resume *models.Resume, userId uint) (uint, error)
+	Update(id uint, resume *models.Resume) error
+	Delete(id uint) error
 }
