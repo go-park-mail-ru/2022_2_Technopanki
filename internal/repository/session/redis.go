@@ -2,7 +2,6 @@ package session
 
 import (
 	"HeadHunter/configs"
-	"HeadHunter/internal/errorHandler"
 	"fmt"
 	"github.com/go-redis/redis"
 	"github.com/google/uuid"

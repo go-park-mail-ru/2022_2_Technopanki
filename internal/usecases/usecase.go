@@ -32,7 +32,8 @@ type User interface {
 
 type Vacancy interface { //TODO Сделать юзкейс вакансий
 	GetAll() ([]models.Vacancy, error)
-	GetById(uint, int) (*models.Vacancy, error)
+	GetById(int) (*models.Vacancy, error)
+	GetByUserId(uint) ([]models.Vacancy, error)
 	Create(uint, *models.Vacancy) (uint, error)
 	Update(uint, int, *models.UpdateVacancy) error
 	Delete(uint, int) error

@@ -32,12 +32,13 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware) *
 		}
 		vacancies := api.Group("/vacancy")
 		{
-			vacancies.GET("/", handlers.GetVacancies, middleware.ErrorHandler()) //TODO заменить на строку ниже
-			vacancies.GET("/", h.VacancyHandler.GetAll, middleware.ErrorHandler())
-			vacancies.GET("/:id", h.VacancyHandler.GetById, middleware.ErrorHandler())
-			vacancies.POST("/", h.VacancyHandler.Create, middleware.ErrorHandler())
-			vacancies.PUT("/:id", h.VacancyHandler.Update, middleware.ErrorHandler())
-			vacancies.DELETE("/:id", h.VacancyHandler.Delete, middleware.ErrorHandler())
+			//vacancies.GET("/", handlers.GetVacancies, middleware.ErrorHandler()) //TODO заменить на строку ниже
+			vacancies.GET("/", h.VacancyHandler.GetAllVacancies, middleware.ErrorHandler())
+			vacancies.GET("/:id", h.VacancyHandler.GetVacancyById, middleware.ErrorHandler())
+			vacancies.GET("/company/:id", h.VacancyHandler.GetUserVacancies, middleware.ErrorHandler())
+			vacancies.POST("/", sessionMW.Session, h.VacancyHandler.CreateVacancy, middleware.ErrorHandler())
+			vacancies.PUT("/:id", sessionMW.Session, h.VacancyHandler.UpdateVacancy, middleware.ErrorHandler())
+			vacancies.DELETE("/:id", sessionMW.Session, h.VacancyHandler.DeleteVacancy, middleware.ErrorHandler())
 		}
 		//
 		//resumes := api.Group("/resume")

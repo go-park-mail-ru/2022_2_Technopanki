@@ -40,11 +40,17 @@ func (vp *VacancyPostgres) Create(userId uint, vacancy *models.Vacancy) (uint, e
 	return vacancy.ID, nil
 }
 
-func (vp *VacancyPostgres) GetById(userId uint, vacancyId int) (*models.Vacancy, error) {
+func (vp *VacancyPostgres) GetById(vacancyId int) (*models.Vacancy, error) {
 	var result models.Vacancy
 	query := vp.db.Where("id = ?", vacancyId).Find(&result)
 	return &result, queryVacancyValidation(query)
 
+}
+
+func (vp *VacancyPostgres) GetByUserId(userId uint) ([]models.Vacancy, error) {
+	var vacancies []models.Vacancy
+	query := vp.db.Where("PostedByUserId = ?", userId).Find(&vacancies)
+	return vacancies, queryVacancyValidation(query)
 }
 
 func (vp *VacancyPostgres) Delete(userId uint, vacancyId int) error {

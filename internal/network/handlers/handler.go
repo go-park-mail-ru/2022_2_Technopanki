@@ -14,9 +14,10 @@ type Handlers struct {
 	cfg            *configs.Config
 }
 
-func NewHandlers(usecases *usecases.UseCases, _cfg *configs.Config, _sr session.Repository) *Handlers {
+func NewHandlers(usecases *usecases.UseCases, _cfg *configs.Config, _sr session.Repository, handlers *Handlers) *Handlers {
 	return &Handlers{
-		UserHandler: newUserHandler(usecases, _cfg, _sr),
+		UserHandler:    newUserHandler(usecases, _cfg, _sr),
+		VacancyHandler: newVacancyHandler(usecases, handlers),
 	}
 }
 
@@ -30,11 +31,12 @@ type UserH interface {
 }
 
 type VacancyH interface {
-	GetAll(c *gin.Context)
-	GetById(c *gin.Context)
-	Create(c *gin.Context)
-	Update(c *gin.Context)
-	Delete(c *gin.Context)
+	GetAllVacancies(c *gin.Context)
+	GetVacancyById(c *gin.Context)
+	GetUserVacancies(c *gin.Context)
+	CreateVacancy(c *gin.Context)
+	UpdateVacancy(c *gin.Context)
+	DeleteVacancy(c *gin.Context)
 }
 
 type ResumeH interface {

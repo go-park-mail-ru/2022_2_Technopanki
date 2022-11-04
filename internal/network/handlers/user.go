@@ -45,7 +45,7 @@ func (uh *UserHandler) SignUp(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
-	token, signUpErr := uh.userUseCase.SignUp(input)
+	token, signUpErr := uh.userUseCase.SignUp(&input)
 	if signUpErr != nil {
 		_ = c.Error(signUpErr)
 		return

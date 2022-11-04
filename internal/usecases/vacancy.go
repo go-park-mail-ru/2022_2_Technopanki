@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"HeadHunter/internal/entity/models"
+	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/repository"
 )
 
@@ -21,8 +22,12 @@ func (vs *VacancyService) Create(userId uint, input *models.Vacancy) (uint, erro
 	return vs.vacancyRep.Create(userId, input)
 }
 
-func (vs *VacancyService) GetById(userId uint, vacancyID int) (*models.Vacancy, error) {
-	return vs.vacancyRep.GetById(userId, vacancyID)
+func (vs *VacancyService) GetById(vacancyID int) (*models.Vacancy, error) {
+	return vs.vacancyRep.GetById(vacancyID)
+}
+
+func (vs *VacancyService) GetByUserId(userId uint) ([]models.Vacancy, error) {
+	return vs.vacancyRep.GetByUserId(userId)
 }
 
 func (vs *VacancyService) Delete(userId uint, vacancyId int) error {
@@ -30,7 +35,7 @@ func (vs *VacancyService) Delete(userId uint, vacancyId int) error {
 }
 
 func (vs *VacancyService) Update(userId uint, vacancyId int, updates *models.UpdateVacancy) error {
-	if err := updates.Validate(); err != nil {
+	if err := validation.UpdateVacancyValidate(*updates); err != nil {
 		return err
 	}
 	return vs.vacancyRep.Update(userId, vacancyId, updates)

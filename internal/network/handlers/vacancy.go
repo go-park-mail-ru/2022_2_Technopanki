@@ -25,7 +25,7 @@ type getAllVacanciesResponce struct {
 	Data []models.Vacancy `json:"data"`
 }
 
-func (vh *VacancyHandler) GetAll(c *gin.Context) {
+func (vh *VacancyHandler) GetAllVacancies(c *gin.Context) {
 	vacancies, getAllErr := vh.vacancyUseCase.GetAll()
 	if getAllErr != nil {
 		_ = c.Error(getAllErr)
@@ -36,14 +36,13 @@ func (vh *VacancyHandler) GetAll(c *gin.Context) {
 	})
 }
 
-func (vh *VacancyHandler) GetById(c *gin.Context) {
-	userId := vh.userHandler.GetUserId(c)
+func (vh *VacancyHandler) GetVacancyById(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		_ = c.Error(errorHandler.ErrInvalidId)
+		_ = c.Error(errorHandler.ErrInvalidQuery)
 		return
 	}
-	vacancy, err := vh.vacancyUseCase.GetById(userId, id)
+	vacancy, err := vh.vacancyUseCase.GetById(id)
 	if err != nil {
 		_ = c.Error(err)
 		return
@@ -52,7 +51,20 @@ func (vh *VacancyHandler) GetById(c *gin.Context) {
 
 }
 
-func (vh *VacancyHandler) Create(c *gin.Context) {
+func (vh *VacancyHandler) GetUserVacancies(c *gin.Context) {
+	userId := vh.userHandler.GetUserId(c)
+	vacancies, GetErr := vh.vacancyUseCase.GetByUserId(userId)
+	if GetErr != nil {
+		_ = c.Error(GetErr)
+		return
+	}
+	c.JSON(http.StatusOK, getAllVacanciesResponce{
+		vacancies,
+	})
+
+}
+
+func (vh *VacancyHandler) CreateVacancy(c *gin.Context) {
 	userId := vh.userHandler.GetUserId(c)
 	var input models.Vacancy
 	if err := c.BindJSON(&input); err != nil {
@@ -74,11 +86,11 @@ type statusResponse struct {
 	Status string `json:"status"`
 }
 
-func (vh *VacancyHandler) Delete(c *gin.Context) {
+func (vh *VacancyHandler) DeleteVacancy(c *gin.Context) {
 	userId := vh.userHandler.GetUserId(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		_ = c.Error(errorHandler.ErrInvalidId)
+		_ = c.Error(errorHandler.ErrInvalidQuery)
 		return
 	}
 	deleteErr := vh.vacancyUseCase.Delete(userId, id)
@@ -91,11 +103,11 @@ func (vh *VacancyHandler) Delete(c *gin.Context) {
 	})
 }
 
-func (vh *VacancyHandler) Update(c *gin.Context) {
+func (vh *VacancyHandler) UpdateVacancy(c *gin.Context) {
 	userId := vh.userHandler.GetUserId(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		_ = c.Error(errorHandler.ErrInvalidId)
+		_ = c.Error(errorHandler.ErrInvalidQuery)
 		return
 	}
 	var input models.UpdateVacancy

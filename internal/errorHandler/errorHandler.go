@@ -7,7 +7,6 @@ import (
 
 var (
 	ErrBadRequest              = errors.New("bad request")
-	ErrInvalidId               = errors.New("invalid id param")
 	ErrUnauthorized            = errors.New("unauthorized")
 	ErrServiceUnavailable      = errors.New("service unavailable")
 	ErrUserExists              = errors.New("Пользователь с таким email уже существует")
@@ -38,7 +37,6 @@ var (
 
 var errorToCode = map[error]int{
 	ErrBadRequest:          http.StatusBadRequest,
-	ErrInvalidId:           http.StatusBadRequest,
 	ErrUnauthorized:        http.StatusUnauthorized,
 	ErrServiceUnavailable:  http.StatusServiceUnavailable,
 	ErrUserExists:          http.StatusBadRequest,
