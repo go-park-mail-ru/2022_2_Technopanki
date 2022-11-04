@@ -16,8 +16,11 @@ type UserAccount struct {
 	ApplicantSurname       string            `json:"applicant_surname,omitempty"`
 	ApplicantCurrentSalary uint              `json:"applicant_current_salary,omitempty"`
 	CompanyName            string            `json:"company_name,omitempty"`
-	BusinessType           string            `json:"business_type,omitempty"`
+	BusinessType           []string          `json:"business_type,omitempty"`
 	CompanyWebsiteUrl      string            `json:"company_website_url,omitempty"`
+	CompanyLocation        string            `json:"company_location,omitempty"`
+	CompanySize            uint              `json:"company_size,omitempty"`
+	SocialNetworks         SocialNetworks    `json:"social_networks" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`
 	Resumes                []Resume          `json:"resumes" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`
 	Vacancies              []Vacancy         `json:"vacancies" gorm:"foreignKey:PostedByUserId;constraint:OnDelete:CASCADE;"`
 	VacancyActivities      []VacancyActivity `json:"vacancy_activities" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`
