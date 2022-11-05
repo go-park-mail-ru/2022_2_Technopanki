@@ -127,6 +127,7 @@ func (us *UserService) UpdateUser(input *models.UserAccount) error {
 
 		input.Password = encryptedPassword
 	}
+	input.ID = oldUser.ID
 
 	dbError := us.userRep.UpdateUser(oldUser, input)
 	if dbError != nil {

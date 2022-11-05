@@ -5,6 +5,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SendErrorData(err *gin.Error, c *gin.Context) {
-	c.AbortWithStatusJSON(errorHandler.ConvertError(err.Err), gin.H{"error": err.Error()})
+func SendErrorData(err *errorHandler.ComplexError, c *gin.Context) {
+	result := gin.H{"error": err.Error()}
+	desc, descErr := err.GetDescriptors("type")
+	if descErr == nil {
+		result["type"] = desc
+	}
+	c.AbortWithStatusJSON(errorHandler.ConvertError(err), result)
 }

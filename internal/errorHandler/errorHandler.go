@@ -1,35 +1,33 @@
 package errorHandler
 
 import (
-	"errors"
 	"net/http"
 )
 
 var (
-	ErrBadRequest         = errors.New("bad request")
-	ErrUnauthorized       = errors.New("unauthorized")
-	ErrServiceUnavailable = errors.New("service unavailable")
-	ErrUserExists         = errors.New("Пользователь с таким email уже существует")
-	ErrUserNotExists      = errors.New("Пользователя с таким email не существует")
-	ErrInvalidQuery       = errors.New("invalid query")
-	ErrInvalidParam       = errors.New("invalid param")
-	ErrSessionNotFound    = errors.New("session with this token not found")
-	ErrVacancyNotFound    = errors.New("vacancy not found")
-	ErrResumeNotFound     = errors.New("resume not found")
+	ErrBadRequest         = newNonDescError("bad request")
+	ErrUnauthorized       = newNonDescError("unauthorized")
+	ErrServiceUnavailable = newNonDescError("service unavailable")
+	ErrUserExists         = newSimpleDescError("Пользователь с таким email уже существует", "type", "email")
+	ErrUserNotExists      = newNonDescError("user not found")
+	ErrInvalidParam       = newNonDescError("invalid param")
+	ErrSessionNotFound    = newNonDescError("session with this token not found")
+	ErrVacancyNotFound    = newNonDescError("vacancy not found")
+	ErrResumeNotFound     = newNonDescError("resume not found")
 
-	ErrForbidden           = errors.New("forbidden")
-	ErrWrongAnswer         = errors.New("wrong answer")
-	ErrInvalidFileFormat   = errors.New("invalid file format")
-	IncorrectNameLength    = errors.New("Длина имени должна быть между 3 и 20 символами")
-	IncorrectSurnameLength = errors.New("Длина фамилии должна быть между 3 и 20 символами")
+	ErrForbidden           = newNonDescError("forbidden")
+	ErrWrongAnswer         = newSimpleDescError("wrong answer", "type", "password")
+	ErrInvalidFileFormat   = newNonDescError("invalid file format")
+	IncorrectNameLength    = newSimpleDescError("Длина имени должна быть между 3 и 20 символами", "type", "name")
+	IncorrectSurnameLength = newSimpleDescError("Длина фамилии должна быть между 3 и 20 символами", "type", "surname")
 
-	InvalidEmailFormat   = errors.New("email должен содержать @")
-	IncorrectEmailLength = errors.New("Длина email должна быть между 8 and 30 символами")
+	InvalidEmailFormat   = newSimpleDescError("email должен содержать @", "type", "email")
+	IncorrectEmailLength = newSimpleDescError("Длина email должна быть между 8 and 30 символами", "type", "email")
 
-	InvalidPasswordFormat   = errors.New("Пароль должен содержать буквы латиницы, цифры и спецсимволы(!#%^$)")
-	IncorrectPasswordLength = errors.New("Длина пароля должна быть между 8 и 20 символами")
+	InvalidPasswordFormat   = newSimpleDescError("Пароль должен содержать буквы латиницы, цифры и спецсимволы(!#%^$)", "type", "password")
+	IncorrectPasswordLength = newSimpleDescError("Длина пароля должна быть между 8 и 20 символами", "type", "password")
 
-	InvalidUserType = errors.New("invalid input user type")
+	InvalidUserType = newNonDescError("invalid input user type")
 )
 
 var errorToCode = map[error]int{
@@ -38,7 +36,6 @@ var errorToCode = map[error]int{
 	ErrServiceUnavailable: http.StatusServiceUnavailable,
 	ErrUserExists:         http.StatusBadRequest,
 	ErrUserNotExists:      http.StatusUnauthorized,
-	ErrInvalidQuery:       http.StatusBadRequest,
 	ErrInvalidParam:       http.StatusBadRequest,
 	ErrSessionNotFound:    http.StatusUnauthorized,
 	ErrVacancyNotFound:    http.StatusNotFound,

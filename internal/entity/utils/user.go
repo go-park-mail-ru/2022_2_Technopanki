@@ -6,6 +6,7 @@ import (
 )
 
 func FillUser(user, reference *models.UserAccount) error {
+	user.ID = reference.ID
 	user.UserType = reference.UserType
 	user.Image = reference.Image
 	if reference.UserType == "applicant" {

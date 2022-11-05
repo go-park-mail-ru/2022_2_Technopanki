@@ -24,7 +24,7 @@ func GetVacancies(c *gin.Context) {
 	idStr := c.Query("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil && idStr != "" {
-		_ = c.Error(errorHandler.ErrInvalidQuery)
+		_ = c.Error(errorHandler.ErrInvalidParam)
 		return
 	}
 	if id == 0 {
