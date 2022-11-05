@@ -9,17 +9,10 @@ import (
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/images"
 	"HeadHunter/internal/repository/session"
-	"errors"
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/kolesa-team/go-webp/decoder"
-	"github.com/kolesa-team/go-webp/webp"
 	"image"
-	"image/gif"
-	"image/jpeg"
-	"image/png"
 	"mime/multipart"
-	"strings"
 )
 
 type UserService struct {
@@ -138,7 +131,7 @@ func (us *UserService) UpdateUser(input *models.UserAccount) error {
 }
 
 func (us *UserService) UpdateUserFields(input *models.UserAccount, field ...string) error {
-	if utils.HasArrayElement[string]("password", field) {
+	if utils.HasStringArrayElement("password", field) {
 		return errorHandler.ErrForbidden
 	}
 	inputValidity := validation.IsMainDataValid(input, us.cfg.Validation)
@@ -172,33 +165,12 @@ func (us *UserService) GetUserByEmail(email string) (*models.UserAccount, error)
 }
 
 func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *multipart.FileHeader) (string, error) {
-	nameWithExt := strings.Split(fileHeader.Filename, ".")
-	if len(nameWithExt) != 2 {
-		return "", errors.New("incorrect fileName format")
-	}
-	imageExt := nameWithExt[1]
-
 	file, fileErr := fileHeader.Open()
 	if fileErr != nil {
 		return "", fileErr
 	}
 
-	var img image.Image
-	var decodeErr error
-	switch imageExt {
-	case "jpeg":
-		img, decodeErr = jpeg.Decode(file)
-	case "jpg":
-		img, decodeErr = jpeg.Decode(file)
-	case "png":
-		img, decodeErr = png.Decode(file)
-	case "gif":
-		img, decodeErr = gif.Decode(file)
-	case "webp":
-		img, decodeErr = webp.Decode(file, &decoder.Options{})
-	default:
-		decodeErr = errorHandler.ErrInvalidFileFormat
-	}
+	img, _, decodeErr := image.Decode(file)
 	if decodeErr != nil {
 		return "", decodeErr
 	}

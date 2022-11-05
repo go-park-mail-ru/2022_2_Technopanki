@@ -11,15 +11,18 @@ func (ce *ComplexError) Error() string {
 	return ce.err
 }
 
-func newComplexError(_err string, _desc map[string]any) error {
+func newComplexError(_err string, _desc map[string]any) *ComplexError {
 	return &ComplexError{err: _err, descriptors: _desc}
 }
 
-func newNonDescError(_err string) error {
+func Complex(_err error) *ComplexError {
+	return &ComplexError{err: _err.Error()}
+}
+func newNonDescError(_err string) *ComplexError {
 	return newComplexError(_err, map[string]any{})
 }
 
-func newSimpleDescError(_err string, key string, value any) error {
+func newSimpleDescError(_err string, key string, value any) *ComplexError {
 	return newComplexError(_err, map[string]any{key: value})
 }
 
@@ -31,7 +34,7 @@ func (ce *ComplexError) GetDescriptors(key string) (any, error) {
 	return desc, nil
 }
 
-func (ce *ComplexError) SetDesc(key string, value any) error {
+func (ce *ComplexError) SetDesc(key string, value any) *ComplexError {
 	newErr := *ce
 	newErr.descriptors[key] = value
 	return &newErr

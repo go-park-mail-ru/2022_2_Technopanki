@@ -23,18 +23,6 @@ func newUserHandler(useCases *usecases.UseCases, _cfg *configs.Config, _sr sessi
 	return &UserHandler{cfg: _cfg, userUseCase: useCases.User, sessionRepo: _sr}
 }
 
-func (uh *UserHandler) getEmailFromContext(c *gin.Context) (string, error) {
-	email, ok := c.Get("userEmail")
-	if !ok {
-		return "", errorHandler.ErrUnauthorized
-	}
-	emailStr, ok := email.(string)
-	if !ok {
-		return "", errorHandler.ErrBadRequest
-	}
-	return emailStr, nil
-}
-
 func (uh *UserHandler) SignIn(c *gin.Context) {
 	var input models.UserAccount
 	if err := c.BindJSON(&input); err != nil {
@@ -57,7 +45,7 @@ func (uh *UserHandler) SignUp(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
-	
+
 	token, signUpErr := uh.userUseCase.SignUp(&input)
 	if signUpErr != nil {
 		_ = c.Error(signUpErr)

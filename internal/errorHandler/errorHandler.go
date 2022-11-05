@@ -16,7 +16,7 @@ var (
 	ErrResumeNotFound     = newNonDescError("resume not found")
 
 	ErrForbidden           = newNonDescError("forbidden")
-	ErrWrongAnswer         = newSimpleDescError("wrong answer", "type", "password")
+	ErrWrongPassword       = newSimpleDescError("wrong password", "type", "password")
 	ErrInvalidFileFormat   = newNonDescError("invalid file format")
 	IncorrectNameLength    = newSimpleDescError("Длина имени должна быть между 3 и 20 символами", "type", "name")
 	IncorrectSurnameLength = newSimpleDescError("Длина фамилии должна быть между 3 и 20 символами", "type", "surname")
@@ -42,7 +42,7 @@ var errorToCode = map[error]int{
 	ErrResumeNotFound:     http.StatusNotFound,
 
 	ErrForbidden:           http.StatusForbidden,
-	ErrWrongAnswer:         http.StatusBadRequest,
+	ErrWrongPassword:       http.StatusBadRequest,
 	ErrInvalidFileFormat:   http.StatusBadRequest,
 	IncorrectNameLength:    http.StatusBadRequest,
 	IncorrectSurnameLength: http.StatusBadRequest,
