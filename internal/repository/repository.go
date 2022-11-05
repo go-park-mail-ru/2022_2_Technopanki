@@ -32,14 +32,15 @@ type VacancyRepository interface { //TODO Сделать репозиторий 
 	GetAll() ([]models.Vacancy, error)
 	GetById(int) (*models.Vacancy, error)
 	GetByUserId(int) ([]models.Vacancy, error)
-	Create(userId uint, vacancy *models.Vacancy) (uint, error)
-	Update(uint, int, *models.UpdateVacancy) error
+	Create(vacancy *models.Vacancy) (uint, error)
+	Update(string, string, *models.UpdateVacancy) error
 	Delete(uint, int) error
 }
 
 type VacancyActivityRepository interface {
-	ApplyForVacancy(uint, *models.VacancyActivity) error
+	ApplyForVacancy(*models.VacancyActivity) error
 	GetAllVacancyApplies(int) ([]models.VacancyActivity, error)
+	GetAllUserApplies(int) ([]models.VacancyActivity, error)
 }
 
 type ResumeRepository interface { //TODO Сделать репозиторий резюме

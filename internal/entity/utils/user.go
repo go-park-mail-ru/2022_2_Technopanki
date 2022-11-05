@@ -16,3 +16,18 @@ func FillUser(user, reference *models.UserAccount) error {
 	}
 	return nil
 }
+
+//func GetUserId(c *gin.Context) (uint, error) {
+//	userEmail, ok := c.Get("userEmail")
+//	if !ok {
+//		paramErr := c.Error(errorHandler.ErrInvalidParam)
+//		return 0, paramErr
+//	}
+//	emailString := userEmail.(string)
+//	userId, userIdErr := uh.userUseCase.GetUserId(emailString)
+//	if userIdErr != nil {
+//		err := c.Error(userIdErr)
+//		return 0, err
+//	}
+//	return userId, nil
+//}

@@ -40,7 +40,11 @@ func (vah *VacancyActivityHandler) GetAllVacancyApplies(c *gin.Context) {
 }
 
 func (vah *VacancyActivityHandler) ApplyForVacancy(c *gin.Context) {
-	userId := vah.userHandler.GetUserId(c)
+	userId, getUserIdErr := vah.userHandler.GetUserId(c)
+	if getUserIdErr != nil {
+		_ = c.Error(getUserIdErr)
+		return
+	}
 	var input models.VacancyActivity
 	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
@@ -54,5 +58,22 @@ func (vah *VacancyActivityHandler) ApplyForVacancy(c *gin.Context) {
 
 	c.JSON(http.StatusOK, statusResponse{
 		Status: "ok",
+	})
+}
+
+func (vah *VacancyActivityHandler) GetAllUserApplies(c *gin.Context) {
+	userId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		_ = c.Error(errorHandler.ErrInvalidParam)
+		return
+	}
+
+	applies, getErr := vah.vacancyActivityUseCase.GetAllUserApplies(userId)
+	if getErr != nil {
+		_ = c.Error(getErr)
+		return
+	}
+	c.JSON(http.StatusOK, GetAllVacancyAppliesResponce{
+		applies,
 	})
 }

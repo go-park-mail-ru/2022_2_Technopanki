@@ -18,5 +18,10 @@ func (vas *VacancyActivityService) GetAllVacancyApplies(vacancyId int) ([]models
 }
 
 func (vas *VacancyActivityService) ApplyForVacancy(userId uint, input *models.VacancyActivity) error {
-	return vas.vacancyActivityRep.ApplyForVacancy(userId, input)
+	input.UserAccountId = userId
+	return vas.vacancyActivityRep.ApplyForVacancy(input)
+}
+
+func (vas *VacancyActivityService) GetAllUserApplies(userId int) ([]models.VacancyActivity, error) {
+	return vas.vacancyActivityRep.GetAllUserApplies(userId)
 }

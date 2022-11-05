@@ -69,7 +69,11 @@ func (vh *VacancyHandler) GetUserVacancies(c *gin.Context) {
 }
 
 func (vh *VacancyHandler) CreateVacancy(c *gin.Context) {
-	userId := vh.userHandler.GetUserId(c)
+	userId, getUserIdErr := vh.userHandler.GetUserId(c)
+	if getUserIdErr != nil {
+		_ = c.Error(getUserIdErr)
+		return
+	}
 	var input models.Vacancy
 	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
@@ -91,7 +95,11 @@ type statusResponse struct {
 }
 
 func (vh *VacancyHandler) DeleteVacancy(c *gin.Context) {
-	userId := vh.userHandler.GetUserId(c)
+	userId, getUserIdErr := vh.userHandler.GetUserId(c)
+	if getUserIdErr != nil {
+		_ = c.Error(getUserIdErr)
+		return
+	}
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		_ = c.Error(errorHandler.ErrInvalidParam)
@@ -108,7 +116,11 @@ func (vh *VacancyHandler) DeleteVacancy(c *gin.Context) {
 }
 
 func (vh *VacancyHandler) UpdateVacancy(c *gin.Context) {
-	userId := vh.userHandler.GetUserId(c)
+	userId, getUserIdErr := vh.userHandler.GetUserId(c)
+	if getUserIdErr != nil {
+		_ = c.Error(getUserIdErr)
+		return
+	}
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		_ = c.Error(errorHandler.ErrInvalidParam)

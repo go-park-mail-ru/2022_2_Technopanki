@@ -5,7 +5,6 @@ import (
 	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/errorHandler"
 	"gorm.io/gorm"
-	"strconv"
 )
 
 type VacancyPostgres struct {
@@ -18,12 +17,14 @@ func newVacancyPostgres(db *gorm.DB) *VacancyPostgres {
 
 func (vp *VacancyPostgres) GetAll() ([]models.Vacancy, error) {
 	var vacancies []models.Vacancy
-	query := vp.db.Find(&vacancies)
-	return vacancies, validation.QueryVacancyValidation(query)
+	query := vp.db.Find(vacancies)
+	if query.Error != nil {
+		return vacancies, query.Error
+	}
+	return vacancies, nil
 }
 
-func (vp *VacancyPostgres) Create(userId uint, vacancy *models.Vacancy) (uint, error) {
-	vacancy.PostedByUserId = userId
+func (vp *VacancyPostgres) Create(vacancy *models.Vacancy) (uint, error) {
 	error := vp.db.Create(&vacancy).Error
 	if error != nil {
 		return 0, errorHandler.ErrInvalidParam
@@ -53,11 +54,9 @@ func (vp *VacancyPostgres) Delete(userId uint, vacancyId int) error {
 	return nil
 }
 
-func (vp *VacancyPostgres) Update(userId uint, vacancyId int, vacancy *models.UpdateVacancy) error {
-	userIdString := strconv.FormatUint(uint64(userId), 10)
-	vacancyIdString := strconv.Itoa(vacancyId)
+func (vp *VacancyPostgres) Update(userId string, vacancyId string, vacancy *models.UpdateVacancy) error {
 
-	error := vp.db.Model(&models.Vacancy{}).Where("id = ? AND posted_by_user_id = ?", vacancyIdString, userIdString).Updates(vacancy).Error
+	error := vp.db.Model(&models.Vacancy{}).Where("id = ? AND posted_by_user_id = ?", vacancyId, userId).Updates(vacancy).Error
 	if error != nil {
 		return error
 	}

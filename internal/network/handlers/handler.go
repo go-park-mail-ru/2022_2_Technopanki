@@ -29,7 +29,7 @@ type UserH interface {
 	Logout(c *gin.Context)
 	AuthCheck(c *gin.Context)
 	UpgradeUser(c *gin.Context)
-	GetUserId(c *gin.Context) uint
+	GetUserId(c *gin.Context) (uint, error)
 }
 
 type VacancyH interface {
@@ -44,6 +44,7 @@ type VacancyH interface {
 type VacancyActivityH interface {
 	ApplyForVacancy(c *gin.Context)
 	GetAllVacancyApplies(c *gin.Context)
+	GetAllUserApplies(c *gin.Context)
 }
 
 type ResumeH interface {
