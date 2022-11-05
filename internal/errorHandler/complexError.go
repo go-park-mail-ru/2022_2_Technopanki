@@ -32,7 +32,7 @@ func (ce *ComplexError) GetDescriptors(key string) (any, error) {
 }
 
 func (ce *ComplexError) SetDesc(key string, value any) error {
-	newErr := ce
+	newErr := *ce
 	newErr.descriptors[key] = value
-	return ce
+	return &newErr
 }
