@@ -1,68 +1,85 @@
 package errorHandler
 
 import (
+	"errors"
 	"net/http"
 )
 
 var (
-	ErrBadRequest         = newComplexError("bad request")
-	ErrUnauthorized       = newComplexError("unauthorized")
-	ErrServiceUnavailable = newComplexError("service unavailable")
-	ErrUserExists         = newComplexError("Пользователь с таким email уже существует", "email")
-	ErrUserNotExists      = newComplexError("user not found")
-	ErrInvalidParam       = newComplexError("invalid param")
-	ErrSessionNotFound    = newComplexError("session with this token not found")
-	ErrVacancyNotFound    = newComplexError("vacancy not found")
-	ErrResumeNotFound     = newComplexError("resume not found")
+	ErrBadRequest         = errors.New("bad request")
+	ErrUnauthorized       = errors.New("unauthorized")
+	ErrServiceUnavailable = errors.New("service unavailable")
+	ErrUserExists         = errors.New("Пользователь с таким email уже существует")
+	ErrUserNotExists      = errors.New("user not found")
+	ErrInvalidParam       = errors.New("invalid param")
+	ErrSessionNotFound    = errors.New("session with this token not found")
+	ErrVacancyNotFound    = errors.New("vacancy not found")
+	ErrResumeNotFound     = errors.New("resume not found")
 
-	ErrForbidden           = newComplexError("forbidden")
-	ErrWrongPassword       = newComplexError("wrong password", "password")
-	ErrInvalidFileFormat   = newComplexError("invalid file format")
-	IncorrectNameLength    = newComplexError("Длина имени должна быть между 2 и 30 символами", "name")
-	IncorrectSurnameLength = newComplexError("Длина фамилии должна быть между 2 и 30 символами", "surname")
+	ErrForbidden           = errors.New("forbidden")
+	ErrWrongPassword       = errors.New("wrong password")
+	ErrInvalidFileFormat   = errors.New("invalid file format")
+	IncorrectNameLength    = errors.New("Длина имени должна быть между 2 и 30 символами")
+	IncorrectSurnameLength = errors.New("Длина фамилии должна быть между 2 и 30 символами")
 
-	InvalidEmailFormat   = newComplexError("email должен содержать @", "email")
-	IncorrectEmailLength = newComplexError("Длина email должна быть между 8 and 30 символами", "email")
+	InvalidEmailFormat   = errors.New("email должен содержать @")
+	IncorrectEmailLength = errors.New("Длина email должна быть между 8 and 30 символами")
 
-	InvalidPasswordFormat   = newComplexError("Пароль должен содержать буквы латиницы, цифры и спецсимволы(!#%^$)", "password")
-	IncorrectPasswordLength = newComplexError("Длина пароля должна быть между 8 и 20 символами", "password")
+	InvalidPasswordFormat   = errors.New("Пароль должен содержать буквы латиницы, цифры и спецсимволы(!#%^$)")
+	IncorrectPasswordLength = errors.New("Длина пароля должна быть между 8 и 20 символами")
 
-	InvalidUserType = newComplexError("invalid input user type")
+	InvalidUserType = errors.New("invalid input user type")
 )
 
 var errorToCode = map[error]int{
-	ErrBadRequest.err:         http.StatusBadRequest,
-	ErrUnauthorized.err:       http.StatusUnauthorized,
-	ErrServiceUnavailable.err: http.StatusServiceUnavailable,
-	ErrUserExists.err:         http.StatusBadRequest,
-	ErrUserNotExists.err:      http.StatusUnauthorized,
-	ErrInvalidParam.err:       http.StatusBadRequest,
-	ErrSessionNotFound.err:    http.StatusUnauthorized,
-	ErrVacancyNotFound.err:    http.StatusNotFound,
-	ErrResumeNotFound.err:     http.StatusNotFound,
+	ErrBadRequest:         http.StatusBadRequest,
+	ErrUnauthorized:       http.StatusUnauthorized,
+	ErrServiceUnavailable: http.StatusServiceUnavailable,
+	ErrUserExists:         http.StatusBadRequest,
+	ErrUserNotExists:      http.StatusUnauthorized,
+	ErrInvalidParam:       http.StatusBadRequest,
+	ErrSessionNotFound:    http.StatusUnauthorized,
+	ErrVacancyNotFound:    http.StatusNotFound,
+	ErrResumeNotFound:     http.StatusNotFound,
 
-	ErrForbidden.err:           http.StatusForbidden,
-	ErrWrongPassword.err:       http.StatusBadRequest,
-	ErrInvalidFileFormat.err:   http.StatusBadRequest,
-	IncorrectNameLength.err:    http.StatusBadRequest,
-	IncorrectSurnameLength.err: http.StatusBadRequest,
-	InvalidUserType.err:        http.StatusBadRequest,
+	ErrForbidden:           http.StatusForbidden,
+	ErrWrongPassword:       http.StatusBadRequest,
+	ErrInvalidFileFormat:   http.StatusBadRequest,
+	IncorrectNameLength:    http.StatusBadRequest,
+	IncorrectSurnameLength: http.StatusBadRequest,
+	InvalidUserType:        http.StatusBadRequest,
 
-	InvalidEmailFormat.err:   http.StatusBadRequest,
-	IncorrectEmailLength.err: http.StatusBadRequest,
+	InvalidEmailFormat:   http.StatusBadRequest,
+	IncorrectEmailLength: http.StatusBadRequest,
 
-	InvalidPasswordFormat.err:   http.StatusBadRequest,
-	IncorrectPasswordLength.err: http.StatusBadRequest,
+	InvalidPasswordFormat:   http.StatusBadRequest,
+	IncorrectPasswordLength: http.StatusBadRequest,
 }
 
 func ConvertError(err error) int {
-	complexErr, ok := err.(*ComplexError)
-	if ok {
-		return ConvertError(complexErr.err)
-	}
 	result, ok := errorToCode[err]
 	if ok {
 		return result
 	}
 	return http.StatusInternalServerError
+}
+
+var errorDescriptors = map[error][]string{
+	ErrUserExists:           {"email"},
+	ErrUserNotExists:        {"email"},
+	ErrWrongPassword:        {"password"},
+	IncorrectNameLength:     {"name"},
+	IncorrectSurnameLength:  {"surname"},
+	InvalidEmailFormat:      {"email"},
+	IncorrectEmailLength:    {"email"},
+	InvalidPasswordFormat:   {"password"},
+	IncorrectPasswordLength: {"password"},
+}
+
+func GetErrorDescriptors(err error) []string {
+	result, ok := errorDescriptors[err]
+	if ok {
+		return result
+	}
+	return []string{}
 }

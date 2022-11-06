@@ -6,13 +6,6 @@ import (
 )
 
 func SendErrorData(c *gin.Context, err error) {
-	result := gin.H{"error": err.Error()}
-
-	complexErr, ok := err.(*errorHandler.ComplexError)
-	if ok {
-		desc := complexErr.GetDescriptors()
-		result["descriptors"] = desc
-	}
-
+	result := gin.H{"error": err.Error(), "descriptors": errorHandler.GetErrorDescriptors(err)}
 	c.AbortWithStatusJSON(errorHandler.ConvertError(err), result)
 }

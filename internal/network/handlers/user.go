@@ -59,7 +59,7 @@ func (uh *UserHandler) SignUp(c *gin.Context) {
 func (uh *UserHandler) Logout(c *gin.Context) {
 	token, err := c.Cookie("session")
 	if err != nil {
-		_ = c.Error(errorHandler.ErrBadRequest.SetDesc("cool"))
+		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
 
