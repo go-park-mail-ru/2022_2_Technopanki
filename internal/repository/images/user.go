@@ -2,16 +2,51 @@ package images
 
 import (
 	"HeadHunter/configs"
+	"HeadHunter/internal/errorHandler"
+	"github.com/kolesa-team/go-webp/encoder"
+	"github.com/kolesa-team/go-webp/webp"
 	"image"
+	"os"
 	"strings"
 )
 
-func UploadUserAvatar(name string, image *image.Image, cfg *configs.ImageConfig) error {
+func UploadUserAvatar(name string, image *image.Image, cfg *configs.ImageConfig) (err error) {
 	fullPath := strings.Join([]string{cfg.Path, "avatar/"}, "")
-	return UploadWebpImage(fullPath, name, image)
+	if name == "" || fullPath == "" {
+		return errorHandler.ErrBadRequest
+	}
+
+	resultImage, createErr := os.Create(strings.Join([]string{fullPath, name}, ""))
+	if createErr != nil {
+		return createErr
+	}
+	defer func(resultImage *os.File) {
+		closeErr := resultImage.Close()
+		if closeErr != nil {
+			err = closeErr
+		}
+	}(resultImage)
+
+	options, optionErr := encoder.NewLossyEncoderOptions(encoder.PresetDefault, 15)
+	if optionErr != nil {
+		return optionErr
+	}
+
+	if encodingErr := webp.Encode(resultImage, *image, options); err != nil {
+		return encodingErr
+	}
+	return nil
 }
 
 func DeleteUserAvatar(name string, cfg *configs.ImageConfig) error {
 	fullPath := strings.Join([]string{cfg.Path, "avatar/"}, "")
-	return DeleteWebpImage(fullPath, name)
+	if fullPath == "" || name == "" {
+		return errorHandler.ErrBadRequest
+	}
+
+	removeErr := os.Remove(strings.Join([]string{fullPath, name}, ""))
+	if removeErr != nil {
+		return removeErr
+	}
+	return nil
 }

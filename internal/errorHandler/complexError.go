@@ -1,41 +1,28 @@
 package errorHandler
 
-import "fmt"
-
 type ComplexError struct {
 	err         string
-	descriptors map[string]any
+	descriptors []string
 }
 
 func (ce *ComplexError) Error() string {
 	return ce.err
 }
 
-func newComplexError(_err string, _desc map[string]any) *ComplexError {
+func newComplexError(_err string, _desc ...string) *ComplexError {
 	return &ComplexError{err: _err, descriptors: _desc}
 }
 
 func Complex(_err error) *ComplexError {
 	return &ComplexError{err: _err.Error()}
 }
-func newNonDescError(_err string) *ComplexError {
-	return newComplexError(_err, map[string]any{})
+
+func (ce *ComplexError) GetDescriptors() []string {
+	return ce.descriptors
 }
 
-func newSimpleDescError(_err string, key string, value any) *ComplexError {
-	return newComplexError(_err, map[string]any{key: value})
-}
-
-func (ce *ComplexError) GetDescriptors(key string) (any, error) {
-	desc, ok := ce.descriptors[key]
-	if !ok {
-		return nil, fmt.Errorf("descriptor not fount")
-	}
-	return desc, nil
-}
-
-func (ce *ComplexError) SetDesc(key string, value any) *ComplexError {
+func (ce *ComplexError) SetDesc(newDesc ...string) *ComplexError {
 	newErr := *ce
-	newErr.descriptors[key] = value
+	newErr.descriptors = append(newErr.descriptors, newDesc...)
 	return &newErr
 }

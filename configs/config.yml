@@ -15,9 +15,9 @@ redis:
   dbname: "sessionDB"
 validation:
   minNameLength: 2
-  maxNameLength: 20
+  maxNameLength: 30
   minSurnameLength: 2
-  maxSurnameLength: 20
+  maxSurnameLength: 30
   minPasswordLength: 8
   maxPasswordLength: 20
   minEmailLength: 8

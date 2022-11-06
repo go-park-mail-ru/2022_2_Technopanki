@@ -10,8 +10,10 @@ import (
 	"HeadHunter/internal/repository/images"
 	"HeadHunter/internal/repository/session"
 	"fmt"
-	"github.com/google/uuid"
 	"image"
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
 	"mime/multipart"
 )
 
@@ -172,11 +174,11 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 
 	img, _, decodeErr := image.Decode(file)
 	if decodeErr != nil {
-		return "", decodeErr
+		return "", errorHandler.ErrBadRequest
 	}
 
 	if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
-		user.Image = fmt.Sprintf("%s.webp", uuid.NewString())
+		user.Image = fmt.Sprintf("%d.webp", user.ID)
 
 		updateErr := us.UpdateUserFields(user, "image")
 		if updateErr != nil {

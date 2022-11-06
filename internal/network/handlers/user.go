@@ -176,8 +176,7 @@ func (uh *UserHandler) UploadUserImage(c *gin.Context) {
 		return
 	}
 
-	_, uploadErr := uh.userUseCase.UploadUserImage(
-		user, file)
+	_, uploadErr := uh.userUseCase.UploadUserImage(user, file)
 	if uploadErr != nil {
 		_ = c.Error(uploadErr)
 		return
