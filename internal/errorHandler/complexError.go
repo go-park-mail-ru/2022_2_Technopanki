@@ -1,20 +1,18 @@
 package errorHandler
 
+import "errors"
+
 type ComplexError struct {
-	err         string
+	err         error
 	descriptors []string
 }
 
 func (ce *ComplexError) Error() string {
-	return ce.err
+	return ce.err.Error()
 }
 
 func newComplexError(_err string, _desc ...string) *ComplexError {
-	return &ComplexError{err: _err, descriptors: _desc}
-}
-
-func Complex(_err error) *ComplexError {
-	return &ComplexError{err: _err.Error()}
+	return &ComplexError{err: errors.New(_err), descriptors: _desc}
 }
 
 func (ce *ComplexError) GetDescriptors() []string {

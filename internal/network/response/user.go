@@ -39,7 +39,7 @@ func generateUserResponse(user *models.UserAccount, fields []string) (models.Use
 	return result, nil
 }
 
-func sendUserResponse(user *models.UserAccount, fields []string, c *gin.Context) {
+func sendUserResponse(c *gin.Context, user *models.UserAccount, fields []string) {
 	result, generateErr := generateUserResponse(user, fields)
 	if generateErr != nil {
 		_ = c.Error(generateErr)
@@ -49,14 +49,14 @@ func sendUserResponse(user *models.UserAccount, fields []string, c *gin.Context)
 	c.JSON(http.StatusOK, result)
 }
 
-func SendSuccessData(user *models.UserAccount, c *gin.Context) {
-	sendUserResponse(user, []string{"id", "user_type", "name_data", "image"}, c)
+func SendSuccessData(c *gin.Context, user *models.UserAccount) {
+	sendUserResponse(c, user, []string{"id", "user_type", "name_data", "image"})
 }
 
-func SendPreviewData(user *models.UserAccount, c *gin.Context) {
-	sendUserResponse(user, []string{"id", "user_type", "name_data", "image", "status"}, c)
+func SendPreviewData(c *gin.Context, user *models.UserAccount) {
+	sendUserResponse(c, user, []string{"id", "user_type", "name_data", "image", "status"})
 }
 
-func SendUploadImageData(user *models.UserAccount, c *gin.Context) {
-	sendUserResponse(user, []string{"image"}, c)
+func SendUploadImageData(c *gin.Context, user *models.UserAccount) {
+	sendUserResponse(c, user, []string{"image"})
 }

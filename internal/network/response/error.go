@@ -5,9 +5,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SendErrorData(err error, c *gin.Context) {
+func SendErrorData(c *gin.Context, err error) {
 	result := gin.H{"error": err.Error()}
-	
+
 	complexErr, ok := err.(*errorHandler.ComplexError)
 	if ok {
 		desc := complexErr.GetDescriptors()

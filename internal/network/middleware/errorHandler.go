@@ -10,7 +10,7 @@ func ErrorHandler() gin.HandlerFunc {
 		if len(c.Errors) > 0 {
 			c.Next()
 			rawErr := c.Errors.Last()
-			response.SendErrorData(rawErr.Err, c)
+			response.SendErrorData(c, rawErr.Err)
 		}
 		return
 	}

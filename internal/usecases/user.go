@@ -172,11 +172,6 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 		return "", fileErr
 	}
 
-	img, _, decodeErr := image.Decode(file)
-	if decodeErr != nil {
-		return "", errorHandler.ErrBadRequest
-	}
-
 	if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
 		user.Image = fmt.Sprintf("%d.webp", user.ID)
 
@@ -184,6 +179,11 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 		if updateErr != nil {
 			return "", updateErr
 		}
+	}
+	
+	img, _, decodeErr := image.Decode(file)
+	if decodeErr != nil {
+		return "", errorHandler.ErrBadRequest
 	}
 
 	return user.Image, images.UploadUserAvatar(user.Image, &img, &us.cfg.Image)

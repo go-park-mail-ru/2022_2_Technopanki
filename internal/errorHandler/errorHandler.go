@@ -31,31 +31,35 @@ var (
 )
 
 var errorToCode = map[error]int{
-	ErrBadRequest:         http.StatusBadRequest,
-	ErrUnauthorized:       http.StatusUnauthorized,
-	ErrServiceUnavailable: http.StatusServiceUnavailable,
-	ErrUserExists:         http.StatusBadRequest,
-	ErrUserNotExists:      http.StatusUnauthorized,
-	ErrInvalidParam:       http.StatusBadRequest,
-	ErrSessionNotFound:    http.StatusUnauthorized,
-	ErrVacancyNotFound:    http.StatusNotFound,
-	ErrResumeNotFound:     http.StatusNotFound,
+	ErrBadRequest.err:         http.StatusBadRequest,
+	ErrUnauthorized.err:       http.StatusUnauthorized,
+	ErrServiceUnavailable.err: http.StatusServiceUnavailable,
+	ErrUserExists.err:         http.StatusBadRequest,
+	ErrUserNotExists.err:      http.StatusUnauthorized,
+	ErrInvalidParam.err:       http.StatusBadRequest,
+	ErrSessionNotFound.err:    http.StatusUnauthorized,
+	ErrVacancyNotFound.err:    http.StatusNotFound,
+	ErrResumeNotFound.err:     http.StatusNotFound,
 
-	ErrForbidden:           http.StatusForbidden,
-	ErrWrongPassword:       http.StatusBadRequest,
-	ErrInvalidFileFormat:   http.StatusBadRequest,
-	IncorrectNameLength:    http.StatusBadRequest,
-	IncorrectSurnameLength: http.StatusBadRequest,
-	InvalidUserType:        http.StatusBadRequest,
+	ErrForbidden.err:           http.StatusForbidden,
+	ErrWrongPassword.err:       http.StatusBadRequest,
+	ErrInvalidFileFormat.err:   http.StatusBadRequest,
+	IncorrectNameLength.err:    http.StatusBadRequest,
+	IncorrectSurnameLength.err: http.StatusBadRequest,
+	InvalidUserType.err:        http.StatusBadRequest,
 
-	InvalidEmailFormat:   http.StatusBadRequest,
-	IncorrectEmailLength: http.StatusBadRequest,
+	InvalidEmailFormat.err:   http.StatusBadRequest,
+	IncorrectEmailLength.err: http.StatusBadRequest,
 
-	InvalidPasswordFormat:   http.StatusBadRequest,
-	IncorrectPasswordLength: http.StatusBadRequest,
+	InvalidPasswordFormat.err:   http.StatusBadRequest,
+	IncorrectPasswordLength.err: http.StatusBadRequest,
 }
 
 func ConvertError(err error) int {
+	complexErr, ok := err.(*ComplexError)
+	if ok {
+		return ConvertError(complexErr.err)
+	}
 	result, ok := errorToCode[err]
 	if ok {
 		return result

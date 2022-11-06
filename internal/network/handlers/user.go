@@ -36,7 +36,7 @@ func (uh *UserHandler) SignIn(c *gin.Context) {
 	}
 	c.SetCookie("session", token, uh.cfg.DefaultExpiringSession, "/", uh.cfg.Domain,
 		uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
-	response.SendSuccessData(&input, c)
+	response.SendSuccessData(c, &input)
 }
 
 func (uh *UserHandler) SignUp(c *gin.Context) {
@@ -53,22 +53,13 @@ func (uh *UserHandler) SignUp(c *gin.Context) {
 	}
 	c.SetCookie("session", token, uh.cfg.DefaultExpiringSession, "/",
 		uh.cfg.Domain, uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
-	response.SendSuccessData(&input, c)
+	response.SendSuccessData(c, &input)
 }
 
-// @Summary      Logout
-// @Description  Выход пользователя
-// @Tags         Авторизация
-// @ID logout
-// @Accept       json
-// @Produce      json
-// @Success 200
-// @Failure 400 {body} string "bad request"
-// @Router       /auth/logout [post]
 func (uh *UserHandler) Logout(c *gin.Context) {
 	token, err := c.Cookie("session")
 	if err != nil {
-		_ = c.Error(errorHandler.ErrBadRequest)
+		_ = c.Error(errorHandler.ErrBadRequest.SetDesc("cool"))
 		return
 	}
 
@@ -92,7 +83,7 @@ func (uh *UserHandler) AuthCheck(c *gin.Context) {
 		_ = c.Error(err)
 		return
 	}
-	response.SendSuccessData(user, c)
+	response.SendSuccessData(c, user)
 }
 
 func (uh *UserHandler) UpdateUser(c *gin.Context) {
@@ -113,7 +104,7 @@ func (uh *UserHandler) UpdateUser(c *gin.Context) {
 		_ = c.Error(updateErr)
 		return
 	}
-	response.SendSuccessData(&input, c)
+	response.SendSuccessData(c, &input)
 }
 
 func (uh *UserHandler) GetUser(c *gin.Context) {
@@ -181,7 +172,7 @@ func (uh *UserHandler) UploadUserImage(c *gin.Context) {
 		_ = c.Error(uploadErr)
 		return
 	}
-	response.SendUploadImageData(user, c)
+	response.SendUploadImageData(c, user)
 }
 
 func (uh *UserHandler) DeleteUserImage(c *gin.Context) {
@@ -217,5 +208,5 @@ func (uh *UserHandler) GetPreview(c *gin.Context) {
 	if getUserErr != nil {
 		_ = c.Error(getUserErr)
 	}
-	response.SendPreviewData(user, c)
+	response.SendPreviewData(c, user)
 }

@@ -20,7 +20,6 @@ type UserAccount struct {
 	CompanyWebsiteUrl      string            `json:"company_website_url,omitempty"`
 	CompanyLocation        string            `json:"company_location,omitempty"`
 	CompanySize            uint              `json:"company_size,omitempty"`
-	SocialNetworks         []SocialNetworks  `json:"social_networks" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`
 	Resumes                []Resume          `json:"resumes" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`
 	Vacancies              []Vacancy         `json:"vacancies" gorm:"foreignKey:PostedByUserId;constraint:OnDelete:CASCADE;"`
 	VacancyActivities      []VacancyActivity `json:"vacancy_activities" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`
