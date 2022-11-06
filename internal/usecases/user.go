@@ -27,6 +27,14 @@ func newUserService(userRepos repository.UserRepository, sessionRepos session.Re
 	return &UserService{userRep: userRepos, sessionRepo: sessionRepos, cfg: _cfg}
 }
 
+func (us *UserService) GetUserId(email string) (uint, error) {
+	user, getErr := us.GetUserByEmail(email)
+	if getErr != nil {
+		return 0, getErr
+	}
+	return user.ID, nil
+}
+
 func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 	inputValidity := validation.IsAuthDataValid(input, us.cfg.Validation)
 	if inputValidity != nil {

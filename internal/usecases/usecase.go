@@ -17,7 +17,8 @@ type UseCases struct {
 
 func NewUseCases(repos *repository.Repository, session session.Repository, _cfg *configs.Config) *UseCases {
 	return &UseCases{
-		User: newUserService(repos.UserRepository, session, _cfg),
+		User:   newUserService(repos.UserRepository, session, _cfg),
+		Resume: newResumeService(repos.ResumeRepository, _cfg),
 	}
 }
 
@@ -28,6 +29,7 @@ type User interface {
 	AuthCheck(email string) (*models.UserAccount, error)
 	UpdateUser(input *models.UserAccount) error
 	GetUser(id uint) (*models.UserAccount, error)
+	GetUserId(email string) (uint, error)
 	GetUserSafety(id uint) (*models.UserAccount, error)
 	GetUserByEmail(email string) (*models.UserAccount, error)
 	UploadUserImage(user *models.UserAccount, fileHeader *multipart.FileHeader) (string, error)
@@ -41,9 +43,10 @@ type Vacancy interface { //TODO Сделать юзкейс вакансий
 	Delete()
 }
 
-type Resume interface { //TODO Сделать юзкейс резюме
-	Get()
-	Create(entity.Resume)
-	Update()
-	Delete()
+type Resume interface {
+	Get(id uint) (*models.Resume, error)
+	GetByApplicant(userId uint) ([]*models.Resume, error)
+	Create(resume *models.Resume, userId uint) (uint, error)
+	Update(id uint, resume *models.Resume) error
+	Delete(id uint) error
 }
