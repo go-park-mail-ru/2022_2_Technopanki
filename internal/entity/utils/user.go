@@ -24,7 +24,8 @@ func FillUser(user, reference *models.UserAccount) error {
 //		return 0, paramErr
 //	}
 //	emailString := userEmail.(string)
-//	userId, userIdErr := uh.userUseCase.GetUserId(emailString)
+//	us := usecases.UserService{}
+//	userId, userIdErr := us.GetUserId(emailString)
 //	if userIdErr != nil {
 //		err := c.Error(userIdErr)
 //		return 0, err
