@@ -19,6 +19,10 @@ func notFound(object string) error {
 	switch object {
 	case "user":
 		return errorHandler.ErrUserNotExists
+	case "vacancy":
+		return errorHandler.ErrVacancyNotFound
+	case "resume":
+		return errorHandler.ErrResumeNotFound
 	default:
 		return fmt.Errorf("%s not found", object)
 	}
