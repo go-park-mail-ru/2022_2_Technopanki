@@ -45,7 +45,7 @@ func main() {
 
 	handler := handlers.NewHandlers(useCase, &mainConfig, redisRepository)
 
-	router := network.InitRoutes(handler, sessionMiddleware)
+	router := network.InitRoutes(handler, sessionMiddleware, &mainConfig)
 	runErr := router.Run(mainConfig.Port)
 	if runErr != nil {
 		log.Fatal(runErr)
