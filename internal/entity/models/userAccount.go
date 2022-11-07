@@ -7,7 +7,7 @@ type UserAccount struct {
 	UserType               string            `json:"user_type" gorm:"not null;"`
 	Email                  string            `json:"email" gorm:"not null;"`
 	Password               string            `json:"password" gorm:"not null;"`
-	ContactNumber          uint              `json:"contact_number" gorm:"not null;"`
+	ContactNumber          string            `json:"contact_number" gorm:"not null;"`
 	Status                 string            `json:"status" gorm:"not null"`
 	Description            string            `json:"description" gorm:"not null;"`
 	Image                  string            `json:"image"`
@@ -19,7 +19,7 @@ type UserAccount struct {
 	BusinessType           []BusinessType    `json:"business_type,omitempty" gorm:"many2many:business_type;"`
 	CompanyWebsiteUrl      string            `json:"company_website_url,omitempty"`
 	CompanyLocation        string            `json:"company_location,omitempty"`
-	CompanySize            uint              `json:"company_size,omitempty"`
+	CompanySize            uint              `json:"company_size"`
 	Resumes                []Resume          `json:"resumes" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`
 	Vacancies              []Vacancy         `json:"vacancies" gorm:"foreignKey:PostedByUserId;constraint:OnDelete:CASCADE;"`
 	VacancyActivities      []VacancyActivity `json:"vacancy_activities" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`

@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (uh *UserHandler) getEmailFromContext(c *gin.Context) (string, error) {
+func getEmailFromContext(c *gin.Context) (string, error) {
 	email, ok := c.Get("userEmail")
 	if !ok {
 		return "", errorHandler.ErrUnauthorized

@@ -10,7 +10,7 @@ var (
 	ErrUnauthorized       = errors.New("unauthorized")
 	ErrServiceUnavailable = errors.New("service unavailable")
 	ErrUserExists         = errors.New("Пользователь с таким email уже существует")
-	ErrUserNotExists      = errors.New("user not found")
+	ErrUserNotExists      = errors.New("Пользователь с таким email не найден")
 	ErrInvalidParam       = errors.New("invalid param")
 	ErrSessionNotFound    = errors.New("session with this token not found")
 	ErrVacancyNotFound    = errors.New("vacancy not found")
