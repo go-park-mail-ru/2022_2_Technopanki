@@ -33,44 +33,9 @@ func (uh *UserHandler) GetUserId(c *gin.Context) (uint, error) {
 		_ = c.Error(userIdErr)
 		return 0, userIdErr
 	}
-	return userId, nil
-}
-
-func (uh *UserHandler) GetUserId(c *gin.Context) (uint, error) {
-	email, emailErr := uh.getEmailFromContext(c)
-	if emailErr != nil {
-		return 0, emailErr
-	}
-	userId, userIdErr := uh.userUseCase.GetUserId(email)
-	if userIdErr != nil {
-		_ = c.Error(userIdErr)
-		return 0, userIdErr
-	}
-	return userId, nil
-}
-
-func (uh *UserHandler) GetUserId(c *gin.Context) (uint, error) {
-	email, emailErr := uh.getEmailFromContext(c)
-	if emailErr != nil {
-		return 0, emailErr
-	}
-	userId, userIdErr := uh.userUseCase.GetUserId(email)
-	if userIdErr != nil {
-		_ = c.Error(userIdErr)
-		return 0, userIdErr
-	}
-	return userId, nil
-}
-
-func (uh *UserHandler) GetUserId(c *gin.Context) (uint, error) {
-	email, emailErr := uh.getEmailFromContext(c)
-	if emailErr != nil {
-		return 0, emailErr
-	}
-	userId, userIdErr := uh.userUseCase.GetUserId(email)
-	if userIdErr != nil {
-		_ = c.Error(userIdErr)
-		return 0, userIdErr
+	if userId == 0 {
+		_ = c.Error(errorHandler.ErrUserNotExists)
+		return 0, errorHandler.ErrUserNotExists
 	}
 	return userId, nil
 }

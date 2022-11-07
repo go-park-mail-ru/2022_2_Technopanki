@@ -41,19 +41,19 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware) *
 		vacancies := api.Group("/vacancy")
 		{
 			vacancies.GET("/", handlers.GetVacancies, middleware.ErrorHandler()) //TODO заменить на строку ниже
-			//vacancies.GET("/", h.VacancyHandler.Get, middleware.ErrorHandler())
-			//vacancies.POST("/", h.VacancyHandler.Create, middleware.ErrorHandler())
-			//vacancies.PUT("/", h.VacancyHandler.Update, middleware.ErrorHandler())
-			//vacancies.DELETE("/", h.VacancyHandler.Delete, middleware.ErrorHandler())
+			//vacancies.GET("/", h.VacancyHandler.GetResume, middleware.ErrorHandler())
+			//vacancies.POST("/", h.VacancyHandler.CreateResume, middleware.ErrorHandler())
+			//vacancies.PUT("/", h.VacancyHandler.UpdateResume, middleware.ErrorHandler())
+			//vacancies.DELETE("/", h.VacancyHandler.DeleteResume, middleware.ErrorHandler())
 		}
 		//
 		resumes := api.Group("/resume")
 		{
-			resumes.GET("/:id", h.ResumeHandler.Get, middleware.ErrorHandler())
-			resumes.GET("/applicant/:user_id", sessionMW.Session, h.ResumeHandler.GetByApplicant, middleware.ErrorHandler())
-			resumes.POST("/", sessionMW.Session, h.ResumeHandler.Create, middleware.ErrorHandler())
-			resumes.PUT("/:id", sessionMW.Session, h.ResumeHandler.Update, middleware.ErrorHandler())
-			resumes.DELETE("/:id", sessionMW.Session, h.ResumeHandler.Delete, middleware.ErrorHandler())
+			resumes.GET("/:id", h.ResumeHandler.GetResume, middleware.ErrorHandler())
+			resumes.GET("/applicant/:user_id", sessionMW.Session, h.ResumeHandler.GetResumeByApplicant, middleware.ErrorHandler())
+			resumes.POST("/", sessionMW.Session, h.ResumeHandler.CreateResume, middleware.ErrorHandler())
+			resumes.PUT("/:id", sessionMW.Session, h.ResumeHandler.UpdateResume, middleware.ErrorHandler())
+			resumes.DELETE("/:id", sessionMW.Session, h.ResumeHandler.DeleteResume, middleware.ErrorHandler())
 		}
 	}
 

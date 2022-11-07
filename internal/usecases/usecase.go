@@ -44,9 +44,9 @@ type Vacancy interface { //TODO Сделать юзкейс вакансий
 }
 
 type Resume interface {
-	Get(id uint) (*models.Resume, error)
-	GetByApplicant(userId uint) ([]*models.Resume, error)
-	Create(resume *models.Resume, userId uint) (uint, error)
-	Update(id uint, resume *models.Resume) error
-	Delete(id uint) error
+	GetResume(id uint) (*models.Resume, error)
+	GetResumeByApplicant(userId uint) ([]*models.Resume, error)
+	CreateResume(resume *models.Resume, userId uint) error
+	UpdateResume(id uint, resume *models.Resume) error
+	DeleteResume(id uint) error
 }

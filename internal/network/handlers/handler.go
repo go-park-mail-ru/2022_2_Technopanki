@@ -45,9 +45,9 @@ type VacancyH interface {
 }
 
 type ResumeH interface {
-	Get(c *gin.Context)
-	GetByApplicant(c *gin.Context)
-	Create(c *gin.Context)
-	Update(c *gin.Context)
-	Delete(c *gin.Context)
+	GetResume(c *gin.Context)
+	GetResumeByApplicant(c *gin.Context)
+	CreateResume(c *gin.Context)
+	UpdateResume(c *gin.Context)
+	DeleteResume(c *gin.Context)
 }

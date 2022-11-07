@@ -15,22 +15,22 @@ func newResumeService(_resumeRep repository.ResumeRepository, _cfg *configs.Conf
 	return &ResumeService{resumeRep: _resumeRep, cfg: _cfg}
 }
 
-func (rs *ResumeService) Get(id uint) (*models.Resume, error) {
-	return rs.resumeRep.Get(id)
+func (rs *ResumeService) GetResume(id uint) (*models.Resume, error) {
+	return rs.resumeRep.GetResume(id)
 }
 
-func (rs *ResumeService) GetByApplicant(userId uint) ([]*models.Resume, error) {
-	return rs.resumeRep.GetByApplicant(userId)
+func (rs *ResumeService) GetResumeByApplicant(userId uint) ([]*models.Resume, error) {
+	return rs.resumeRep.GetResumeByApplicant(userId)
 }
 
-func (rs *ResumeService) Create(resume *models.Resume, userId uint) (uint, error) {
-	return rs.resumeRep.Create(resume, userId)
+func (rs *ResumeService) CreateResume(resume *models.Resume, userId uint) error {
+	return rs.resumeRep.CreateResume(resume, userId)
 }
 
-func (rs *ResumeService) Update(id uint, resume *models.Resume) error {
-	return rs.resumeRep.Update(id, resume)
+func (rs *ResumeService) UpdateResume(id uint, resume *models.Resume) error {
+	return rs.resumeRep.UpdateResume(id, resume)
 }
 
-func (rs *ResumeService) Delete(id uint) error {
-	return rs.resumeRep.Delete(id)
+func (rs *ResumeService) DeleteResume(id uint) error {
+	return rs.resumeRep.DeleteResume(id)
 }

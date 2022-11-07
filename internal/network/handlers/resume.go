@@ -26,7 +26,7 @@ func (rh *ResumeHandler) isAccessAllowed(id uint, c *gin.Context) error {
 		return userErr
 	}
 
-	resume, getResumeErr := rh.resumeUseCase.Get(id)
+	resume, getResumeErr := rh.resumeUseCase.GetResume(id)
 	if getResumeErr != nil {
 		return getResumeErr
 	}
@@ -37,14 +37,14 @@ func (rh *ResumeHandler) isAccessAllowed(id uint, c *gin.Context) error {
 	return nil
 }
 
-func (rh *ResumeHandler) Get(c *gin.Context) {
+func (rh *ResumeHandler) GetResume(c *gin.Context) {
 	id, paramErr := strconv.Atoi(c.Param("id"))
 	if paramErr != nil {
 		_ = c.Error(errorHandler.ErrInvalidParam)
 		return
 	}
 
-	resume, getResumeErr := rh.resumeUseCase.Get(uint(id))
+	resume, getResumeErr := rh.resumeUseCase.GetResume(uint(id))
 	if getResumeErr != nil {
 		_ = c.Error(getResumeErr)
 		return
@@ -53,13 +53,13 @@ func (rh *ResumeHandler) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, resume)
 }
 
-func (rh *ResumeHandler) GetByApplicant(c *gin.Context) {
+func (rh *ResumeHandler) GetResumeByApplicant(c *gin.Context) {
 	userId, paramErr := strconv.Atoi(c.Param("user_id"))
 	if paramErr != nil {
 		_ = c.Error(errorHandler.ErrInvalidParam)
 		return
 	}
-	resumes, getResumeErr := rh.resumeUseCase.GetByApplicant(uint(userId))
+	resumes, getResumeErr := rh.resumeUseCase.GetResumeByApplicant(uint(userId))
 	if getResumeErr != nil {
 		_ = c.Error(getResumeErr)
 		return
@@ -68,7 +68,7 @@ func (rh *ResumeHandler) GetByApplicant(c *gin.Context) {
 	c.JSON(http.StatusOK, resumes)
 }
 
-func (rh *ResumeHandler) Create(c *gin.Context) {
+func (rh *ResumeHandler) CreateResume(c *gin.Context) {
 	userId, getUserErr := rh.userHandler.GetUserId(c)
 	if getUserErr != nil {
 		_ = c.Error(getUserErr)
@@ -81,16 +81,16 @@ func (rh *ResumeHandler) Create(c *gin.Context) {
 		return
 	}
 
-	resumeId, creatingErr := rh.resumeUseCase.Create(&input, userId)
+	creatingErr := rh.resumeUseCase.CreateResume(&input, userId)
 	if creatingErr != nil {
 		_ = c.Error(creatingErr)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"id": resumeId, "id2": input.ID})
+	c.JSON(http.StatusOK, gin.H{"id": input.ID})
 }
 
-func (rh *ResumeHandler) Update(c *gin.Context) {
+func (rh *ResumeHandler) UpdateResume(c *gin.Context) {
 	id, paramErr := strconv.Atoi(c.Param("id"))
 	if paramErr != nil {
 		_ = c.Error(errorHandler.ErrInvalidParam)
@@ -109,7 +109,7 @@ func (rh *ResumeHandler) Update(c *gin.Context) {
 		return
 	}
 
-	updateErr := rh.resumeUseCase.Update(uint(id), &input)
+	updateErr := rh.resumeUseCase.UpdateResume(uint(id), &input)
 	if updateErr != nil {
 		_ = c.Error(updateErr)
 		return
@@ -118,7 +118,7 @@ func (rh *ResumeHandler) Update(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
-func (rh *ResumeHandler) Delete(c *gin.Context) {
+func (rh *ResumeHandler) DeleteResume(c *gin.Context) {
 	id, paramErr := strconv.Atoi(c.Param("id"))
 	if paramErr != nil {
 		_ = c.Error(errorHandler.ErrInvalidParam)
@@ -131,7 +131,7 @@ func (rh *ResumeHandler) Delete(c *gin.Context) {
 		return
 	}
 
-	deleteErr := rh.resumeUseCase.Delete(uint(id))
+	deleteErr := rh.resumeUseCase.DeleteResume(uint(id))
 	if deleteErr != nil {
 		_ = c.Error(deleteErr)
 		return

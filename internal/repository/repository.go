@@ -4,6 +4,7 @@ import (
 	"HeadHunter/internal/entity"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
+	"errors"
 	"fmt"
 	"gorm.io/gorm"
 )
@@ -25,7 +26,7 @@ func notFound(object string) error {
 
 func queryValidation(query *gorm.DB, object string) error {
 	if query.Error != nil {
-		if query.Error.Error() == "record not found" {
+		if errors.Is(query.Error, fmt.Errorf("record not found")) {
 			return notFound(object)
 		}
 		return fmt.Errorf("postgre query error: %s", query.Error.Error())
@@ -62,9 +63,9 @@ type VacancyRepository interface { //TODO Сделать репозиторий 
 }
 
 type ResumeRepository interface { //TODO Сделать репозиторий резюме
-	Get(id uint) (*models.Resume, error)
-	GetByApplicant(userId uint) ([]*models.Resume, error)
-	Create(resume *models.Resume, userId uint) (uint, error)
-	Update(id uint, resume *models.Resume) error
-	Delete(id uint) error
+	GetResume(id uint) (*models.Resume, error)
+	GetResumeByApplicant(userId uint) ([]*models.Resume, error)
+	CreateResume(resume *models.Resume, userId uint) error
+	UpdateResume(id uint, resume *models.Resume) error
+	DeleteResume(id uint) error
 }
