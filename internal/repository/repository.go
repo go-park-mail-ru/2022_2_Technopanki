@@ -66,7 +66,7 @@ type VacancyRepository interface { //TODO Сделать репозиторий 
 	Delete()
 }
 
-type ResumeRepository interface { //TODO Сделать репозиторий резюме
+type ResumeRepository interface {
 	GetResume(id uint) (*models.Resume, error)
 	GetResumeByApplicant(userId uint) ([]*models.Resume, error)
 	CreateResume(resume *models.Resume, userId uint) error

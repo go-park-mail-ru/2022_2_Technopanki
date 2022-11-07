@@ -18,15 +18,9 @@ func (rp *ResumePostgres) GetResume(id uint) (*models.Resume, error) {
 	var result models.Resume
 	query := rp.db.First(&result, id)
 
-	queryExpDet := rp.db.Where("resume_id = ?", result.ID).First(&result.ExperienceDetail)
-	if queryExpDet.Error != nil {
-		return &result, queryExpDet.Error
-	}
+	rp.db.Where("resume_id = ?", result.ID).First(&result.ExperienceDetail)
 
-	queryEduDet := rp.db.Where("resume_id = ?", result.ID).First(&result.EducationDetail)
-	if queryEduDet.Error != nil {
-		return &result, queryEduDet.Error
-	}
+	rp.db.Where("resume_id = ?", result.ID).First(&result.EducationDetail)
 
 	return &result, queryValidation(query, "resume")
 }
@@ -36,15 +30,9 @@ func (rp *ResumePostgres) GetResumeByApplicant(userId uint) ([]*models.Resume, e
 	query := rp.db.Where("user_account_id = ?", userId).Find(&result)
 
 	for _, elem := range result {
-		queryExpDet := rp.db.Where("resume_id = ?", elem.ID).Find(&elem.ExperienceDetail)
-		if queryExpDet.Error != nil {
-			return result, queryExpDet.Error
-		}
+		rp.db.Where("resume_id = ?", elem.ID).Find(&elem.ExperienceDetail)
 
-		queryEduDet := rp.db.Where("resume_id = ?", elem.ID).Find(&elem.EducationDetail)
-		if queryEduDet.Error != nil {
-			return result, queryEduDet.Error
-		}
+		rp.db.Where("resume_id = ?", elem.ID).Find(&elem.EducationDetail)
 	}
 
 	return result, queryValidation(query, "resume")
