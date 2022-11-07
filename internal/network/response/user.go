@@ -34,6 +34,10 @@ func generateUserResponse(user *models.UserAccount, fields []string) (models.Use
 			} else {
 				return models.UserAccount{}, errorHandler.InvalidUserType
 			}
+		case "company_size":
+			if user.UserType == "employer" {
+				result.CompanySize = user.CompanySize
+			}
 		}
 	}
 	return result, nil
@@ -50,7 +54,7 @@ func sendUserResponse(c *gin.Context, user *models.UserAccount, fields []string)
 }
 
 func SendSuccessData(c *gin.Context, user *models.UserAccount) {
-	sendUserResponse(c, user, []string{"id", "user_type", "name_data", "image"})
+	sendUserResponse(c, user, []string{"id", "user_type", "name_data", "image", "email", "company_size"})
 }
 
 func SendPreviewData(c *gin.Context, user *models.UserAccount) {
