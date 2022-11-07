@@ -23,23 +23,6 @@ func newUserHandler(useCases *usecases.UseCases, _cfg *configs.Config, _sr sessi
 	return &UserHandler{cfg: _cfg, userUseCase: useCases.User, sessionRepo: _sr}
 }
 
-func (uh *UserHandler) GetUserId(c *gin.Context) (uint, error) {
-	email, emailErr := uh.getEmailFromContext(c)
-	if emailErr != nil {
-		return 0, emailErr
-	}
-	userId, userIdErr := uh.userUseCase.GetUserId(email)
-	if userIdErr != nil {
-		_ = c.Error(userIdErr)
-		return 0, userIdErr
-	}
-	if userId == 0 {
-		_ = c.Error(errorHandler.ErrUserNotExists)
-		return 0, errorHandler.ErrUserNotExists
-	}
-	return userId, nil
-}
-
 func (uh *UserHandler) SignIn(c *gin.Context) {
 	var input models.UserAccount
 	if err := c.BindJSON(&input); err != nil {

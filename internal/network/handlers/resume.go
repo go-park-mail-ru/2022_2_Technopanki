@@ -20,27 +20,16 @@ func newResumeHandler(useCases *usecases.UseCases, _cfg *configs.Config, _userHa
 	return &ResumeHandler{cfg: _cfg, resumeUseCase: useCases.Resume, userHandler: _userHandler}
 }
 
-func (rh *ResumeHandler) isAccessAllowed(id uint, c *gin.Context) error {
-	userId, userErr := rh.userHandler.GetUserId(c)
-	if userErr != nil {
-		return userErr
-	}
-
-	resume, getResumeErr := rh.resumeUseCase.GetResume(id)
-	if getResumeErr != nil {
-		return getResumeErr
-	}
-
-	if resume.UserAccountId != userId {
-		return errorHandler.ErrForbidden
-	}
-	return nil
-}
-
 func (rh *ResumeHandler) GetResume(c *gin.Context) {
 	id, paramErr := strconv.Atoi(c.Param("id"))
 	if paramErr != nil {
 		_ = c.Error(errorHandler.ErrInvalidParam)
+		return
+	}
+
+	isAccessAllowed := rh.isResumeAvailable(c, uint(id))
+	if isAccessAllowed != nil {
+		_ = c.Error(isAccessAllowed)
 		return
 	}
 
@@ -59,6 +48,18 @@ func (rh *ResumeHandler) GetResumeByApplicant(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrInvalidParam)
 		return
 	}
+
+	userIdFromContext, getUserErr := rh.userHandler.GetUserId(c)
+	if getUserErr != nil {
+		_ = c.Error(getUserErr)
+		return
+	}
+
+	if userIdFromContext != uint(userId) {
+		_ = c.Error(errorHandler.ErrUnauthorized)
+		return
+	}
+
 	resumes, getResumeErr := rh.resumeUseCase.GetResumeByApplicant(uint(userId))
 	if getResumeErr != nil {
 		_ = c.Error(getResumeErr)
@@ -97,7 +98,7 @@ func (rh *ResumeHandler) UpdateResume(c *gin.Context) {
 		return
 	}
 
-	isAccessAllowed := rh.isAccessAllowed(uint(id), c)
+	isAccessAllowed := rh.isResumeAvailable(c, uint(id))
 	if isAccessAllowed != nil {
 		_ = c.Error(isAccessAllowed)
 		return
@@ -125,7 +126,7 @@ func (rh *ResumeHandler) DeleteResume(c *gin.Context) {
 		return
 	}
 
-	isAccessAllowed := rh.isAccessAllowed(uint(id), c)
+	isAccessAllowed := rh.isResumeAvailable(c, uint(id))
 	if isAccessAllowed != nil {
 		_ = c.Error(isAccessAllowed)
 		return
