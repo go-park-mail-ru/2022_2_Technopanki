@@ -18,7 +18,7 @@ func getEmailFromContext(c *gin.Context) (string, error) {
 }
 
 func (uh *UserHandler) GetUserId(c *gin.Context) (uint, error) {
-	email, emailErr := uh.getEmailFromContext(c)
+	email, emailErr := getEmailFromContext(c)
 	if emailErr != nil {
 		return 0, emailErr
 	}

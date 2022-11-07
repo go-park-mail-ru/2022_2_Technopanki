@@ -27,7 +27,6 @@ type UserH interface {
 	SignIn(c *gin.Context)
 	Logout(c *gin.Context)
 	AuthCheck(c *gin.Context)
-	getEmailFromContext(c *gin.Context) (string, error)
 	UpdateUser(c *gin.Context)
 	GetUserId(c *gin.Context) (uint, error)
 	GetUser(c *gin.Context)
