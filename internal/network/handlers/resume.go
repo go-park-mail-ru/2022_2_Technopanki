@@ -76,6 +76,17 @@ func (rh *ResumeHandler) CreateResume(c *gin.Context) {
 		return
 	}
 
+	userType, getTypeErr := rh.userHandler.GetUserType(c)
+	if getTypeErr != nil {
+		_ = c.Error(getTypeErr)
+		return
+	}
+
+	if userType != "employer" {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+
 	var input models.Resume
 	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
