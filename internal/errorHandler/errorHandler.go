@@ -28,7 +28,8 @@ var (
 	InvalidPasswordFormat   = errors.New("Пароль должен содержать буквы латиницы, цифры и спецсимволы(!#%^$)")
 	IncorrectPasswordLength = errors.New("Длина пароля должна быть между 8 и 20 символами")
 
-	InvalidUserType = errors.New("invalid input user type")
+	CSRFTokenMismatch = errors.New("CSRF token mismatch")
+	InvalidUserType   = errors.New("invalid input user type")
 )
 
 var errorToCode = map[error]int{
@@ -47,6 +48,7 @@ var errorToCode = map[error]int{
 	ErrInvalidFileFormat:   http.StatusBadRequest,
 	IncorrectNameLength:    http.StatusBadRequest,
 	IncorrectSurnameLength: http.StatusBadRequest,
+	CSRFTokenMismatch:      http.StatusBadRequest,
 	InvalidUserType:        http.StatusBadRequest,
 
 	InvalidEmailFormat:   http.StatusBadRequest,

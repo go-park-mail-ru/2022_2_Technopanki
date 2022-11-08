@@ -16,6 +16,7 @@ type Config struct {
 	Cookie                 CookieConfig     `yaml:"cookie"`
 	Crypt                  CryptConfig      `yaml:"crypt"`
 	Image                  ImageConfig      `yaml:"image"`
+	Security               SecurityConfig   `yaml:"security"`
 }
 
 type DBConfig struct {
@@ -59,6 +60,10 @@ type ImageConfig struct {
 	Path                   string `yaml:"path"`
 	DefaultEmployerAvatar  string `yaml:"defaultEmployerAvatar"`
 	DefaultApplicantAvatar string `yaml:"defaultApplicantAvatar"`
+}
+
+type SecurityConfig struct {
+	Secret string `yaml:"csrfSecret"`
 }
 
 func InitConfig(config *Config) error {
