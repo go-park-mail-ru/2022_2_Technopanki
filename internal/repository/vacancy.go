@@ -15,9 +15,9 @@ func newVacancyPostgres(db *gorm.DB) *VacancyPostgres {
 	return &VacancyPostgres{db: db}
 }
 
-func (vp *VacancyPostgres) GetAll() ([]models.Vacancy, error) {
-	var vacancies []models.Vacancy
-	query := vp.db.Find(vacancies)
+func (vp *VacancyPostgres) GetAll() ([]*models.Vacancy, error) {
+	var vacancies []*models.Vacancy
+	query := vp.db.Find(&vacancies)
 	if query.Error != nil {
 		return vacancies, query.Error
 	}
@@ -25,7 +25,7 @@ func (vp *VacancyPostgres) GetAll() ([]models.Vacancy, error) {
 }
 
 func (vp *VacancyPostgres) Create(vacancy *models.Vacancy) (uint, error) {
-	error := vp.db.Create(&vacancy).Error
+	error := vp.db.Create(vacancy).Error
 	if error != nil {
 		return 0, errorHandler.ErrInvalidParam
 	}
@@ -54,9 +54,9 @@ func (vp *VacancyPostgres) Delete(userId uint, vacancyId int) error {
 	return nil
 }
 
-func (vp *VacancyPostgres) Update(userId string, vacancyId string, vacancy *models.UpdateVacancy) error {
+func (vp *VacancyPostgres) Update(userId uint, vacancyId int, oldVacancy *models.Vacancy, updates *models.Vacancy) error {
 
-	error := vp.db.Model(&models.Vacancy{}).Where("id = ? AND posted_by_user_id = ?", vacancyId, userId).Updates(vacancy).Error
+	error := vp.db.Model(oldVacancy).Where("id = ? AND posted_by_user_id = ?", vacancyId, userId).Updates(updates).Error
 	if error != nil {
 		return error
 	}

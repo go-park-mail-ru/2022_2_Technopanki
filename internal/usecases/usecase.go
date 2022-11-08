@@ -33,17 +33,17 @@ type User interface {
 }
 
 type Vacancy interface { //TODO Сделать юзкейс вакансий
-	GetAll() ([]models.Vacancy, error)
+	GetAll() ([]*models.Vacancy, error)
 	GetById(int) (*models.Vacancy, error)
 	GetByUserId(int) ([]models.Vacancy, error)
 	Create(uint, *models.Vacancy) (uint, error)
-	Update(uint, int, *models.UpdateVacancy) error
+	Update(uint, int, *models.Vacancy) error
 	Delete(uint, int) error
 }
 
 type VacancyActivity interface {
 	ApplyForVacancy(uint, *models.VacancyActivity) error
-	GetAllVacancyApplies(int) ([]models.VacancyActivity, error)
+	GetAllVacancyApplies(int) ([]*models.VacancyActivity, error)
 	GetAllUserApplies(int) ([]models.VacancyActivity, error)
 }
 

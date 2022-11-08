@@ -2,9 +2,7 @@ package usecases
 
 import (
 	"HeadHunter/internal/entity/models"
-	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/repository"
-	"strconv"
 )
 
 type VacancyService struct {
@@ -15,7 +13,7 @@ func newVacancyService(vacancyRepos repository.VacancyRepository) *VacancyServic
 	return &VacancyService{vacancyRep: vacancyRepos}
 }
 
-func (vs *VacancyService) GetAll() ([]models.Vacancy, error) {
+func (vs *VacancyService) GetAll() ([]*models.Vacancy, error) {
 	return vs.vacancyRep.GetAll()
 }
 
@@ -36,11 +34,15 @@ func (vs *VacancyService) Delete(userId uint, vacancyId int) error {
 	return vs.vacancyRep.Delete(userId, vacancyId)
 }
 
-func (vs *VacancyService) Update(userId uint, vacancyId int, updates *models.UpdateVacancy) error {
-	userIdString := strconv.FormatUint(uint64(userId), 10)
-	vacancyIdString := strconv.Itoa(vacancyId)
-	if err := validation.UpdateVacancyValidate(*updates); err != nil {
-		return err
+func (vs *VacancyService) Update(userId uint, vacancyId int, updates *models.Vacancy) error {
+	//userIdString := strconv.FormatUint(uint64(userId), 10)
+	//vacancyIdString := strconv.Itoa(vacancyId)
+	oldVacancy, getErr := vs.vacancyRep.GetById(vacancyId)
+	if getErr != nil {
+		return getErr
 	}
-	return vs.vacancyRep.Update(userIdString, vacancyIdString, updates)
+	//if err := validation.UpdateVacancyValidate(*updates); err != nil {
+	//	return err
+	//}
+	return vs.vacancyRep.Update(userId, vacancyId, oldVacancy, updates)
 }

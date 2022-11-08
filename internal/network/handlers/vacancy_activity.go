@@ -14,11 +14,15 @@ type VacancyActivityHandler struct {
 	userHandler            UserH
 }
 
-func newVacancyActivityHandler(useCases *usecases.UseCases, handlers *Handlers) *VacancyActivityHandler {
-	return &VacancyActivityHandler{vacancyActivityUseCase: useCases.VacancyActivity, userHandler: handlers.UserHandler}
+func newVacancyActivityHandler(useCases *usecases.UseCases, userHandler *UserHandler) *VacancyActivityHandler {
+	return &VacancyActivityHandler{vacancyActivityUseCase: useCases.VacancyActivity, userHandler: userHandler}
 }
 
 type GetAllVacancyAppliesResponce struct {
+	Data []*models.VacancyActivity `json:"data"`
+}
+
+type GetAllUserAppliesResponce struct {
 	Data []models.VacancyActivity `json:"data"`
 }
 
@@ -73,7 +77,7 @@ func (vah *VacancyActivityHandler) GetAllUserApplies(c *gin.Context) {
 		_ = c.Error(getErr)
 		return
 	}
-	c.JSON(http.StatusOK, GetAllVacancyAppliesResponce{
+	c.JSON(http.StatusOK, GetAllUserAppliesResponce{
 		applies,
 	})
 }

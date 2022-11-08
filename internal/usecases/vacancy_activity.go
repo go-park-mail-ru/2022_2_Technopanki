@@ -13,7 +13,7 @@ func newVacancyActivityService(vacancyActivityRepos repository.VacancyActivityRe
 	return &VacancyActivityService{vacancyActivityRep: vacancyActivityRepos}
 }
 
-func (vas *VacancyActivityService) GetAllVacancyApplies(vacancyId int) ([]models.VacancyActivity, error) {
+func (vas *VacancyActivityService) GetAllVacancyApplies(vacancyId int) ([]*models.VacancyActivity, error) {
 	return vas.vacancyActivityRep.GetAllVacancyApplies(vacancyId)
 }
 

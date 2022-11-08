@@ -15,11 +15,12 @@ type Handlers struct {
 	cfg                    *configs.Config
 }
 
-func NewHandlers(usecases *usecases.UseCases, _cfg *configs.Config, _sr session.Repository, handlers *Handlers) *Handlers {
+func NewHandlers(usecases *usecases.UseCases, _cfg *configs.Config, _sr session.Repository) *Handlers {
+	userHandler := newUserHandler(usecases, _cfg, _sr)
 	return &Handlers{
 		UserHandler:            newUserHandler(usecases, _cfg, _sr),
-		VacancyHandler:         newVacancyHandler(usecases, handlers),
-		VacancyActivityHandler: newVacancyActivityHandler(usecases, handlers),
+		VacancyHandler:         newVacancyHandler(usecases, userHandler),
+		VacancyActivityHandler: newVacancyActivityHandler(usecases, userHandler),
 	}
 }
 

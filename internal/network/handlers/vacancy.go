@@ -17,10 +17,13 @@ type VacancyHandler struct {
 	userHandler    UserH
 }
 
-func newVacancyHandler(useCases *usecases.UseCases, handlers *Handlers) *VacancyHandler {
-	return &VacancyHandler{vacancyUseCase: useCases.Vacancy, userHandler: handlers.UserHandler}
+func newVacancyHandler(useCases *usecases.UseCases, userHandler *UserHandler) *VacancyHandler {
+	return &VacancyHandler{vacancyUseCase: useCases.Vacancy, userHandler: userHandler}
 }
 
+type getAllVacanciesResponcePointer struct {
+	Data []*models.Vacancy `json:"data"`
+}
 type getAllVacanciesResponce struct {
 	Data []models.Vacancy `json:"data"`
 }
@@ -31,7 +34,7 @@ func (vh *VacancyHandler) GetAllVacancies(c *gin.Context) {
 		_ = c.Error(getAllErr)
 		return
 	}
-	c.JSON(http.StatusOK, getAllVacanciesResponce{
+	c.JSON(http.StatusOK, getAllVacanciesResponcePointer{
 		vacancies,
 	})
 }
@@ -126,7 +129,7 @@ func (vh *VacancyHandler) UpdateVacancy(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrInvalidParam)
 		return
 	}
-	var input models.UpdateVacancy
+	var input models.Vacancy
 	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
