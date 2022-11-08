@@ -32,6 +32,23 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 		},
 	}))
 
+	protected := router.Group("/protected")
+	{
+		protected.GET("/", func(c *gin.Context) {
+			token, err := c.GetRawData()
+			if err != nil {
+				_ = c.Error(errorHandler.ErrBadRequest)
+				return
+			}
+			c.SetCookie("X-CSRF-Token", string(token), 0, "/",
+				cfg.Domain, cfg.Cookie.Secure, cfg.Cookie.HTTPOnly)
+		}, middleware.ErrorHandler())
+
+		protected.POST("/", func(c *gin.Context) {
+			c.String(200, "CSRF token is valid")
+		})
+	}
+
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	auth := router.Group("/auth")
 	{

@@ -9,6 +9,7 @@ import (
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/images"
 	"HeadHunter/internal/repository/session"
+	"HeadHunter/internal/usecases/sanitize"
 	"fmt"
 	"image"
 	_ "image/gif"
@@ -31,6 +32,12 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 	inputValidity := validation.IsAuthDataValid(input, us.cfg.Validation)
 	if inputValidity != nil {
 		return "", inputValidity
+	}
+
+	var sanitizeErr error
+	input, sanitizeErr = sanitize.SanitizeObject[*models.UserAccount](input)
+	if sanitizeErr != nil {
+		return "", sanitizeErr
 	}
 
 	user, getErr := us.userRep.GetUserByEmail(input.Email)
@@ -56,6 +63,12 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 	inputValidity := validation.IsUserValid(input, us.cfg.Validation)
 	if inputValidity != nil {
 		return "", inputValidity
+	}
+
+	var sanitizeErr error
+	input, sanitizeErr = sanitize.SanitizeObject[*models.UserAccount](input)
+	if sanitizeErr != nil {
+		return "", sanitizeErr
 	}
 
 	isExist, getErr := us.userRep.IsUserExist(input.Email)
@@ -105,6 +118,12 @@ func (us *UserService) UpdateUser(input *models.UserAccount) error {
 		return inputValidity
 	}
 
+	var sanitizeErr error
+	input, sanitizeErr = sanitize.SanitizeObject[*models.UserAccount](input)
+	if sanitizeErr != nil {
+		return sanitizeErr
+	}
+
 	oldUser, getErr := us.userRep.GetUserByEmail(input.Email)
 	if getErr != nil {
 		return getErr
@@ -141,6 +160,12 @@ func (us *UserService) UpdateUserFields(input *models.UserAccount, field ...stri
 		return inputValidity
 	}
 
+	var sanitizeErr error
+	input, sanitizeErr = sanitize.SanitizeObject[*models.UserAccount](input)
+	if sanitizeErr != nil {
+		return sanitizeErr
+	}
+
 	oldUser, getErr := us.userRep.GetUserByEmail(input.Email)
 	if getErr != nil {
 		return getErr
@@ -172,6 +197,12 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 		return "", fileErr
 	}
 
+	var sanitizeErr error
+	user, sanitizeErr = sanitize.SanitizeObject[*models.UserAccount](user)
+	if sanitizeErr != nil {
+		return "", sanitizeErr
+	}
+
 	if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
 		user.Image = fmt.Sprintf("%d.webp", user.ID)
 
@@ -180,7 +211,7 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 			return "", updateErr
 		}
 	}
-	
+
 	img, _, decodeErr := image.Decode(file)
 	if decodeErr != nil {
 		return "", errorHandler.ErrBadRequest
@@ -191,6 +222,13 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 }
 
 func (us *UserService) DeleteUserImage(user *models.UserAccount) error {
+
+	var sanitizeErr error
+	user, sanitizeErr = sanitize.SanitizeObject[*models.UserAccount](user)
+	if sanitizeErr != nil {
+		return sanitizeErr
+	}
+
 	if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
 		return errorHandler.ErrBadRequest
 	}
