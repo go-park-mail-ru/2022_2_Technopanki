@@ -82,7 +82,7 @@ func (rh *ResumeHandler) CreateResume(c *gin.Context) {
 		return
 	}
 
-	if userType != "employer" {
+	if userType != "applicant" {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
