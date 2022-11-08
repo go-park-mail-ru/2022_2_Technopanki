@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"HeadHunter/internal/entity"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
 	"errors"
@@ -10,9 +9,10 @@ import (
 )
 
 type Repository struct {
-	UserRepository    UserRepository
-	VacancyRepository VacancyRepository
-	ResumeRepository  ResumeRepository
+	UserRepository            UserRepository
+	VacancyRepository         VacancyRepository
+	VacancyActivityRepository VacancyActivityRepository
+	ResumeRepository          ResumeRepository
 }
 
 func notFound(object string) error {
@@ -43,8 +43,10 @@ func queryValidation(query *gorm.DB, object string) error {
 
 func NewPostgresRepository(db *gorm.DB) *Repository {
 	return &Repository{
-		UserRepository:   newUserPostgres(db),
-		ResumeRepository: newResumePostgres(db),
+		UserRepository:            newUserPostgres(db),
+		ResumeRepository:          newResumePostgres(db),
+		VacancyRepository:         newVacancyPostgres(db),
+		VacancyActivityRepository: newVacancyActivityPostgres(db),
 	}
 }
 
@@ -60,10 +62,18 @@ type UserRepository interface {
 }
 
 type VacancyRepository interface { //TODO Сделать репозиторий вакансий
-	Get()
-	Create(entity.Vacancy)
-	Update()
-	Delete()
+	GetAll() ([]*models.Vacancy, error)
+	GetById(int) (*models.Vacancy, error)
+	GetByUserId(int) ([]models.Vacancy, error)
+	Create(vacancy *models.Vacancy) (uint, error)
+	Update(uint, int, *models.Vacancy, *models.Vacancy) error
+	Delete(uint, int) error
+}
+
+type VacancyActivityRepository interface {
+	ApplyForVacancy(*models.VacancyActivity) error
+	GetAllVacancyApplies(int) ([]*models.VacancyActivity, error)
+	GetAllUserApplies(int) ([]models.VacancyActivity, error)
 }
 
 type ResumeRepository interface {

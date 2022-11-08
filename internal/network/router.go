@@ -53,11 +53,16 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 		}
 		vacancies := api.Group("/vacancy")
 		{
-			vacancies.GET("/", handlers.GetVacancies, middleware.ErrorHandler()) //TODO заменить на строку ниже
-			//vacancies.GET("/", h.VacancyHandler.GetResume, middleware.ErrorHandler())
-			//vacancies.POST("/", h.VacancyHandler.CreateResume, middleware.ErrorHandler())
-			//vacancies.PUT("/", h.VacancyHandler.UpdateResume, middleware.ErrorHandler())
-			//vacancies.DELETE("/", h.VacancyHandler.DeleteResume, middleware.ErrorHandler())
+			vacancies.GET("/", h.VacancyHandler.GetAllVacancies, middleware.ErrorHandler())
+			vacancies.GET("/:id", h.VacancyHandler.GetVacancyById, middleware.ErrorHandler())
+			vacancies.GET("/company/:id", h.VacancyHandler.GetUserVacancies, middleware.ErrorHandler())
+			vacancies.POST("/", sessionMW.Session, h.VacancyHandler.CreateVacancy, middleware.ErrorHandler())
+			vacancies.PUT("/:id", sessionMW.Session, h.VacancyHandler.UpdateVacancy, middleware.ErrorHandler())
+			vacancies.DELETE("/:id", sessionMW.Session, h.VacancyHandler.DeleteVacancy, middleware.ErrorHandler())
+			vacancies.POST("/apply", sessionMW.Session, h.VacancyActivityHandler.ApplyForVacancy, middleware.ErrorHandler())
+			vacancies.GET("/applies/:id", h.VacancyActivityHandler.GetAllVacancyApplies, middleware.ErrorHandler())
+			vacancies.GET("/user_applies/:id", h.VacancyActivityHandler.GetAllUserApplies, middleware.ErrorHandler())
+
 		}
 		//
 		resumes := api.Group("/resume")

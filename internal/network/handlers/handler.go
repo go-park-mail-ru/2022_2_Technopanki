@@ -8,17 +8,20 @@ import (
 )
 
 type Handlers struct {
-	UserHandler    UserH
-	VacancyHandler VacancyH
-	ResumeHandler  ResumeH
-	cfg            *configs.Config
+	UserHandler            UserH
+	VacancyHandler         VacancyH
+	VacancyActivityHandler VacancyActivityH
+	ResumeHandler          ResumeH
+	cfg                    *configs.Config
 }
 
 func NewHandlers(usecases *usecases.UseCases, _cfg *configs.Config, _sr session.Repository) *Handlers {
 	userHandler := newUserHandler(usecases, _cfg, _sr)
 	return &Handlers{
-		UserHandler:   userHandler,
-		ResumeHandler: newResumeHandler(usecases, _cfg, userHandler),
+		UserHandler:            userHandler,
+		ResumeHandler:          newResumeHandler(usecases, _cfg, userHandler),
+		VacancyHandler:         newVacancyHandler(usecases, userHandler),
+		VacancyActivityHandler: newVacancyActivityHandler(usecases, userHandler),
 	}
 }
 
@@ -38,10 +41,18 @@ type UserH interface {
 }
 
 type VacancyH interface {
-	Get(c *gin.Context)
-	Create(c *gin.Context)
-	Update(c *gin.Context)
-	Delete(c *gin.Context)
+	GetAllVacancies(c *gin.Context)
+	GetVacancyById(c *gin.Context)
+	GetUserVacancies(c *gin.Context)
+	CreateVacancy(c *gin.Context)
+	UpdateVacancy(c *gin.Context)
+	DeleteVacancy(c *gin.Context)
+}
+
+type VacancyActivityH interface {
+	ApplyForVacancy(c *gin.Context)
+	GetAllVacancyApplies(c *gin.Context)
+	GetAllUserApplies(c *gin.Context)
 }
 
 type ResumeH interface {

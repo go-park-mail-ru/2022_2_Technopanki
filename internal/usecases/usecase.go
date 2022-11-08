@@ -2,7 +2,6 @@ package usecases
 
 import (
 	"HeadHunter/configs"
-	"HeadHunter/internal/entity"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/session"
@@ -10,15 +9,18 @@ import (
 )
 
 type UseCases struct {
-	User    User
-	Vacancy Vacancy
-	Resume  Resume
+	User            User
+	Vacancy         Vacancy
+	VacancyActivity VacancyActivity
+	Resume          Resume
 }
 
 func NewUseCases(repos *repository.Repository, session session.Repository, _cfg *configs.Config) *UseCases {
 	return &UseCases{
-		User:   newUserService(repos.UserRepository, session, _cfg),
-		Resume: newResumeService(repos.ResumeRepository, _cfg),
+		User:            newUserService(repos.UserRepository, session, _cfg),
+		Resume:          newResumeService(repos.ResumeRepository, _cfg),
+		Vacancy:         newVacancyService(repos.VacancyRepository),
+		VacancyActivity: newVacancyActivityService(repos.VacancyActivityRepository),
 	}
 }
 
@@ -37,10 +39,18 @@ type User interface {
 }
 
 type Vacancy interface { //TODO Сделать юзкейс вакансий
-	Get()
-	Create(entity.Vacancy)
-	Update()
-	Delete()
+	GetAll() ([]*models.Vacancy, error)
+	GetById(int) (*models.Vacancy, error)
+	GetByUserId(int) ([]models.Vacancy, error)
+	Create(uint, *models.Vacancy) (uint, error)
+	Update(uint, int, *models.Vacancy) error
+	Delete(uint, int) error
+}
+
+type VacancyActivity interface {
+	ApplyForVacancy(uint, *models.VacancyActivity) error
+	GetAllVacancyApplies(int) ([]*models.VacancyActivity, error)
+	GetAllUserApplies(int) ([]models.VacancyActivity, error)
 }
 
 type Resume interface {
