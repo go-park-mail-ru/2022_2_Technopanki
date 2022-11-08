@@ -3,6 +3,7 @@ package network
 import (
 	"HeadHunter/configs"
 	_ "HeadHunter/docs"
+	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/network/handlers"
 	"HeadHunter/internal/network/middleware"
 	"github.com/gin-gonic/gin"
