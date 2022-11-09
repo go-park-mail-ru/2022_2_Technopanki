@@ -3,6 +3,7 @@ package usecases
 import (
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/repository"
+	"HeadHunter/internal/usecases/sanitize"
 )
 
 type VacancyService struct {
@@ -18,6 +19,12 @@ func (vs *VacancyService) GetAll() ([]*models.Vacancy, error) {
 }
 
 func (vs *VacancyService) Create(userId uint, input *models.Vacancy) (uint, error) {
+	var sanitizeErr error
+	input, sanitizeErr = sanitize.SanitizeObject[*models.Vacancy](input)
+	if sanitizeErr != nil {
+		return 0, sanitizeErr
+	}
+
 	input.PostedByUserId = userId
 	return vs.vacancyRep.Create(input)
 }
@@ -35,6 +42,12 @@ func (vs *VacancyService) Delete(userId uint, vacancyId int) error {
 }
 
 func (vs *VacancyService) Update(userId uint, vacancyId int, updates *models.Vacancy) error {
+	var sanitizeErr error
+	updates, sanitizeErr = sanitize.SanitizeObject[*models.Vacancy](updates)
+	if sanitizeErr != nil {
+		return sanitizeErr
+	}
+
 	//userIdString := strconv.FormatUint(uint64(userId), 10)
 	//vacancyIdString := strconv.Itoa(vacancyId)
 	oldVacancy, getErr := vs.vacancyRep.GetById(vacancyId)
