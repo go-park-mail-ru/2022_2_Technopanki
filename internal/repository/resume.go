@@ -4,7 +4,6 @@ import (
 	"HeadHunter/internal/entity/models"
 	"fmt"
 	"gorm.io/gorm"
-	"time"
 )
 
 type ResumePostgres struct {
@@ -39,19 +38,24 @@ func (rp *ResumePostgres) GetResumeByApplicant(userId uint) ([]*models.Resume, e
 	return result, queryValidation(query, "resume")
 }
 
+func (rp *ResumePostgres) GetPreviewResumeByApplicant(userId uint) ([]*models.Resume, error) {
+	var result []*models.Resume
+	query := rp.db.Select("id, title").Where("user_account_id = ?", userId).Find(&result)
+
+	return result, queryValidation(query, "resume")
+}
+
 func (rp *ResumePostgres) CreateResume(resume *models.Resume, userId uint) error {
 	resume.UserAccountId = userId
 	creatingErr := rp.db.Create(resume).Save(resume).Error
 	if creatingErr != nil {
 		return fmt.Errorf("cannot create resume: %w", creatingErr)
 	}
-	resume.CreatedTime = time.Now()
 	return nil
 }
 
 func (rp *ResumePostgres) UpdateResume(id uint, resume *models.Resume) error {
 	old, getErr := rp.GetResume(id)
-	fmt.Println(old)
 	if getErr != nil {
 		return getErr
 	}

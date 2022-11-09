@@ -12,12 +12,12 @@ var (
 	ErrServiceUnavailable      = errors.New("service unavailable")
 	ErrUserExists              = errors.New("Пользователь с таким email уже существует")
 	ErrUserNotExists           = errors.New("Пользователя с таким email не существует")
-	ErrVacancyNotExist         = errors.New("Такой вакансии не существует")
 	ErrInvalidParam            = errors.New("invalid parameter")
 	ErrCannotCreateUser        = errors.New("cannot create user")
 	ErrCannotDeleteVacancy     = errors.New("cannot delete vacancy")
 	ErrCannotUpdateVacancy     = errors.New("cannot update vacancy")
 	ErrUpdateStructHasNoValues = errors.New("update structure has no values")
+	ErrCSRFTokenMismatched     = errors.New("csrf token mismatched")
 
 	ErrCannotCreateSession = errors.New("cannot create session")
 	ErrSessionNotFound     = errors.New("session with this token not found")
@@ -55,6 +55,8 @@ var errorToCode = map[error]int{
 	ErrCannotCreateSession: http.StatusInternalServerError,
 	ErrSessionNotFound:     http.StatusUnauthorized,
 	ErrCannotDeleteSession: http.StatusInternalServerError,
+
+	ErrCSRFTokenMismatched: http.StatusForbidden,
 
 	ErrVacancyNotFound:         http.StatusNotFound,
 	ErrUpdateStructHasNoValues: http.StatusInternalServerError,

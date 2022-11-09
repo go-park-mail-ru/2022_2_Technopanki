@@ -9,7 +9,7 @@ import (
 	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases"
 	repositorypkg "HeadHunter/pkg/repository"
-	"log"
+	"github.com/sirupsen/logrus"
 )
 
 // @title Jobflow API
@@ -21,18 +21,18 @@ import (
 func main() {
 	var mainConfig configs.Config
 	if configErr := configs.InitConfig(&mainConfig); configErr != nil {
-		log.Fatal(configErr.Error())
+		logrus.Fatal(configErr.Error())
 	}
 	client, redisErr := repositorypkg.RedisConnect(mainConfig.Redis)
 	if redisErr != nil {
-		log.Fatal(redisErr)
+		logrus.Fatal(redisErr)
 	}
 
 	redisRepository := session.NewRedisStore(mainConfig, client)
 	sessionMiddleware := middleware.NewSessionMiddleware(redisRepository)
 	db, DBErr := repositorypkg.DBConnect(mainConfig.DB)
 	if DBErr != nil {
-		log.Fatal(DBErr)
+		logrus.Fatal(DBErr)
 	}
 
 	postgresRepository := repository.NewPostgresRepository(db)
@@ -48,6 +48,6 @@ func main() {
 	router := network.InitRoutes(handler, sessionMiddleware, &mainConfig)
 	runErr := router.Run(mainConfig.Port)
 	if runErr != nil {
-		log.Fatal(runErr)
+		logrus.Fatal(runErr)
 	}
 }

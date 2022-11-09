@@ -3,7 +3,6 @@ package network
 import (
 	"HeadHunter/configs"
 	_ "HeadHunter/docs"
-	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/network/handlers"
 	"HeadHunter/internal/network/middleware"
 	"github.com/gin-gonic/gin"
@@ -19,32 +18,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 
 	router.Use(middleware.CORSMiddleware())
 
-	//store := cookie.NewStore([]byte("secret"))
-	//router.Use(sessions.Sessions("mySession", store))
-	//router.Use(csrf.Middleware(csrf.Options{
-	//	Secret: cfg.Security.Secret,
-	//	ErrorFunc: func(c *gin.Context) {
-	//		_ = c.Error(errorHandler.CSRFTokenMismatch)
-	//		return
-	//	},
-	//}))
-
-	protected := router.Group("/protected")
-	{
-		protected.GET("/", func(c *gin.Context) {
-			token, err := c.GetRawData()
-			if err != nil {
-				_ = c.Error(errorHandler.ErrBadRequest)
-				return
-			}
-			c.SetCookie("X-CSRF-Token", string(token), 0, "/",
-				cfg.Domain, cfg.Cookie.Secure, cfg.Cookie.HTTPOnly)
-		}, middleware.ErrorHandler())
-
-		protected.POST("/", func(c *gin.Context) {
-			c.String(200, "CSRF token is valid")
-		})
-	}
+	initCSRF(router, cfg.Security)
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	auth := router.Group("/auth")
@@ -87,6 +61,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 		{
 			resumes.GET("/:id", sessionMW.Session, h.ResumeHandler.GetResume, middleware.ErrorHandler())
 			resumes.GET("/applicant/:user_id", sessionMW.Session, h.ResumeHandler.GetResumeByApplicant, middleware.ErrorHandler())
+			resumes.GET("/applicant/preview/:user_id", sessionMW.Session, h.ResumeHandler.GetPreviewResumeByApplicant, middleware.ErrorHandler())
 			resumes.POST("/", sessionMW.Session, h.ResumeHandler.CreateResume, middleware.ErrorHandler())
 			resumes.PUT("/:id", sessionMW.Session, h.ResumeHandler.UpdateResume, middleware.ErrorHandler())
 			resumes.DELETE("/:id", sessionMW.Session, h.ResumeHandler.DeleteResume, middleware.ErrorHandler())

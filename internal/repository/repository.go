@@ -50,6 +50,8 @@ func NewPostgresRepository(db *gorm.DB) *Repository {
 	}
 }
 
+//go:generate mockgen -source repository.go -destination=mocks/mock.go
+
 type UserRepository interface {
 	CreateUser(user *models.UserAccount) error
 	GetUserByEmail(email string) (*models.UserAccount, error)
@@ -58,15 +60,14 @@ type UserRepository interface {
 	UpdateUserField(oldUser, newUser *models.UserAccount, field ...string) error
 	GetUser(id uint) (*models.UserAccount, error)
 	GetUserSafety(id uint, safeFields []string) (*models.UserAccount, error)
-	UpdateUserImage()
 }
 
 type VacancyRepository interface { //TODO Сделать репозиторий вакансий
 	GetAll() ([]*models.Vacancy, error)
 	GetById(int) (*models.Vacancy, error)
-	GetByUserId(int) ([]models.Vacancy, error)
+	GetByUserId(int) ([]*models.Vacancy, error)
 	Create(vacancy *models.Vacancy) (uint, error)
-	Update(uint, int, *models.Vacancy, *models.Vacancy) error
+	Update(int, *models.Vacancy) error
 	Delete(uint, int) error
 }
 
@@ -79,6 +80,7 @@ type VacancyActivityRepository interface {
 type ResumeRepository interface {
 	GetResume(id uint) (*models.Resume, error)
 	GetResumeByApplicant(userId uint) ([]*models.Resume, error)
+	GetPreviewResumeByApplicant(userId uint) ([]*models.Resume, error)
 	CreateResume(resume *models.Resume, userId uint) error
 	UpdateResume(id uint, resume *models.Resume) error
 	DeleteResume(id uint) error

@@ -7,4 +7,4 @@ var PrivateUserFields = []string{"email", "contact_number",
 // SafeUserFields Поля, доступ к которым доступен всегда
 var SafeUserFields = []string{"id", "user_type", "description", "status", "date_of_birth", "image",
 	"applicant_name", "applicant_surname", "company_name",
-	"company_location", "company_size", "company_website_url"}
+	"location", "company_size", "company_website_url"}
