@@ -69,6 +69,33 @@ func (rh *ResumeHandler) GetResumeByApplicant(c *gin.Context) {
 	c.JSON(http.StatusOK, resumes)
 }
 
+func (rh *ResumeHandler) GetPreviewResumeByApplicant(c *gin.Context) {
+	userId, paramErr := strconv.Atoi(c.Param("user_id"))
+	if paramErr != nil {
+		_ = c.Error(errorHandler.ErrInvalidParam)
+		return
+	}
+
+	userIdFromContext, getUserErr := rh.userHandler.GetUserId(c)
+	if getUserErr != nil {
+		_ = c.Error(getUserErr)
+		return
+	}
+
+	if userIdFromContext != uint(userId) {
+		_ = c.Error(errorHandler.ErrUnauthorized)
+		return
+	}
+
+	resumes, getResumeErr := rh.resumeUseCase.GetResumeByApplicant(uint(userId))
+	if getResumeErr != nil {
+		_ = c.Error(getResumeErr)
+		return
+	}
+
+	c.JSON(http.StatusOK, resumes)
+}
+
 func (rh *ResumeHandler) CreateResume(c *gin.Context) {
 	userId, getUserErr := rh.userHandler.GetUserId(c)
 	if getUserErr != nil {

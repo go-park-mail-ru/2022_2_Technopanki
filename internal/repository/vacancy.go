@@ -4,6 +4,7 @@ import (
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/errorHandler"
+	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -39,8 +40,8 @@ func (vp *VacancyPostgres) GetById(vacancyId int) (*models.Vacancy, error) {
 
 }
 
-func (vp *VacancyPostgres) GetByUserId(userId int) ([]models.Vacancy, error) {
-	var vacancies []models.Vacancy
+func (vp *VacancyPostgres) GetByUserId(userId int) ([]*models.Vacancy, error) {
+	var vacancies []*models.Vacancy
 	query := vp.db.Where("posted_by_user_id = ?", userId).Find(&vacancies)
 	return vacancies, validation.QueryVacancyValidation(query)
 }
@@ -54,11 +55,13 @@ func (vp *VacancyPostgres) Delete(userId uint, vacancyId int) error {
 	return nil
 }
 
-func (vp *VacancyPostgres) Update(userId uint, vacancyId int, oldVacancy *models.Vacancy, updates *models.Vacancy) error {
-
-	error := vp.db.Model(oldVacancy).Where("id = ? AND posted_by_user_id = ?", vacancyId, userId).Updates(updates).Error
-	if error != nil {
-		return error
+func (vp *VacancyPostgres) Update(vacancyId int, updates *models.Vacancy) error {
+	old, getErr := vp.GetById(vacancyId)
+	fmt.Println(old)
+	if getErr != nil {
+		return getErr
 	}
-	return error
+	updates.PostedByUserId = old.PostedByUserId
+	updates.ID = uint(vacancyId)
+	return vp.db.Updates(updates).Error
 }

@@ -12,6 +12,6 @@ func CORSMiddleware() gin.HandlerFunc {
 		"http://localhost:80", "http://95.163.208.72:80"}
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
 	config.AllowCredentials = true
-
+	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "X-CSRF-Token"}
 	return cors.New(config)
 }
