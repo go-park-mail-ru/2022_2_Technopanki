@@ -4,7 +4,6 @@ import (
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/errorHandler"
-	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -62,14 +61,15 @@ func (vp *VacancyPostgres) Update(userId uint, vacancyId int, oldVacancy *models
 		return errorHandler.ErrCannotUpdateVacancy
 	}
 	return nil
- }
+}
+
 //func (vp *VacancyPostgres) Update(vacancyId int, updates *models.Vacancy) error {
-	//old, getErr := vp.GetById(vacancyId)
-	//fmt.Println(old)
-	//if getErr != nil {
-		//return getErr
-	//}
-	//updates.PostedByUserId = old.PostedByUserId
-	//updates.ID = uint(vacancyId)
-	//return vp.db.Updates(updates).Error
+//old, getErr := vp.GetById(vacancyId)
+//fmt.Println(old)
+//if getErr != nil {
+//return getErr
+//}
+//updates.PostedByUserId = old.PostedByUserId
+//updates.ID = uint(vacancyId)
+//return vp.db.Updates(updates).Error
 //}

@@ -7,6 +7,7 @@ import (
 	"HeadHunter/internal/repository/session"
 	"mime/multipart"
 )
+
 //go:generate mockgen -source=usecase.go -destination=mocks/mock.go
 
 type UseCases struct {
@@ -44,7 +45,7 @@ type Vacancy interface { //TODO Сделать юзкейс вакансий
 	GetById(int) (*models.Vacancy, error)
 	GetByUserId(int) ([]*models.Vacancy, error)
 	Create(uint, *models.Vacancy) (uint, error)
-	Update(int, *models.Vacancy) error
+	Update(uint, int, *models.Vacancy) error
 	Delete(uint, int) error
 }
 
