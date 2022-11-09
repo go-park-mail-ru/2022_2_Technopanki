@@ -41,21 +41,12 @@ func (vs *VacancyService) Delete(userId uint, vacancyId int) error {
 	return vs.vacancyRep.Delete(userId, vacancyId)
 }
 
-func (vs *VacancyService) Update(userId uint, vacancyId int, updates *models.Vacancy) error {
+func (vs *VacancyService) Update(vacancyId int, updates *models.Vacancy) error {
 	var sanitizeErr error
 	updates, sanitizeErr = sanitize.SanitizeObject[*models.Vacancy](updates)
 	if sanitizeErr != nil {
 		return sanitizeErr
 	}
 
-	//userIdString := strconv.FormatUint(uint64(userId), 10)
-	//vacancyIdString := strconv.Itoa(vacancyId)
-	oldVacancy, getErr := vs.vacancyRep.GetById(vacancyId)
-	if getErr != nil {
-		return getErr
-	}
-	//if err := validation.UpdateVacancyValidate(*updates); err != nil {
-	//	return err
-	//}
-	return vs.vacancyRep.Update(userId, vacancyId, oldVacancy, updates)
+	return vs.vacancyRep.Update(vacancyId, updates)
 }

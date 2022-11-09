@@ -43,7 +43,7 @@ type Vacancy interface { //TODO Сделать юзкейс вакансий
 	GetById(int) (*models.Vacancy, error)
 	GetByUserId(int) ([]*models.Vacancy, error)
 	Create(uint, *models.Vacancy) (uint, error)
-	Update(uint, int, *models.Vacancy) error
+	Update(int, *models.Vacancy) error
 	Delete(uint, int) error
 }
 

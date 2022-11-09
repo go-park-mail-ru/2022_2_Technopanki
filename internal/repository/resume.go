@@ -4,7 +4,6 @@ import (
 	"HeadHunter/internal/entity/models"
 	"fmt"
 	"gorm.io/gorm"
-	"time"
 )
 
 type ResumePostgres struct {
@@ -52,13 +51,11 @@ func (rp *ResumePostgres) CreateResume(resume *models.Resume, userId uint) error
 	if creatingErr != nil {
 		return fmt.Errorf("cannot create resume: %w", creatingErr)
 	}
-	resume.CreatedTime = time.Now()
 	return nil
 }
 
 func (rp *ResumePostgres) UpdateResume(id uint, resume *models.Resume) error {
 	old, getErr := rp.GetResume(id)
-	fmt.Println(old)
 	if getErr != nil {
 		return getErr
 	}

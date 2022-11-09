@@ -116,7 +116,7 @@ func (vh *VacancyHandler) DeleteVacancy(c *gin.Context) {
 }
 
 func (vh *VacancyHandler) UpdateVacancy(c *gin.Context) {
-	userId, getUserIdErr := vh.userHandler.GetUserId(c)
+	_, getUserIdErr := vh.userHandler.GetUserId(c)
 	if getUserIdErr != nil {
 		_ = c.Error(getUserIdErr)
 		return
@@ -132,7 +132,7 @@ func (vh *VacancyHandler) UpdateVacancy(c *gin.Context) {
 		return
 	}
 
-	updateErr := vh.vacancyUseCase.Update(userId, id, &input)
+	updateErr := vh.vacancyUseCase.Update(id, &input)
 	if updateErr != nil {
 		_ = c.Error(updateErr)
 		return
