@@ -5,12 +5,9 @@ import (
 	_ "HeadHunter/docs"
 	"HeadHunter/internal/network/handlers"
 	"HeadHunter/internal/network/middleware"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	csrf "github.com/utrack/gin-csrf"
 )
 
 func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, cfg *configs.Config) *gin.Engine {
@@ -21,28 +18,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 
 	router.Use(middleware.CORSMiddleware())
 
-	store := cookie.NewStore([]byte("secret"))
-	router.Use(sessions.Sessions("csrfSession", store))
-	router.Use(csrf.Middleware(csrf.Options{
-		Secret: cfg.Security.Secret,
-		ErrorFunc: func(c *gin.Context) {
-			c.String(400, "CSRF token mismatch")
-			c.Abort()
-		},
-	}))
-
-	protected := router.Group("/protected")
-	{
-		protected.GET("/", func(c *gin.Context) {
-			token := csrf.GetToken(c)
-			c.Request.Header.Add("X-CSRF-Token", token)
-			c.JSON(200, gin.H{"token": csrf.GetToken(c)})
-		})
-
-		protected.POST("/", func(c *gin.Context) {
-			c.String(200, "CSRF token is valid")
-		})
-	}
+	initCSRF(router, cfg.Security)
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	auth := router.Group("/auth")

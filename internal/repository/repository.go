@@ -50,6 +50,8 @@ func NewPostgresRepository(db *gorm.DB) *Repository {
 	}
 }
 
+//go:generate mockgen -source repository.go -destination=mocks/mock.go
+
 type UserRepository interface {
 	CreateUser(user *models.UserAccount) error
 	GetUserByEmail(email string) (*models.UserAccount, error)

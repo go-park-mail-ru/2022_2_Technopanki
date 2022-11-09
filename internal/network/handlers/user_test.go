@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"net/http"
 	"net/http/httptest"
 	"testing"
 )
@@ -90,7 +91,7 @@ func TestUserHandler_SignUp(t *testing.T) {
 	}
 	for _, test := range testTable {
 		t.Run(test.name, func(t *testing.T) {
-
+			t.Parallel()
 			c := gomock.NewController(t)
 			defer c.Finish()
 
@@ -187,7 +188,7 @@ func TestUserHandler_SignIn(t *testing.T) {
 	}
 	for _, test := range testTable {
 		t.Run(test.name, func(t *testing.T) {
-
+			t.Parallel()
 			c := gomock.NewController(t)
 			defer c.Finish()
 
@@ -231,10 +232,19 @@ func TestUserHandler_Logout(t *testing.T) {
 		expectedResponseBody string
 	}{
 		{
-			name:       "valid",
-			inputToken: "token",
+			name:       "no cookie",
+			inputToken: "invalid_token",
 			mockBehavior: func(r *mock_usecases.MockUser, token string) {
-				r.EXPECT().Logout(token).Return(nil)
+				r.EXPECT().Logout(token).Return(errorHandler.ErrBadRequest)
+			},
+			expectedStatusCode:   400,
+			expectedResponseBody: "{\"descriptors\":[],\"error\":\"bad request\"}",
+		},
+		{
+			name:       "with cookie",
+			inputToken: "valid_token",
+			mockBehavior: func(r *mock_usecases.MockUser, token string) {
+				r.EXPECT().Logout(token).Return(errorHandler.ErrBadRequest)
 			},
 			expectedStatusCode:   200,
 			expectedResponseBody: "",
@@ -242,7 +252,7 @@ func TestUserHandler_Logout(t *testing.T) {
 	}
 	for _, test := range testTable {
 		t.Run(test.name, func(t *testing.T) {
-
+			t.Parallel()
 			c := gomock.NewController(t)
 			defer c.Finish()
 
@@ -261,11 +271,17 @@ func TestUserHandler_Logout(t *testing.T) {
 			}
 
 			r := gin.New()
-			r.POST("/logout", handler.Logout, middleware.ErrorHandler())
+			r.POST("/logout", handler.Logout)
 			w := httptest.NewRecorder()
-			req := httptest.NewRequest("POST", "/logout",
-				bytes.NewBufferString(test.inputToken))
 
+			cookie := &http.Cookie{
+				Name:  "session",
+				Value: "valid_token",
+			}
+			req := httptest.NewRequest("POST", "/logout",
+				bytes.NewBufferString(""))
+
+			req.AddCookie(cookie)
 			r.ServeHTTP(w, req)
 
 			assert.Equal(t, test.expectedStatusCode, w.Code)
@@ -275,7 +291,70 @@ func TestUserHandler_Logout(t *testing.T) {
 }
 
 func TestUserHandler_AuthCheck(t *testing.T) {
+	type mockBehavior func(r *mock_usecases.MockUser, email string)
 
+	testTable := []struct {
+		name                 string
+		mockBehavior         mockBehavior
+		inputToken           string
+		expectedUser         models.UserAccount
+		expectedStatusCode   int
+		expectedResponseBody string
+	}{
+		{
+			name:       "no cookie",
+			inputToken: "invalid_token",
+			mockBehavior: func(r *mock_usecases.MockUser, email string) {
+				expectedUser := &models.UserAccount{
+					Email:       "test@gmail.com",
+					CompanyName: "Some company",
+					UserType:    "employer",
+					Image:       "basic_applicant_avatar.webp",
+				}
+				r.EXPECT().AuthCheck(email).Return(expectedUser, nil)
+			},
+			expectedStatusCode:   200,
+			expectedResponseBody: "",
+		},
+	}
+	for _, test := range testTable {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			mockUseCase := mock_usecases.NewMockUser(c)
+			test.mockBehavior(mockUseCase, test.inputToken)
+
+			handler := UserHandler{
+				userUseCase: mockUseCase,
+				cfg: &configs.Config{
+					DefaultExpiringSession: 100,
+					Cookie: configs.CookieConfig{
+						Secure:   false,
+						HTTPOnly: true,
+					},
+				},
+			}
+
+			r := gin.New()
+			r.GET("/auth", handler.AuthCheck)
+			w := httptest.NewRecorder()
+
+			cookie := &http.Cookie{
+				Name:  "session",
+				Value: "valid_token",
+			}
+			req := httptest.NewRequest("GET", "/auth",
+				bytes.NewBufferString(""))
+
+			req.AddCookie(cookie)
+			r.ServeHTTP(w, req)
+
+			assert.Equal(t, test.expectedStatusCode, w.Code)
+			assert.Equal(t, test.expectedResponseBody, w.Body.String())
+		})
+	}
 }
 
 func TestUserHandler_UploadUserImage(t *testing.T) {

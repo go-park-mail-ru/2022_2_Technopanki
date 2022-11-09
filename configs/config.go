@@ -63,7 +63,8 @@ type ImageConfig struct {
 }
 
 type SecurityConfig struct {
-	Secret string `yaml:"csrfSecret"`
+	Secret   string `yaml:"csrfSecret"`
+	CsrfMode bool   `yaml:"csrfMode"`
 }
 
 func InitConfig(config *Config) error {

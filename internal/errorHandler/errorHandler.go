@@ -16,6 +16,7 @@ var (
 	ErrCannotCreateUser        = errors.New("cannot create user")
 	ErrCannotDeleteVacancy     = errors.New("cannot delete vacancy")
 	ErrUpdateStructHasNoValues = errors.New("update structure has no values")
+	ErrCSRFTokenMismatched     = errors.New("csrf token mismatched")
 
 	ErrCannotCreateSession = errors.New("cannot create session")
 	ErrSessionNotFound     = errors.New("session with this token not found")
@@ -52,6 +53,8 @@ var errorToCode = map[error]int{
 	ErrCannotCreateSession: http.StatusInternalServerError,
 	ErrSessionNotFound:     http.StatusUnauthorized,
 	ErrCannotDeleteSession: http.StatusInternalServerError,
+
+	ErrCSRFTokenMismatched: http.StatusForbidden,
 
 	ErrVacancyNotFound:         http.StatusNotFound,
 	ErrUpdateStructHasNoValues: http.StatusInternalServerError,
