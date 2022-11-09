@@ -51,6 +51,7 @@ func (uh *UserHandler) SignUp(c *gin.Context) {
 		_ = c.Error(signUpErr)
 		return
 	}
+	c.SetSameSite(http.SameSiteLaxMode)
 	c.SetCookie("session", token, uh.cfg.DefaultExpiringSession, "/",
 		uh.cfg.Domain, uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
 	response.SendSuccessData(c, &input)
