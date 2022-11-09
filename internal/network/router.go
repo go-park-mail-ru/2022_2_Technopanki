@@ -36,7 +36,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 		protected.GET("/", func(c *gin.Context) {
 			token := csrf.GetToken(c)
 			c.Request.Header.Add("X-CSRF-Token", token)
-			c.String(200, csrf.GetToken(c))
+			c.JSON(200, gin.H{"token": csrf.GetToken(c)})
 		})
 
 		protected.POST("/", func(c *gin.Context) {

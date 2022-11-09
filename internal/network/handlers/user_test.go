@@ -55,7 +55,7 @@ func TestUserHandler_SignUp(t *testing.T) {
 					ApplicantName:    "Zakhar",
 					UserType:         "applicant",
 				}
-				r.EXPECT().SignUp(user).Return("", errorHandler.ErrBadRequest)
+				r.EXPECT().SignUp(user).Return(expectedUser, errorHandler.ErrBadRequest)
 			},
 			expectedStatusCode: 200,
 			expectedResponseBody: `{
