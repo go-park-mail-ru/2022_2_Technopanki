@@ -52,7 +52,7 @@ type Vacancy interface { //TODO Сделать юзкейс вакансий
 type VacancyActivity interface {
 	ApplyForVacancy(uint, int, *models.VacancyActivity) error
 	GetAllVacancyApplies(int) ([]*models.VacancyActivity, error)
-	GetAllUserApplies(int) ([]models.VacancyActivity, error)
+	GetAllUserApplies(int) ([]*models.VacancyActivity, error)
 }
 
 type Resume interface {

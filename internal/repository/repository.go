@@ -74,7 +74,7 @@ type VacancyRepository interface { //TODO Сделать репозиторий 
 type VacancyActivityRepository interface {
 	ApplyForVacancy(*models.VacancyActivity) error
 	GetAllVacancyApplies(int) ([]*models.VacancyActivity, error)
-	GetAllUserApplies(int) ([]models.VacancyActivity, error)
+	GetAllUserApplies(int) ([]*models.VacancyActivity, error)
 }
 
 type ResumeRepository interface {

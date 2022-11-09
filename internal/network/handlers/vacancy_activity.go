@@ -23,7 +23,7 @@ type GetAllVacancyAppliesResponce struct {
 }
 
 type GetAllUserAppliesResponce struct {
-	Data []models.VacancyActivity `json:"data"`
+	Data []*models.VacancyActivity `json:"data"`
 }
 
 func (vah *VacancyActivityHandler) GetAllVacancyApplies(c *gin.Context) {
