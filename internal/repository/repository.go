@@ -58,7 +58,6 @@ type UserRepository interface {
 	UpdateUserField(oldUser, newUser *models.UserAccount, field ...string) error
 	GetUser(id uint) (*models.UserAccount, error)
 	GetUserSafety(id uint, safeFields []string) (*models.UserAccount, error)
-	UpdateUserImage()
 }
 
 type VacancyRepository interface { //TODO Сделать репозиторий вакансий

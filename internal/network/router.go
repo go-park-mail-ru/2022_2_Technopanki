@@ -5,6 +5,8 @@ import (
 	_ "HeadHunter/docs"
 	"HeadHunter/internal/network/handlers"
 	"HeadHunter/internal/network/middleware"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -19,15 +21,15 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 
 	router.Use(middleware.CORSMiddleware())
 
-	//store := cookie.NewStore([]byte("secret"))
-	//router.Use(sessions.Sessions("csrfSession", store))
-	//router.Use(csrf.Middleware(csrf.Options{
-	//	Secret: cfg.Security.Secret,
-	//	ErrorFunc: func(c *gin.Context) {
-	//		c.String(400, "CSRF token mismatch")
-	//		c.Abort()
-	//	},
-	//}))
+	store := cookie.NewStore([]byte("secret"))
+	router.Use(sessions.Sessions("csrfSession", store))
+	router.Use(csrf.Middleware(csrf.Options{
+		Secret: cfg.Security.Secret,
+		ErrorFunc: func(c *gin.Context) {
+			c.String(400, "CSRF token mismatch")
+			c.Abort()
+		},
+	}))
 
 	protected := router.Group("/protected")
 	{

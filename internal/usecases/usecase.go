@@ -7,6 +7,7 @@ import (
 	"HeadHunter/internal/repository/session"
 	"mime/multipart"
 )
+//go:generate mockgen -source=usecase.go -destination=mocks/mock.go
 
 type UseCases struct {
 	User            User
