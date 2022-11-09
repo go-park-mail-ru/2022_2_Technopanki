@@ -243,7 +243,7 @@ func (us *UserService) DeleteUserImage(user *models.UserAccount) error {
 	}
 	deleteErr := images.DeleteUserAvatar(user.Image, &us.cfg.Image)
 	if deleteErr != nil {
-		return deleteErr
+		return errorHandler.ErrCannotDeleteAvatar
 	}
 	user.Image = fmt.Sprintf("basic_%s_avatar.webp", user.UserType)
 	return us.UpdateUserFields(user, "image")

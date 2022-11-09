@@ -3,7 +3,6 @@ package repository
 import (
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
-	"errors"
 	"fmt"
 	"gorm.io/gorm"
 )
@@ -30,7 +29,7 @@ func notFound(object string) error {
 
 func queryValidation(query *gorm.DB, object string) error {
 	if query.Error != nil {
-		if errors.Is(query.Error, fmt.Errorf("record not found")) {
+		if query.Error.Error() == "record not found" {
 			return notFound(object)
 		}
 		return fmt.Errorf("postgre query error: %s", query.Error.Error())

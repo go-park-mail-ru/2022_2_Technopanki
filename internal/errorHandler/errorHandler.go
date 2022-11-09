@@ -23,8 +23,8 @@ var (
 	ErrSessionNotFound     = errors.New("session with this token not found")
 	ErrCannotDeleteSession = errors.New("cannot delete session")
 
-	ErrVacancyNotFound = errors.New("vacancy not found")
-
+	ErrVacancyNotFound     = errors.New("vacancy not found")
+	ErrCannotDeleteAvatar  = errors.New("Невозможно удалить аватар")
 	ErrForbidden           = errors.New("forbidden")
 	ErrWrongPassword       = errors.New("wrong password")
 	ErrInvalidFileFormat   = errors.New("invalid file format")
@@ -55,6 +55,7 @@ var errorToCode = map[error]int{
 	ErrCannotCreateSession: http.StatusInternalServerError,
 	ErrSessionNotFound:     http.StatusUnauthorized,
 	ErrCannotDeleteSession: http.StatusInternalServerError,
+	ErrCannotDeleteAvatar:  http.StatusBadRequest,
 
 	ErrCSRFTokenMismatched: http.StatusForbidden,
 

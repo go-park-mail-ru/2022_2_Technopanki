@@ -7,7 +7,6 @@ import (
 	"HeadHunter/internal/network/response"
 	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -164,7 +163,7 @@ func (uh *UserHandler) UploadUserImage(c *gin.Context) {
 
 	file, fileErr := c.FormFile("avatar")
 	if fileErr != nil {
-		_ = c.Error(fmt.Errorf("form file error: %w", fileErr))
+		_ = c.Error(errorHandler.ErrInvalidFileFormat)
 		return
 	}
 	_, uploadErr := uh.userUseCase.UploadUserImage(user, file)
