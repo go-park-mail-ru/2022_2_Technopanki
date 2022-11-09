@@ -207,6 +207,7 @@ func (uh *UserHandler) GetPreview(c *gin.Context) {
 	user, getUserErr := uh.userUseCase.GetUserSafety(uint(id))
 	if getUserErr != nil {
 		_ = c.Error(getUserErr)
+		return
 	}
 	response.SendPreviewData(c, user)
 }
