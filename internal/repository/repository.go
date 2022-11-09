@@ -64,7 +64,7 @@ type UserRepository interface {
 type VacancyRepository interface { //TODO Сделать репозиторий вакансий
 	GetAll() ([]*models.Vacancy, error)
 	GetById(int) (*models.Vacancy, error)
-	GetByUserId(int) ([]models.Vacancy, error)
+	GetByUserId(int) ([]*models.Vacancy, error)
 	Create(vacancy *models.Vacancy) (uint, error)
 	Update(uint, int, *models.Vacancy, *models.Vacancy) error
 	Delete(uint, int) error

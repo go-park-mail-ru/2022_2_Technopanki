@@ -62,7 +62,7 @@ func (vh *VacancyHandler) GetUserVacancies(c *gin.Context) {
 		_ = c.Error(GetErr)
 		return
 	}
-	c.JSON(http.StatusOK, getAllVacanciesResponce{
+	c.JSON(http.StatusOK, getAllVacanciesResponcePointer{
 		vacancies,
 	})
 

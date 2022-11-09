@@ -33,7 +33,7 @@ func (vs *VacancyService) GetById(vacancyID int) (*models.Vacancy, error) {
 	return vs.vacancyRep.GetById(vacancyID)
 }
 
-func (vs *VacancyService) GetByUserId(userId int) ([]models.Vacancy, error) {
+func (vs *VacancyService) GetByUserId(userId int) ([]*models.Vacancy, error) {
 	return vs.vacancyRep.GetByUserId(userId)
 }
 

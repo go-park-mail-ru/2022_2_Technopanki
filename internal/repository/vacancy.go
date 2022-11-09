@@ -39,8 +39,8 @@ func (vp *VacancyPostgres) GetById(vacancyId int) (*models.Vacancy, error) {
 
 }
 
-func (vp *VacancyPostgres) GetByUserId(userId int) ([]models.Vacancy, error) {
-	var vacancies []models.Vacancy
+func (vp *VacancyPostgres) GetByUserId(userId int) ([]*models.Vacancy, error) {
+	var vacancies []*models.Vacancy
 	query := vp.db.Where("posted_by_user_id = ?", userId).Find(&vacancies)
 	return vacancies, validation.QueryVacancyValidation(query)
 }
