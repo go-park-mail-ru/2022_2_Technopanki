@@ -16,6 +16,8 @@ func newVacancyActivityPostgres(db *gorm.DB) *VacancyActivityPostgres {
 
 func (vap *VacancyActivityPostgres) GetAllVacancyApplies(vacancyId int) ([]*models.VacancyActivity, error) {
 	var applies []*models.VacancyActivity
+	//var responce []*models.VacancyActivityResponce
+	//query := vap.db.Model(&models.Resume{}).Select("resumes.title, resumes.description").Joins("left join vacancy_activities on vacancy_activities.resume_id = resumes.id").Where("vacancy_id = ?", vacancyId).Scan(&responce)
 	query := vap.db.Where("vacancy_id = ?", vacancyId).Find(&applies)
 	if query.Error != nil {
 		return applies, query.Error

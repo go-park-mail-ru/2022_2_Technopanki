@@ -49,14 +49,19 @@ func (vah *VacancyActivityHandler) ApplyForVacancy(c *gin.Context) {
 		_ = c.Error(getUserIdErr)
 		return
 	}
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		_ = c.Error(errorHandler.ErrInvalidParam)
+		return
+	}
 	var input models.VacancyActivity
 	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
-	err := vah.vacancyActivityUseCase.ApplyForVacancy(userId, &input)
+	applyErr := vah.vacancyActivityUseCase.ApplyForVacancy(userId, id, &input)
 	if err != nil {
-		_ = c.Error(err)
+		_ = c.Error(applyErr)
 		return
 	}
 

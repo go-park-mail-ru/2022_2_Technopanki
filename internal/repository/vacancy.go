@@ -56,9 +56,9 @@ func (vp *VacancyPostgres) Delete(userId uint, vacancyId int) error {
 
 func (vp *VacancyPostgres) Update(userId uint, vacancyId int, oldVacancy *models.Vacancy, updates *models.Vacancy) error {
 
-	error := vp.db.Model(oldVacancy).Where("id = ? AND posted_by_user_id = ?", vacancyId, userId).Updates(updates).Error
-	if error != nil {
-		return error
+	query := vp.db.Model(oldVacancy).Where("id = ? AND posted_by_user_id = ?", vacancyId, userId).Updates(updates)
+	if query.Error != nil || query.RowsAffected == 0 {
+		return errorHandler.ErrCannotUpdateVacancy
 	}
-	return error
+	return nil
 }
