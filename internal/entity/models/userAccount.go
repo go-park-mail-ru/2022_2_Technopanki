@@ -18,7 +18,7 @@ type UserAccount struct {
 	CompanyName            string            `json:"company_name,omitempty"`
 	BusinessType           []BusinessType    `json:"business_type,omitempty" gorm:"many2many:business_type;"`
 	CompanyWebsiteUrl      string            `json:"company_website_url,omitempty"`
-	CompanyLocation        string            `json:"company_location,omitempty"`
+	Location               string            `json:"location,omitempty"`
 	CompanySize            uint              `json:"company_size"`
 	Resumes                []Resume          `json:"resumes" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`
 	Vacancies              []Vacancy         `json:"vacancies" gorm:"foreignKey:PostedByUserId;constraint:OnDelete:CASCADE;"`
