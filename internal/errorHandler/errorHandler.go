@@ -12,7 +12,6 @@ var (
 	ErrServiceUnavailable      = errors.New("service unavailable")
 	ErrUserExists              = errors.New("Пользователь с таким email уже существует")
 	ErrUserNotExists           = errors.New("Пользователя с таким email не существует")
-	ErrVacancyNotExist         = errors.New("Такой вакансии не существует")
 	ErrInvalidParam            = errors.New("invalid parameter")
 	ErrCannotCreateUser        = errors.New("cannot create user")
 	ErrCannotDeleteVacancy     = errors.New("cannot delete vacancy")
