@@ -23,6 +23,10 @@ func (rs *ResumeService) GetResumeByApplicant(userId uint) ([]*models.Resume, er
 	return rs.resumeRep.GetResumeByApplicant(userId)
 }
 
+func (rs *ResumeService) GetPreviewResumeByApplicant(userId uint) ([]*models.Resume, error) {
+	return rs.resumeRep.GetResumeByApplicant(userId)
+}
+
 func (rs *ResumeService) CreateResume(resume *models.Resume, userId uint) error {
 	return rs.resumeRep.CreateResume(resume, userId)
 }

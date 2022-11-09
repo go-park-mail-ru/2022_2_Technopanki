@@ -3,12 +3,12 @@ package network
 import (
 	"HeadHunter/configs"
 	_ "HeadHunter/docs"
-	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/network/handlers"
 	"HeadHunter/internal/network/middleware"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	csrf "github.com/utrack/gin-csrf"
 )
 
 func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, cfg *configs.Config) *gin.Engine {
@@ -20,26 +20,22 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 	router.Use(middleware.CORSMiddleware())
 
 	//store := cookie.NewStore([]byte("secret"))
-	//router.Use(sessions.Sessions("mySession", store))
+	//router.Use(sessions.Sessions("csrfSession", store))
 	//router.Use(csrf.Middleware(csrf.Options{
 	//	Secret: cfg.Security.Secret,
 	//	ErrorFunc: func(c *gin.Context) {
-	//		_ = c.Error(errorHandler.CSRFTokenMismatch)
-	//		return
+	//		c.String(400, "CSRF token mismatch")
+	//		c.Abort()
 	//	},
 	//}))
 
 	protected := router.Group("/protected")
 	{
 		protected.GET("/", func(c *gin.Context) {
-			token, err := c.GetRawData()
-			if err != nil {
-				_ = c.Error(errorHandler.ErrBadRequest)
-				return
-			}
-			c.SetCookie("X-CSRF-Token", string(token), 0, "/",
-				cfg.Domain, cfg.Cookie.Secure, cfg.Cookie.HTTPOnly)
-		}, middleware.ErrorHandler())
+			token := csrf.GetToken(c)
+			c.Request.Header.Add("X-CSRF-Token", token)
+			c.String(200, csrf.GetToken(c))
+		})
 
 		protected.POST("/", func(c *gin.Context) {
 			c.String(200, "CSRF token is valid")
@@ -87,6 +83,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 		{
 			resumes.GET("/:id", sessionMW.Session, h.ResumeHandler.GetResume, middleware.ErrorHandler())
 			resumes.GET("/applicant/:user_id", sessionMW.Session, h.ResumeHandler.GetResumeByApplicant, middleware.ErrorHandler())
+			resumes.GET("/applicant/preview/:user_id", sessionMW.Session, h.ResumeHandler.GetPreviewResumeByApplicant, middleware.ErrorHandler())
 			resumes.POST("/", sessionMW.Session, h.ResumeHandler.CreateResume, middleware.ErrorHandler())
 			resumes.PUT("/:id", sessionMW.Session, h.ResumeHandler.UpdateResume, middleware.ErrorHandler())
 			resumes.DELETE("/:id", sessionMW.Session, h.ResumeHandler.DeleteResume, middleware.ErrorHandler())

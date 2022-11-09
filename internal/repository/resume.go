@@ -39,6 +39,13 @@ func (rp *ResumePostgres) GetResumeByApplicant(userId uint) ([]*models.Resume, e
 	return result, queryValidation(query, "resume")
 }
 
+func (rp *ResumePostgres) GetPreviewResumeByApplicant(userId uint) ([]*models.Resume, error) {
+	var result []*models.Resume
+	query := rp.db.Select("id, title").Where("user_account_id = ?", userId).Find(&result)
+
+	return result, queryValidation(query, "resume")
+}
+
 func (rp *ResumePostgres) CreateResume(resume *models.Resume, userId uint) error {
 	resume.UserAccountId = userId
 	creatingErr := rp.db.Create(resume).Save(resume).Error
