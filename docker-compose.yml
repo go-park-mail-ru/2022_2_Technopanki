@@ -15,8 +15,7 @@ services:
     environment:
       POSTGRES_DB: "jobflowDB"
       POSTGRES_USER: "jobflowAdmin"
-      #POSTGRES_PASSWORD: "pgjf12345RTY"
-      POSTGRES_PASSWORD: "12345"
+      POSTGRES_PASSWORD: "pgjf12345RTY"
     ports:
       - '5432:5432'
     volumes:
