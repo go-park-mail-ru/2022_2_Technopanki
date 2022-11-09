@@ -53,7 +53,3 @@ func (up *UserPostgres) GetUserSafety(id uint, allowedFields []string) (*models.
 	query := up.db.Select(append(constants.SafeUserFields, allowedFields...)).Find(&result, id)
 	return &result, queryValidation(query, "user")
 }
-
-func (up *UserPostgres) UpdateUserImage() {
-
-}
