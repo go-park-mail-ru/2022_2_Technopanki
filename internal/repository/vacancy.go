@@ -55,13 +55,21 @@ func (vp *VacancyPostgres) Delete(userId uint, vacancyId int) error {
 	return nil
 }
 
-func (vp *VacancyPostgres) Update(vacancyId int, updates *models.Vacancy) error {
-	old, getErr := vp.GetById(vacancyId)
-	fmt.Println(old)
-	if getErr != nil {
-		return getErr
+func (vp *VacancyPostgres) Update(userId uint, vacancyId int, oldVacancy *models.Vacancy, updates *models.Vacancy) error {
+
+	query := vp.db.Model(oldVacancy).Where("id = ? AND posted_by_user_id = ?", vacancyId, userId).Updates(updates)
+	if query.Error != nil || query.RowsAffected == 0 {
+		return errorHandler.ErrCannotUpdateVacancy
 	}
-	updates.PostedByUserId = old.PostedByUserId
-	updates.ID = uint(vacancyId)
-	return vp.db.Updates(updates).Error
-}
+	return nil
+ }
+//func (vp *VacancyPostgres) Update(vacancyId int, updates *models.Vacancy) error {
+	//old, getErr := vp.GetById(vacancyId)
+	//fmt.Println(old)
+	//if getErr != nil {
+		//return getErr
+	//}
+	//updates.PostedByUserId = old.PostedByUserId
+	//updates.ID = uint(vacancyId)
+	//return vp.db.Updates(updates).Error
+//}

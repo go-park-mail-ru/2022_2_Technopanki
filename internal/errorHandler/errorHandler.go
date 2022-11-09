@@ -15,6 +15,7 @@ var (
 	ErrInvalidParam            = errors.New("invalid parameter")
 	ErrCannotCreateUser        = errors.New("cannot create user")
 	ErrCannotDeleteVacancy     = errors.New("cannot delete vacancy")
+	ErrCannotUpdateVacancy     = errors.New("cannot update vacancy")
 	ErrUpdateStructHasNoValues = errors.New("update structure has no values")
 	ErrCSRFTokenMismatched     = errors.New("csrf token mismatched")
 
@@ -50,6 +51,7 @@ var errorToCode = map[error]int{
 	ErrInvalidParam:        http.StatusBadRequest,
 	ErrCannotCreateUser:    http.StatusServiceUnavailable,
 	ErrCannotDeleteVacancy: http.StatusServiceUnavailable,
+	ErrCannotUpdateVacancy: http.StatusServiceUnavailable,
 	ErrCannotCreateSession: http.StatusInternalServerError,
 	ErrSessionNotFound:     http.StatusUnauthorized,
 	ErrCannotDeleteSession: http.StatusInternalServerError,
