@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
+	"HeadHunter/internal/network/middleware"
 	mock_usecases "HeadHunter/internal/usecases/mocks"
 	"bytes"
 	"github.com/gin-gonic/gin"
@@ -13,12 +15,11 @@ import (
 )
 
 func TestUserHandler_SignUp(t *testing.T) {
-	type mockBehavior func(r *mock_usecases.MockUser, user models.UserAccount)
+	type mockBehavior func(r *mock_usecases.MockUser, user *models.UserAccount)
 
 	testTable := []struct {
 		name                 string
 		inputUser            models.UserAccount
-		expectedUser         models.UserAccount
 		inputBody            string
 		mockBehavior         mockBehavior
 		expectedStatusCode   int
@@ -33,13 +34,6 @@ func TestUserHandler_SignUp(t *testing.T) {
 				ApplicantName:    "Zakhar",
 				UserType:         "applicant",
 			},
-			expectedUser: models.UserAccount{
-				ID:               1,
-				Email:            "test@gmail.com",
-				ApplicantSurname: "Urvancev",
-				ApplicantName:    "Zakhar",
-				UserType:         "applicant",
-			},
 			inputBody: `{
     			"email": "test@gmail.com",
     			"password": "123456a!",
@@ -47,108 +41,237 @@ func TestUserHandler_SignUp(t *testing.T) {
                 "applicant_surname": "Urvancev",
     			"user_type": "applicant"
 }`,
-			mockBehavior: func(r *mock_usecases.MockUser, user models.UserAccount) {
-				expectedUser := models.UserAccount{
-					ID:               1,
-					Email:            "test@gmail.com",
-					ApplicantSurname: "Urvancev",
-					ApplicantName:    "Zakhar",
-					UserType:         "applicant",
-				}
-				r.EXPECT().SignUp(user).Return(expectedUser, errorHandler.ErrBadRequest)
+			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
+				r.EXPECT().SignUp(user).Return(gomock.Any().String(), nil)
 			},
-			expectedStatusCode: 200,
-			expectedResponseBody: `{
-    "id": 1,
-    "user_type": "applicant",
-    "email": "test@gmail.com",
-    "password": "",
-    "contact_number": "",
-    "status": "",
-    "description": "",
-    "image": "basic_applicant_avatar.webp",
-    "date_of_birth": "0001-01-01T00:00:00Z",
-    "applicant_name": "Zakhar",
-    "applicant_surname": "Urvancev",
-    "company_size": 0,
-    "resumes": null,
-    "vacancies": null,
-    "vacancy_activities": null
-}`,
+			expectedStatusCode:   200,
+			expectedResponseBody: "{\"id\":0,\"user_type\":\"applicant\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"applicant_name\":\"Zakhar\",\"applicant_surname\":\"Urvancev\",\"company_size\":0,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name: "valid employer",
 			inputUser: models.UserAccount{
-				Email:            "test2@gmail.com",
-				Password:         "123456a!",
-				ApplicantSurname: "Urvancev",
-				ApplicantName:    "Zakhar",
-				UserType:         "employer",
+				Email:       "test@gmail.com",
+				Password:    "123456a!",
+				CompanyName: "Some company",
+				UserType:    "employer",
 			},
 			inputBody: `{
-    			"email": "test2@gmail.com",
+    			"email": "test@gmail.com",
     			"password": "123456a!",
                 "company_name": "Some company",
     			"user_type": "employer"
 }`,
-			mockBehavior: func(r *mock_usecases.MockUser, user models.UserAccount) {
-				r.EXPECT().SignUp(user).Return(1, nil)
+			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
+				r.EXPECT().SignUp(user).Return(gomock.Any().String(), nil)
 			},
-			expectedStatusCode: 200,
-			expectedResponseBody: `{
-    "id": 5,
-    "user_type": "employer",
-    "email": "test2@gmail.com",
-    "password": "",
-    "contact_number": "",
-    "status": "",
-    "description": "",
-    "image": "basic_employer_avatar.webp",
-    "date_of_birth": "0001-01-01T00:00:00Z",
-    "company_name": "Some company",
-    "company_size": 0,
-    "resumes": null,
-    "vacancies": null,
-    "vacancy_activities": null
+			expectedStatusCode:   200,
+			expectedResponseBody: "{\"id\":0,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+		},
+		{
+			name: "user already exists",
+			inputUser: models.UserAccount{
+				Email:       "test@gmail.com",
+				Password:    "123456a!",
+				CompanyName: "Some company",
+				UserType:    "employer",
+			},
+			inputBody: `{
+    			"email": "test@gmail.com",
+    			"password": "123456a!",
+                "company_name": "Some company",
+    			"user_type": "employer"
 }`,
+			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
+				r.EXPECT().SignUp(user).Return("", errorHandler.ErrUserExists)
+			},
+			expectedStatusCode:   200,
+			expectedResponseBody: "",
 		},
 	}
 	for _, test := range testTable {
 		t.Run(test.name, func(t *testing.T) {
-			// Init Dependencies
+
 			c := gomock.NewController(t)
 			defer c.Finish()
 
 			mockUseCase := mock_usecases.NewMockUser(c)
-			test.mockBehavior(mockUseCase, test.inputUser)
+			test.mockBehavior(mockUseCase, &test.inputUser)
 
-			handler := UserHandler{userUseCase: mockUseCase}
+			handler := UserHandler{
+				userUseCase: mockUseCase,
+				cfg: &configs.Config{
+					DefaultExpiringSession: 100,
+					Cookie: configs.CookieConfig{
+						Secure:   false,
+						HTTPOnly: true,
+					},
+				},
+			}
 
-			// Init Endpoint
 			r := gin.New()
 			r.POST("/sign-up", handler.SignUp)
 
-			// Create Request
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("POST", "/sign-up",
 				bytes.NewBufferString(test.inputBody))
 
-			// Make Request
 			r.ServeHTTP(w, req)
 
-			// Assert
-			assert.Equal(t, w.Code, test.expectedStatusCode)
-			assert.Equal(t, w.Body.String(), test.expectedResponseBody)
+			assert.Equal(t, test.expectedStatusCode, w.Code)
+			assert.Equal(t, test.expectedResponseBody, w.Body.String())
 		})
 	}
 }
 
 func TestUserHandler_SignIn(t *testing.T) {
+	type mockBehavior func(r *mock_usecases.MockUser, user *models.UserAccount)
 
+	testTable := []struct {
+		name                 string
+		inputUser            models.UserAccount
+		inputBody            string
+		mockBehavior         mockBehavior
+		expectedStatusCode   int
+		expectedResponseBody string
+	}{
+		{
+			name: "valid applicant",
+			inputUser: models.UserAccount{
+				Email:    "test@gmail.com",
+				Password: "123456a!",
+				UserType: "applicant",
+			},
+			inputBody: `{
+    			"email": "test@gmail.com",
+    			"password": "123456a!",
+				"user_type": "applicant"
+}`,
+			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
+				r.EXPECT().SignIn(user).Return(gomock.Any().String(), nil)
+			},
+			expectedStatusCode:   200,
+			expectedResponseBody: "{\"id\":0,\"user_type\":\"applicant\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"company_size\":0,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+		},
+		{
+			name: "invalid user type",
+			inputUser: models.UserAccount{
+				Email:    "test@gmail.com",
+				Password: "123456a!",
+			},
+			inputBody: `{
+    			"email": "test@gmail.com",
+    			"password": "123456a!"
+}`,
+			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
+				r.EXPECT().SignIn(user).Return(gomock.Any().String(), errorHandler.InvalidUserType)
+			},
+			expectedStatusCode:   400,
+			expectedResponseBody: "{\"descriptors\":[],\"error\":\"invalid input user type\"}",
+		},
+		{
+			name: "user not exist",
+			inputUser: models.UserAccount{
+				Email:    "test@gmail.com",
+				Password: "123456a!",
+			},
+			inputBody: `{
+    			"email": "test@gmail.com",
+    			"password": "123456a!"
+}`,
+			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
+				r.EXPECT().SignIn(user).Return("", errorHandler.ErrUserNotExists)
+			},
+			expectedStatusCode:   401,
+			expectedResponseBody: "{\"descriptors\":[\"email\"],\"error\":\"Пользователя с таким email не существует\"}",
+		},
+	}
+	for _, test := range testTable {
+		t.Run(test.name, func(t *testing.T) {
+
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			mockUseCase := mock_usecases.NewMockUser(c)
+			test.mockBehavior(mockUseCase, &test.inputUser)
+
+			handler := UserHandler{
+				userUseCase: mockUseCase,
+				cfg: &configs.Config{
+					DefaultExpiringSession: 100,
+					Cookie: configs.CookieConfig{
+						Secure:   false,
+						HTTPOnly: true,
+					},
+				},
+			}
+
+			r := gin.New()
+			r.POST("/sign-in", handler.SignIn, middleware.ErrorHandler())
+
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest("POST", "/sign-in",
+				bytes.NewBufferString(test.inputBody))
+
+			r.ServeHTTP(w, req)
+
+			assert.Equal(t, test.expectedStatusCode, w.Code)
+			assert.Equal(t, test.expectedResponseBody, w.Body.String())
+		})
+	}
 }
 
 func TestUserHandler_Logout(t *testing.T) {
+	type mockBehavior func(r *mock_usecases.MockUser, token string)
 
+	testTable := []struct {
+		name                 string
+		mockBehavior         mockBehavior
+		inputToken           string
+		expectedStatusCode   int
+		expectedResponseBody string
+	}{
+		{
+			name:       "valid",
+			inputToken: "token",
+			mockBehavior: func(r *mock_usecases.MockUser, token string) {
+				r.EXPECT().Logout(token).Return(nil)
+			},
+			expectedStatusCode:   200,
+			expectedResponseBody: "",
+		},
+	}
+	for _, test := range testTable {
+		t.Run(test.name, func(t *testing.T) {
+
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			mockUseCase := mock_usecases.NewMockUser(c)
+			test.mockBehavior(mockUseCase, test.inputToken)
+
+			handler := UserHandler{
+				userUseCase: mockUseCase,
+				cfg: &configs.Config{
+					DefaultExpiringSession: 100,
+					Cookie: configs.CookieConfig{
+						Secure:   false,
+						HTTPOnly: true,
+					},
+				},
+			}
+
+			r := gin.New()
+			r.POST("/logout", handler.Logout, middleware.ErrorHandler())
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest("POST", "/logout",
+				bytes.NewBufferString(test.inputToken))
+
+			r.ServeHTTP(w, req)
+
+			assert.Equal(t, test.expectedStatusCode, w.Code)
+			assert.Equal(t, test.expectedResponseBody, w.Body.String())
+		})
+	}
 }
 
 func TestUserHandler_AuthCheck(t *testing.T) {
