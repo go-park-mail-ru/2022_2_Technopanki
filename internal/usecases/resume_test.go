@@ -242,7 +242,8 @@ func TestResumeService_CreateResume(t *testing.T) {
 				r.EXPECT().CreateResume(resume, userId).Return(nil)
 			},
 			input: &models.Resume{
-				Title: "Job",
+				Title:       "Job",
+				Description: "Some information for this job",
 			},
 			expectedId:  1,
 			expectedErr: nil,

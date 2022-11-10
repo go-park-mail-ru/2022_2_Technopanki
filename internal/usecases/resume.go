@@ -3,6 +3,7 @@ package usecases
 import (
 	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
+	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/usecases/sanitize"
 )
@@ -29,6 +30,12 @@ func (rs *ResumeService) GetPreviewResumeByApplicant(userId uint) ([]*models.Res
 }
 
 func (rs *ResumeService) CreateResume(resume *models.Resume, userId uint) error {
+
+	isResumeValid := validation.ResumeValidaion(resume, rs.cfg.Validation)
+	if isResumeValid != nil {
+		return isResumeValid
+	}
+
 	var sanitizeErr error
 	resume, sanitizeErr = sanitize.SanitizeObject[*models.Resume](resume)
 	if sanitizeErr != nil {
@@ -39,6 +46,12 @@ func (rs *ResumeService) CreateResume(resume *models.Resume, userId uint) error 
 }
 
 func (rs *ResumeService) UpdateResume(id uint, resume *models.Resume) error {
+
+	isResumeValid := validation.ResumeValidaion(resume, rs.cfg.Validation)
+	if isResumeValid != nil {
+		return isResumeValid
+	}
+
 	var sanitizeErr error
 	resume, sanitizeErr = sanitize.SanitizeObject[*models.Resume](resume)
 	if sanitizeErr != nil {
