@@ -16,6 +16,7 @@ var (
 	ErrCannotCreateUser            = errors.New("cannot create user")
 	ErrCannotDeleteVacancy         = errors.New("cannot delete vacancy")
 	ErrCannotUpdateVacancy         = errors.New("cannot update vacancy")
+	ErrCannotApplyForVacancy       = errors.New("cannot apply fo vacancy")
 	ErrUpdateStructHasNoValues     = errors.New("update structure has no values")
 	ErrCSRFTokenMismatched         = errors.New("csrf token mismatched")
 	InvalidResumeTitleLength       = errors.New("Длина заголовка резюме должна быть от 3 до 30 символов")
@@ -58,6 +59,21 @@ var errorToCode = map[error]int{
 	ErrSessionNotFound:             http.StatusUnauthorized,
 	ErrCannotDeleteSession:         http.StatusInternalServerError,
 	ErrCannotDeleteAvatar:          http.StatusBadRequest,
+	ErrResumeNotFound:              http.StatusNotFound,
+	ErrBadRequest:                  http.StatusBadRequest,
+	ErrUnauthorized:                http.StatusUnauthorized,
+	ErrServiceUnavailable:          http.StatusServiceUnavailable,
+	ErrUserExists:                  http.StatusBadRequest,
+	ErrUserNotExists:               http.StatusUnauthorized,
+	ErrInvalidParam:                http.StatusBadRequest,
+	ErrCannotCreateUser:            http.StatusServiceUnavailable,
+	ErrCannotDeleteVacancy:         http.StatusServiceUnavailable,
+	ErrCannotUpdateVacancy:         http.StatusServiceUnavailable,
+	ErrCannotCreateSession:         http.StatusInternalServerError,
+	ErrSessionNotFound:             http.StatusUnauthorized,
+	ErrCannotDeleteSession:         http.StatusInternalServerError,
+	ErrCannotDeleteAvatar:          http.StatusBadRequest,
+	ErrCannotApplyForVacancy:       http.StatusBadRequest,
 	InvalidResumeTitleLength:       http.StatusBadRequest,
 	InvalidResumeDescriptionLength: http.StatusBadRequest,
 
