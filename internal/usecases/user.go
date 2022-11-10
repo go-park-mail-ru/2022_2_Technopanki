@@ -209,6 +209,7 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 	var sanitizeErr error
 	user, sanitizeErr = sanitize.SanitizeObject[*models.UserAccount](user)
 	if sanitizeErr != nil {
+		fmt.Println("Error in sanitizing (UploadUserImage)")
 		return "", sanitizeErr
 	}
 
@@ -223,6 +224,7 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 
 	img, _, decodeErr := image.Decode(file)
 	if decodeErr != nil {
+		fmt.Println("Error in decoding (UploadUserImage)")
 		return "", errorHandler.ErrBadRequest
 	}
 

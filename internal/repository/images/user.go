@@ -3,6 +3,7 @@ package images
 import (
 	"HeadHunter/configs"
 	"HeadHunter/internal/errorHandler"
+	"fmt"
 	"github.com/kolesa-team/go-webp/encoder"
 	"github.com/kolesa-team/go-webp/webp"
 	"image"
@@ -16,6 +17,7 @@ import (
 func UploadUserAvatar(name string, image *image.Image, cfg *configs.ImageConfig) (err error) {
 	fullPath := strings.Join([]string{cfg.Path, "avatar/"}, "")
 	if name == "" || fullPath == "" {
+		fmt.Println("Error in file name/path (UploadUserAvatar)")
 		return errorHandler.ErrBadRequest
 	}
 

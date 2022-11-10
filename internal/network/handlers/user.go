@@ -7,6 +7,7 @@ import (
 	"HeadHunter/internal/network/response"
 	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -150,6 +151,7 @@ func (uh *UserHandler) GetUserSafety(c *gin.Context) {
 func (uh *UserHandler) UploadUserImage(c *gin.Context) {
 	email, emailErr := getEmailFromContext(c)
 	if emailErr != nil {
+		fmt.Println("Error in geting from context (UploadUserImage)")
 		_ = c.Error(emailErr)
 		return
 	}
@@ -163,11 +165,13 @@ func (uh *UserHandler) UploadUserImage(c *gin.Context) {
 
 	file, fileErr := c.FormFile("avatar")
 	if fileErr != nil {
+		fmt.Println(fileErr)
 		_ = c.Error(errorHandler.ErrInvalidFileFormat)
 		return
 	}
 	_, uploadErr := uh.userUseCase.UploadUserImage(user, file)
 	if uploadErr != nil {
+		fmt.Println("error in uploading image")
 		_ = c.Error(uploadErr)
 		return
 	}
