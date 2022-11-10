@@ -60,7 +60,7 @@ func (vah *VacancyActivityHandler) ApplyForVacancy(c *gin.Context) {
 		return
 	}
 	applyErr := vah.vacancyActivityUseCase.ApplyForVacancy(userId, id, &input)
-	if err != nil {
+	if applyErr != nil {
 		_ = c.Error(applyErr)
 		return
 	}
