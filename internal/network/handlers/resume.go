@@ -27,12 +27,6 @@ func (rh *ResumeHandler) GetResume(c *gin.Context) {
 		return
 	}
 
-	isAccessAllowed := rh.isResumeAvailable(c, uint(id))
-	if isAccessAllowed != nil {
-		_ = c.Error(isAccessAllowed)
-		return
-	}
-
 	resume, getResumeErr := rh.resumeUseCase.GetResume(uint(id))
 	if getResumeErr != nil {
 		_ = c.Error(getResumeErr)
