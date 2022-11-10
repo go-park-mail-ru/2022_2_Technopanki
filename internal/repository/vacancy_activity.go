@@ -2,7 +2,6 @@ package repository
 
 import (
 	"HeadHunter/internal/entity/models"
-	"HeadHunter/internal/errorHandler"
 	"gorm.io/gorm"
 )
 
@@ -26,18 +25,15 @@ func (vap *VacancyActivityPostgres) GetAllVacancyApplies(vacancyId int) ([]*mode
 }
 
 func (vap *VacancyActivityPostgres) ApplyForVacancy(apply *models.VacancyActivity) error {
-	error := vap.db.Create(&apply).Error
-	if error != nil {
-		return errorHandler.ErrInvalidParam
-	}
-	return nil
+	query := vap.db.Create(&apply)
+	return queryValidation(query, "vacancy_activity")
 }
 
 func (vap *VacancyActivityPostgres) GetAllUserApplies(userId int) ([]*models.VacancyActivity, error) {
 	var applies []*models.VacancyActivity
 	query := vap.db.Where("user_account_id = ?", userId).Find(&applies)
-	//if query.Error != nil {
-	//	return applies, query.Error
-	//}
-	return applies, queryValidation(query, "vacancy_activity")
+	if query.Error != nil {
+		return applies, query.Error
+	}
+	return applies, nil
 }
