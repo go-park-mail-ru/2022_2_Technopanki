@@ -22,6 +22,9 @@ validation:
   maxPasswordLength: 20
   minEmailLength: 8
   maxEmailLength: 30
+  minResumeTitleLength: 3
+  maxResumeTitleLength: 30
+  minResumeDescriptionLength: 10
 cookie:
   httpOnly: true
   secure: false

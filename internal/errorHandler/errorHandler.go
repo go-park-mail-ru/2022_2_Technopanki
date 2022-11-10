@@ -6,18 +6,20 @@ import (
 )
 
 var (
-	ErrResumeNotFound          = errors.New("resume not found")
-	ErrBadRequest              = errors.New("bad request")
-	ErrUnauthorized            = errors.New("unauthorized")
-	ErrServiceUnavailable      = errors.New("service unavailable")
-	ErrUserExists              = errors.New("Пользователь с таким email уже существует")
-	ErrUserNotExists           = errors.New("Пользователя с таким email не существует")
-	ErrInvalidParam            = errors.New("invalid parameter")
-	ErrCannotCreateUser        = errors.New("cannot create user")
-	ErrCannotDeleteVacancy     = errors.New("cannot delete vacancy")
-	ErrCannotUpdateVacancy     = errors.New("cannot update vacancy")
-	ErrUpdateStructHasNoValues = errors.New("update structure has no values")
-	ErrCSRFTokenMismatched     = errors.New("csrf token mismatched")
+	ErrResumeNotFound              = errors.New("resume not found")
+	ErrBadRequest                  = errors.New("bad request")
+	ErrUnauthorized                = errors.New("unauthorized")
+	ErrServiceUnavailable          = errors.New("service unavailable")
+	ErrUserExists                  = errors.New("Пользователь с таким email уже существует")
+	ErrUserNotExists               = errors.New("Пользователя с таким email не существует")
+	ErrInvalidParam                = errors.New("invalid parameter")
+	ErrCannotCreateUser            = errors.New("cannot create user")
+	ErrCannotDeleteVacancy         = errors.New("cannot delete vacancy")
+	ErrCannotUpdateVacancy         = errors.New("cannot update vacancy")
+	ErrUpdateStructHasNoValues     = errors.New("update structure has no values")
+	ErrCSRFTokenMismatched         = errors.New("csrf token mismatched")
+	InvalidResumeTitleLength       = errors.New("Длина заголовка резюме должна быть от 3 до 30 символов")
+	InvalidResumeDescriptionLength = errors.New("Описание должно быть более подробным")
 
 	ErrCannotCreateSession = errors.New("cannot create session")
 	ErrSessionNotFound     = errors.New("session with this token not found")
@@ -42,20 +44,22 @@ var (
 )
 
 var errorToCode = map[error]int{
-	ErrResumeNotFound:      http.StatusNotFound,
-	ErrBadRequest:          http.StatusBadRequest,
-	ErrUnauthorized:        http.StatusUnauthorized,
-	ErrServiceUnavailable:  http.StatusServiceUnavailable,
-	ErrUserExists:          http.StatusBadRequest,
-	ErrUserNotExists:       http.StatusUnauthorized,
-	ErrInvalidParam:        http.StatusBadRequest,
-	ErrCannotCreateUser:    http.StatusServiceUnavailable,
-	ErrCannotDeleteVacancy: http.StatusServiceUnavailable,
-	ErrCannotUpdateVacancy: http.StatusServiceUnavailable,
-	ErrCannotCreateSession: http.StatusInternalServerError,
-	ErrSessionNotFound:     http.StatusUnauthorized,
-	ErrCannotDeleteSession: http.StatusInternalServerError,
-	ErrCannotDeleteAvatar:  http.StatusBadRequest,
+	ErrResumeNotFound:              http.StatusNotFound,
+	ErrBadRequest:                  http.StatusBadRequest,
+	ErrUnauthorized:                http.StatusUnauthorized,
+	ErrServiceUnavailable:          http.StatusServiceUnavailable,
+	ErrUserExists:                  http.StatusBadRequest,
+	ErrUserNotExists:               http.StatusUnauthorized,
+	ErrInvalidParam:                http.StatusBadRequest,
+	ErrCannotCreateUser:            http.StatusServiceUnavailable,
+	ErrCannotDeleteVacancy:         http.StatusServiceUnavailable,
+	ErrCannotUpdateVacancy:         http.StatusServiceUnavailable,
+	ErrCannotCreateSession:         http.StatusInternalServerError,
+	ErrSessionNotFound:             http.StatusUnauthorized,
+	ErrCannotDeleteSession:         http.StatusInternalServerError,
+	ErrCannotDeleteAvatar:          http.StatusBadRequest,
+	InvalidResumeTitleLength:       http.StatusBadRequest,
+	InvalidResumeDescriptionLength: http.StatusBadRequest,
 
 	ErrCSRFTokenMismatched: http.StatusForbidden,
 
@@ -86,15 +90,17 @@ func ConvertError(err error) int {
 }
 
 var errorDescriptors = map[error][]string{
-	ErrUserExists:           {"email"},
-	ErrUserNotExists:        {"email"},
-	ErrWrongPassword:        {"password"},
-	IncorrectNameLength:     {"name"},
-	IncorrectSurnameLength:  {"surname"},
-	InvalidEmailFormat:      {"email"},
-	IncorrectEmailLength:    {"email"},
-	InvalidPasswordFormat:   {"password"},
-	IncorrectPasswordLength: {"password"},
+	ErrUserExists:                  {"email"},
+	ErrUserNotExists:               {"email"},
+	ErrWrongPassword:               {"password"},
+	IncorrectNameLength:            {"name"},
+	IncorrectSurnameLength:         {"surname"},
+	InvalidEmailFormat:             {"email"},
+	IncorrectEmailLength:           {"email"},
+	InvalidPasswordFormat:          {"password"},
+	IncorrectPasswordLength:        {"password"},
+	InvalidResumeTitleLength:       {"resume_title"},
+	InvalidResumeDescriptionLength: {"resume_descriptors"},
 }
 
 func GetErrorDescriptors(err error) []string {

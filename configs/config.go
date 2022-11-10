@@ -36,14 +36,17 @@ type RedisConfig struct {
 }
 
 type ValidationConfig struct {
-	MinNameLength     int `yaml:"minNameLength"`
-	MaxNameLength     int `yaml:"maxNameLength"`
-	MinSurnameLength  int `yaml:"minSurnameLength"`
-	MaxSurnameLength  int `yaml:"maxSurnameLength"`
-	MinPasswordLength int `yaml:"minPasswordLength"`
-	MaxPasswordLength int `yaml:"maxPasswordLength"`
-	MinEmailLength    int `yaml:"minEmailLength"`
-	MaxEmailLength    int `yaml:"maxEmailLength"`
+	MinNameLength              int `yaml:"minNameLength"`
+	MaxNameLength              int `yaml:"maxNameLength"`
+	MinSurnameLength           int `yaml:"minSurnameLength"`
+	MaxSurnameLength           int `yaml:"maxSurnameLength"`
+	MinPasswordLength          int `yaml:"minPasswordLength"`
+	MaxPasswordLength          int `yaml:"maxPasswordLength"`
+	MinEmailLength             int `yaml:"minEmailLength"`
+	MaxEmailLength             int `yaml:"maxEmailLength"`
+	MinResumeTitleLength       int `yaml:"minResumeTitleLength"`
+	MaxResumeTitleLength       int `yaml:"maxResumeTitleLength"`
+	MinResumeDescriptionLength int `yaml:"minResumeDescriptionLength"`
 }
 
 type CookieConfig struct {
