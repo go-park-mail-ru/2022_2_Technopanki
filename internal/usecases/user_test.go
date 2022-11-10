@@ -470,3 +470,150 @@ func TestUserService_GetUserSafety(t *testing.T) {
 		})
 	}
 }
+
+func TestUserService_UpdateUser(t *testing.T) {
+	type getMockBehavior func(r *mock_repository.MockUserRepository, email string)
+	type updateMockBehavior func(r *mock_repository.MockUserRepository, oldUser, newUser *models.UserAccount)
+	testTable := []struct {
+		name               string
+		inputUser          *models.UserAccount
+		oldUser            *models.UserAccount
+		getMockBehavior    getMockBehavior
+		updateMockBehavior updateMockBehavior
+		expectedErr        error
+	}{
+		{
+			name: "ok",
+			inputUser: &models.UserAccount{
+				Email:            "test@gmail.com",
+				ApplicantSurname: "Kozirev",
+				ApplicantName:    "Zakhar",
+				UserType:         "applicant",
+			},
+			oldUser: &models.UserAccount{
+				Email:            "test@gmail.com",
+				ApplicantSurname: "Urvancev",
+				ApplicantName:    "Zakhar",
+				UserType:         "applicant",
+			},
+			getMockBehavior: func(r *mock_repository.MockUserRepository, email string) {
+				old := &models.UserAccount{
+					Email:            "test@gmail.com",
+					ApplicantSurname: "Urvancev",
+					ApplicantName:    "Zakhar",
+					UserType:         "applicant",
+				}
+				r.EXPECT().GetUserByEmail(email).Return(old, nil)
+			},
+			updateMockBehavior: func(r *mock_repository.MockUserRepository, oldUser, newUser *models.UserAccount) {
+				r.EXPECT().UpdateUser(oldUser, newUser).Return(nil)
+			},
+			expectedErr: nil,
+		},
+		{
+			name: "user not exists",
+			inputUser: &models.UserAccount{
+				Email:            "test@gmail.com",
+				ApplicantSurname: "Kozirev",
+				ApplicantName:    "Zakhar",
+				UserType:         "applicant",
+			},
+			oldUser: nil,
+			getMockBehavior: func(r *mock_repository.MockUserRepository, email string) {
+				r.EXPECT().GetUserByEmail(email).Return(nil, errorHandler.ErrUserNotExists)
+			},
+			updateMockBehavior: func(r *mock_repository.MockUserRepository, oldUser, newUser *models.UserAccount) {
+				r.EXPECT().UpdateUser(oldUser, newUser).Return(nil)
+			},
+			expectedErr: errorHandler.ErrUserNotExists,
+		},
+		{
+			name: "invalid user type",
+			inputUser: &models.UserAccount{
+				Email:            "test@gmail.com",
+				ApplicantSurname: "Kozirev",
+				ApplicantName:    "Zakhar",
+				UserType:         "applicant",
+			},
+			oldUser: &models.UserAccount{
+				Email:            "test@gmail.com",
+				ApplicantSurname: "Urvancev",
+				ApplicantName:    "Zakhar",
+				UserType:         "employer",
+			},
+			getMockBehavior: func(r *mock_repository.MockUserRepository, email string) {
+				old := &models.UserAccount{
+					Email:            "test@gmail.com",
+					ApplicantSurname: "Urvancev",
+					ApplicantName:    "Zakhar",
+					UserType:         "employer",
+				}
+				r.EXPECT().GetUserByEmail(email).Return(old, nil)
+			},
+			updateMockBehavior: func(r *mock_repository.MockUserRepository, oldUser, newUser *models.UserAccount) {
+				r.EXPECT().UpdateUser(oldUser, newUser).Return(nil)
+			},
+			expectedErr: errorHandler.ErrBadRequest,
+		},
+		{
+			name: "error with rep",
+			inputUser: &models.UserAccount{
+				Email:            "test@gmail.com",
+				ApplicantSurname: "Kozirev",
+				ApplicantName:    "Zakhar",
+				UserType:         "applicant",
+			},
+			oldUser: &models.UserAccount{
+				Email:            "test@gmail.com",
+				ApplicantSurname: "Urvancev",
+				ApplicantName:    "Zakhar",
+				UserType:         "applicant",
+			},
+			getMockBehavior: func(r *mock_repository.MockUserRepository, email string) {
+				old := &models.UserAccount{
+					Email:            "test@gmail.com",
+					ApplicantSurname: "Urvancev",
+					ApplicantName:    "Zakhar",
+					UserType:         "applicant",
+				}
+				r.EXPECT().GetUserByEmail(email).Return(old, nil)
+			},
+			updateMockBehavior: func(r *mock_repository.MockUserRepository, oldUser, newUser *models.UserAccount) {
+				r.EXPECT().UpdateUser(oldUser, newUser).Return(errorHandler.ErrBadRequest)
+			},
+			expectedErr: errorHandler.ErrBadRequest,
+		},
+	}
+
+	for _, test := range testTable {
+		testCase := test
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			mockUserRepository := mock_repository.NewMockUserRepository(c)
+			mockSessionRep := mock_session.NewMockRepository(c)
+
+			testCase.getMockBehavior(mockUserRepository, testCase.inputUser.Email)
+			if testCase.oldUser != nil && testCase.oldUser.UserType == testCase.inputUser.UserType {
+				testCase.updateMockBehavior(mockUserRepository, testCase.oldUser, testCase.inputUser)
+			}
+			userService := UserService{userRep: mockUserRepository, sessionRepo: mockSessionRep, cfg: &configs.Config{
+				Validation: configs.ValidationConfig{
+					MaxEmailLength:    30,
+					MinSurnameLength:  2,
+					MaxSurnameLength:  30,
+					MinNameLength:     2,
+					MaxNameLength:     30,
+					MaxPasswordLength: 20,
+					MinPasswordLength: 8,
+					MinEmailLength:    8,
+				},
+			}}
+
+			err := userService.UpdateUser(testCase.inputUser)
+			assert.Equal(t, testCase.expectedErr, err)
+		})
+	}
+}
