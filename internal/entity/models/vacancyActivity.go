@@ -8,8 +8,8 @@ type VacancyActivity struct {
 	VacancyId     uint      `json:"vacancy_id" gorm:"primaryKey"`
 	UserName      string    `json:"user_name"`
 	UserSurname   string    `json:"user_surname"`
-	ResumeTitle   string    `json:"resume_title"`
-	ApplyDate     time.Time `json:"apply_date" gorm:"autoCreateTime"`
+	ResumeTitle   string    `json:"title"`
+	ApplyDate     time.Time `json:"created_date" gorm:"autoCreateTime"`
 }
 
 type VacancyActivityResponce struct {

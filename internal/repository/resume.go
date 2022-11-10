@@ -47,10 +47,24 @@ func (rp *ResumePostgres) GetPreviewResumeByApplicant(userId uint) ([]*models.Re
 
 func (rp *ResumePostgres) CreateResume(resume *models.Resume, userId uint) error {
 	resume.UserAccountId = userId
+
+	var user models.UserAccount
+	queryUser := rp.db.Where("id = ?", userId).Find(&user)
+
+	if queryUser.Error != nil {
+		return queryUser.Error
+	}
+
+	resume.UserName = user.ApplicantName
+	resume.UserSurname = user.ApplicantSurname
+	resume.ImgSrc = user.Image
+	
 	creatingErr := rp.db.Create(resume).Save(resume).Error
+
 	if creatingErr != nil {
 		return fmt.Errorf("cannot create resume: %w", creatingErr)
 	}
+
 	return nil
 }
 
