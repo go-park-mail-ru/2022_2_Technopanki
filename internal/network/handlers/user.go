@@ -166,7 +166,8 @@ func (uh *UserHandler) UploadUserImage(c *gin.Context) {
 	_, file, fileErr := c.Request.FormFile("avatar")
 	if fileErr != nil {
 		fmt.Println(fileErr)
-		fmt.Println(file.Header)
+		fmt.Println(c.Request.Header.Get("Content-Type"))
+		fmt.Println(c.Request.Header)
 		_ = c.Error(errorHandler.ErrInvalidFileFormat)
 		return
 	}
