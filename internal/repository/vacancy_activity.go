@@ -36,8 +36,8 @@ func (vap *VacancyActivityPostgres) ApplyForVacancy(apply *models.VacancyActivit
 func (vap *VacancyActivityPostgres) GetAllUserApplies(userId int) ([]*models.VacancyActivity, error) {
 	var applies []*models.VacancyActivity
 	query := vap.db.Where("user_account_id = ?", userId).Find(&applies)
-	if query.Error != nil {
-		return applies, query.Error
-	}
-	return applies, nil
+	//if query.Error != nil {
+	//	return applies, query.Error
+	//}
+	return applies, queryValidation(query, "vacancy_activity")
 }
