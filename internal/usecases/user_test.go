@@ -470,15 +470,3 @@ func TestUserService_GetUserSafety(t *testing.T) {
 		})
 	}
 }
-
-func TestUserService_UpdateUser(t *testing.T) {
-
-}
-
-func TestUserService_UpdateUserFields(t *testing.T) {
-
-}
-
-func TestUserService_DeleteUserImage(t *testing.T) {
-
-}
