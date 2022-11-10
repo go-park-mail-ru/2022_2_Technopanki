@@ -25,7 +25,7 @@ func (rs *ResumeService) GetResumeByApplicant(userId uint) ([]*models.Resume, er
 }
 
 func (rs *ResumeService) GetPreviewResumeByApplicant(userId uint) ([]*models.Resume, error) {
-	return rs.resumeRep.GetResumeByApplicant(userId)
+	return rs.resumeRep.GetPreviewResumeByApplicant(userId)
 }
 
 func (rs *ResumeService) CreateResume(resume *models.Resume, userId uint) error {
@@ -44,7 +44,7 @@ func (rs *ResumeService) UpdateResume(id uint, resume *models.Resume) error {
 	if sanitizeErr != nil {
 		return sanitizeErr
 	}
-	
+
 	return rs.resumeRep.UpdateResume(id, resume)
 }
 
