@@ -45,7 +45,7 @@ func UploadUserAvatar(name string, image *image.Image, cfg *configs.ImageConfig)
 
 func DeleteUserAvatar(name string, cfg *configs.ImageConfig) error {
 	fullPath := strings.Join([]string{cfg.Path, "avatar/"}, "")
-	if fullPath == "" || name == "" {
+	if name == "" {
 		return errorHandler.ErrBadRequest
 	}
 
