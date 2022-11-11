@@ -25,7 +25,7 @@ func (up *UserPostgres) UpdateUser(oldUser, newUser *models.UserAccount) error {
 		ImgSrc:        newUser.Image,            //TODO УБРАТЬ ВСЁ ЭТО
 		UserName:      newUser.ApplicantName,    //TODO УБРАТЬ ВСЁ ЭТО
 		UserSurname:   newUser.ApplicantSurname, //TODO УБРАТЬ ВСЁ ЭТО
-	}                                                                 //TODO УБРАТЬ ВСЁ ЭТО//TODO УБРАТЬ ВСЁ ЭТО
+	} //TODO УБРАТЬ ВСЁ ЭТО//TODO УБРАТЬ ВСЁ ЭТО
 	var resumes []*models.Resume                                      //TODO УБРАТЬ ВСЁ ЭТО
 	_ = up.db.Where("user_account_id = ?", oldUser.ID).Find(&resumes) //TODO УБРАТЬ ВСЁ ЭТО
 
@@ -33,7 +33,7 @@ func (up *UserPostgres) UpdateUser(oldUser, newUser *models.UserAccount) error {
 		newResume.UserAccountId = resume.UserAccountId
 		newResume.ID = resume.ID
 		resumeUpdate := up.db.Model(resume).Updates(newResume)
-		if resumeUpdate != nil {
+		if resumeUpdate.Error != nil {
 			return resumeUpdate.Error
 		}
 
@@ -47,7 +47,7 @@ func (up *UserPostgres) UpdateUserField(oldUser, newUser *models.UserAccount, fi
 		ImgSrc:        newUser.Image,            //TODO УБРАТЬ ВСЁ ЭТО
 		UserName:      newUser.ApplicantName,    //TODO УБРАТЬ ВСЁ ЭТО
 		UserSurname:   newUser.ApplicantSurname, //TODO УБРАТЬ ВСЁ ЭТО
-	}                                                                 //TODO УБРАТЬ ВСЁ ЭТО//TODO УБРАТЬ ВСЁ ЭТО
+	} //TODO УБРАТЬ ВСЁ ЭТО//TODO УБРАТЬ ВСЁ ЭТО
 	var resumes []*models.Resume                                      //TODO УБРАТЬ ВСЁ ЭТО
 	_ = up.db.Where("user_account_id = ?", oldUser.ID).Find(&resumes) //TODO УБРАТЬ ВСЁ ЭТО
 
@@ -55,7 +55,7 @@ func (up *UserPostgres) UpdateUserField(oldUser, newUser *models.UserAccount, fi
 		newResume.UserAccountId = resume.UserAccountId
 		newResume.ID = resume.ID
 		resumeUpdate := up.db.Model(resume).Updates(newResume)
-		if resumeUpdate != nil {
+		if resumeUpdate.Error != nil {
 			return resumeUpdate.Error
 		}
 
