@@ -36,4 +36,4 @@ image:
   defaultApplicantAvatar: "basic_applicant_avatar"
 security:
   csrfSecret: "jobFlowSecretWorld112351235125"
-  csrfMode: true
+  csrfMode: false
