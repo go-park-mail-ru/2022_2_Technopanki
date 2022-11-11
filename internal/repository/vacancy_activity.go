@@ -26,6 +26,10 @@ func (vap *VacancyActivityPostgres) GetAllVacancyApplies(vacancyId int) ([]*mode
 
 func (vap *VacancyActivityPostgres) ApplyForVacancy(apply *models.VacancyActivity) error {
 	query := vap.db.Create(&apply)
+	//return queryValidation(query, "vacancy_activity")
+	if query.RowsAffected == 0 {
+		return notFound("vacancy_activity")
+	}
 	return queryValidation(query, "vacancy_activity")
 }
 
