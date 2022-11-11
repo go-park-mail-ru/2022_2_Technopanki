@@ -25,10 +25,17 @@ func UploadUserAvatar(name string, image *image.Image, cfg *configs.ImageConfig)
 	if createErr != nil {
 		return createErr
 	}
+
 	defer func(resultImage *os.File) {
-		closeErr := resultImage.Close()
-		if closeErr != nil {
-			err = closeErr
+		errSync := resultImage.Sync()
+		if errSync != nil {
+			fmt.Printf("fail to sync file %s, error: %s", resultImage.Name(), errSync.Error())
+			err = errSync
+		}
+		errClose := resultImage.Close()
+		if errClose != nil {
+			fmt.Printf("fail to close file %s, error: %s", resultImage.Name(), errClose.Error())
+			err = errSync
 		}
 	}(resultImage)
 
