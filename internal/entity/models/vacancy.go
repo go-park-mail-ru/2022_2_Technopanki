@@ -17,6 +17,7 @@ type Vacancy struct {
 	Experience        string            `json:"experience,omitempty"`
 	Format            string            `json:"format,omitempty"`
 	Hours             string            `json:"hours,omitempty"`
+	Image             string            `json:"image,omitempty"`
 	VacancyActivities []VacancyActivity `json:"vacancyActivities" gorm:"foreignKey:VacancyId;constraint:OnDelete:CASCADE;"`
 	Skills            []Skill           `json:"skills" gorm:"many2many:vacancy_skills;"`
 }

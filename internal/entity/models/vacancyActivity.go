@@ -9,6 +9,7 @@ type VacancyActivity struct {
 	UserName      string    `json:"user_name"`
 	UserSurname   string    `json:"user_surname"`
 	ResumeTitle   string    `json:"title"`
+	Image         string    `json:"image"`
 	ApplyDate     time.Time `json:"created_date" gorm:"autoCreateTime"`
 }
 
