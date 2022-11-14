@@ -25,6 +25,12 @@ func (vap *VacancyActivityPostgres) GetAllVacancyApplies(vacancyId int) ([]*mode
 }
 
 func (vap *VacancyActivityPostgres) ApplyForVacancy(apply *models.VacancyActivity) error {
+	var user models.UserAccount
+	queryUser := vap.db.Where("id = ?", apply.UserAccountId).Find(&user)
+	if queryUser.Error != nil {
+		return queryUser.Error
+	}
+	apply.Image = user.Image
 	query := vap.db.Create(&apply)
 	//return queryValidation(query, "vacancy_activity")
 	if query.RowsAffected == 0 {
