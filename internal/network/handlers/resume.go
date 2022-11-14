@@ -81,7 +81,7 @@ func (rh *ResumeHandler) GetPreviewResumeByApplicant(c *gin.Context) {
 		return
 	}
 
-	resumes, getResumeErr := rh.resumeUseCase.GetResumeByApplicant(uint(userId))
+	resumes, getResumeErr := rh.resumeUseCase.GetPreviewResumeByApplicant(uint(userId))
 	if getResumeErr != nil {
 		_ = c.Error(getResumeErr)
 		return

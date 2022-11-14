@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"HeadHunter/internal/entity/complexModels"
 	"HeadHunter/internal/entity/models"
 	"fmt"
 	"gorm.io/gorm"
@@ -38,11 +39,16 @@ func (rp *ResumePostgres) GetResumeByApplicant(userId uint) ([]*models.Resume, e
 	return result, queryValidation(query, "resume")
 }
 
-func (rp *ResumePostgres) GetPreviewResumeByApplicant(userId uint) ([]*models.Resume, error) {
-	var result []*models.Resume
-	query := rp.db.Select("id, title").Where("user_account_id = ?", userId).Find(&result)
+func (rp *ResumePostgres) GetPreviewResumeByApplicant(userId uint) ([]*complexModels.ResumePreview, error) {
+	var resultPreview []*complexModels.ResumePreview
+	query := rp.db.Table("resumes").
+		Select("user_accounts.applicant_name, user_accounts.applicant_surname, user_accounts.image,"+
+			"resumes.id, resumes.title").
+		Joins("left join user_accounts on resumes.user_account_id = user_accounts.id").
+		Where("user_account_id = ?", userId).
+		Scan(&resultPreview)
 
-	return result, queryValidation(query, "resume")
+	return resultPreview, queryValidation(query, "resume")
 }
 
 func (rp *ResumePostgres) CreateResume(resume *models.Resume, userId uint) error {
@@ -58,7 +64,7 @@ func (rp *ResumePostgres) CreateResume(resume *models.Resume, userId uint) error
 	resume.UserName = user.ApplicantName
 	resume.UserSurname = user.ApplicantSurname
 	resume.ImgSrc = user.Image
-	
+
 	creatingErr := rp.db.Create(resume).Save(resume).Error
 
 	if creatingErr != nil {

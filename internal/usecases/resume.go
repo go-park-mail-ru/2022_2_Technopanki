@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"HeadHunter/configs"
+	"HeadHunter/internal/entity/complexModels"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/repository"
@@ -25,7 +26,7 @@ func (rs *ResumeService) GetResumeByApplicant(userId uint) ([]*models.Resume, er
 	return rs.resumeRep.GetResumeByApplicant(userId)
 }
 
-func (rs *ResumeService) GetPreviewResumeByApplicant(userId uint) ([]*models.Resume, error) {
+func (rs *ResumeService) GetPreviewResumeByApplicant(userId uint) ([]*complexModels.ResumePreview, error) {
 	return rs.resumeRep.GetPreviewResumeByApplicant(userId)
 }
 

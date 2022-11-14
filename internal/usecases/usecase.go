@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"HeadHunter/configs"
+	"HeadHunter/internal/entity/complexModels"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/session"
@@ -40,7 +41,7 @@ type User interface {
 	DeleteUserImage(user *models.UserAccount) error
 }
 
-type Vacancy interface { //TODO Сделать юзкейс вакансий
+type Vacancy interface {
 	GetAll() ([]*models.Vacancy, error)
 	GetById(int) (*models.Vacancy, error)
 	GetByUserId(int) ([]*models.Vacancy, error)
@@ -58,7 +59,7 @@ type VacancyActivity interface {
 type Resume interface {
 	GetResume(id uint) (*models.Resume, error)
 	GetResumeByApplicant(userId uint) ([]*models.Resume, error)
-	GetPreviewResumeByApplicant(userId uint) ([]*models.Resume, error)
+	GetPreviewResumeByApplicant(userId uint) ([]*complexModels.ResumePreview, error)
 	CreateResume(resume *models.Resume, userId uint) error
 	UpdateResume(id uint, resume *models.Resume) error
 	DeleteResume(id uint) error

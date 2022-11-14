@@ -20,47 +20,9 @@ func (up *UserPostgres) CreateUser(user *models.UserAccount) error {
 }
 
 func (up *UserPostgres) UpdateUser(oldUser, newUser *models.UserAccount) error {
-	newResume := &models.Resume{ //TODO УБРАТЬ ВСЁ ЭТО
-		UserAccountId: oldUser.ID,               //TODO УБРАТЬ ВСЁ ЭТО
-		ImgSrc:        newUser.Image,            //TODO УБРАТЬ ВСЁ ЭТО
-		UserName:      newUser.ApplicantName,    //TODO УБРАТЬ ВСЁ ЭТО
-		UserSurname:   newUser.ApplicantSurname, //TODO УБРАТЬ ВСЁ ЭТО
-	} //TODO УБРАТЬ ВСЁ ЭТО//TODO УБРАТЬ ВСЁ ЭТО
-	var resumes []*models.Resume                                      //TODO УБРАТЬ ВСЁ ЭТО
-	_ = up.db.Where("user_account_id = ?", oldUser.ID).Find(&resumes) //TODO УБРАТЬ ВСЁ ЭТО
-
-	for _, resume := range resumes {
-		newResume.UserAccountId = resume.UserAccountId
-		newResume.ID = resume.ID
-		resumeUpdate := up.db.Model(resume).Updates(newResume)
-		if resumeUpdate.Error != nil {
-			return resumeUpdate.Error
-		}
-
-	}
-
 	return up.db.Model(oldUser).Updates(newUser).Error
 }
-func (up *UserPostgres) UpdateUserField(oldUser, newUser *models.UserAccount, field ...string) error { //TODO ИСПРАВИТЬ ВСЁ ЭТО
-	newResume := &models.Resume{ //TODO УБРАТЬ ВСЁ ЭТО
-		UserAccountId: oldUser.ID,               //TODO УБРАТЬ ВСЁ ЭТО
-		ImgSrc:        newUser.Image,            //TODO УБРАТЬ ВСЁ ЭТО
-		UserName:      newUser.ApplicantName,    //TODO УБРАТЬ ВСЁ ЭТО
-		UserSurname:   newUser.ApplicantSurname, //TODO УБРАТЬ ВСЁ ЭТО
-	} //TODO УБРАТЬ ВСЁ ЭТО//TODO УБРАТЬ ВСЁ ЭТО
-	var resumes []*models.Resume                                      //TODO УБРАТЬ ВСЁ ЭТО
-	_ = up.db.Where("user_account_id = ?", oldUser.ID).Find(&resumes) //TODO УБРАТЬ ВСЁ ЭТО
-
-	for _, resume := range resumes {
-		newResume.UserAccountId = resume.UserAccountId
-		newResume.ID = resume.ID
-		resumeUpdate := up.db.Model(resume).Updates(newResume)
-		if resumeUpdate.Error != nil {
-			return resumeUpdate.Error
-		}
-
-	}
-
+func (up *UserPostgres) UpdateUserField(oldUser, newUser *models.UserAccount, field ...string) error {
 	return up.db.Model(oldUser).Select(field).Updates(newUser).Error
 }
 func (up *UserPostgres) GetUserByEmail(email string) (*models.UserAccount, error) {

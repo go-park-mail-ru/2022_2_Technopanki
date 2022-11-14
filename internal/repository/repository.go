@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"HeadHunter/internal/entity/complexModels"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
 	"fmt"
@@ -63,7 +64,7 @@ type UserRepository interface {
 	GetUserSafety(id uint, safeFields []string) (*models.UserAccount, error)
 }
 
-type VacancyRepository interface { //TODO Сделать репозиторий вакансий
+type VacancyRepository interface {
 	GetAll() ([]*models.Vacancy, error)
 	GetById(int) (*models.Vacancy, error)
 	GetByUserId(int) ([]*models.Vacancy, error)
@@ -81,7 +82,7 @@ type VacancyActivityRepository interface {
 type ResumeRepository interface {
 	GetResume(id uint) (*models.Resume, error)
 	GetResumeByApplicant(userId uint) ([]*models.Resume, error)
-	GetPreviewResumeByApplicant(userId uint) ([]*models.Resume, error)
+	GetPreviewResumeByApplicant(userId uint) ([]*complexModels.ResumePreview, error)
 	CreateResume(resume *models.Resume, userId uint) error
 	UpdateResume(id uint, resume *models.Resume) error
 	DeleteResume(id uint) error
