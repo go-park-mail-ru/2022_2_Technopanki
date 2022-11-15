@@ -24,3 +24,12 @@ type UserAccount struct {
 	Vacancies              []Vacancy         `json:"vacancies" gorm:"foreignKey:PostedByUserId;constraint:OnDelete:CASCADE;"`
 	VacancyActivities      []VacancyActivity `json:"vacancy_activities" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`
 }
+
+// PrivateUserFields Поля, доступ к которым по умолчанию не доступен
+var PrivateUserFields = []string{"email", "contact_number",
+	"applicant_current_salary"}
+
+// SafeUserFields Поля, доступ к которым доступен всегда
+var SafeUserFields = []string{"id", "user_type", "description", "status", "date_of_birth", "image",
+	"applicant_name", "applicant_surname", "company_name",
+	"location", "company_size", "company_website_url"}

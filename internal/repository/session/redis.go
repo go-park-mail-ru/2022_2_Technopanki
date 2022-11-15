@@ -12,7 +12,7 @@ type RedisStore struct {
 	client           *redis.Client
 }
 
-func NewRedisStore(cfg configs.Config, _redis *redis.Client) *RedisStore {
+func NewRedisStore(cfg *configs.Config, _redis *redis.Client) *RedisStore {
 	return &RedisStore{
 		client:           _redis,
 		DefaultExpiresAt: cfg.DefaultExpiringSession,

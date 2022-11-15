@@ -13,8 +13,5 @@ func ResumeValidaion(resume *models.Resume, cfg configs.ValidationConfig) error 
 	if len(resume.Description) < cfg.MinResumeDescriptionLength {
 		return errorHandler.InvalidResumeDescriptionLength
 	}
-	if resume.UserSurname != "" || resume.UserName != "" || resume.ImgSrc != "" {
-		return errorHandler.ErrBadRequest
-	}
 	return nil
 }

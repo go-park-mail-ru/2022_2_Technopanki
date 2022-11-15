@@ -6,7 +6,7 @@ import (
 	"github.com/go-redis/redis"
 )
 
-func RedisConnect(cfg configs.RedisConfig) (*redis.Client, error) {
+func RedisConnect(cfg *configs.RedisConfig) (*redis.Client, error) {
 	client := redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%s", cfg.Host, cfg.Port),
 		Password: cfg.Password,

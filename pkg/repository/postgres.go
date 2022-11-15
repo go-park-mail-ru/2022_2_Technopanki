@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func DBConnect(cfg configs.DBConfig) (*gorm.DB, error) {
+func DBConnect(cfg *configs.DBConfig) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
 		cfg.Username,
 		cfg.Password,

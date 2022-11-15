@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"HeadHunter/internal/entity/constants"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
 	"gorm.io/gorm"
@@ -44,12 +43,12 @@ func (up *UserPostgres) IsUserExist(email string) (bool, error) {
 
 func (up *UserPostgres) GetUser(id uint) (*models.UserAccount, error) {
 	var result models.UserAccount
-	query := up.db.Select(append(constants.PrivateUserFields, constants.SafeUserFields...)).Find(&result, id)
+	query := up.db.Select(append(models.PrivateUserFields, models.SafeUserFields...)).Find(&result, id)
 	return &result, queryValidation(query, "user")
 }
 
 func (up *UserPostgres) GetUserSafety(id uint, allowedFields []string) (*models.UserAccount, error) {
 	var result models.UserAccount
-	query := up.db.Select(append(constants.SafeUserFields, allowedFields...)).Find(&result, id)
+	query := up.db.Select(append(models.SafeUserFields, allowedFields...)).Find(&result, id)
 	return &result, queryValidation(query, "user")
 }

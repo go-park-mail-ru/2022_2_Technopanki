@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"HeadHunter/internal/entity/complexModels"
 	"HeadHunter/internal/entity/models"
 	"fmt"
 	"gorm.io/gorm"
@@ -39,8 +38,8 @@ func (rp *ResumePostgres) GetResumeByApplicant(userId uint) ([]*models.Resume, e
 	return result, queryValidation(query, "resume")
 }
 
-func (rp *ResumePostgres) GetPreviewResumeByApplicant(userId uint) ([]*complexModels.ResumePreview, error) {
-	var resultPreview []*complexModels.ResumePreview
+func (rp *ResumePostgres) GetPreviewResumeByApplicant(userId uint) ([]*models.ResumePreview, error) {
+	var resultPreview []*models.ResumePreview
 	query := rp.db.Table("resumes").
 		Select("user_accounts.applicant_name, user_accounts.applicant_surname, user_accounts.image,"+
 			"resumes.id, resumes.title").
@@ -60,10 +59,6 @@ func (rp *ResumePostgres) CreateResume(resume *models.Resume, userId uint) error
 	if queryUser.Error != nil {
 		return queryUser.Error
 	}
-
-	resume.UserName = user.ApplicantName
-	resume.UserSurname = user.ApplicantSurname
-	resume.ImgSrc = user.Image
 
 	creatingErr := rp.db.Create(resume).Save(resume).Error
 

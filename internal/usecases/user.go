@@ -2,7 +2,6 @@ package usecases
 
 import (
 	"HeadHunter/configs"
-	"HeadHunter/internal/entity/constants"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/entity/utils"
 	"HeadHunter/internal/entity/validation"
@@ -193,7 +192,7 @@ func (us *UserService) GetUser(id uint) (*models.UserAccount, error) {
 }
 
 func (us *UserService) GetUserSafety(id uint) (*models.UserAccount, error) {
-	return us.userRep.GetUserSafety(id, constants.PrivateUserFields) //TODO добавить поле в бд
+	return us.userRep.GetUserSafety(id, models.PrivateUserFields) //TODO добавить поле в бд
 }
 
 func (us *UserService) GetUserByEmail(email string) (*models.UserAccount, error) {

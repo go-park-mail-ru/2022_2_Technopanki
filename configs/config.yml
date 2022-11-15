@@ -24,7 +24,7 @@ validation:
   maxEmailLength: 30
   minResumeTitleLength: 3
   maxResumeTitleLength: 30
-  minResumeDescriptionLength: 10
+  minResumeDescriptionLength: 3
 cookie:
   httpOnly: true
   secure: false

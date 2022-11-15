@@ -23,14 +23,14 @@ func main() {
 	if configErr := configs.InitConfig(&mainConfig); configErr != nil {
 		logrus.Fatal(configErr.Error())
 	}
-	client, redisErr := repositorypkg.RedisConnect(mainConfig.Redis)
+	client, redisErr := repositorypkg.RedisConnect(&mainConfig.Redis)
 	if redisErr != nil {
 		logrus.Fatal(redisErr)
 	}
 
-	redisRepository := session.NewRedisStore(mainConfig, client)
+	redisRepository := session.NewRedisStore(&mainConfig, client)
 	sessionMiddleware := middleware.NewSessionMiddleware(redisRepository)
-	db, DBErr := repositorypkg.DBConnect(mainConfig.DB)
+	db, DBErr := repositorypkg.DBConnect(&mainConfig.DB)
 	if DBErr != nil {
 		logrus.Fatal(DBErr)
 	}
