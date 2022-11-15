@@ -6,42 +6,41 @@ import (
 )
 
 var (
-	ErrResumeNotFound              = errors.New("resume not found")
-	ErrBadRequest                  = errors.New("bad request")
-	ErrUnauthorized                = errors.New("unauthorized")
-	ErrServiceUnavailable          = errors.New("service unavailable")
+	ErrResumeNotFound              = errors.New("Резюме не найдено")
+	ErrBadRequest                  = errors.New("Плохой запрос")
+	ErrUnauthorized                = errors.New("Клиент не авторизован")
+	ErrServiceUnavailable          = errors.New("Сервис недоступен")
 	ErrUserExists                  = errors.New("Пользователь с таким email уже существует")
 	ErrUserNotExists               = errors.New("Пользователя с таким email не существует")
-	ErrInvalidParam                = errors.New("invalid parameter")
-	ErrCannotCreateUser            = errors.New("cannot create user")
-	ErrCannotDeleteVacancy         = errors.New("cannot delete vacancy")
-	ErrCannotUpdateVacancy         = errors.New("cannot update vacancy")
-	ErrCannotApplyForVacancy       = errors.New("cannot apply fo vacancy")
-	ErrUpdateStructHasNoValues     = errors.New("update structure has no values")
-	ErrCSRFTokenMismatched         = errors.New("csrf token mismatched")
+	ErrInvalidParam                = errors.New("Некорректный параметр")
+	ErrCannotCreateUser            = errors.New("Невозможно создать пользователя")
+	ErrCannotDeleteVacancy         = errors.New("Невозможно удалить вакансию")
+	ErrCannotUpdateVacancy         = errors.New("Невозможно обновить вакансию")
+	ErrCannotApplyForVacancy       = errors.New("Невозможно откликнуться на вакансию")
+	ErrUpdateStructHasNoValues     = errors.New("Нет значений для обновления")
+	ErrCSRFTokenMismatched         = errors.New("Несоответствие CSRF-токена")
 	InvalidResumeTitleLength       = errors.New("Длина заголовка резюме должна быть от 3 до 30 символов")
 	InvalidResumeDescriptionLength = errors.New("Описание должно быть более подробным")
 
-	ErrCannotCreateSession = errors.New("cannot create session")
-	ErrSessionNotFound     = errors.New("session with this token not found")
-	ErrCannotDeleteSession = errors.New("cannot delete session")
+	ErrCannotCreateSession = errors.New("Невозможно создать сессию")
+	ErrSessionNotFound     = errors.New("Сессия с данным токеном не найдена")
+	ErrCannotDeleteSession = errors.New("Невозможно удалить сессию")
 
-	ErrVacancyNotFound     = errors.New("vacancy not found")
+	ErrVacancyNotFound     = errors.New("Вакансия не найдена")
 	ErrCannotDeleteAvatar  = errors.New("Невозможно удалить аватар")
-	ErrForbidden           = errors.New("forbidden")
-	ErrWrongPassword       = errors.New("wrong password")
-	ErrInvalidFileFormat   = errors.New("invalid file format")
+	ErrForbidden           = errors.New("Запрещено")
+	ErrWrongPassword       = errors.New("Неправильный пароль")
+	ErrInvalidFileFormat   = errors.New("Некорректный формат файла")
 	IncorrectNameLength    = errors.New("Длина имени должна быть между 2 и 30 символами")
 	IncorrectSurnameLength = errors.New("Длина фамилии должна быть между 2 и 30 символами")
 
-	InvalidEmailFormat   = errors.New("email должен содержать @")
+	InvalidEmailFormat   = errors.New("Email должен содержать @")
 	IncorrectEmailLength = errors.New("Длина email должна быть между 8 and 30 символами")
 
 	InvalidPasswordFormat   = errors.New("Пароль должен содержать буквы латиницы, цифры и спецсимволы(!#%^$)")
 	IncorrectPasswordLength = errors.New("Длина пароля должна быть между 8 и 20 символами")
 
-	CSRFTokenMismatch = errors.New("CSRF token mismatch")
-	InvalidUserType   = errors.New("invalid input user type")
+	InvalidUserType = errors.New("Некорректный входной тип пользователя")
 )
 
 var errorToCode = map[error]int{
@@ -87,7 +86,6 @@ var errorToCode = map[error]int{
 	ErrInvalidFileFormat:   http.StatusBadRequest,
 	IncorrectNameLength:    http.StatusBadRequest,
 	IncorrectSurnameLength: http.StatusBadRequest,
-	CSRFTokenMismatch:      http.StatusBadRequest,
 	InvalidUserType:        http.StatusBadRequest,
 
 	InvalidEmailFormat:   http.StatusBadRequest,
@@ -105,24 +103,24 @@ func ConvertError(err error) int {
 	return http.StatusInternalServerError
 }
 
-var errorDescriptors = map[error][]string{
-	ErrUserExists:                  {"email"},
-	ErrUserNotExists:               {"email"},
-	ErrWrongPassword:               {"password"},
-	IncorrectNameLength:            {"name"},
-	IncorrectSurnameLength:         {"surname"},
-	InvalidEmailFormat:             {"email"},
-	IncorrectEmailLength:           {"email"},
-	InvalidPasswordFormat:          {"password"},
-	IncorrectPasswordLength:        {"password"},
-	InvalidResumeTitleLength:       {"resume_title"},
-	InvalidResumeDescriptionLength: {"resume_descriptors"},
+var errorDescriptors = map[error]string{
+	ErrUserExists:                  "email",
+	ErrUserNotExists:               "email",
+	ErrWrongPassword:               "password",
+	IncorrectNameLength:            "name",
+	IncorrectSurnameLength:         "surname",
+	InvalidEmailFormat:             "email",
+	IncorrectEmailLength:           "email",
+	InvalidPasswordFormat:          "password",
+	IncorrectPasswordLength:        "password",
+	InvalidResumeTitleLength:       "resume_title",
+	InvalidResumeDescriptionLength: "resume_descriptors",
 }
 
-func GetErrorDescriptors(err error) []string {
+func GetErrorDescriptors(err error) string {
 	result, ok := errorDescriptors[err]
 	if ok {
 		return result
 	}
-	return []string{}
+	return ""
 }
