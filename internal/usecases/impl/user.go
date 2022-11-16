@@ -1,4 +1,4 @@
-package usecases
+package impl
 
 import (
 	"HeadHunter/configs"
@@ -24,7 +24,7 @@ type UserService struct {
 	cfg         *configs.Config
 }
 
-func newUserService(userRepos repository.UserRepository, sessionRepos session.Repository, _cfg *configs.Config) *UserService {
+func NewUserService(userRepos repository.UserRepository, sessionRepos session.Repository, _cfg *configs.Config) *UserService {
 	return &UserService{userRep: userRepos, sessionRepo: sessionRepos, cfg: _cfg}
 }
 

@@ -1,4 +1,4 @@
-package usecases
+package impl
 
 import (
 	"HeadHunter/internal/entity/models"
@@ -9,7 +9,7 @@ type VacancyActivityService struct {
 	vacancyActivityRep repository.VacancyActivityRepository
 }
 
-func newVacancyActivityService(vacancyActivityRepos repository.VacancyActivityRepository) *VacancyActivityService {
+func NewVacancyActivityService(vacancyActivityRepos repository.VacancyActivityRepository) *VacancyActivityService {
 	return &VacancyActivityService{vacancyActivityRep: vacancyActivityRepos}
 }
 

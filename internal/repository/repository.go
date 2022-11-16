@@ -2,8 +2,7 @@ package repository
 
 import (
 	"HeadHunter/internal/entity/models"
-	"HeadHunter/internal/errorHandler"
-	"fmt"
+	"HeadHunter/internal/repository/impl"
 	"gorm.io/gorm"
 )
 
@@ -14,40 +13,12 @@ type Repository struct {
 	ResumeRepository          ResumeRepository
 }
 
-func notFound(object string) error {
-	switch object {
-	case "user":
-		return errorHandler.ErrUserNotExists
-	case "vacancy":
-		return errorHandler.ErrVacancyNotFound
-	case "vacancy_activity":
-		return errorHandler.ErrCannotApplyForVacancy
-	case "resume":
-		return errorHandler.ErrResumeNotFound
-	default:
-		return fmt.Errorf("%s not found", object)
-	}
-}
-
-func queryValidation(query *gorm.DB, object string) error {
-	if query.Error != nil {
-		if query.Error.Error() == "record not found" {
-			return notFound(object)
-		}
-		return fmt.Errorf("postgre query error: %s", query.Error.Error())
-	}
-	if query.RowsAffected == 0 {
-		return notFound(object)
-	}
-	return nil
-}
-
 func NewPostgresRepository(db *gorm.DB) *Repository {
 	return &Repository{
-		UserRepository:            newUserPostgres(db),
-		ResumeRepository:          newResumePostgres(db),
-		VacancyRepository:         newVacancyPostgres(db),
-		VacancyActivityRepository: newVacancyActivityPostgres(db),
+		UserRepository:            impl.NewUserPostgres(db),
+		ResumeRepository:          impl.NewResumePostgres(db),
+		VacancyRepository:         impl.NewVacancyPostgres(db),
+		VacancyActivityRepository: impl.NewVacancyActivityPostgres(db),
 	}
 }
 
@@ -83,6 +54,7 @@ type ResumeRepository interface {
 	GetResumeByApplicant(userId uint) ([]*models.Resume, error)
 	GetPreviewResumeByApplicant(userId uint) ([]*models.ResumePreview, error)
 	CreateResume(resume *models.Resume, userId uint) error
-	UpdateResume(id uint, resume *models.Resume) error
-	DeleteResume(id uint) error
+	UpdateResume(id uint, resume *models.Resume) (*models.Resume, error)
+	DeleteResume(id uint) (*models.Resume, error)
+	GetDB() *gorm.DB
 }

@@ -59,7 +59,6 @@ func Test_ResumeValidaion(t *testing.T) {
 			inputResume: &models.Resume{
 				Title:       "Some job",
 				Description: "Information about my skills in this job",
-				UserName:    "Hacker_name",
 			},
 			cfg: configs.ValidationConfig{
 				MinResumeDescriptionLength: 10,

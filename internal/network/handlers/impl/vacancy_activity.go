@@ -1,8 +1,9 @@
-package handlers
+package impl
 
 import (
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
+	"HeadHunter/internal/network/handlers"
 	"HeadHunter/internal/usecases"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -11,10 +12,10 @@ import (
 
 type VacancyActivityHandler struct {
 	vacancyActivityUseCase usecases.VacancyActivity
-	userHandler            UserH
+	userHandler            handlers.UserH
 }
 
-func newVacancyActivityHandler(useCases *usecases.UseCases, userHandler *UserHandler) *VacancyActivityHandler {
+func NewVacancyActivityHandler(useCases *usecases.UseCases, userHandler *UserHandler) *VacancyActivityHandler {
 	return &VacancyActivityHandler{vacancyActivityUseCase: useCases.VacancyActivity, userHandler: userHandler}
 }
 

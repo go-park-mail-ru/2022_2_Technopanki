@@ -1,4 +1,4 @@
-package handlers
+package impl
 
 import (
 	"HeadHunter/configs"
@@ -13,11 +13,10 @@ import (
 type ResumeHandler struct {
 	cfg           *configs.Config
 	resumeUseCase usecases.Resume
-	userHandler   UserH
 }
 
-func newResumeHandler(useCases *usecases.UseCases, _cfg *configs.Config, _userHandler UserH) *ResumeHandler {
-	return &ResumeHandler{cfg: _cfg, resumeUseCase: useCases.Resume, userHandler: _userHandler}
+func NewResumeHandler(useCases *usecases.UseCases, _cfg *configs.Config) *ResumeHandler {
+	return &ResumeHandler{cfg: _cfg, resumeUseCase: useCases.Resume}
 }
 
 func (rh *ResumeHandler) GetResume(c *gin.Context) {
@@ -43,18 +42,13 @@ func (rh *ResumeHandler) GetResumeByApplicant(c *gin.Context) {
 		return
 	}
 
-	userIdFromContext, getUserErr := rh.userHandler.GetUserId(c)
-	if getUserErr != nil {
-		_ = c.Error(getUserErr)
+	email, contextErr := getEmailFromContext(c)
+	if contextErr != nil {
+		_ = c.Error(contextErr)
 		return
 	}
 
-	if userIdFromContext != uint(userId) {
-		_ = c.Error(errorHandler.ErrUnauthorized)
-		return
-	}
-
-	resumes, getResumeErr := rh.resumeUseCase.GetResumeByApplicant(uint(userId))
+	resumes, getResumeErr := rh.resumeUseCase.GetResumeByApplicant(uint(userId), email)
 	if getResumeErr != nil {
 		_ = c.Error(getResumeErr)
 		return
@@ -70,18 +64,13 @@ func (rh *ResumeHandler) GetPreviewResumeByApplicant(c *gin.Context) {
 		return
 	}
 
-	userIdFromContext, getUserErr := rh.userHandler.GetUserId(c)
-	if getUserErr != nil {
-		_ = c.Error(getUserErr)
+	email, contextErr := getEmailFromContext(c)
+	if contextErr != nil {
+		_ = c.Error(contextErr)
 		return
 	}
 
-	if userIdFromContext != uint(userId) {
-		_ = c.Error(errorHandler.ErrUnauthorized)
-		return
-	}
-
-	resumes, getResumeErr := rh.resumeUseCase.GetPreviewResumeByApplicant(uint(userId))
+	resumes, getResumeErr := rh.resumeUseCase.GetPreviewResumeByApplicant(uint(userId), email)
 	if getResumeErr != nil {
 		_ = c.Error(getResumeErr)
 		return
@@ -91,20 +80,10 @@ func (rh *ResumeHandler) GetPreviewResumeByApplicant(c *gin.Context) {
 }
 
 func (rh *ResumeHandler) CreateResume(c *gin.Context) {
-	userId, getUserErr := rh.userHandler.GetUserId(c)
-	if getUserErr != nil {
-		_ = c.Error(getUserErr)
-		return
-	}
 
-	userType, getTypeErr := rh.userHandler.GetUserType(c)
-	if getTypeErr != nil {
-		_ = c.Error(getTypeErr)
-		return
-	}
-
-	if userType != "applicant" {
-		_ = c.Error(errorHandler.ErrBadRequest)
+	email, contextErr := getEmailFromContext(c)
+	if contextErr != nil {
+		_ = c.Error(contextErr)
 		return
 	}
 
@@ -114,7 +93,7 @@ func (rh *ResumeHandler) CreateResume(c *gin.Context) {
 		return
 	}
 
-	creatingErr := rh.resumeUseCase.CreateResume(&input, userId)
+	creatingErr := rh.resumeUseCase.CreateResume(&input, email)
 	if creatingErr != nil {
 		_ = c.Error(creatingErr)
 		return
@@ -130,9 +109,9 @@ func (rh *ResumeHandler) UpdateResume(c *gin.Context) {
 		return
 	}
 
-	isAccessAllowed := rh.isResumeAvailable(c, uint(id))
-	if isAccessAllowed != nil {
-		_ = c.Error(isAccessAllowed)
+	email, contextErr := getEmailFromContext(c)
+	if contextErr != nil {
+		_ = c.Error(contextErr)
 		return
 	}
 
@@ -142,7 +121,7 @@ func (rh *ResumeHandler) UpdateResume(c *gin.Context) {
 		return
 	}
 
-	updateErr := rh.resumeUseCase.UpdateResume(uint(id), &input)
+	updateErr := rh.resumeUseCase.UpdateResume(uint(id), &input, email)
 	if updateErr != nil {
 		_ = c.Error(updateErr)
 		return
@@ -158,13 +137,19 @@ func (rh *ResumeHandler) DeleteResume(c *gin.Context) {
 		return
 	}
 
-	isAccessAllowed := rh.isResumeAvailable(c, uint(id))
-	if isAccessAllowed != nil {
-		_ = c.Error(isAccessAllowed)
+	email, contextErr := getEmailFromContext(c)
+	if contextErr != nil {
+		_ = c.Error(contextErr)
 		return
 	}
 
-	deleteErr := rh.resumeUseCase.DeleteResume(uint(id))
+	var input models.Resume
+	if err := c.BindJSON(&input); err != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+
+	deleteErr := rh.resumeUseCase.DeleteResume(uint(id), email)
 	if deleteErr != nil {
 		_ = c.Error(deleteErr)
 		return

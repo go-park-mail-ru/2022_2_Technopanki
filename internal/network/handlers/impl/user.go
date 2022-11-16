@@ -1,4 +1,4 @@
-package handlers
+package impl
 
 import (
 	"HeadHunter/configs"
@@ -18,7 +18,7 @@ type UserHandler struct {
 	sessionRepo session.Repository
 }
 
-func newUserHandler(useCases *usecases.UseCases, _cfg *configs.Config, _sr session.Repository) *UserHandler {
+func NewUserHandler(useCases *usecases.UseCases, _cfg *configs.Config, _sr session.Repository) *UserHandler {
 	return &UserHandler{cfg: _cfg, userUseCase: useCases.User, sessionRepo: _sr}
 }
 

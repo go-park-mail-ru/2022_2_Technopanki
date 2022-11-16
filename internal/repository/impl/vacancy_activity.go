@@ -1,4 +1,4 @@
-package repository
+package impl
 
 import (
 	"HeadHunter/internal/entity/models"
@@ -9,7 +9,7 @@ type VacancyActivityPostgres struct {
 	db *gorm.DB
 }
 
-func newVacancyActivityPostgres(db *gorm.DB) *VacancyActivityPostgres {
+func NewVacancyActivityPostgres(db *gorm.DB) *VacancyActivityPostgres {
 	return &VacancyActivityPostgres{db: db}
 }
 
@@ -33,10 +33,7 @@ func (vap *VacancyActivityPostgres) ApplyForVacancy(apply *models.VacancyActivit
 	apply.Image = user.Image
 	query := vap.db.Create(&apply)
 	//return queryValidation(query, "vacancy_activity")
-	if query.RowsAffected == 0 {
-		return notFound("vacancy_activity")
-	}
-	return queryValidation(query, "vacancy_activity")
+	return QueryValidation(query, "vacancy_activity")
 }
 
 func (vap *VacancyActivityPostgres) GetAllUserApplies(userId int) ([]*models.VacancyActivity, error) {

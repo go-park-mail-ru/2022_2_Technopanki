@@ -1,4 +1,4 @@
-package repository
+package impl
 
 import (
 	"HeadHunter/internal/entity/models"
@@ -10,7 +10,7 @@ type ResumePostgres struct {
 	db *gorm.DB
 }
 
-func newResumePostgres(db *gorm.DB) *ResumePostgres {
+func NewResumePostgres(db *gorm.DB) *ResumePostgres {
 	return &ResumePostgres{db: db}
 }
 
@@ -22,7 +22,7 @@ func (rp *ResumePostgres) GetResume(id uint) (*models.Resume, error) {
 
 	rp.db.Where("resume_id = ?", result.ID).First(&result.EducationDetail)
 
-	return &result, queryValidation(query, "resume")
+	return &result, QueryValidation(query, "resume")
 }
 
 func (rp *ResumePostgres) GetResumeByApplicant(userId uint) ([]*models.Resume, error) {
@@ -35,7 +35,7 @@ func (rp *ResumePostgres) GetResumeByApplicant(userId uint) ([]*models.Resume, e
 		rp.db.Where("resume_id = ?", elem.ID).Find(&elem.EducationDetail)
 	}
 
-	return result, queryValidation(query, "resume")
+	return result, QueryValidation(query, "resume")
 }
 
 func (rp *ResumePostgres) GetPreviewResumeByApplicant(userId uint) ([]*models.ResumePreview, error) {
@@ -47,7 +47,7 @@ func (rp *ResumePostgres) GetPreviewResumeByApplicant(userId uint) ([]*models.Re
 		Where("user_account_id = ?", userId).
 		Scan(&resultPreview)
 
-	return resultPreview, queryValidation(query, "resume")
+	return resultPreview, QueryValidation(query, "resume")
 }
 
 func (rp *ResumePostgres) CreateResume(resume *models.Resume, userId uint) error {
@@ -69,16 +69,24 @@ func (rp *ResumePostgres) CreateResume(resume *models.Resume, userId uint) error
 	return nil
 }
 
-func (rp *ResumePostgres) UpdateResume(id uint, resume *models.Resume) error {
+func (rp *ResumePostgres) UpdateResume(id uint, resume *models.Resume) (*models.Resume, error) {
 	old, getErr := rp.GetResume(id)
 	if getErr != nil {
-		return getErr
+		return nil, getErr
 	}
 	resume.UserAccountId = old.UserAccountId
 	resume.ID = id
-	return rp.db.Session(&gorm.Session{FullSaveAssociations: true}).Updates(resume).Error
+	return nil, rp.db.Session(&gorm.Session{FullSaveAssociations: true}).Updates(resume).Error
 }
 
-func (rp *ResumePostgres) DeleteResume(id uint) error {
-	return rp.db.Delete(&models.Resume{ID: id}).Error
+func (rp *ResumePostgres) DeleteResume(id uint) (*models.Resume, error) {
+	old, getErr := rp.GetResume(id)
+	if getErr != nil {
+		return nil, getErr
+	}
+	return old, rp.db.Delete(&models.Resume{ID: id}).Error
+}
+
+func (rp *ResumePostgres) GetDB() *gorm.DB {
+	return rp.db
 }

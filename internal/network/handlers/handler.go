@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"HeadHunter/configs"
+	"HeadHunter/internal/network/handlers/impl"
 	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases"
 	"github.com/gin-gonic/gin"
@@ -16,12 +17,12 @@ type Handlers struct {
 }
 
 func NewHandlers(usecases *usecases.UseCases, _cfg *configs.Config, _sr session.Repository) *Handlers {
-	userHandler := newUserHandler(usecases, _cfg, _sr)
+	userHandler := impl.NewUserHandler(usecases, _cfg, _sr)
 	return &Handlers{
 		UserHandler:            userHandler,
-		ResumeHandler:          newResumeHandler(usecases, _cfg, userHandler),
-		VacancyHandler:         newVacancyHandler(usecases, userHandler),
-		VacancyActivityHandler: newVacancyActivityHandler(usecases, userHandler),
+		ResumeHandler:          impl.NewResumeHandler(usecases, _cfg),
+		VacancyHandler:         impl.NewVacancyHandler(usecases, userHandler),
+		VacancyActivityHandler: impl.NewVacancyActivityHandler(usecases, userHandler),
 	}
 }
 

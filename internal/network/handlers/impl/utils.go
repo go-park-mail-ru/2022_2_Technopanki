@@ -1,4 +1,4 @@
-package handlers
+package impl
 
 import (
 	"HeadHunter/internal/errorHandler"
@@ -45,21 +45,4 @@ func (uh *UserHandler) GetUserType(c *gin.Context) (string, error) {
 		return "", userIdErr
 	}
 	return user.UserType, nil
-}
-
-func (rh *ResumeHandler) isResumeAvailable(c *gin.Context, id uint) error {
-	userId, userErr := rh.userHandler.GetUserId(c)
-	if userErr != nil {
-		return userErr
-	}
-
-	resume, getResumeErr := rh.resumeUseCase.GetResume(id)
-	if getResumeErr != nil {
-		return getResumeErr
-	}
-
-	if resume.UserAccountId != userId {
-		return errorHandler.ErrForbidden
-	}
-	return nil
 }

@@ -1,8 +1,7 @@
-package usecases
+package impl
 
 import (
 	"HeadHunter/configs"
-	"HeadHunter/internal/entity/constants"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
 	mock_repository "HeadHunter/internal/repository/mocks"
@@ -460,7 +459,7 @@ func TestUserService_GetUserSafety(t *testing.T) {
 			defer c.Finish()
 
 			mockUserRepository := mock_repository.NewMockUserRepository(c)
-			testCase.mockBehavior(mockUserRepository, testCase.id, constants.PrivateUserFields)
+			testCase.mockBehavior(mockUserRepository, testCase.id, models.PrivateUserFields)
 			userService := UserService{userRep: mockUserRepository}
 			user, err := userService.GetUserSafety(testCase.id)
 			if testCase.expectedErr == nil {

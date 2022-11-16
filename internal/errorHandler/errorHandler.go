@@ -7,7 +7,7 @@ import (
 
 var (
 	ErrResumeNotFound              = errors.New("Резюме не найдено")
-	ErrBadRequest                  = errors.New("Плохой запрос")
+	ErrBadRequest                  = errors.New("Некорректный запрос")
 	ErrUnauthorized                = errors.New("Клиент не авторизован")
 	ErrServiceUnavailable          = errors.New("Сервис недоступен")
 	ErrUserExists                  = errors.New("Пользователь с таким email уже существует")
