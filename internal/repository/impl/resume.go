@@ -69,22 +69,14 @@ func (rp *ResumePostgres) CreateResume(resume *models.Resume, userId uint) error
 	return nil
 }
 
-func (rp *ResumePostgres) UpdateResume(id uint, resume *models.Resume) (*models.Resume, error) {
-	old, getErr := rp.GetResume(id)
-	if getErr != nil {
-		return nil, getErr
-	}
-	resume.UserAccountId = old.UserAccountId
+func (rp *ResumePostgres) UpdateResume(id uint, resume *models.Resume) error {
 	resume.ID = id
-	return nil, rp.db.Session(&gorm.Session{FullSaveAssociations: true}).Updates(resume).Error
+	return rp.db.Session(&gorm.Session{FullSaveAssociations: true}).Updates(resume).Error
 }
 
-func (rp *ResumePostgres) DeleteResume(id uint) (*models.Resume, error) {
-	old, getErr := rp.GetResume(id)
-	if getErr != nil {
-		return nil, getErr
-	}
-	return old, rp.db.Delete(&models.Resume{ID: id}).Error
+func (rp *ResumePostgres) DeleteResume(id uint) error {
+
+	return rp.db.Delete(&models.Resume{ID: id}).Error
 }
 
 func (rp *ResumePostgres) GetDB() *gorm.DB {

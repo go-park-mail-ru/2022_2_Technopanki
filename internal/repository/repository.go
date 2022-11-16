@@ -54,7 +54,7 @@ type ResumeRepository interface {
 	GetResumeByApplicant(userId uint) ([]*models.Resume, error)
 	GetPreviewResumeByApplicant(userId uint) ([]*models.ResumePreview, error)
 	CreateResume(resume *models.Resume, userId uint) error
-	UpdateResume(id uint, resume *models.Resume) (*models.Resume, error)
-	DeleteResume(id uint) (*models.Resume, error)
+	UpdateResume(id uint, resume *models.Resume) error
+	DeleteResume(id uint) error
 	GetDB() *gorm.DB
 }

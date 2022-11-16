@@ -83,12 +83,15 @@ func (rs *ResumeService) UpdateResume(id uint, resume *models.Resume, email stri
 	if contextErr != nil {
 		return contextErr
 	}
-	update, updateErr := rs.resumeRep.UpdateResume(id, resume)
-	if updateErr != nil {
-		return updateErr
-	}
 
-	if userFromContext.ID != update.UserAccountId {
+	old, getErr := rs.resumeRep.GetResume(id)
+	if getErr != nil {
+		return getErr
+	}
+	resume.UserAccountId = old.UserAccountId
+	resume.ID = id
+
+	if userFromContext.ID != old.UserAccountId {
 		return errorHandler.ErrUnauthorized
 	}
 
@@ -98,7 +101,7 @@ func (rs *ResumeService) UpdateResume(id uint, resume *models.Resume, email stri
 		return sanitizeErr
 	}
 
-	return nil
+	return rs.resumeRep.UpdateResume(id, resume)
 }
 
 func (rs *ResumeService) DeleteResume(id uint, email string) error {
@@ -107,12 +110,13 @@ func (rs *ResumeService) DeleteResume(id uint, email string) error {
 		return contextErr
 	}
 
-	resume, deleteErr := rs.resumeRep.DeleteResume(id)
-	if deleteErr != nil {
-		return deleteErr
+	old, getErr := rs.resumeRep.GetResume(id)
+	if getErr != nil {
+		return getErr
 	}
-	if userFromContext.ID != resume.UserAccountId {
+
+	if userFromContext.ID != old.UserAccountId {
 		return errorHandler.ErrUnauthorized
 	}
-	return nil
+	return rs.resumeRep.DeleteResume(id)
 }
