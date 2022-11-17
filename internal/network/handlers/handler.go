@@ -38,7 +38,6 @@ type UserH interface {
 	DeleteUserImage(c *gin.Context)
 	GetPreview(c *gin.Context)
 	GetUserId(c *gin.Context) (uint, error)
-	GetUserType(c *gin.Context) (string, error)
 }
 
 type VacancyH interface {

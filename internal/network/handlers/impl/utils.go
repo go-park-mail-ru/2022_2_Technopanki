@@ -33,16 +33,3 @@ func (uh *UserHandler) GetUserId(c *gin.Context) (uint, error) {
 	}
 	return userId, nil
 }
-
-func (uh *UserHandler) GetUserType(c *gin.Context) (string, error) {
-	email, emailErr := getEmailFromContext(c)
-	if emailErr != nil {
-		return "", emailErr
-	}
-	user, userIdErr := uh.userUseCase.GetUserByEmail(email)
-	if userIdErr != nil {
-		_ = c.Error(userIdErr)
-		return "", userIdErr
-	}
-	return user.UserType, nil
-}
