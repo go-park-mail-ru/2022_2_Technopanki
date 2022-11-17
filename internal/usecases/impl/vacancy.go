@@ -18,6 +18,14 @@ func (vs *VacancyService) GetAll() ([]*models.Vacancy, error) {
 	return vs.vacancyRep.GetAll()
 }
 
+func (vs *VacancyService) GetById(vacancyID uint) (*models.Vacancy, error) {
+	return vs.vacancyRep.GetById(vacancyID)
+}
+
+func (vs *VacancyService) GetByUserId(userId uint) ([]*models.Vacancy, error) {
+	return vs.vacancyRep.GetByUserId(userId)
+}
+
 func (vs *VacancyService) Create(userId uint, input *models.Vacancy) (uint, error) {
 	var sanitizeErr error
 	input = escaping.EscapingObject[*models.Vacancy](input)
@@ -29,19 +37,7 @@ func (vs *VacancyService) Create(userId uint, input *models.Vacancy) (uint, erro
 	return vs.vacancyRep.Create(input)
 }
 
-func (vs *VacancyService) GetById(vacancyID int) (*models.Vacancy, error) {
-	return vs.vacancyRep.GetById(vacancyID)
-}
-
-func (vs *VacancyService) GetByUserId(userId int) ([]*models.Vacancy, error) {
-	return vs.vacancyRep.GetByUserId(userId)
-}
-
-func (vs *VacancyService) Delete(userId uint, vacancyId int) error {
-	return vs.vacancyRep.Delete(userId, vacancyId)
-}
-
-func (vs *VacancyService) Update(userId uint, vacancyId int, updates *models.Vacancy) error {
+func (vs *VacancyService) Update(userId uint, vacancyId uint, updates *models.Vacancy) error {
 
 	var sanitizeErr error
 	updates = escaping.EscapingObject[*models.Vacancy](updates)
@@ -53,4 +49,8 @@ func (vs *VacancyService) Update(userId uint, vacancyId int, updates *models.Vac
 		return getErr
 	}
 	return vs.vacancyRep.Update(userId, vacancyId, oldVacancy, updates)
+}
+
+func (vs *VacancyService) Delete(userId uint, vacancyId uint) error {
+	return vs.vacancyRep.Delete(userId, vacancyId)
 }

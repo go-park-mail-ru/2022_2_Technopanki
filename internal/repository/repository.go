@@ -36,17 +36,17 @@ type UserRepository interface {
 
 type VacancyRepository interface {
 	GetAll() ([]*models.Vacancy, error)
-	GetById(int) (*models.Vacancy, error)
-	GetByUserId(int) ([]*models.Vacancy, error)
+	GetById(vacancyId uint) (*models.Vacancy, error)
+	GetByUserId(userId uint) ([]*models.Vacancy, error)
 	Create(vacancy *models.Vacancy) (uint, error)
-	Update(userId uint, vacancyId int, oldVacancy *models.Vacancy, updates *models.Vacancy) error
-	Delete(uint, int) error
+	Update(userId, vacancyId uint, oldVacancy *models.Vacancy, updates *models.Vacancy) error
+	Delete(userId, vacancyId uint) error
 }
 
 type VacancyActivityRepository interface {
 	ApplyForVacancy(*models.VacancyActivity) error
-	GetAllVacancyApplies(int) ([]*models.VacancyActivity, error)
-	GetAllUserApplies(int) ([]*models.VacancyActivity, error)
+	GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivity, error)
+	GetAllUserApplies(userId uint) ([]*models.VacancyActivity, error)
 }
 
 type ResumeRepository interface {

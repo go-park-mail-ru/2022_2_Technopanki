@@ -31,19 +31,19 @@ func (vp *VacancyPostgres) Create(vacancy *models.Vacancy) (uint, error) {
 	return vacancy.ID, nil
 }
 
-func (vp *VacancyPostgres) GetById(vacancyId int) (*models.Vacancy, error) {
+func (vp *VacancyPostgres) GetById(vacancyId uint) (*models.Vacancy, error) {
 	var result models.Vacancy
 	query := vp.db.Where("id = ?", vacancyId).Find(&result)
 	return &result, QueryValidation(query, "vacancy")
 }
 
-func (vp *VacancyPostgres) GetByUserId(userId int) ([]*models.Vacancy, error) {
+func (vp *VacancyPostgres) GetByUserId(userId uint) ([]*models.Vacancy, error) {
 	var vacancies []*models.Vacancy
 	query := vp.db.Where("posted_by_user_id = ?", userId).Find(&vacancies)
 	return vacancies, QueryValidation(query, "vacancy")
 }
 
-func (vp *VacancyPostgres) Delete(userId uint, vacancyId int) error {
+func (vp *VacancyPostgres) Delete(userId, vacancyId uint) error {
 
 	error := vp.db.Where("posted_by_user_id = ?", userId).Delete(&models.Vacancy{}, vacancyId).Error
 	if error != nil {
@@ -52,7 +52,7 @@ func (vp *VacancyPostgres) Delete(userId uint, vacancyId int) error {
 	return nil
 }
 
-func (vp *VacancyPostgres) Update(userId uint, vacancyId int, oldVacancy *models.Vacancy, updates *models.Vacancy) error {
+func (vp *VacancyPostgres) Update(userId, vacancyId uint, oldVacancy *models.Vacancy, updates *models.Vacancy) error {
 
 	query := vp.db.Model(oldVacancy).Where("id = ? AND posted_by_user_id = ?", vacancyId, userId).Updates(updates)
 	return QueryValidation(query, "vacancy")

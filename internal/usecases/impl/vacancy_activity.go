@@ -13,16 +13,16 @@ func NewVacancyActivityService(vacancyActivityRepos repository.VacancyActivityRe
 	return &VacancyActivityService{vacancyActivityRep: vacancyActivityRepos}
 }
 
-func (vas *VacancyActivityService) GetAllVacancyApplies(vacancyId int) ([]*models.VacancyActivity, error) {
-	return vas.vacancyActivityRep.GetAllVacancyApplies(vacancyId)
-}
-
-func (vas *VacancyActivityService) ApplyForVacancy(userId uint, vacancyId int, input *models.VacancyActivity) error {
+func (vas *VacancyActivityService) ApplyForVacancy(userId uint, vacancyId uint, input *models.VacancyActivity) error {
 	input.UserAccountId = userId
-	input.VacancyId = uint(vacancyId)
+	input.VacancyId = vacancyId
 	return vas.vacancyActivityRep.ApplyForVacancy(input)
 }
 
-func (vas *VacancyActivityService) GetAllUserApplies(userId int) ([]*models.VacancyActivity, error) {
+func (vas *VacancyActivityService) GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivity, error) {
+	return vas.vacancyActivityRep.GetAllVacancyApplies(vacancyId)
+}
+
+func (vas *VacancyActivityService) GetAllUserApplies(userId uint) ([]*models.VacancyActivity, error) {
 	return vas.vacancyActivityRep.GetAllUserApplies(userId)
 }
