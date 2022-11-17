@@ -84,7 +84,7 @@ func (rp *ResumePostgres) GetAuthor(email string) (*models.UserAccount, error) {
 
 func (rp *ResumePostgres) GetEmployerIdByVacancyActivity(id uint) (uint, error) {
 	var result uint
-	query := rp.db.Model(&models.Resume{}).Select("vacancies.postedByUserId").
+	query := rp.db.Model(&models.Resume{}).Select("vacancies.posted_by_user_id").
 		Joins("left join vacancy_activities on resumes.id = vacancy_activities.resume_id").
 		Joins("left join vacancies on vacancies.id = vacancy_activities.vacancy_id").
 		Where("resumes.id = ?", id).
