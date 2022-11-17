@@ -75,10 +75,9 @@ func (rp *ResumePostgres) UpdateResume(id uint, resume *models.Resume) error {
 }
 
 func (rp *ResumePostgres) DeleteResume(id uint) error {
-
 	return rp.db.Delete(&models.Resume{ID: id}).Error
 }
 
-func (rp *ResumePostgres) GetDB() *gorm.DB {
-	return rp.db
+func (rp *ResumePostgres) GetAuthor(email string) (*models.UserAccount, error) {
+	return GetUser(email, rp.db)
 }

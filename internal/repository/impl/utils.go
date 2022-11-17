@@ -1,6 +1,7 @@
 package impl
 
 import (
+	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
 	"fmt"
 	"gorm.io/gorm"
@@ -32,4 +33,10 @@ func QueryValidation(query *gorm.DB, object string) error {
 		return notFound(object)
 	}
 	return nil
+}
+
+func GetUser(email string, db *gorm.DB) (*models.UserAccount, error) {
+	var result models.UserAccount
+	query := db.Where("email = ?", email).Find(&result)
+	return &result, QueryValidation(query, "user")
 }

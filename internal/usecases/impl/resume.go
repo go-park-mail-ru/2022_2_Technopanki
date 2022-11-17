@@ -6,7 +6,6 @@ import (
 	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/repository"
-	"HeadHunter/internal/usecases"
 	"HeadHunter/internal/usecases/sanitize"
 )
 
@@ -24,7 +23,7 @@ func (rs *ResumeService) GetResume(id uint) (*models.Resume, error) {
 }
 
 func (rs *ResumeService) GetResumeByApplicant(userId uint, email string) ([]*models.Resume, error) {
-	userFromContext, contextErr := usecases.GetUser(email, rs.resumeRep.GetDB())
+	userFromContext, contextErr := rs.resumeRep.GetAuthor(email)
 	if contextErr != nil {
 		return []*models.Resume{}, contextErr
 	}
@@ -36,7 +35,7 @@ func (rs *ResumeService) GetResumeByApplicant(userId uint, email string) ([]*mod
 }
 
 func (rs *ResumeService) GetPreviewResumeByApplicant(userId uint, email string) ([]*models.ResumePreview, error) {
-	userFromContext, contextErr := usecases.GetUser(email, rs.resumeRep.GetDB())
+	userFromContext, contextErr := rs.resumeRep.GetAuthor(email)
 	if contextErr != nil {
 		return []*models.ResumePreview{}, contextErr
 	}
@@ -54,7 +53,7 @@ func (rs *ResumeService) CreateResume(resume *models.Resume, email string) error
 		return isResumeValid
 	}
 
-	user, getErr := usecases.GetUser(email, rs.resumeRep.GetDB())
+	user, getErr := rs.resumeRep.GetAuthor(email)
 	if getErr != nil {
 		return getErr
 	}
@@ -79,7 +78,7 @@ func (rs *ResumeService) UpdateResume(id uint, resume *models.Resume, email stri
 		return isResumeValid
 	}
 
-	userFromContext, contextErr := usecases.GetUser(email, rs.resumeRep.GetDB())
+	userFromContext, contextErr := rs.resumeRep.GetAuthor(email)
 	if contextErr != nil {
 		return contextErr
 	}
@@ -105,7 +104,7 @@ func (rs *ResumeService) UpdateResume(id uint, resume *models.Resume, email stri
 }
 
 func (rs *ResumeService) DeleteResume(id uint, email string) error {
-	userFromContext, contextErr := usecases.GetUser(email, rs.resumeRep.GetDB())
+	userFromContext, contextErr := rs.resumeRep.GetAuthor(email)
 	if contextErr != nil {
 		return contextErr
 	}
@@ -118,5 +117,6 @@ func (rs *ResumeService) DeleteResume(id uint, email string) error {
 	if userFromContext.ID != old.UserAccountId {
 		return errorHandler.ErrUnauthorized
 	}
+
 	return rs.resumeRep.DeleteResume(id)
 }

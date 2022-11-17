@@ -21,8 +21,8 @@ func NewHandlers(usecases *usecases.UseCases, _cfg *configs.Config, _sr session.
 	return &Handlers{
 		UserHandler:            userHandler,
 		ResumeHandler:          impl.NewResumeHandler(usecases, _cfg),
-		VacancyHandler:         impl.NewVacancyHandler(usecases, userHandler),
-		VacancyActivityHandler: impl.NewVacancyActivityHandler(usecases, userHandler),
+		VacancyHandler:         NewVacancyHandler(usecases, userHandler),
+		VacancyActivityHandler: NewVacancyActivityHandler(usecases, userHandler),
 	}
 }
 

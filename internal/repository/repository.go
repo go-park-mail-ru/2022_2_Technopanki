@@ -56,5 +56,5 @@ type ResumeRepository interface {
 	CreateResume(resume *models.Resume, userId uint) error
 	UpdateResume(id uint, resume *models.Resume) error
 	DeleteResume(id uint) error
-	GetDB() *gorm.DB
+	GetAuthor(email string) (*models.UserAccount, error)
 }
