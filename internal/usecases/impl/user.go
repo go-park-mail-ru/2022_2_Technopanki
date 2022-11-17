@@ -9,7 +9,7 @@ import (
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/images"
 	"HeadHunter/internal/repository/session"
-	"HeadHunter/internal/usecases/sanitize"
+	"HeadHunter/internal/usecases/escaping"
 	"fmt"
 	"image"
 	_ "image/gif"
@@ -42,11 +42,7 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 		return "", inputValidity
 	}
 
-	var sanitizeErr error
-	input, sanitizeErr = sanitize.SanitizeObject[*models.UserAccount](input)
-	if sanitizeErr != nil {
-		return "", sanitizeErr
-	}
+	input = escaping.EscapingObject[*models.UserAccount](input)
 
 	user, getErr := us.userRep.GetUserByEmail(input.Email)
 	if getErr != nil {
@@ -73,11 +69,7 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 		return "", inputValidity
 	}
 
-	var sanitizeErr error
-	input, sanitizeErr = sanitize.SanitizeObject[*models.UserAccount](input)
-	if sanitizeErr != nil {
-		return "", sanitizeErr
-	}
+	input = escaping.EscapingObject[*models.UserAccount](input)
 
 	isExist, getErr := us.userRep.IsUserExist(input.Email)
 	if getErr != nil {
@@ -126,11 +118,7 @@ func (us *UserService) UpdateUser(input *models.UserAccount) error {
 		return inputValidity
 	}
 
-	var sanitizeErr error
-	input, sanitizeErr = sanitize.SanitizeObject[*models.UserAccount](input)
-	if sanitizeErr != nil {
-		return sanitizeErr
-	}
+	input = escaping.EscapingObject[*models.UserAccount](input)
 
 	oldUser, getErr := us.userRep.GetUserByEmail(input.Email)
 	if getErr != nil {
@@ -168,11 +156,7 @@ func (us *UserService) UpdateUserFields(input *models.UserAccount, field ...stri
 		return inputValidity
 	}
 
-	var sanitizeErr error
-	input, sanitizeErr = sanitize.SanitizeObject[*models.UserAccount](input)
-	if sanitizeErr != nil {
-		return sanitizeErr
-	}
+	input = escaping.EscapingObject[*models.UserAccount](input)
 
 	oldUser, getErr := us.userRep.GetUserByEmail(input.Email)
 	if getErr != nil {
@@ -205,12 +189,7 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 		return "", fileErr
 	}
 
-	var sanitizeErr error
-	user, sanitizeErr = sanitize.SanitizeObject[*models.UserAccount](user)
-	if sanitizeErr != nil {
-		fmt.Println("Error in sanitizing (UploadUserImage)")
-		return "", sanitizeErr
-	}
+	user = escaping.EscapingObject[*models.UserAccount](user)
 
 	if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
 		user.Image = fmt.Sprintf("%d.webp", user.ID)
@@ -233,11 +212,7 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 
 func (us *UserService) DeleteUserImage(user *models.UserAccount) error {
 
-	var sanitizeErr error
-	user, sanitizeErr = sanitize.SanitizeObject[*models.UserAccount](user)
-	if sanitizeErr != nil {
-		return sanitizeErr
-	}
+	user = escaping.EscapingObject[*models.UserAccount](user)
 
 	if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
 		return errorHandler.ErrBadRequest

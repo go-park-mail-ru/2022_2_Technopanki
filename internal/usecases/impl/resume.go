@@ -6,7 +6,7 @@ import (
 	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/repository"
-	"HeadHunter/internal/usecases/sanitize"
+	"HeadHunter/internal/usecases/escaping"
 )
 
 type ResumeService struct {
@@ -62,11 +62,7 @@ func (rs *ResumeService) CreateResume(resume *models.Resume, email string) error
 		return errorHandler.InvalidUserType
 	}
 
-	var sanitizeErr error
-	resume, sanitizeErr = sanitize.SanitizeObject[*models.Resume](resume)
-	if sanitizeErr != nil {
-		return sanitizeErr
-	}
+	resume = escaping.EscapingObject[*models.Resume](resume)
 
 	return rs.resumeRep.CreateResume(resume, user.ID)
 }
@@ -94,11 +90,7 @@ func (rs *ResumeService) UpdateResume(id uint, resume *models.Resume, email stri
 		return errorHandler.ErrUnauthorized
 	}
 
-	var sanitizeErr error
-	resume, sanitizeErr = sanitize.SanitizeObject[*models.Resume](resume)
-	if sanitizeErr != nil {
-		return sanitizeErr
-	}
+	resume = escaping.EscapingObject[*models.Resume](resume)
 
 	return rs.resumeRep.UpdateResume(id, resume)
 }
