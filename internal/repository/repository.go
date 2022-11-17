@@ -57,4 +57,5 @@ type ResumeRepository interface {
 	UpdateResume(id uint, resume *models.Resume) error
 	DeleteResume(id uint) error
 	GetAuthor(email string) (*models.UserAccount, error)
+	GetEmployerIdByVacancyActivity(id uint) (uint, error)
 }

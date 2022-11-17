@@ -81,3 +81,13 @@ func (rp *ResumePostgres) DeleteResume(id uint) error {
 func (rp *ResumePostgres) GetAuthor(email string) (*models.UserAccount, error) {
 	return GetUser(email, rp.db)
 }
+
+func (rp *ResumePostgres) GetEmployerIdByVacancyActivity(id uint) (uint, error) {
+	var result uint
+	query := rp.db.Model(&models.Resume{}).Select("vacancies.postedByUserId").
+		Joins("left join vacancy_activities on resumes.id = vacancy_activities.resume_id").
+		Joins("left join vacancies on vacancies.id = vacancy_activities.vacancy_id").
+		Where("resumes.id = ?", id).
+		Scan(&result)
+	return result, QueryValidation(query, "user")
+}

@@ -442,7 +442,7 @@ func (mr *MockResumeMockRecorder) GetPreviewResumeByApplicant(userId, email inte
 }
 
 // GetResume mocks base method.
-func (m *MockResume) GetResume(id uint) (*models.Resume, error) {
+func (m *MockResume) GetResume(id uint, email string) (*models.Resume, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetResume", id)
 	ret0, _ := ret[0].(*models.Resume)
