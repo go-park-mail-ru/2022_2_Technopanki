@@ -49,6 +49,7 @@ func (up *UserPostgres) GetUser(id uint) (*models.UserAccount, error) {
 
 func (up *UserPostgres) GetUserSafety(id uint, allowedFields []string) (*models.UserAccount, error) {
 	var result models.UserAccount
+
 	query := up.db.Select(append(models.SafeUserFields, allowedFields...)).Find(&result, id)
 	return &result, QueryValidation(query, "user")
 }

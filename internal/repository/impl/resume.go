@@ -28,17 +28,20 @@ func (rp *ResumePostgres) GetResume(id uint) (*models.Resume, error) {
 
 func (rp *ResumePostgres) GetResumeByApplicant(userId uint) ([]*models.Resume, error) {
 	var result []*models.Resume
-
+	var resultEdu []*models.EducationDetail
+	var resultExp []*models.ExperienceDetail
 	query := rp.db.Table("resumes").
 		Joins("left join experience_details on resumes.id = experience_details.resume_id").
 		Joins("left join education_details on resumes.id = education_details.resume_id").
-		Where("user_account_id = ?", userId).Scan(&result)
+		Where("user_account_id = ?", userId).
+		Scan(&result).Scan(&resultEdu).Scan(&resultExp)
 
-	for _, elem := range result {
-		query.Where("experience_details.resume_id = ?", elem.ID).
-			Scan(&elem.ExperienceDetail)
-		query.Where("education_details.resume_id = ?", elem.ID).
-			Scan(&elem.EducationDetail)
+	for i, elem := range result {
+		elem.ExperienceDetail = *resultExp[i]
+		resultExp[i].ResumeId = elem.ID
+
+		elem.EducationDetail = *resultEdu[i]
+		resultEdu[i].ResumeId = elem.ID
 	}
 	return result, QueryValidation(query, "resume")
 }

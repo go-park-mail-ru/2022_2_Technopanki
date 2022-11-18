@@ -3,6 +3,7 @@ package validation
 import (
 	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
+	"HeadHunter/internal/entity/utils"
 	"HeadHunter/internal/errorHandler"
 	"strings"
 )
@@ -45,6 +46,10 @@ func IsAuthDataValid(user *models.UserAccount, cfg configs.ValidationConfig) err
 }
 
 func IsMainDataValid(user *models.UserAccount, cfg configs.ValidationConfig) error {
+	if err := AllowedFieldsValidation(user); err != nil {
+		return err
+	}
+
 	if user.UserType == "applicant" {
 		if len([]rune(user.ApplicantName)) > cfg.MaxNameLength || len([]rune(user.ApplicantName)) < cfg.MinNameLength {
 			return errorHandler.IncorrectNameLength
@@ -68,4 +73,22 @@ func IsUserValid(user *models.UserAccount, cfg configs.ValidationConfig) error {
 		return mainDataErr
 	}
 	return IsAuthDataValid(user, cfg)
+}
+
+func AllowedFieldsValidation(user *models.UserAccount) error {
+	fields := strings.Split(user.PublicFields, " ")
+	if len(fields) > len(models.PrivateUserFields) {
+		return errorHandler.ErrBadRequest
+	}
+
+	if len(fields) == 1 && (fields[0] == "" || fields[0] == "null") {
+		return nil
+	}
+
+	for _, elem := range fields {
+		if !utils.HasStringArrayElement(elem, models.PrivateUserFields) {
+			return errorHandler.ErrBadRequest
+		}
+	}
+	return nil
 }

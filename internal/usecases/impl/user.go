@@ -16,6 +16,7 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"mime/multipart"
+	"strings"
 )
 
 type UserService struct {
@@ -151,7 +152,21 @@ func (us *UserService) GetUser(id uint) (*models.UserAccount, error) {
 }
 
 func (us *UserService) GetUserSafety(id uint) (*models.UserAccount, error) {
-	return us.userRep.GetUserSafety(id, models.PrivateUserFields) //TODO добавить поле в бд
+	user, getErr := us.userRep.GetUser(id)
+	if getErr != nil {
+		return nil, getErr
+	}
+
+	if validErr := validation.AllowedFieldsValidation(user); validErr != nil {
+		return nil, validErr
+	}
+	fmt.Println(user.PublicFields)
+	fields := strings.Split(user.PublicFields, " ")
+
+	if len(fields) == 1 && (fields[0] == "" || fields[0] == "null") {
+		fields = []string{}
+	}
+	return us.userRep.GetUserSafety(id, fields)
 }
 
 func (us *UserService) GetUserByEmail(email string) (*models.UserAccount, error) {
