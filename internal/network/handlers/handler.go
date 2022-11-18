@@ -17,12 +17,11 @@ type Handlers struct {
 }
 
 func NewHandlers(usecases *usecases.UseCases, _cfg *configs.Config, _sr session.Repository) *Handlers {
-	userHandler := impl.NewUserHandler(usecases, _cfg, _sr)
 	return &Handlers{
-		UserHandler:            userHandler,
+		UserHandler:            impl.NewUserHandler(usecases, _cfg, _sr),
 		ResumeHandler:          impl.NewResumeHandler(usecases, _cfg),
-		VacancyHandler:         NewVacancyHandler(usecases, userHandler),
-		VacancyActivityHandler: NewVacancyActivityHandler(usecases, userHandler),
+		VacancyHandler:         impl.NewVacancyHandler(usecases),
+		VacancyActivityHandler: impl.NewVacancyActivityHandler(usecases),
 	}
 }
 
@@ -54,6 +53,7 @@ type VacancyActivityH interface {
 	ApplyForVacancy(c *gin.Context)
 	GetAllVacancyApplies(c *gin.Context)
 	GetAllUserApplies(c *gin.Context)
+	DeleteUserApply(c *gin.Context)
 }
 
 type ResumeH interface {

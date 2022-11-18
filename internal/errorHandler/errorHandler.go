@@ -15,6 +15,7 @@ var (
 	ErrInvalidParam                = errors.New("Некорректный параметр")
 	ErrCannotCreateUser            = errors.New("Невозможно создать пользователя")
 	ErrCannotDeleteVacancy         = errors.New("Невозможно удалить вакансию")
+	ErrCannotDeleteVacancyApply    = errors.New("Невозможно удалить отклик на вакансию")
 	ErrCannotUpdateVacancy         = errors.New("Невозможно обновить вакансию")
 	ErrCannotApplyForVacancy       = errors.New("Невозможно откликнуться на вакансию")
 	ErrUpdateStructHasNoValues     = errors.New("Нет значений для обновления")
@@ -53,6 +54,7 @@ var errorToCode = map[error]int{
 	ErrInvalidParam:                http.StatusBadRequest,
 	ErrCannotCreateUser:            http.StatusServiceUnavailable,
 	ErrCannotDeleteVacancy:         http.StatusServiceUnavailable,
+	ErrCannotDeleteVacancyApply:    http.StatusServiceUnavailable,
 	ErrCannotUpdateVacancy:         http.StatusServiceUnavailable,
 	ErrCannotCreateSession:         http.StatusInternalServerError,
 	ErrSessionNotFound:             http.StatusUnauthorized,

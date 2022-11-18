@@ -1,9 +1,8 @@
-package handlers
+package impl
 
 import (
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
-	"HeadHunter/internal/network/handlers/impl"
 	"HeadHunter/internal/usecases"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -12,18 +11,10 @@ import (
 
 type VacancyHandler struct {
 	vacancyUseCase usecases.Vacancy
-	userHandler    UserH
 }
 
-func NewVacancyHandler(useCases *usecases.UseCases, userHandler *impl.UserHandler) *VacancyHandler {
-	return &VacancyHandler{vacancyUseCase: useCases.Vacancy, userHandler: userHandler}
-}
-
-type getAllVacanciesResponcePointer struct {
-	Data []*models.Vacancy `json:"data"`
-}
-type getAllVacanciesResponce struct {
-	Data []models.Vacancy `json:"data"`
+func NewVacancyHandler(useCases *usecases.UseCases) *VacancyHandler {
+	return &VacancyHandler{vacancyUseCase: useCases.Vacancy}
 }
 
 func (vh *VacancyHandler) GetAllVacancies(c *gin.Context) {
@@ -32,8 +23,8 @@ func (vh *VacancyHandler) GetAllVacancies(c *gin.Context) {
 		_ = c.Error(getAllErr)
 		return
 	}
-	c.JSON(http.StatusOK, getAllVacanciesResponcePointer{
-		vacancies,
+	c.JSON(http.StatusOK, models.GetAllVacanciesResponcePointer{
+		Data: vacancies,
 	})
 }
 
@@ -63,77 +54,75 @@ func (vh *VacancyHandler) GetUserVacancies(c *gin.Context) {
 		_ = c.Error(GetErr)
 		return
 	}
-	c.JSON(http.StatusOK, getAllVacanciesResponcePointer{
-		vacancies,
+	c.JSON(http.StatusOK, models.GetAllVacanciesResponcePointer{
+		Data: vacancies,
 	})
 
 }
 
 func (vh *VacancyHandler) CreateVacancy(c *gin.Context) {
-	userId, getUserIdErr := vh.userHandler.GetUserId(c)
-	if getUserIdErr != nil {
-		_ = c.Error(getUserIdErr)
+	email, contextErr := getEmailFromContext(c)
+	if contextErr != nil {
+		_ = c.Error(contextErr)
 		return
 	}
+
 	var input models.Vacancy
 	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
 
-	id, err := vh.vacancyUseCase.Create(userId, &input)
+	id, err := vh.vacancyUseCase.Create(email, &input)
 	if err != nil {
 		_ = c.Error(err)
 		return
 	}
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"id": id,
-	})
-}
-
-type statusResponse struct {
-	Status string `json:"status"`
+	c.JSON(http.StatusOK, gin.H{"id": id})
 }
 
 func (vh *VacancyHandler) DeleteVacancy(c *gin.Context) {
-	userId, getUserIdErr := vh.userHandler.GetUserId(c)
-	if getUserIdErr != nil {
-		_ = c.Error(getUserIdErr)
-		return
-	}
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		_ = c.Error(errorHandler.ErrInvalidParam)
 		return
 	}
-	deleteErr := vh.vacancyUseCase.Delete(userId, id)
+
+	email, contextErr := getEmailFromContext(c)
+	if contextErr != nil {
+		_ = c.Error(contextErr)
+		return
+	}
+
+	deleteErr := vh.vacancyUseCase.Delete(email, id)
 	if deleteErr != nil {
 		_ = c.Error(deleteErr)
 		return
 	}
-	c.JSON(http.StatusOK, statusResponse{
-		Status: "ok",
-	})
+	c.Status(http.StatusOK)
 }
 
 func (vh *VacancyHandler) UpdateVacancy(c *gin.Context) {
-	userId, getUserIdErr := vh.userHandler.GetUserId(c)
-	if getUserIdErr != nil {
-		_ = c.Error(getUserIdErr)
-		return
-	}
+
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		_ = c.Error(errorHandler.ErrInvalidParam)
 		return
 	}
+
+	email, contextErr := getEmailFromContext(c)
+	if contextErr != nil {
+		_ = c.Error(contextErr)
+		return
+	}
+
 	var input models.Vacancy
 	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
 
-	updateErr := vh.vacancyUseCase.Update(userId, id, &input)
+	updateErr := vh.vacancyUseCase.Update(email, id, &input)
 	if updateErr != nil {
 		_ = c.Error(updateErr)
 		return

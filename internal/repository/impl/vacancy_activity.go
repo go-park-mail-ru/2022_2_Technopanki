@@ -2,6 +2,7 @@ package impl
 
 import (
 	"HeadHunter/internal/entity/models"
+	"HeadHunter/internal/errorHandler"
 	"gorm.io/gorm"
 )
 
@@ -43,4 +44,16 @@ func (vap *VacancyActivityPostgres) GetAllUserApplies(userId int) ([]*models.Vac
 		return applies, query.Error
 	}
 	return applies, nil
+}
+
+func (vap *VacancyActivityPostgres) GetAuthor(email string) (*models.UserAccount, error) {
+	return GetUser(email, vap.db)
+}
+
+func (vap *VacancyActivityPostgres) DeleteUserApply(userId uint, applyId int) error {
+	error := vap.db.Where("user_account_id = ?", userId).Delete(&models.VacancyActivity{}, applyId).Error
+	if error != nil {
+		return errorHandler.ErrCannotDeleteVacancyApply
+	}
+	return nil
 }

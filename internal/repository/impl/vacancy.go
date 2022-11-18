@@ -58,13 +58,6 @@ func (vp *VacancyPostgres) Update(userId uint, vacancyId int, oldVacancy *models
 	return QueryValidation(query, "vacancy")
 }
 
-//func (vp *VacancyPostgres) Update(vacancyId int, updates *models.Vacancy) error {
-//old, getErr := vp.GetById(vacancyId)
-//fmt.Println(old)
-//if getErr != nil {
-//return getErr
-//}
-//updates.PostedByUserId = old.PostedByUserId
-//updates.ID = uint(vacancyId)
-//return vp.db.Updates(updates).Error
-//}
+func (vp *VacancyPostgres) GetAuthor(email string) (*models.UserAccount, error) {
+	return GetUser(email, vp.db)
+}
