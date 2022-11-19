@@ -34,7 +34,7 @@ func (vh *VacancyHandler) GetVacancyById(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrInvalidParam)
 		return
 	}
-	vacancy, err := vh.vacancyUseCase.GetById(id)
+	vacancy, err := vh.vacancyUseCase.GetById(uint(id))
 	if err != nil {
 		_ = c.Error(err)
 		return
@@ -49,7 +49,7 @@ func (vh *VacancyHandler) GetUserVacancies(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrInvalidParam)
 		return
 	}
-	vacancies, GetErr := vh.vacancyUseCase.GetByUserId(companyId)
+	vacancies, GetErr := vh.vacancyUseCase.GetByUserId(uint(companyId))
 	if GetErr != nil {
 		_ = c.Error(GetErr)
 		return
@@ -94,7 +94,7 @@ func (vh *VacancyHandler) DeleteVacancy(c *gin.Context) {
 		return
 	}
 
-	deleteErr := vh.vacancyUseCase.Delete(email, id)
+	deleteErr := vh.vacancyUseCase.Delete(email, uint(id))
 	if deleteErr != nil {
 		_ = c.Error(deleteErr)
 		return
@@ -122,7 +122,7 @@ func (vh *VacancyHandler) UpdateVacancy(c *gin.Context) {
 		return
 	}
 
-	updateErr := vh.vacancyUseCase.Update(email, id, &input)
+	updateErr := vh.vacancyUseCase.Update(email, uint(id), &input)
 	if updateErr != nil {
 		_ = c.Error(updateErr)
 		return

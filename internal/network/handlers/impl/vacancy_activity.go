@@ -24,7 +24,7 @@ func (vah *VacancyActivityHandler) GetAllVacancyApplies(c *gin.Context) {
 		return
 	}
 
-	applies, getAllErr := vah.vacancyActivityUseCase.GetAllVacancyApplies(id)
+	applies, getAllErr := vah.vacancyActivityUseCase.GetAllVacancyApplies(uint(id))
 	if getAllErr != nil {
 		_ = c.Error(getAllErr)
 		return
@@ -52,7 +52,7 @@ func (vah *VacancyActivityHandler) ApplyForVacancy(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
-	applyErr := vah.vacancyActivityUseCase.ApplyForVacancy(email, id, &input)
+	applyErr := vah.vacancyActivityUseCase.ApplyForVacancy(email, uint(id), &input)
 	if applyErr != nil {
 		_ = c.Error(applyErr)
 		return
@@ -68,7 +68,7 @@ func (vah *VacancyActivityHandler) GetAllUserApplies(c *gin.Context) {
 		return
 	}
 
-	applies, getErr := vah.vacancyActivityUseCase.GetAllUserApplies(userId)
+	applies, getErr := vah.vacancyActivityUseCase.GetAllUserApplies(uint(userId))
 	if getErr != nil {
 		_ = c.Error(getErr)
 		return
@@ -91,7 +91,7 @@ func (vah *VacancyActivityHandler) DeleteUserApply(c *gin.Context) {
 		return
 	}
 
-	deleteErr := vah.vacancyActivityUseCase.DeleteUserApply(email, id)
+	deleteErr := vah.vacancyActivityUseCase.DeleteUserApply(email, uint(id))
 	if deleteErr != nil {
 		_ = c.Error(deleteErr)
 		return

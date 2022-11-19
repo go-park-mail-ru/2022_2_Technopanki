@@ -14,11 +14,11 @@ func NewVacancyActivityService(vacancyActivityRepos repository.VacancyActivityRe
 	return &VacancyActivityService{vacancyActivityRep: vacancyActivityRepos}
 }
 
-func (vas *VacancyActivityService) GetAllVacancyApplies(vacancyId int) ([]*models.VacancyActivity, error) {
+func (vas *VacancyActivityService) GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivity, error) {
 	return vas.vacancyActivityRep.GetAllVacancyApplies(vacancyId)
 }
 
-func (vas *VacancyActivityService) ApplyForVacancy(email string, vacancyId int, input *models.VacancyActivity) error {
+func (vas *VacancyActivityService) ApplyForVacancy(email string, vacancyId uint, input *models.VacancyActivity) error {
 	user, getErr := vas.vacancyActivityRep.GetAuthor(email)
 	if getErr != nil {
 		return getErr
@@ -32,11 +32,11 @@ func (vas *VacancyActivityService) ApplyForVacancy(email string, vacancyId int, 
 	return vas.vacancyActivityRep.ApplyForVacancy(input)
 }
 
-func (vas *VacancyActivityService) GetAllUserApplies(userId int) ([]*models.VacancyActivity, error) {
+func (vas *VacancyActivityService) GetAllUserApplies(userId uint) ([]*models.VacancyActivity, error) {
 	return vas.vacancyActivityRep.GetAllUserApplies(userId)
 }
 
-func (vas *VacancyActivityService) DeleteUserApply(email string, id int) error {
+func (vas *VacancyActivityService) DeleteUserApply(email string, id uint) error {
 	user, getErr := vas.vacancyActivityRep.GetAuthor(email)
 	if getErr != nil {
 		return getErr
