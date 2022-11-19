@@ -43,6 +43,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 				image.DELETE("/", sessionMW.Session, h.UserHandler.DeleteUserImage, middleware.ErrorHandler())
 			}
 		}
+		
 		vacancies := api.Group("/vacancy")
 		{
 			vacancies.GET("/", h.VacancyHandler.GetAllVacancies, middleware.ErrorHandler())
@@ -56,7 +57,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 			vacancies.GET("/user_applies/:id", h.VacancyActivityHandler.GetAllUserApplies, middleware.ErrorHandler())
 
 		}
-		//
+
 		resumes := api.Group("/resume")
 		{
 			resumes.GET("/:id", sessionMW.Session, h.ResumeHandler.GetResume, middleware.ErrorHandler())

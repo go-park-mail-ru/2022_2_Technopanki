@@ -36,20 +36,20 @@ type UserRepository interface {
 
 type VacancyRepository interface {
 	GetAll() ([]*models.Vacancy, error)
-	GetById(int) (*models.Vacancy, error)
-	GetByUserId(int) ([]*models.Vacancy, error)
+	GetById(vacancyId uint) (*models.Vacancy, error)
+	GetByUserId(userId uint) ([]*models.Vacancy, error)
 	Create(vacancy *models.Vacancy) (uint, error)
-	Update(userId uint, vacancyId int, oldVacancy *models.Vacancy, updates *models.Vacancy) error
-	Delete(uint, int) error
-	GetAuthor(string) (*models.UserAccount, error)
+	Update(userId uint, vacancyId uint, oldVacancy *models.Vacancy, updates *models.Vacancy) error
+	Delete(userId, vacancyId uint) error
+	GetAuthor(email string) (*models.UserAccount, error)
 }
 
 type VacancyActivityRepository interface {
 	ApplyForVacancy(*models.VacancyActivity) error
-	GetAllVacancyApplies(int) ([]*models.VacancyActivity, error)
-	GetAllUserApplies(int) ([]*models.VacancyActivity, error)
-	GetAuthor(string) (*models.UserAccount, error)
-	DeleteUserApply(uint, int) error
+	GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivity, error)
+	GetAllUserApplies(userId uint) ([]*models.VacancyActivity, error)
+	GetAuthor(email string) (*models.UserAccount, error)
+	DeleteUserApply(userId, applyId uint) error
 }
 
 type ResumeRepository interface {
@@ -60,4 +60,5 @@ type ResumeRepository interface {
 	UpdateResume(id uint, resume *models.Resume) error
 	DeleteResume(id uint) error
 	GetAuthor(email string) (*models.UserAccount, error)
+	GetEmployerIdByVacancyActivity(id uint) (uint, error)
 }

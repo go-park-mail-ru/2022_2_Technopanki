@@ -16,6 +16,7 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"mime/multipart"
+	"strings"
 )
 
 type UserService struct {
@@ -86,7 +87,7 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 	input.Password = encryptedPassword
 
 	input.Image = fmt.Sprintf("basic_%s_avatar.webp", input.UserType)
-
+	input.PublicFields = "email contact_number applicant_current_salary" //TODO после РК3 убрать для добавления фичи с доступом
 	createErr := us.userRep.CreateUser(input)
 	if createErr != nil {
 		return "", fmt.Errorf("creating session user: %w", createErr)
@@ -138,32 +139,7 @@ func (us *UserService) UpdateUser(input *models.UserAccount) error {
 		input.Password = encryptedPassword
 	}
 	input.ID = oldUser.ID
-	input.Image = oldUser.Image
 	dbError := us.userRep.UpdateUser(oldUser, input)
-	if dbError != nil {
-		return dbError
-	}
-
-	return nil
-}
-
-func (us *UserService) UpdateUserFields(input *models.UserAccount, field ...string) error {
-	if utils.HasStringArrayElement("password", field) {
-		return errorHandler.ErrForbidden
-	}
-	inputValidity := validation.IsMainDataValid(input, us.cfg.Validation)
-	if inputValidity != nil {
-		return inputValidity
-	}
-
-	input = escaping.EscapingObject[*models.UserAccount](input)
-
-	oldUser, getErr := us.userRep.GetUserByEmail(input.Email)
-	if getErr != nil {
-		return getErr
-	}
-
-	dbError := us.userRep.UpdateUserField(oldUser, input, field...)
 	if dbError != nil {
 		return dbError
 	}
@@ -176,7 +152,21 @@ func (us *UserService) GetUser(id uint) (*models.UserAccount, error) {
 }
 
 func (us *UserService) GetUserSafety(id uint) (*models.UserAccount, error) {
-	return us.userRep.GetUserSafety(id, models.PrivateUserFields) //TODO добавить поле в бд
+	user, getErr := us.userRep.GetUser(id)
+	if getErr != nil {
+		return nil, getErr
+	}
+
+	if validErr := validation.AllowedFieldsValidation(user); validErr != nil {
+		return nil, validErr
+	}
+	fmt.Println(user.PublicFields)
+	fields := strings.Split(user.PublicFields, " ")
+
+	if len(fields) == 1 && (fields[0] == "" || fields[0] == "null") {
+		fields = []string{}
+	}
+	return us.userRep.GetUserSafety(id, fields)
 }
 
 func (us *UserService) GetUserByEmail(email string) (*models.UserAccount, error) {
@@ -194,7 +184,7 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 	if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
 		user.Image = fmt.Sprintf("%d.webp", user.ID)
 
-		updateErr := us.UpdateUserFields(user, "image")
+		updateErr := us.UpdateUser(user)
 		if updateErr != nil {
 			return "", updateErr
 		}
@@ -222,5 +212,5 @@ func (us *UserService) DeleteUserImage(user *models.UserAccount) error {
 		return errorHandler.ErrCannotDeleteAvatar
 	}
 	user.Image = fmt.Sprintf("basic_%s_avatar.webp", user.UserType)
-	return us.UpdateUserFields(user, "image")
+	return us.UpdateUser(user)
 }

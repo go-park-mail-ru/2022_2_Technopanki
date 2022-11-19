@@ -43,22 +43,22 @@ type User interface {
 
 type Vacancy interface {
 	GetAll() ([]*models.Vacancy, error)
-	GetById(int) (*models.Vacancy, error)
-	GetByUserId(int) ([]*models.Vacancy, error)
-	Create(string, *models.Vacancy) (uint, error)
-	Update(string, int, *models.Vacancy) error
-	Delete(string, int) error
+	GetById(vacancyId uint) (*models.Vacancy, error)
+	GetByUserId(userId uint) ([]*models.Vacancy, error)
+	Create(email string, input *models.Vacancy) (uint, error)
+	Update(email string, vacancyId uint, updates *models.Vacancy) error
+	Delete(email string, vacancyId uint) error
 }
 
 type VacancyActivity interface {
-	ApplyForVacancy(string, int, *models.VacancyActivity) error
-	GetAllVacancyApplies(int) ([]*models.VacancyActivity, error)
-	GetAllUserApplies(int) ([]*models.VacancyActivity, error)
-	DeleteUserApply(string, int) error
+	ApplyForVacancy(email string, vacancyId uint, input *models.VacancyActivity) error
+	GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivity, error)
+	GetAllUserApplies(userid uint) ([]*models.VacancyActivity, error)
+	DeleteUserApply(email string, apply uint) error
 }
 
 type Resume interface {
-	GetResume(id uint) (*models.Resume, error)
+	GetResume(id uint, email string) (*models.Resume, error)
 	GetResumeByApplicant(userId uint, email string) ([]*models.Resume, error)
 	GetPreviewResumeByApplicant(userId uint, email string) ([]*models.ResumePreview, error)
 	CreateResume(resume *models.Resume, email string) error

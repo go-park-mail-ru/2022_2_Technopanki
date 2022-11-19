@@ -16,25 +16,33 @@ func NewResumePostgres(db *gorm.DB) *ResumePostgres {
 
 func (rp *ResumePostgres) GetResume(id uint) (*models.Resume, error) {
 	var result models.Resume
-	query := rp.db.First(&result, id)
 
-	rp.db.Where("resume_id = ?", result.ID).First(&result.ExperienceDetail)
-
-	rp.db.Where("resume_id = ?", result.ID).First(&result.EducationDetail)
+	query := rp.db.Table("resumes").
+		Joins("left join experience_details on resumes.id = experience_details.resume_id").
+		Joins("left join education_details on resumes.id = education_details.resume_id").
+		Where("resumes.id = ?", id).Scan(&result).
+		Scan(&result.ExperienceDetail).Scan(&result.EducationDetail)
 
 	return &result, QueryValidation(query, "resume")
 }
 
 func (rp *ResumePostgres) GetResumeByApplicant(userId uint) ([]*models.Resume, error) {
 	var result []*models.Resume
-	query := rp.db.Where("user_account_id = ?", userId).Find(&result)
+	var resultEdu []*models.EducationDetail
+	var resultExp []*models.ExperienceDetail
+	query := rp.db.Table("resumes").
+		Joins("left join experience_details on resumes.id = experience_details.resume_id").
+		Joins("left join education_details on resumes.id = education_details.resume_id").
+		Where("user_account_id = ?", userId).
+		Scan(&result).Scan(&resultEdu).Scan(&resultExp)
 
-	for _, elem := range result {
-		rp.db.Where("resume_id = ?", elem.ID).Find(&elem.ExperienceDetail)
+	for i, elem := range result {
+		elem.ExperienceDetail = *resultExp[i]
+		resultExp[i].ResumeId = elem.ID
 
-		rp.db.Where("resume_id = ?", elem.ID).Find(&elem.EducationDetail)
+		elem.EducationDetail = *resultEdu[i]
+		resultEdu[i].ResumeId = elem.ID
 	}
-
 	return result, QueryValidation(query, "resume")
 }
 
@@ -80,4 +88,14 @@ func (rp *ResumePostgres) DeleteResume(id uint) error {
 
 func (rp *ResumePostgres) GetAuthor(email string) (*models.UserAccount, error) {
 	return GetUser(email, rp.db)
+}
+
+func (rp *ResumePostgres) GetEmployerIdByVacancyActivity(id uint) (uint, error) {
+	var result uint
+	query := rp.db.Model(&models.Resume{}).Select("vacancies.posted_by_user_id").
+		Joins("left join vacancy_activities on resumes.id = vacancy_activities.resume_id").
+		Joins("left join vacancies on vacancies.id = vacancy_activities.vacancy_id").
+		Where("resumes.id = ?", id).
+		Scan(&result)
+	return result, QueryValidation(query, "user")
 }

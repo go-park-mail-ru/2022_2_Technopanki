@@ -26,7 +26,13 @@ func (rh *ResumeHandler) GetResume(c *gin.Context) {
 		return
 	}
 
-	resume, getResumeErr := rh.resumeUseCase.GetResume(uint(id))
+	email, contextErr := getEmailFromContext(c)
+	if contextErr != nil {
+		_ = c.Error(contextErr)
+		return
+	}
+
+	resume, getResumeErr := rh.resumeUseCase.GetResume(uint(id), email)
 	if getResumeErr != nil {
 		_ = c.Error(getResumeErr)
 		return

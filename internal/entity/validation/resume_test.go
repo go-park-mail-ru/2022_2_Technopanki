@@ -53,21 +53,7 @@ func Test_ResumeValidaion(t *testing.T) {
 				MaxResumeTitleLength:       30,
 			},
 			expected: errorHandler.InvalidResumeDescriptionLength,
-		},
-		{
-			name: "try to change user",
-			inputResume: &models.Resume{
-				Title:       "Some job",
-				Description: "Information about my skills in this job",
-			},
-			cfg: configs.ValidationConfig{
-				MinResumeDescriptionLength: 10,
-				MinResumeTitleLength:       3,
-				MaxResumeTitleLength:       30,
-			},
-			expected: errorHandler.ErrBadRequest,
-		},
-	}
+		}}
 	for _, test := range testTable {
 		testCase := test
 		t.Run(testCase.name, func(t *testing.T) {

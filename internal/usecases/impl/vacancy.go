@@ -35,15 +35,15 @@ func (vs *VacancyService) Create(email string, input *models.Vacancy) (uint, err
 	return vs.vacancyRep.Create(input)
 }
 
-func (vs *VacancyService) GetById(vacancyID int) (*models.Vacancy, error) {
+func (vs *VacancyService) GetById(vacancyID uint) (*models.Vacancy, error) {
 	return vs.vacancyRep.GetById(vacancyID)
 }
 
-func (vs *VacancyService) GetByUserId(userId int) ([]*models.Vacancy, error) {
+func (vs *VacancyService) GetByUserId(userId uint) ([]*models.Vacancy, error) {
 	return vs.vacancyRep.GetByUserId(userId)
 }
 
-func (vs *VacancyService) Delete(email string, vacancyId int) error {
+func (vs *VacancyService) Delete(email string, vacancyId uint) error {
 	user, getErr := vs.vacancyRep.GetAuthor(email)
 	if getErr != nil {
 		return getErr
@@ -52,7 +52,7 @@ func (vs *VacancyService) Delete(email string, vacancyId int) error {
 	return vs.vacancyRep.Delete(userId, vacancyId)
 }
 
-func (vs *VacancyService) Update(email string, vacancyId int, updates *models.Vacancy) error {
+func (vs *VacancyService) Update(email string, vacancyId uint, updates *models.Vacancy) error {
 
 	user, getErr := vs.vacancyRep.GetAuthor(email)
 	if getErr != nil {

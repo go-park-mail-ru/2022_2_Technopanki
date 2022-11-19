@@ -10,5 +10,5 @@ type ExperienceDetail struct {
 	JobTitle        string    `json:"job_title" gorm:"not null;"`
 	CompanyName     string    `json:"company_name" gorm:"not null;"`
 	JobLocationCity string    `json:"job_location_city" gorm:"not null;"`
-	Description     string    `json:"description" gorm:"not null;"`
+	ExpDDescription string    `json:"description" gorm:"not null;"`
 }

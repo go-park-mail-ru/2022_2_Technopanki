@@ -14,7 +14,7 @@ func NewVacancyActivityPostgres(db *gorm.DB) *VacancyActivityPostgres {
 	return &VacancyActivityPostgres{db: db}
 }
 
-func (vap *VacancyActivityPostgres) GetAllVacancyApplies(vacancyId int) ([]*models.VacancyActivity, error) {
+func (vap *VacancyActivityPostgres) GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivity, error) {
 	var applies []*models.VacancyActivity
 	//var responce []*models.VacancyActivityResponce
 	//query := vap.db.Model(&models.Resume{}).Select("resumes.title, resumes.description").Joins("left join vacancy_activities on vacancy_activities.resume_id = resumes.id").Where("vacancy_id = ?", vacancyId).Scan(&responce)
@@ -37,7 +37,7 @@ func (vap *VacancyActivityPostgres) ApplyForVacancy(apply *models.VacancyActivit
 	return QueryValidation(query, "vacancy_activity")
 }
 
-func (vap *VacancyActivityPostgres) GetAllUserApplies(userId int) ([]*models.VacancyActivity, error) {
+func (vap *VacancyActivityPostgres) GetAllUserApplies(userId uint) ([]*models.VacancyActivity, error) {
 	var applies []*models.VacancyActivity
 	query := vap.db.Where("user_account_id = ?", userId).Find(&applies)
 	if query.Error != nil {
@@ -50,7 +50,7 @@ func (vap *VacancyActivityPostgres) GetAuthor(email string) (*models.UserAccount
 	return GetUser(email, vap.db)
 }
 
-func (vap *VacancyActivityPostgres) DeleteUserApply(userId uint, applyId int) error {
+func (vap *VacancyActivityPostgres) DeleteUserApply(userId uint, applyId uint) error {
 	error := vap.db.Where("user_account_id = ?", userId).Delete(&models.VacancyActivity{}, applyId).Error
 	if error != nil {
 		return errorHandler.ErrCannotDeleteVacancyApply

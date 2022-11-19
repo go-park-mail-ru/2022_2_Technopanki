@@ -295,17 +295,17 @@ func (mr *MockVacancyMockRecorder) GetByUserId(arg0 interface{}) *gomock.Call {
 }
 
 // Update mocks base method.
-func (m *MockVacancy) Update(arg0 int, arg1 *models.Vacancy) error {
+func (m *MockVacancy) Update(arg0 uint, arg1 int, arg2 *models.Vacancy) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Update", arg0, arg1)
+	ret := m.ctrl.Call(m, "Update", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Update indicates an expected call of Update.
-func (mr *MockVacancyMockRecorder) Update(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockVacancyMockRecorder) Update(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockVacancy)(nil).Update), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockVacancy)(nil).Update), arg0, arg1, arg2)
 }
 
 // MockVacancyActivity is a mock of VacancyActivity interface.
@@ -332,24 +332,24 @@ func (m *MockVacancyActivity) EXPECT() *MockVacancyActivityMockRecorder {
 }
 
 // ApplyForVacancy mocks base method.
-func (m *MockVacancyActivity) ApplyForVacancy(arg0 uint, arg1 *models.VacancyActivity) error {
+func (m *MockVacancyActivity) ApplyForVacancy(arg0 uint, arg1 int, arg2 *models.VacancyActivity) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ApplyForVacancy", arg0, arg1)
+	ret := m.ctrl.Call(m, "ApplyForVacancy", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // ApplyForVacancy indicates an expected call of ApplyForVacancy.
-func (mr *MockVacancyActivityMockRecorder) ApplyForVacancy(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockVacancyActivityMockRecorder) ApplyForVacancy(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ApplyForVacancy", reflect.TypeOf((*MockVacancyActivity)(nil).ApplyForVacancy), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ApplyForVacancy", reflect.TypeOf((*MockVacancyActivity)(nil).ApplyForVacancy), arg0, arg1, arg2)
 }
 
 // GetAllUserApplies mocks base method.
-func (m *MockVacancyActivity) GetAllUserApplies(arg0 int) ([]models.VacancyActivity, error) {
+func (m *MockVacancyActivity) GetAllUserApplies(arg0 int) ([]*models.VacancyActivity, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllUserApplies", arg0)
-	ret0, _ := ret[0].([]models.VacancyActivity)
+	ret0, _ := ret[0].([]*models.VacancyActivity)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -399,50 +399,50 @@ func (m *MockResume) EXPECT() *MockResumeMockRecorder {
 }
 
 // CreateResume mocks base method.
-func (m *MockResume) CreateResume(resume *models.Resume, userId uint) error {
+func (m *MockResume) CreateResume(resume *models.Resume, email string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateResume", resume, userId)
+	ret := m.ctrl.Call(m, "CreateResume", resume, email)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // CreateResume indicates an expected call of CreateResume.
-func (mr *MockResumeMockRecorder) CreateResume(resume, userId interface{}) *gomock.Call {
+func (mr *MockResumeMockRecorder) CreateResume(resume, email interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateResume", reflect.TypeOf((*MockResume)(nil).CreateResume), resume, userId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateResume", reflect.TypeOf((*MockResume)(nil).CreateResume), resume, email)
 }
 
 // DeleteResume mocks base method.
-func (m *MockResume) DeleteResume(id uint) error {
+func (m *MockResume) DeleteResume(id uint, email string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteResume", id)
+	ret := m.ctrl.Call(m, "DeleteResume", id, email)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // DeleteResume indicates an expected call of DeleteResume.
-func (mr *MockResumeMockRecorder) DeleteResume(id interface{}) *gomock.Call {
+func (mr *MockResumeMockRecorder) DeleteResume(id, email interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteResume", reflect.TypeOf((*MockResume)(nil).DeleteResume), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteResume", reflect.TypeOf((*MockResume)(nil).DeleteResume), id, email)
 }
 
 // GetPreviewResumeByApplicant mocks base method.
-func (m *MockResume) GetPreviewResumeByApplicant(userId uint) ([]*models.Resume, error) {
+func (m *MockResume) GetPreviewResumeByApplicant(userId uint, email string) ([]*models.ResumePreview, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetPreviewResumeByApplicant", userId)
-	ret0, _ := ret[0].([]*models.Resume)
+	ret := m.ctrl.Call(m, "GetPreviewResumeByApplicant", userId, email)
+	ret0, _ := ret[0].([]*models.ResumePreview)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetPreviewResumeByApplicant indicates an expected call of GetPreviewResumeByApplicant.
-func (mr *MockResumeMockRecorder) GetPreviewResumeByApplicant(userId interface{}) *gomock.Call {
+func (mr *MockResumeMockRecorder) GetPreviewResumeByApplicant(userId, email interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPreviewResumeByApplicant", reflect.TypeOf((*MockResume)(nil).GetPreviewResumeByApplicant), userId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPreviewResumeByApplicant", reflect.TypeOf((*MockResume)(nil).GetPreviewResumeByApplicant), userId, email)
 }
 
 // GetResume mocks base method.
-func (m *MockResume) GetResume(id uint) (*models.Resume, error) {
+func (m *MockResume) GetResume(id uint, email string) (*models.Resume, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetResume", id)
 	ret0, _ := ret[0].(*models.Resume)
@@ -457,30 +457,30 @@ func (mr *MockResumeMockRecorder) GetResume(id interface{}) *gomock.Call {
 }
 
 // GetResumeByApplicant mocks base method.
-func (m *MockResume) GetResumeByApplicant(userId uint) ([]*models.Resume, error) {
+func (m *MockResume) GetResumeByApplicant(userId uint, email string) ([]*models.Resume, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetResumeByApplicant", userId)
+	ret := m.ctrl.Call(m, "GetResumeByApplicant", userId, email)
 	ret0, _ := ret[0].([]*models.Resume)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetResumeByApplicant indicates an expected call of GetResumeByApplicant.
-func (mr *MockResumeMockRecorder) GetResumeByApplicant(userId interface{}) *gomock.Call {
+func (mr *MockResumeMockRecorder) GetResumeByApplicant(userId, email interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetResumeByApplicant", reflect.TypeOf((*MockResume)(nil).GetResumeByApplicant), userId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetResumeByApplicant", reflect.TypeOf((*MockResume)(nil).GetResumeByApplicant), userId, email)
 }
 
 // UpdateResume mocks base method.
-func (m *MockResume) UpdateResume(id uint, resume *models.Resume) error {
+func (m *MockResume) UpdateResume(id uint, resume *models.Resume, email string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateResume", id, resume)
+	ret := m.ctrl.Call(m, "UpdateResume", id, resume, email)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // UpdateResume indicates an expected call of UpdateResume.
-func (mr *MockResumeMockRecorder) UpdateResume(id, resume interface{}) *gomock.Call {
+func (mr *MockResumeMockRecorder) UpdateResume(id, resume, email interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateResume", reflect.TypeOf((*MockResume)(nil).UpdateResume), id, resume)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateResume", reflect.TypeOf((*MockResume)(nil).UpdateResume), id, resume, email)
 }
