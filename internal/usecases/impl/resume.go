@@ -12,15 +12,15 @@ import (
 type ResumeService struct {
 	resumeRep repository.ResumeRepository
 	cfg       *configs.Config
-	authorRep repository.AuthorRepository
+	userRep   repository.UserRepository
 }
 
-func NewResumeService(_resumeRep repository.ResumeRepository, _cfg *configs.Config, _authorRep repository.AuthorRepository) *ResumeService {
-	return &ResumeService{resumeRep: _resumeRep, cfg: _cfg, authorRep: _authorRep}
+func NewResumeService(_resumeRep repository.ResumeRepository, _cfg *configs.Config, _userRep repository.UserRepository) *ResumeService {
+	return &ResumeService{resumeRep: _resumeRep, cfg: _cfg, userRep: _userRep}
 }
 
 func (rs *ResumeService) GetResume(id uint, email string) (*models.Resume, error) {
-	userFromContext, contextErr := rs.authorRep.GetAuthor(email)
+	userFromContext, contextErr := rs.userRep.GetUserByEmail(email)
 	if contextErr != nil {
 		return nil, contextErr
 	}
@@ -41,7 +41,7 @@ func (rs *ResumeService) GetResume(id uint, email string) (*models.Resume, error
 }
 
 func (rs *ResumeService) GetResumeByApplicant(userId uint, email string) ([]*models.Resume, error) {
-	userFromContext, contextErr := rs.authorRep.GetAuthor(email)
+	userFromContext, contextErr := rs.userRep.GetUserByEmail(email)
 	if contextErr != nil {
 		return []*models.Resume{}, contextErr
 	}
@@ -53,7 +53,7 @@ func (rs *ResumeService) GetResumeByApplicant(userId uint, email string) ([]*mod
 }
 
 func (rs *ResumeService) GetPreviewResumeByApplicant(userId uint, email string) ([]*models.ResumePreview, error) {
-	userFromContext, contextErr := rs.authorRep.GetAuthor(email)
+	userFromContext, contextErr := rs.userRep.GetUserByEmail(email)
 	if contextErr != nil {
 		return []*models.ResumePreview{}, contextErr
 	}
@@ -71,7 +71,7 @@ func (rs *ResumeService) CreateResume(resume *models.Resume, email string) error
 		return isResumeValid
 	}
 
-	user, getErr := rs.authorRep.GetAuthor(email)
+	user, getErr := rs.userRep.GetUserByEmail(email)
 	if getErr != nil {
 		return getErr
 	}
@@ -92,7 +92,7 @@ func (rs *ResumeService) UpdateResume(id uint, resume *models.Resume, email stri
 		return isResumeValid
 	}
 
-	userFromContext, contextErr := rs.authorRep.GetAuthor(email)
+	userFromContext, contextErr := rs.userRep.GetUserByEmail(email)
 	if contextErr != nil {
 		return contextErr
 	}
@@ -114,7 +114,7 @@ func (rs *ResumeService) UpdateResume(id uint, resume *models.Resume, email stri
 }
 
 func (rs *ResumeService) DeleteResume(id uint, email string) error {
-	userFromContext, contextErr := rs.authorRep.GetAuthor(email)
+	userFromContext, contextErr := rs.userRep.GetUserByEmail(email)
 	if contextErr != nil {
 		return contextErr
 	}
