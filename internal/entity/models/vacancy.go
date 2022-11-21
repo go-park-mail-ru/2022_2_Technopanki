@@ -21,3 +21,7 @@ type Vacancy struct {
 	VacancyActivities []VacancyActivity `json:"vacancyActivities" gorm:"foreignKey:VacancyId;constraint:OnDelete:CASCADE;"`
 	Skills            []Skill           `json:"skills" gorm:"many2many:vacancy_skills;"`
 }
+
+type GetAllVacanciesResponcePointer struct {
+	Data []*Vacancy `json:"data"`
+}

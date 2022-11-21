@@ -45,15 +45,16 @@ type Vacancy interface {
 	GetAll() ([]*models.Vacancy, error)
 	GetById(vacancyId uint) (*models.Vacancy, error)
 	GetByUserId(userId uint) ([]*models.Vacancy, error)
-	Create(userId uint, input *models.Vacancy) (uint, error)
-	Update(userId uint, vacancyId uint, updates *models.Vacancy) error
-	Delete(userId uint, vacancyId uint) error
+	Create(email string, input *models.Vacancy) (uint, error)
+	Update(email string, vacancyId uint, updates *models.Vacancy) error
+	Delete(email string, vacancyId uint) error
 }
 
 type VacancyActivity interface {
-	ApplyForVacancy(userId uint, vacancyId uint, input *models.VacancyActivity) error
+	ApplyForVacancy(email string, vacancyId uint, input *models.VacancyActivity) error
 	GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivity, error)
-	GetAllUserApplies(userId uint) ([]*models.VacancyActivity, error)
+	GetAllUserApplies(userid uint) ([]*models.VacancyActivity, error)
+	DeleteUserApply(email string, apply uint) error
 }
 
 type Resume interface {

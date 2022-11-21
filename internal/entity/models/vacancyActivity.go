@@ -13,7 +13,6 @@ type VacancyActivity struct {
 	ApplyDate     time.Time `json:"created_date" gorm:"autoCreateTime"`
 }
 
-type VacancyActivityResponce struct {
-	ResumeTitle       string `json:"resume_title"`
-	ResumeDescription string `json:"resume_description"`
+type GetAllAppliesResponce struct {
+	Data []*VacancyActivity `json:"data"`
 }

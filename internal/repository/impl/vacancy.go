@@ -43,7 +43,7 @@ func (vp *VacancyPostgres) GetByUserId(userId uint) ([]*models.Vacancy, error) {
 	return vacancies, QueryValidation(query, "vacancy")
 }
 
-func (vp *VacancyPostgres) Delete(userId, vacancyId uint) error {
+func (vp *VacancyPostgres) Delete(userId uint, vacancyId uint) error {
 
 	error := vp.db.Where("posted_by_user_id = ?", userId).Delete(&models.Vacancy{}, vacancyId).Error
 	if error != nil {
@@ -52,19 +52,12 @@ func (vp *VacancyPostgres) Delete(userId, vacancyId uint) error {
 	return nil
 }
 
-func (vp *VacancyPostgres) Update(userId, vacancyId uint, oldVacancy *models.Vacancy, updates *models.Vacancy) error {
+func (vp *VacancyPostgres) Update(userId uint, vacancyId uint, oldVacancy *models.Vacancy, updates *models.Vacancy) error {
 
 	query := vp.db.Model(oldVacancy).Where("id = ? AND posted_by_user_id = ?", vacancyId, userId).Updates(updates)
 	return QueryValidation(query, "vacancy")
 }
 
-//func (vp *VacancyPostgres) Update(vacancyId int, updates *models.Vacancy) error {
-//old, getErr := vp.GetById(vacancyId)
-//fmt.Println(old)
-//if getErr != nil {
-//return getErr
-//}
-//updates.PostedByUserId = old.PostedByUserId
-//updates.ID = uint(vacancyId)
-//return vp.db.Updates(updates).Error
-//}
+func (vp *VacancyPostgres) GetAuthor(email string) (*models.UserAccount, error) {
+	return GetUser(email, vp.db)
+}
