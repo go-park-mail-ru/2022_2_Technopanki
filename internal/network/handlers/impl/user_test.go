@@ -169,7 +169,7 @@ func TestUserHandler_SignIn(t *testing.T) {
 				r.EXPECT().SignIn(user).Return(gomock.Any().String(), errorHandler.InvalidUserType)
 			},
 			expectedStatusCode:   400,
-			expectedResponseBody: "{\"descriptors\":[],\"error\":\"\"Некорректный входной тип пользователя\"}",
+			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"\"Некорректный входной тип пользователя\"}",
 		},
 		{
 			name: "user not exist",
@@ -185,7 +185,7 @@ func TestUserHandler_SignIn(t *testing.T) {
 				r.EXPECT().SignIn(user).Return("", errorHandler.ErrUserNotExists)
 			},
 			expectedStatusCode:   401,
-			expectedResponseBody: "{\"descriptors\":[\"email\"],\"error\":\"Пользователя с таким email не существует\"}",
+			expectedResponseBody: "{\"descriptors\":\"email\",\"error\":\"Пользователя с таким email не существует\"}",
 		},
 	}
 	for _, test := range testTable {
@@ -240,7 +240,7 @@ func TestUserHandler_Logout(t *testing.T) {
 				r.EXPECT().Logout(token).Return(errorHandler.ErrBadRequest)
 			},
 			expectedStatusCode:   400,
-			expectedResponseBody: "{\"descriptors\":[],\"error\":\"Некорректный запрос\"}",
+			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Некорректный запрос\"}",
 		},
 		{
 			name:       "with cookie",
@@ -340,7 +340,7 @@ func TestUserHandler_AuthCheck(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("", fmt.Errorf("getting session error:"))
 			},
 			expectedStatusCode:   401,
-			expectedResponseBody: "{\"descriptors\":[],\"error\":\"Клиент не авторизован\"}",
+			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Клиент не авторизован\"}",
 		},
 	}
 	for _, test := range testTable {
@@ -442,7 +442,7 @@ func TestUserHandler_GetUser(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			expectedStatusCode:   401,
-			expectedResponseBody: "{\"descriptors\":[\"email\"],\"error\":\"Пользователя с таким email не существует\"}",
+			expectedResponseBody: "{\"descriptors\":\"email\",\"error\":\"Пользователя с таким email не существует\"}",
 		},
 		{
 			name:           "not found",
@@ -463,7 +463,7 @@ func TestUserHandler_GetUser(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("", fmt.Errorf("getting session error:"))
 			},
 			expectedStatusCode:   401,
-			expectedResponseBody: "{\"descriptors\":[],\"error\":\"Клиент не авторизован\"}",
+			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Клиент не авторизован\"}",
 		},
 	}
 	for _, test := range testTable {
@@ -559,7 +559,7 @@ func TestUserHandler_GetUserSafety(t *testing.T) {
 				r.EXPECT().GetUserSafety(id).Return(expectedUser, errorHandler.ErrUserNotExists)
 			},
 			expectedStatusCode:   401,
-			expectedResponseBody: "{\"descriptors\":[\"email\"],\"error\":\"Пользователя с таким email не существует\"}",
+			expectedResponseBody: "{\"descriptors\":\"email\",\"error\":\"Пользователя с таким email не существует\"}",
 		},
 	}
 	for _, test := range testTable {
@@ -642,7 +642,7 @@ func TestUserHandler_GetPreview(t *testing.T) {
 				r.EXPECT().GetUserSafety(id).Return(expectedUser, errorHandler.ErrUserNotExists)
 			},
 			expectedStatusCode:   401,
-			expectedResponseBody: "{\"descriptors\":[\"email\"],\"error\":\"Пользователя с таким email не существует\"}",
+			expectedResponseBody: "{\"descriptors\":\"email\",\"error\":\"Пользователя с таким email не существует\"}",
 		},
 	}
 	for _, test := range testTable {
@@ -752,7 +752,7 @@ func TestUserHandler_UpdateUser(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			expectedStatusCode:   400,
-			expectedResponseBody: "{\"descriptors\":[],\"error\":\"Некорректный входной тип пользователя\"}",
+			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Некорректный входной тип пользователя\"}",
 		},
 		{
 			name:           "unauthorized",
@@ -781,7 +781,7 @@ func TestUserHandler_UpdateUser(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("", fmt.Errorf("getting session error:"))
 			},
 			expectedStatusCode:   401,
-			expectedResponseBody: "{\"descriptors\":[],\"error\":\"Клиент не авторизован\"}",
+			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Клиент не авторизован\"}",
 		},
 	}
 	for _, test := range testTable {
@@ -906,7 +906,7 @@ func TestUserHandler_DeleteUserImage(t *testing.T) {
 				r.EXPECT().DeleteUserImage(user).Return(errorHandler.ErrBadRequest)
 			},
 			expectedStatusCode:   400,
-			expectedResponseBody: "{\"descriptors\":[],\"error\":\"Некорректный запрос\"}",
+			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Некорректный запрос\"}",
 		},
 		{
 			name:           "invalid session",
@@ -936,7 +936,7 @@ func TestUserHandler_DeleteUserImage(t *testing.T) {
 				r.EXPECT().DeleteUserImage(user).Return(errorHandler.ErrBadRequest)
 			},
 			expectedStatusCode:   401,
-			expectedResponseBody: "{\"descriptors\":[],\"error\":\"Клиент не авторизован\"}",
+			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Клиент не авторизован\"}",
 		},
 	}
 	for _, test := range testTable {
