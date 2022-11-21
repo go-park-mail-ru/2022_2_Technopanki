@@ -417,7 +417,7 @@ func TestUserService_GetUser(t *testing.T) {
 }
 
 func TestUserService_GetUserSafety(t *testing.T) {
-	type mockBehavior func(r *mock_repository.MockUserRepository, id uint, slice []string)
+	type mockBehavior func(r *mock_repository.MockUserRepository, id uint, fields []string)
 	testTable := []struct {
 		name         string
 		id           uint
@@ -427,28 +427,60 @@ func TestUserService_GetUserSafety(t *testing.T) {
 	}{
 		{
 			name: "ok",
-			mockBehavior: func(r *mock_repository.MockUserRepository, id uint, slice []string) {
+			mockBehavior: func(r *mock_repository.MockUserRepository, id uint, fields []string) {
 				expected := &models.UserAccount{
-					Email: "test@gmail.com",
+					Email:        "test@gmail.com",
+					PublicFields: "email contact_number applicant_current_salary",
 				}
-				r.EXPECT().GetUserSafety(id, slice).Return(expected, nil)
+				r.EXPECT().GetUser(id).Return(expected, nil)
+				r.EXPECT().GetUserSafety(id, fields).Return(expected, nil)
 			},
 			expectedUser: &models.UserAccount{
-				Email: "test@gmail.com",
+				Email:        "test@gmail.com",
+				PublicFields: "email contact_number applicant_current_salary",
 			},
 			expectedErr: nil,
 		}, {
-			name: "error",
-			mockBehavior: func(r *mock_repository.MockUserRepository, id uint, slice []string) {
+			name: "failed fields validation",
+			mockBehavior: func(r *mock_repository.MockUserRepository, id uint, fields []string) {
 				expected := &models.UserAccount{
-					Email: "test@gmail.com",
+					Email:        "test@gmail.com",
+					PublicFields: "e e e e e e e e e e e e e e e ee e e e e e  ",
 				}
-				r.EXPECT().GetUserSafety(id, slice).Return(expected, errorHandler.ErrUserNotExists)
+				r.EXPECT().GetUser(id).Return(expected, nil)
 			},
 			expectedUser: &models.UserAccount{
-				Email: "test@gmail.com",
+				Email:        "test@gmail.com",
+				PublicFields: "email contact_number applicant_current_salary",
 			},
-			expectedErr: errorHandler.ErrUserNotExists,
+			expectedErr: errorHandler.ErrBadRequest,
+		},
+		{
+			name: "cannot get user",
+			mockBehavior: func(r *mock_repository.MockUserRepository, id uint, fields []string) {
+				r.EXPECT().GetUser(id).Return(nil, errorHandler.ErrBadRequest)
+			},
+			expectedUser: &models.UserAccount{
+				Email:        "test@gmail.com",
+				PublicFields: "email contact_number applicant_current_salary",
+			},
+			expectedErr: errorHandler.ErrBadRequest,
+		},
+		{
+			name: "cannot get user safety",
+			mockBehavior: func(r *mock_repository.MockUserRepository, id uint, fields []string) {
+				expected := &models.UserAccount{
+					Email:        "test@gmail.com",
+					PublicFields: "email contact_number applicant_current_salary",
+				}
+				r.EXPECT().GetUser(id).Return(expected, nil)
+				r.EXPECT().GetUserSafety(id, fields).Return(nil, errorHandler.ErrBadRequest)
+			},
+			expectedUser: &models.UserAccount{
+				Email:        "test@gmail.com",
+				PublicFields: "email contact_number applicant_current_salary",
+			},
+			expectedErr: errorHandler.ErrBadRequest,
 		},
 	}
 	for _, test := range testTable {
@@ -457,7 +489,6 @@ func TestUserService_GetUserSafety(t *testing.T) {
 			t.Parallel()
 			c := gomock.NewController(t)
 			defer c.Finish()
-
 			mockUserRepository := mock_repository.NewMockUserRepository(c)
 			testCase.mockBehavior(mockUserRepository, testCase.id, models.PrivateUserFields)
 			userService := UserService{userRep: mockUserRepository}
