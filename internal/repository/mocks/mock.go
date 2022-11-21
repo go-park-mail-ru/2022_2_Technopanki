@@ -414,21 +414,6 @@ func (mr *MockResumeRepositoryMockRecorder) DeleteResume(id interface{}) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteResume", reflect.TypeOf((*MockResumeRepository)(nil).DeleteResume), id)
 }
 
-// GetAuthor mocks base method.
-func (m *MockResumeRepository) GetAuthor(email string) (*models.UserAccount, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAuthor", email)
-	ret0, _ := ret[0].(*models.UserAccount)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetAuthor indicates an expected call of GetAuthor.
-func (mr *MockResumeRepositoryMockRecorder) GetAuthor(email interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAuthor", reflect.TypeOf((*MockResumeRepository)(nil).GetAuthor), email)
-}
-
 // GetEmployerIdByVacancyActivity mocks base method.
 func (m *MockResumeRepository) GetEmployerIdByVacancyActivity(id uint) (uint, error) {
 	m.ctrl.T.Helper()

@@ -221,32 +221,32 @@ func (m *MockVacancy) EXPECT() *MockVacancyMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockVacancy) Create(arg0 uint, arg1 *models.Vacancy) (uint, error) {
+func (m *MockVacancy) Create(email string, input *models.Vacancy) (uint, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", arg0, arg1)
+	ret := m.ctrl.Call(m, "Create", email, input)
 	ret0, _ := ret[0].(uint)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Create indicates an expected call of Create.
-func (mr *MockVacancyMockRecorder) Create(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockVacancyMockRecorder) Create(email, input interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockVacancy)(nil).Create), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockVacancy)(nil).Create), email, input)
 }
 
 // Delete mocks base method.
-func (m *MockVacancy) Delete(arg0 uint, arg1 int) error {
+func (m *MockVacancy) Delete(email string, vacancyId uint) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Delete", arg0, arg1)
+	ret := m.ctrl.Call(m, "Delete", email, vacancyId)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Delete indicates an expected call of Delete.
-func (mr *MockVacancyMockRecorder) Delete(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockVacancyMockRecorder) Delete(email, vacancyId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockVacancy)(nil).Delete), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockVacancy)(nil).Delete), email, vacancyId)
 }
 
 // GetAll mocks base method.
@@ -265,47 +265,47 @@ func (mr *MockVacancyMockRecorder) GetAll() *gomock.Call {
 }
 
 // GetById mocks base method.
-func (m *MockVacancy) GetById(arg0 int) (*models.Vacancy, error) {
+func (m *MockVacancy) GetById(vacancyId uint) (*models.Vacancy, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetById", arg0)
+	ret := m.ctrl.Call(m, "GetById", vacancyId)
 	ret0, _ := ret[0].(*models.Vacancy)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetById indicates an expected call of GetById.
-func (mr *MockVacancyMockRecorder) GetById(arg0 interface{}) *gomock.Call {
+func (mr *MockVacancyMockRecorder) GetById(vacancyId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockVacancy)(nil).GetById), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockVacancy)(nil).GetById), vacancyId)
 }
 
 // GetByUserId mocks base method.
-func (m *MockVacancy) GetByUserId(arg0 int) ([]*models.Vacancy, error) {
+func (m *MockVacancy) GetByUserId(userId uint) ([]*models.Vacancy, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetByUserId", arg0)
+	ret := m.ctrl.Call(m, "GetByUserId", userId)
 	ret0, _ := ret[0].([]*models.Vacancy)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetByUserId indicates an expected call of GetByUserId.
-func (mr *MockVacancyMockRecorder) GetByUserId(arg0 interface{}) *gomock.Call {
+func (mr *MockVacancyMockRecorder) GetByUserId(userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUserId", reflect.TypeOf((*MockVacancy)(nil).GetByUserId), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUserId", reflect.TypeOf((*MockVacancy)(nil).GetByUserId), userId)
 }
 
 // Update mocks base method.
-func (m *MockVacancy) Update(arg0 uint, arg1 int, arg2 *models.Vacancy) error {
+func (m *MockVacancy) Update(email string, vacancyId uint, updates *models.Vacancy) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Update", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "Update", email, vacancyId, updates)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Update indicates an expected call of Update.
-func (mr *MockVacancyMockRecorder) Update(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockVacancyMockRecorder) Update(email, vacancyId, updates interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockVacancy)(nil).Update), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockVacancy)(nil).Update), email, vacancyId, updates)
 }
 
 // MockVacancyActivity is a mock of VacancyActivity interface.
@@ -332,47 +332,61 @@ func (m *MockVacancyActivity) EXPECT() *MockVacancyActivityMockRecorder {
 }
 
 // ApplyForVacancy mocks base method.
-func (m *MockVacancyActivity) ApplyForVacancy(arg0 uint, arg1 int, arg2 *models.VacancyActivity) error {
+func (m *MockVacancyActivity) ApplyForVacancy(email string, vacancyId uint, input *models.VacancyActivity) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ApplyForVacancy", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "ApplyForVacancy", email, vacancyId, input)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // ApplyForVacancy indicates an expected call of ApplyForVacancy.
-func (mr *MockVacancyActivityMockRecorder) ApplyForVacancy(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockVacancyActivityMockRecorder) ApplyForVacancy(email, vacancyId, input interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ApplyForVacancy", reflect.TypeOf((*MockVacancyActivity)(nil).ApplyForVacancy), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ApplyForVacancy", reflect.TypeOf((*MockVacancyActivity)(nil).ApplyForVacancy), email, vacancyId, input)
+}
+
+// DeleteUserApply mocks base method.
+func (m *MockVacancyActivity) DeleteUserApply(email string, apply uint) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteUserApply", email, apply)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteUserApply indicates an expected call of DeleteUserApply.
+func (mr *MockVacancyActivityMockRecorder) DeleteUserApply(email, apply interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteUserApply", reflect.TypeOf((*MockVacancyActivity)(nil).DeleteUserApply), email, apply)
 }
 
 // GetAllUserApplies mocks base method.
-func (m *MockVacancyActivity) GetAllUserApplies(arg0 int) ([]*models.VacancyActivity, error) {
+func (m *MockVacancyActivity) GetAllUserApplies(userid uint) ([]*models.VacancyActivity, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAllUserApplies", arg0)
+	ret := m.ctrl.Call(m, "GetAllUserApplies", userid)
 	ret0, _ := ret[0].([]*models.VacancyActivity)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetAllUserApplies indicates an expected call of GetAllUserApplies.
-func (mr *MockVacancyActivityMockRecorder) GetAllUserApplies(arg0 interface{}) *gomock.Call {
+func (mr *MockVacancyActivityMockRecorder) GetAllUserApplies(userid interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllUserApplies", reflect.TypeOf((*MockVacancyActivity)(nil).GetAllUserApplies), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllUserApplies", reflect.TypeOf((*MockVacancyActivity)(nil).GetAllUserApplies), userid)
 }
 
 // GetAllVacancyApplies mocks base method.
-func (m *MockVacancyActivity) GetAllVacancyApplies(arg0 int) ([]*models.VacancyActivity, error) {
+func (m *MockVacancyActivity) GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivity, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAllVacancyApplies", arg0)
+	ret := m.ctrl.Call(m, "GetAllVacancyApplies", vacancyId)
 	ret0, _ := ret[0].([]*models.VacancyActivity)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetAllVacancyApplies indicates an expected call of GetAllVacancyApplies.
-func (mr *MockVacancyActivityMockRecorder) GetAllVacancyApplies(arg0 interface{}) *gomock.Call {
+func (mr *MockVacancyActivityMockRecorder) GetAllVacancyApplies(vacancyId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllVacancyApplies", reflect.TypeOf((*MockVacancyActivity)(nil).GetAllVacancyApplies), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllVacancyApplies", reflect.TypeOf((*MockVacancyActivity)(nil).GetAllVacancyApplies), vacancyId)
 }
 
 // MockResume is a mock of Resume interface.
@@ -444,16 +458,16 @@ func (mr *MockResumeMockRecorder) GetPreviewResumeByApplicant(userId, email inte
 // GetResume mocks base method.
 func (m *MockResume) GetResume(id uint, email string) (*models.Resume, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetResume", id)
+	ret := m.ctrl.Call(m, "GetResume", id, email)
 	ret0, _ := ret[0].(*models.Resume)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetResume indicates an expected call of GetResume.
-func (mr *MockResumeMockRecorder) GetResume(id interface{}) *gomock.Call {
+func (mr *MockResumeMockRecorder) GetResume(id, email interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetResume", reflect.TypeOf((*MockResume)(nil).GetResume), id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetResume", reflect.TypeOf((*MockResume)(nil).GetResume), id, email)
 }
 
 // GetResumeByApplicant mocks base method.
