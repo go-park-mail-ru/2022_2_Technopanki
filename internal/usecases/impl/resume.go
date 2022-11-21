@@ -7,7 +7,6 @@ import (
 	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/usecases/escaping"
-	"fmt"
 )
 
 type ResumeService struct {
@@ -31,16 +30,13 @@ func (rs *ResumeService) GetResume(id uint, email string) (*models.Resume, error
 	}
 
 	if userFromContext.ID != resume.UserAccountId {
-		fmt.Println("provalilsya")
 		employerId, err := rs.resumeRep.GetEmployerIdByVacancyActivity(id)
 		if err != nil || employerId != userFromContext.ID {
-			fmt.Println(err)
-			fmt.Println(employerId)
 			return nil, errorHandler.ErrUnauthorized
 		}
 	}
 
-	return rs.resumeRep.GetResume(id)
+	return resume, nil
 }
 
 func (rs *ResumeService) GetResumeByApplicant(userId uint, email string) ([]*models.Resume, error) {

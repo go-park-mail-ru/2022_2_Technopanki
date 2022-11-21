@@ -1,6 +1,7 @@
 package impl
 
 import (
+	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
 	mock_repository "HeadHunter/internal/repository/mocks"
@@ -10,7 +11,7 @@ import (
 )
 
 func TestResumeService_GetResume(t *testing.T) {
-	type mockBehavior func(r *mock_repository.MockResumeRepository, id uint)
+	type mockBehavior func(r *mock_repository.MockResumeRepository, id uint, email string)
 	testTable := []struct {
 		name           string
 		id             uint
@@ -21,28 +22,56 @@ func TestResumeService_GetResume(t *testing.T) {
 	}{
 		{
 			name: "ok",
-			mockBehavior: func(r *mock_repository.MockResumeRepository, id uint) {
+			mockBehavior: func(r *mock_repository.MockResumeRepository, id uint, email string) {
 				expected := &models.Resume{
 					Title: "Job",
 				}
+				r.EXPECT().GetAuthor(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
 				r.EXPECT().GetResume(id).Return(expected, nil)
 			},
 			expectedResume: &models.Resume{
 				Title: "Job",
 			},
 			expectedErr: nil,
-		}, {
-			name: "error",
-			mockBehavior: func(r *mock_repository.MockResumeRepository, id uint) {
+		},
+		{
+			name: "user not found",
+			mockBehavior: func(r *mock_repository.MockResumeRepository, id uint, email string) {
+				r.EXPECT().GetAuthor(email).Return(nil, errorHandler.ErrUserNotExists)
+			},
+			expectedResume: nil,
+			expectedErr:    errorHandler.ErrUserNotExists,
+		},
+		{
+			name: "user is not author",
+			id:   3,
+			mockBehavior: func(r *mock_repository.MockResumeRepository, id uint, email string) {
 				expected := &models.Resume{
+					ID:    1,
 					Title: "Job",
 				}
-				r.EXPECT().GetResume(id).Return(expected, errorHandler.ErrResumeNotFound)
+				user := &models.UserAccount{
+					UserType: "applicant",
+					ID:       1,
+				}
+				r.EXPECT().GetAuthor(email).Return(user, nil)
+				r.EXPECT().GetResume(id).Return(expected, nil)
+				r.EXPECT().GetEmployerIdByVacancyActivity(id).Return(uint(0), errorHandler.ErrUserNotExists)
 			},
 			expectedResume: &models.Resume{
+				ID:    1,
 				Title: "Job",
 			},
-			expectedErr: errorHandler.ErrResumeNotFound,
+			expectedErr: errorHandler.ErrUnauthorized,
+		},
+		{
+			name: "cannot get resume",
+			mockBehavior: func(r *mock_repository.MockResumeRepository, id uint, email string) {
+				r.EXPECT().GetAuthor(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
+				r.EXPECT().GetResume(id).Return(nil, errorHandler.ErrBadRequest)
+			},
+			expectedResume: nil,
+			expectedErr:    errorHandler.ErrBadRequest,
 		},
 	}
 	for _, test := range testTable {
@@ -53,7 +82,7 @@ func TestResumeService_GetResume(t *testing.T) {
 			defer c.Finish()
 
 			resumeUserRepository := mock_repository.NewMockResumeRepository(c)
-			testCase.mockBehavior(resumeUserRepository, testCase.id)
+			testCase.mockBehavior(resumeUserRepository, testCase.id, testCase.email)
 			resumeService := ResumeService{resumeRep: resumeUserRepository}
 			user, err := resumeService.GetResume(testCase.id, testCase.email)
 			if testCase.expectedErr == nil {
@@ -65,7 +94,22 @@ func TestResumeService_GetResume(t *testing.T) {
 }
 
 func TestResumeService_GetResumeByApplicant(t *testing.T) {
-	type mockBehavior func(r *mock_repository.MockResumeRepository, id uint)
+	cfg := &configs.Config{
+		Validation: configs.ValidationConfig{
+			MaxEmailLength:             30,
+			MinSurnameLength:           2,
+			MaxSurnameLength:           30,
+			MinNameLength:              2,
+			MaxNameLength:              30,
+			MaxPasswordLength:          20,
+			MinPasswordLength:          8,
+			MinEmailLength:             8,
+			MaxResumeTitleLength:       30,
+			MinResumeTitleLength:       3,
+			MinResumeDescriptionLength: 3,
+		},
+	}
+	type mockBehavior func(r *mock_repository.MockResumeRepository, userId uint, email string)
 	testTable := []struct {
 		name            string
 		id              uint
@@ -76,13 +120,14 @@ func TestResumeService_GetResumeByApplicant(t *testing.T) {
 	}{
 		{
 			name: "ok",
-			mockBehavior: func(r *mock_repository.MockResumeRepository, id uint) {
+			mockBehavior: func(r *mock_repository.MockResumeRepository, userId uint, email string) {
 				expected := []*models.Resume{
 					{
 						Title: "Job",
 					},
 				}
-				r.EXPECT().GetResumeByApplicant(id).Return(expected, nil)
+				r.EXPECT().GetAuthor(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
+				r.EXPECT().GetResumeByApplicant(userId).Return(expected, nil)
 			},
 			expectedResumes: []*models.Resume{
 				{
@@ -90,22 +135,32 @@ func TestResumeService_GetResumeByApplicant(t *testing.T) {
 				},
 			},
 			expectedErr: nil,
-		}, {
-			name: "error",
-			mockBehavior: func(r *mock_repository.MockResumeRepository, id uint) {
-				expected := []*models.Resume{
-					{
-						Title: "Job",
-					},
-				}
-				r.EXPECT().GetResumeByApplicant(id).Return(expected, errorHandler.ErrResumeNotFound)
+		},
+		{
+			name: "user not found",
+			mockBehavior: func(r *mock_repository.MockResumeRepository, userId uint, email string) {
+				r.EXPECT().GetAuthor(email).Return(nil, errorHandler.ErrUserNotExists)
 			},
-			expectedResumes: []*models.Resume{
-				{
-					Title: "Job",
-				},
+			expectedResumes: []*models.Resume{},
+			expectedErr:     errorHandler.ErrUserNotExists,
+		},
+		{
+			name: "user is not author",
+			id:   3,
+			mockBehavior: func(r *mock_repository.MockResumeRepository, userId uint, email string) {
+				r.EXPECT().GetAuthor(email).Return(&models.UserAccount{UserType: "applicant", ID: 1}, nil)
 			},
-			expectedErr: errorHandler.ErrResumeNotFound,
+			expectedResumes: []*models.Resume{},
+			expectedErr:     errorHandler.ErrUnauthorized,
+		},
+		{
+			name: "cannot get preview",
+			mockBehavior: func(r *mock_repository.MockResumeRepository, userId uint, email string) {
+				r.EXPECT().GetAuthor(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
+				r.EXPECT().GetResumeByApplicant(userId).Return([]*models.Resume{}, errorHandler.ErrBadRequest)
+			},
+			expectedResumes: []*models.Resume{},
+			expectedErr:     errorHandler.ErrBadRequest,
 		},
 	}
 	for _, test := range testTable {
@@ -116,8 +171,8 @@ func TestResumeService_GetResumeByApplicant(t *testing.T) {
 			defer c.Finish()
 
 			resumeUserRepository := mock_repository.NewMockResumeRepository(c)
-			testCase.mockBehavior(resumeUserRepository, testCase.id)
-			resumeService := ResumeService{resumeRep: resumeUserRepository}
+			testCase.mockBehavior(resumeUserRepository, testCase.id, testCase.email)
+			resumeService := ResumeService{resumeRep: resumeUserRepository, cfg: cfg}
 			user, err := resumeService.GetResumeByApplicant(testCase.id, testCase.email)
 			if testCase.expectedErr == nil {
 				assert.Equal(t, testCase.expectedResumes, user)
@@ -128,47 +183,72 @@ func TestResumeService_GetResumeByApplicant(t *testing.T) {
 }
 
 func TestResumeService_GetPreviewResumeByApplicant(t *testing.T) {
-	type mockBehavior func(r *mock_repository.MockResumeRepository, id uint)
+	cfg := &configs.Config{
+		Validation: configs.ValidationConfig{
+			MaxEmailLength:             30,
+			MinSurnameLength:           2,
+			MaxSurnameLength:           30,
+			MinNameLength:              2,
+			MaxNameLength:              30,
+			MaxPasswordLength:          20,
+			MinPasswordLength:          8,
+			MinEmailLength:             8,
+			MaxResumeTitleLength:       30,
+			MinResumeTitleLength:       3,
+			MinResumeDescriptionLength: 3,
+		},
+	}
+	type mockBehavior func(r *mock_repository.MockResumeRepository, userId uint, email string)
 	testTable := []struct {
 		name            string
 		id              uint
 		email           string
 		mockBehavior    mockBehavior
-		expectedResumes []*models.Resume
+		expectedResumes []*models.ResumePreview
 		expectedErr     error
 	}{
 		{
 			name: "ok",
-			mockBehavior: func(r *mock_repository.MockResumeRepository, id uint) {
-				expected := []*models.Resume{
+			mockBehavior: func(r *mock_repository.MockResumeRepository, userId uint, email string) {
+				expected := []*models.ResumePreview{
 					{
 						Title: "Job",
 					},
 				}
-				r.EXPECT().GetPreviewResumeByApplicant(id).Return(expected, nil)
+				r.EXPECT().GetAuthor(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
+				r.EXPECT().GetPreviewResumeByApplicant(userId).Return(expected, nil)
 			},
-			expectedResumes: []*models.Resume{
+			expectedResumes: []*models.ResumePreview{
 				{
 					Title: "Job",
 				},
 			},
 			expectedErr: nil,
 		}, {
-			name: "error",
-			mockBehavior: func(r *mock_repository.MockResumeRepository, id uint) {
-				expected := []*models.Resume{
-					{
-						Title: "Job",
-					},
-				}
-				r.EXPECT().GetPreviewResumeByApplicant(id).Return(expected, errorHandler.ErrResumeNotFound)
+			name: "user not found",
+			mockBehavior: func(r *mock_repository.MockResumeRepository, userId uint, email string) {
+				r.EXPECT().GetAuthor(email).Return(nil, errorHandler.ErrUserNotExists)
 			},
-			expectedResumes: []*models.Resume{
-				{
-					Title: "Job",
-				},
+			expectedResumes: []*models.ResumePreview{},
+			expectedErr:     errorHandler.ErrUserNotExists,
+		},
+		{
+			name: "user is not author",
+			id:   3,
+			mockBehavior: func(r *mock_repository.MockResumeRepository, userId uint, email string) {
+				r.EXPECT().GetAuthor(email).Return(&models.UserAccount{UserType: "applicant", ID: 1}, nil)
 			},
-			expectedErr: errorHandler.ErrResumeNotFound,
+			expectedResumes: []*models.ResumePreview{},
+			expectedErr:     errorHandler.ErrUnauthorized,
+		},
+		{
+			name: "cannot get preview",
+			mockBehavior: func(r *mock_repository.MockResumeRepository, userId uint, email string) {
+				r.EXPECT().GetAuthor(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
+				r.EXPECT().GetPreviewResumeByApplicant(userId).Return([]*models.ResumePreview{}, errorHandler.ErrBadRequest)
+			},
+			expectedResumes: []*models.ResumePreview{},
+			expectedErr:     errorHandler.ErrBadRequest,
 		},
 	}
 	for _, test := range testTable {
@@ -179,8 +259,8 @@ func TestResumeService_GetPreviewResumeByApplicant(t *testing.T) {
 			defer c.Finish()
 
 			resumeUserRepository := mock_repository.NewMockResumeRepository(c)
-			testCase.mockBehavior(resumeUserRepository, testCase.id)
-			resumeService := ResumeService{resumeRep: resumeUserRepository}
+			testCase.mockBehavior(resumeUserRepository, testCase.id, testCase.email)
+			resumeService := ResumeService{resumeRep: resumeUserRepository, cfg: cfg}
 			user, err := resumeService.GetPreviewResumeByApplicant(testCase.id, testCase.email)
 			if testCase.expectedErr == nil {
 				assert.Equal(t, testCase.expectedResumes, user)
@@ -191,27 +271,68 @@ func TestResumeService_GetPreviewResumeByApplicant(t *testing.T) {
 }
 
 func TestResumeService_DeleteResume(t *testing.T) {
-	type mockBehavior func(r *mock_repository.MockResumeRepository, id uint)
+	type mockBehavior func(r *mock_repository.MockResumeRepository, id uint, email string)
+	cfg := &configs.Config{
+		Validation: configs.ValidationConfig{
+			MaxEmailLength:             30,
+			MinSurnameLength:           2,
+			MaxSurnameLength:           30,
+			MinNameLength:              2,
+			MaxNameLength:              30,
+			MaxPasswordLength:          20,
+			MinPasswordLength:          8,
+			MinEmailLength:             8,
+			MaxResumeTitleLength:       30,
+			MinResumeTitleLength:       3,
+			MinResumeDescriptionLength: 3,
+		},
+	}
 	testTable := []struct {
-		name           string
-		id             uint
-		email          string
-		mockBehavior   mockBehavior
-		expectedResume *models.Resume
-		expectedErr    error
+		name         string
+		id           uint
+		email        string
+		mockBehavior mockBehavior
+		expectedErr  error
 	}{
 		{
 			name: "ok",
-			mockBehavior: func(r *mock_repository.MockResumeRepository, id uint) {
+			mockBehavior: func(r *mock_repository.MockResumeRepository, id uint, email string) {
+				r.EXPECT().GetAuthor(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
+				r.EXPECT().GetResume(id).Return(&models.Resume{}, nil)
 				r.EXPECT().DeleteResume(id).Return(nil)
 			},
 			expectedErr: nil,
 		}, {
-			name: "error",
-			mockBehavior: func(r *mock_repository.MockResumeRepository, id uint) {
-				r.EXPECT().DeleteResume(id).Return(errorHandler.ErrResumeNotFound)
+			name: "cannot get author",
+			mockBehavior: func(r *mock_repository.MockResumeRepository, id uint, email string) {
+				r.EXPECT().GetAuthor(email).Return(nil, errorHandler.ErrUserNotExists)
+			},
+			expectedErr: errorHandler.ErrUserNotExists,
+		},
+		{
+			name: "resume not found",
+			mockBehavior: func(r *mock_repository.MockResumeRepository, id uint, email string) {
+				r.EXPECT().GetAuthor(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
+				r.EXPECT().GetResume(id).Return(nil, errorHandler.ErrResumeNotFound)
 			},
 			expectedErr: errorHandler.ErrResumeNotFound,
+		},
+		{
+			name: "user is not author",
+			mockBehavior: func(r *mock_repository.MockResumeRepository, id uint, email string) {
+				r.EXPECT().GetAuthor(email).Return(&models.UserAccount{UserType: "applicant", ID: 1}, nil)
+				r.EXPECT().GetResume(id).Return(&models.Resume{UserAccountId: 2}, nil)
+			},
+			expectedErr: errorHandler.ErrUnauthorized,
+		},
+		{
+			name: "cannot delete resume",
+			mockBehavior: func(r *mock_repository.MockResumeRepository, id uint, email string) {
+				r.EXPECT().GetAuthor(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
+				r.EXPECT().GetResume(id).Return(&models.Resume{}, nil)
+				r.EXPECT().DeleteResume(id).Return(errorHandler.ErrBadRequest)
+			},
+			expectedErr: errorHandler.ErrBadRequest,
 		},
 	}
 	for _, test := range testTable {
@@ -222,8 +343,8 @@ func TestResumeService_DeleteResume(t *testing.T) {
 			defer c.Finish()
 
 			resumeUserRepository := mock_repository.NewMockResumeRepository(c)
-			testCase.mockBehavior(resumeUserRepository, testCase.id)
-			resumeService := ResumeService{resumeRep: resumeUserRepository}
+			testCase.mockBehavior(resumeUserRepository, testCase.id, testCase.email)
+			resumeService := ResumeService{resumeRep: resumeUserRepository, cfg: cfg}
 			err := resumeService.DeleteResume(testCase.id, testCase.email)
 			assert.Equal(t, testCase.expectedErr, err)
 		})
@@ -231,36 +352,59 @@ func TestResumeService_DeleteResume(t *testing.T) {
 }
 
 func TestResumeService_CreateResume(t *testing.T) {
-	type mockBehavior func(r *mock_repository.MockResumeRepository, resume *models.Resume, email string)
+	type mockBehavior func(r *mock_repository.MockResumeRepository, resume *models.Resume, userId uint, email string)
+	cfg := &configs.Config{
+		Validation: configs.ValidationConfig{
+			MaxEmailLength:             30,
+			MinSurnameLength:           2,
+			MaxSurnameLength:           30,
+			MinNameLength:              2,
+			MaxNameLength:              30,
+			MaxPasswordLength:          20,
+			MinPasswordLength:          8,
+			MinEmailLength:             8,
+			MaxResumeTitleLength:       30,
+			MinResumeTitleLength:       3,
+			MinResumeDescriptionLength: 3,
+		},
+	}
 	testTable := []struct {
 		name         string
 		email        string
+		userId       uint
 		mockBehavior mockBehavior
 		input        *models.Resume
-		expectedId   uint
 		expectedErr  error
 	}{
 		{
 			name: "ok",
-			mockBehavior: func(r *mock_repository.MockResumeRepository, resume *models.Resume, email string) {
-				r.EXPECT().CreateResume(resume, email).Return(nil)
+			mockBehavior: func(r *mock_repository.MockResumeRepository, resume *models.Resume, userId uint, email string) {
+				r.EXPECT().GetAuthor(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
+				r.EXPECT().CreateResume(resume, userId).Return(nil)
 			},
 			input: &models.Resume{
 				Title:       "Job",
 				Description: "Some information for this job",
 			},
-			expectedId:  1,
 			expectedErr: nil,
 		}, {
-			name: "error",
-			mockBehavior: func(r *mock_repository.MockResumeRepository, resume *models.Resume, email string) {
-				r.EXPECT().CreateResume(resume, email).Return(errorHandler.ErrResumeNotFound)
-			},
+			name:         "error",
+			mockBehavior: func(r *mock_repository.MockResumeRepository, resume *models.Resume, userId uint, email string) {},
 			input: &models.Resume{
 				Title: "Job",
 			},
-			expectedId:  1,
-			expectedErr: errorHandler.ErrResumeNotFound,
+			expectedErr: errorHandler.InvalidResumeDescriptionLength,
+		},
+		{
+			name: "user not exists",
+			mockBehavior: func(r *mock_repository.MockResumeRepository, resume *models.Resume, userId uint, email string) {
+				r.EXPECT().GetAuthor(email).Return(nil, errorHandler.ErrUserNotExists)
+			},
+			input: &models.Resume{
+				Title:       "Job",
+				Description: "some description for job",
+			},
+			expectedErr: errorHandler.ErrUserNotExists,
 		},
 	}
 	for _, test := range testTable {
@@ -271,8 +415,8 @@ func TestResumeService_CreateResume(t *testing.T) {
 			defer c.Finish()
 
 			resumeUserRepository := mock_repository.NewMockResumeRepository(c)
-			testCase.mockBehavior(resumeUserRepository, testCase.input, testCase.email)
-			resumeService := ResumeService{resumeRep: resumeUserRepository}
+			testCase.mockBehavior(resumeUserRepository, testCase.input, testCase.userId, testCase.email)
+			resumeService := ResumeService{resumeRep: resumeUserRepository, cfg: cfg}
 			err := resumeService.CreateResume(testCase.input, testCase.email)
 			assert.Equal(t, testCase.expectedErr, err)
 		})
@@ -280,36 +424,97 @@ func TestResumeService_CreateResume(t *testing.T) {
 }
 
 func TestResumeService_UpdateResume(t *testing.T) {
-	type mockBehavior func(r *mock_repository.MockResumeRepository, resume *models.Resume, id uint)
+	type mockBehavior func(r *mock_repository.MockResumeRepository, resume *models.Resume, id uint, email string)
+	cfg := &configs.Config{
+		Validation: configs.ValidationConfig{
+			MaxEmailLength:             30,
+			MinSurnameLength:           2,
+			MaxSurnameLength:           30,
+			MinNameLength:              2,
+			MaxNameLength:              30,
+			MaxPasswordLength:          20,
+			MinPasswordLength:          8,
+			MinEmailLength:             8,
+			MaxResumeTitleLength:       30,
+			MinResumeTitleLength:       3,
+			MinResumeDescriptionLength: 3,
+		},
+	}
 	testTable := []struct {
 		name         string
 		id           uint
 		email        string
 		mockBehavior mockBehavior
 		input        *models.Resume
-		expectedId   uint
 		expectedErr  error
 	}{
 		{
 			name: "ok",
-			mockBehavior: func(r *mock_repository.MockResumeRepository, resume *models.Resume, id uint) {
+			mockBehavior: func(r *mock_repository.MockResumeRepository, resume *models.Resume, id uint, email string) {
+				r.EXPECT().GetAuthor(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
+				r.EXPECT().GetResume(id).Return(&models.Resume{}, nil)
 				r.EXPECT().UpdateResume(id, resume).Return(nil)
 			},
 			input: &models.Resume{
-				Title: "Job",
+				Title:       "Job",
+				Description: "Some description",
 			},
-			expectedId:  1,
 			expectedErr: nil,
 		}, {
-			name: "error",
-			mockBehavior: func(r *mock_repository.MockResumeRepository, resume *models.Resume, id uint) {
-				r.EXPECT().UpdateResume(id, resume).Return(errorHandler.ErrResumeNotFound)
-			},
+			name:         "validation error",
+			mockBehavior: func(r *mock_repository.MockResumeRepository, resume *models.Resume, id uint, email string) {},
 			input: &models.Resume{
 				Title: "Job",
 			},
-			expectedId:  1,
+			expectedErr: errorHandler.InvalidResumeDescriptionLength,
+		},
+		{
+			name: "user not found",
+			mockBehavior: func(r *mock_repository.MockResumeRepository, resume *models.Resume, id uint, email string) {
+				r.EXPECT().GetAuthor(email).Return(nil, errorHandler.ErrUserNotExists)
+			},
+			input: &models.Resume{
+				Title:       "Job",
+				Description: "Some description",
+			},
+			expectedErr: errorHandler.ErrUserNotExists,
+		},
+		{
+			name: "resume not found",
+			mockBehavior: func(r *mock_repository.MockResumeRepository, resume *models.Resume, id uint, email string) {
+				r.EXPECT().GetAuthor(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
+				r.EXPECT().GetResume(id).Return(nil, errorHandler.ErrResumeNotFound)
+			},
+			input: &models.Resume{
+				Title:       "Job",
+				Description: "Some description",
+			},
 			expectedErr: errorHandler.ErrResumeNotFound,
+		},
+		{
+			name: "user is not author",
+			mockBehavior: func(r *mock_repository.MockResumeRepository, resume *models.Resume, id uint, email string) {
+				r.EXPECT().GetAuthor(email).Return(&models.UserAccount{UserType: "applicant", ID: 1}, nil)
+				r.EXPECT().GetResume(id).Return(&models.Resume{UserAccountId: 2}, nil)
+			},
+			input: &models.Resume{
+				Title:       "Job",
+				Description: "Some description",
+			},
+			expectedErr: errorHandler.ErrUnauthorized,
+		},
+		{
+			name: "cannot update resume",
+			mockBehavior: func(r *mock_repository.MockResumeRepository, resume *models.Resume, id uint, email string) {
+				r.EXPECT().GetAuthor(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
+				r.EXPECT().GetResume(id).Return(&models.Resume{}, nil)
+				r.EXPECT().UpdateResume(id, resume).Return(errorHandler.ErrBadRequest)
+			},
+			input: &models.Resume{
+				Title:       "Job",
+				Description: "Some description",
+			},
+			expectedErr: errorHandler.ErrBadRequest,
 		},
 	}
 	for _, test := range testTable {
@@ -320,8 +525,8 @@ func TestResumeService_UpdateResume(t *testing.T) {
 			defer c.Finish()
 
 			resumeUserRepository := mock_repository.NewMockResumeRepository(c)
-			testCase.mockBehavior(resumeUserRepository, testCase.input, testCase.id)
-			resumeService := ResumeService{resumeRep: resumeUserRepository}
+			testCase.mockBehavior(resumeUserRepository, testCase.input, testCase.id, testCase.email)
+			resumeService := ResumeService{resumeRep: resumeUserRepository, cfg: cfg}
 			err := resumeService.UpdateResume(testCase.id, testCase.input, testCase.email)
 			assert.Equal(t, testCase.expectedErr, err)
 		})
