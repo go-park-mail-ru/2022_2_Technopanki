@@ -16,8 +16,6 @@ func NewVacancyActivityPostgres(db *gorm.DB) *VacancyActivityPostgres {
 
 func (vap *VacancyActivityPostgres) GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivity, error) {
 	var applies []*models.VacancyActivity
-	//var responce []*models.VacancyActivityResponce
-	//query := vap.db.Model(&models.Resume{}).Select("resumes.title, resumes.description").Joins("left join vacancy_activities on vacancy_activities.resume_id = resumes.id").Where("vacancy_id = ?", vacancyId).Scan(&responce)
 	query := vap.db.Where("vacancy_id = ?", vacancyId).Find(&applies)
 	if query.Error != nil {
 		return applies, query.Error
@@ -33,7 +31,6 @@ func (vap *VacancyActivityPostgres) ApplyForVacancy(apply *models.VacancyActivit
 	}
 	apply.Image = user.Image
 	query := vap.db.Create(&apply)
-	//return queryValidation(query, "vacancy_activity")
 	return QueryValidation(query, "vacancy_activity")
 }
 
@@ -44,10 +41,6 @@ func (vap *VacancyActivityPostgres) GetAllUserApplies(userId uint) ([]*models.Va
 		return applies, query.Error
 	}
 	return applies, nil
-}
-
-func (vap *VacancyActivityPostgres) GetAuthor(email string) (*models.UserAccount, error) {
-	return GetUser(email, vap.db)
 }
 
 func (vap *VacancyActivityPostgres) DeleteUserApply(userId uint, applyId uint) error {

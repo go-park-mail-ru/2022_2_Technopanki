@@ -22,8 +22,8 @@ func NewUseCases(repos *repository.Repository, session session.Repository, _cfg 
 	return &UseCases{
 		User:            impl.NewUserService(repos.UserRepository, session, _cfg),
 		Resume:          impl.NewResumeService(repos.ResumeRepository, _cfg, repos.UserRepository),
-		Vacancy:         impl.NewVacancyService(repos.VacancyRepository),
-		VacancyActivity: impl.NewVacancyActivityService(repos.VacancyActivityRepository),
+		Vacancy:         impl.NewVacancyService(repos.VacancyRepository, repos.UserRepository),
+		VacancyActivity: impl.NewVacancyActivityService(repos.VacancyActivityRepository, repos.UserRepository),
 	}
 }
 

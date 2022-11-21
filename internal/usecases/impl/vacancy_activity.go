@@ -8,10 +8,11 @@ import (
 
 type VacancyActivityService struct {
 	vacancyActivityRep repository.VacancyActivityRepository
+	userRep            repository.UserRepository
 }
 
-func NewVacancyActivityService(vacancyActivityRepos repository.VacancyActivityRepository) *VacancyActivityService {
-	return &VacancyActivityService{vacancyActivityRep: vacancyActivityRepos}
+func NewVacancyActivityService(vacancyActivityRepos repository.VacancyActivityRepository, _userRep repository.UserRepository) *VacancyActivityService {
+	return &VacancyActivityService{vacancyActivityRep: vacancyActivityRepos, userRep: _userRep}
 }
 
 func (vas *VacancyActivityService) GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivity, error) {
@@ -19,7 +20,7 @@ func (vas *VacancyActivityService) GetAllVacancyApplies(vacancyId uint) ([]*mode
 }
 
 func (vas *VacancyActivityService) ApplyForVacancy(email string, vacancyId uint, input *models.VacancyActivity) error {
-	user, getErr := vas.vacancyActivityRep.GetAuthor(email)
+	user, getErr := vas.userRep.GetUserByEmail(email)
 	if getErr != nil {
 		return getErr
 	}
@@ -37,7 +38,7 @@ func (vas *VacancyActivityService) GetAllUserApplies(userId uint) ([]*models.Vac
 }
 
 func (vas *VacancyActivityService) DeleteUserApply(email string, id uint) error {
-	user, getErr := vas.vacancyActivityRep.GetAuthor(email)
+	user, getErr := vas.userRep.GetUserByEmail(email)
 	if getErr != nil {
 		return getErr
 	}

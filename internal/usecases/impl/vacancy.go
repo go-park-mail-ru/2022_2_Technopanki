@@ -9,10 +9,11 @@ import (
 
 type VacancyService struct {
 	vacancyRep repository.VacancyRepository
+	userRep    repository.UserRepository
 }
 
-func NewVacancyService(vacancyRepos repository.VacancyRepository) *VacancyService {
-	return &VacancyService{vacancyRep: vacancyRepos}
+func NewVacancyService(vacancyRepos repository.VacancyRepository, _userRep repository.UserRepository) *VacancyService {
+	return &VacancyService{vacancyRep: vacancyRepos, userRep: _userRep}
 }
 
 func (vs *VacancyService) GetAll() ([]*models.Vacancy, error) {
@@ -21,7 +22,7 @@ func (vs *VacancyService) GetAll() ([]*models.Vacancy, error) {
 
 func (vs *VacancyService) Create(email string, input *models.Vacancy) (uint, error) {
 
-	user, getErr := vs.vacancyRep.GetAuthor(email)
+	user, getErr := vs.userRep.GetUserByEmail(email)
 	if getErr != nil {
 		return 0, getErr
 	}
@@ -44,7 +45,7 @@ func (vs *VacancyService) GetByUserId(userId uint) ([]*models.Vacancy, error) {
 }
 
 func (vs *VacancyService) Delete(email string, vacancyId uint) error {
-	user, getErr := vs.vacancyRep.GetAuthor(email)
+	user, getErr := vs.userRep.GetUserByEmail(email)
 	if getErr != nil {
 		return getErr
 	}
@@ -54,7 +55,7 @@ func (vs *VacancyService) Delete(email string, vacancyId uint) error {
 
 func (vs *VacancyService) Update(email string, vacancyId uint, updates *models.Vacancy) error {
 
-	user, getErr := vs.vacancyRep.GetAuthor(email)
+	user, getErr := vs.userRep.GetUserByEmail(email)
 	if getErr != nil {
 		return getErr
 	}
