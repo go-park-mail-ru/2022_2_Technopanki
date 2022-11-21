@@ -506,6 +506,50 @@ func TestResumeHandler_UpdateResume(t *testing.T) {
 			expectedStatusCode:   401,
 			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Клиент не авторизован\"}",
 		},
+		{
+			name:           "resume not found",
+			emailFromToken: "test@gmail.com",
+			inputId:        42,
+			inputParam:     "42",
+			createdResume: &models.Resume{
+				ID:    42,
+				Title: "some title",
+			},
+			inputBody: `{
+    			"title": "some title"
+}`,
+			mockBehavior: func(r *mock_usecases.MockResume, id uint, resume *models.Resume) {
+				updated := &models.Resume{Title: "some title"}
+				r.EXPECT().UpdateResume(id, updated, "test@gmail.com").Return(errorHandler.ErrResumeNotFound)
+			},
+			sessionRepBehavior: func(sessionRep *mock_session.MockRepository, token string) {
+				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
+			},
+			expectedStatusCode:   404,
+			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Резюме не найдено\"}",
+		},
+		{
+			name:           "user is not an author",
+			emailFromToken: "test@gmail.com",
+			inputId:        42,
+			inputParam:     "42",
+			createdResume: &models.Resume{
+				ID:    42,
+				Title: "some title",
+			},
+			inputBody: `{
+    			"title": "some title"
+}`,
+			mockBehavior: func(r *mock_usecases.MockResume, id uint, resume *models.Resume) {
+				updated := &models.Resume{Title: "some title"}
+				r.EXPECT().UpdateResume(id, updated, "test@gmail.com").Return(errorHandler.ErrUnauthorized)
+			},
+			sessionRepBehavior: func(sessionRep *mock_session.MockRepository, token string) {
+				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
+			},
+			expectedStatusCode:   401,
+			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Клиент не авторизован\"}",
+		},
 	}
 	for _, test := range testTable {
 		testCase := test
@@ -595,6 +639,34 @@ func TestResumeHandler_DeleteResume(t *testing.T) {
 			},
 			sessionRepBehavior: func(sessionRep *mock_session.MockRepository, token string) {
 				sessionRep.EXPECT().GetSession(token).Return("", fmt.Errorf("getting session error:"))
+			},
+			expectedStatusCode:   401,
+			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Клиент не авторизован\"}",
+		},
+		{
+			name:           "resume not found",
+			emailFromToken: "test@gmail.com",
+			inputId:        42,
+			inputParam:     "42",
+			mockBehavior: func(r *mock_usecases.MockResume, id uint) {
+				r.EXPECT().DeleteResume(id, "test@gmail.com").Return(errorHandler.ErrResumeNotFound)
+			},
+			sessionRepBehavior: func(sessionRep *mock_session.MockRepository, token string) {
+				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
+			},
+			expectedStatusCode:   404,
+			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Резюме не найдено\"}",
+		},
+		{
+			name:           "user is not author",
+			emailFromToken: "test@gmail.com",
+			inputId:        42,
+			inputParam:     "42",
+			mockBehavior: func(r *mock_usecases.MockResume, id uint) {
+				r.EXPECT().DeleteResume(id, "test@gmail.com").Return(errorHandler.ErrUnauthorized)
+			},
+			sessionRepBehavior: func(sessionRep *mock_session.MockRepository, token string) {
+				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			expectedStatusCode:   401,
 			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Клиент не авторизован\"}",
