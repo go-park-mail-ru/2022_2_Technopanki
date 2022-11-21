@@ -21,14 +21,14 @@ import (
 func main() {
 	var mainConfig configs.Config
 	if configErr := configs.InitConfig(&mainConfig); configErr != nil {
-		logrus.Fatal(configErr.Error())
+		logrus.Fatal(configErr)
 	}
-	client, redisErr := repositorypkg.RedisConnect(&mainConfig.Redis)
+	redisClient, redisErr := repositorypkg.RedisConnect(&mainConfig.Redis)
 	if redisErr != nil {
 		logrus.Fatal(redisErr)
 	}
 
-	redisRepository := session.NewRedisStore(&mainConfig, client)
+	redisRepository := session.NewRedisStore(&mainConfig, redisClient)
 	sessionMiddleware := middleware.NewSessionMiddleware(redisRepository)
 	db, DBErr := repositorypkg.DBConnect(&mainConfig.DB)
 	if DBErr != nil {
@@ -43,7 +43,7 @@ func main() {
 		&mainConfig,
 	)
 
-	handler := handlers.NewHandlers(useCase, &mainConfig, redisRepository)
+	handler := handlers.NewHandlers(useCase, &mainConfig)
 
 	router := network.InitRoutes(handler, sessionMiddleware, &mainConfig)
 	runErr := router.Run(mainConfig.Port)

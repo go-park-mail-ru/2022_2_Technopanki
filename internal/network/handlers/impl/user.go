@@ -5,7 +5,6 @@ import (
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/network/response"
-	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -15,11 +14,10 @@ import (
 type UserHandler struct {
 	cfg         *configs.Config
 	userUseCase usecases.User
-	sessionRepo session.Repository
 }
 
-func NewUserHandler(useCases *usecases.UseCases, _cfg *configs.Config, _sr session.Repository) *UserHandler {
-	return &UserHandler{cfg: _cfg, userUseCase: useCases.User, sessionRepo: _sr}
+func NewUserHandler(useCases *usecases.UseCases, _cfg *configs.Config) *UserHandler {
+	return &UserHandler{cfg: _cfg, userUseCase: useCases.User}
 }
 
 func (uh *UserHandler) SignIn(c *gin.Context) {

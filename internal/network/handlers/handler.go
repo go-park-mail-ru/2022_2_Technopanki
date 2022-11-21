@@ -3,7 +3,6 @@ package handlers
 import (
 	"HeadHunter/configs"
 	"HeadHunter/internal/network/handlers/impl"
-	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases"
 	"github.com/gin-gonic/gin"
 )
@@ -13,12 +12,11 @@ type Handlers struct {
 	VacancyHandler         VacancyH
 	VacancyActivityHandler VacancyActivityH
 	ResumeHandler          ResumeH
-	cfg                    *configs.Config
 }
 
-func NewHandlers(usecases *usecases.UseCases, _cfg *configs.Config, _sr session.Repository) *Handlers {
+func NewHandlers(usecases *usecases.UseCases, _cfg *configs.Config) *Handlers {
 	return &Handlers{
-		UserHandler:            impl.NewUserHandler(usecases, _cfg, _sr),
+		UserHandler:            impl.NewUserHandler(usecases, _cfg),
 		ResumeHandler:          impl.NewResumeHandler(usecases, _cfg),
 		VacancyHandler:         impl.NewVacancyHandler(usecases),
 		VacancyActivityHandler: impl.NewVacancyActivityHandler(usecases),
