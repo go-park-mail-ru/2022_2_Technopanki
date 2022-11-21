@@ -5,6 +5,7 @@ import (
 	_ "HeadHunter/docs"
 	"HeadHunter/internal/network/handlers"
 	"HeadHunter/internal/network/middleware"
+	"HeadHunter/pkg/errorHandler"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -23,49 +24,49 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	auth := router.Group("/auth")
 	{
-		auth.GET("/", sessionMW.Session, h.UserHandler.AuthCheck, middleware.ErrorHandler())
-		auth.POST("/sign-up", h.UserHandler.SignUp, middleware.ErrorHandler())
-		auth.POST("/sign-in", h.UserHandler.SignIn, middleware.ErrorHandler())
-		auth.POST("/logout", sessionMW.Session, h.UserHandler.Logout, middleware.ErrorHandler())
+		auth.GET("/", sessionMW.Session, h.UserHandler.AuthCheck, errorHandler.Middleware())
+		auth.POST("/sign-up", h.UserHandler.SignUp, errorHandler.Middleware())
+		auth.POST("/sign-in", h.UserHandler.SignIn, errorHandler.Middleware())
+		auth.POST("/logout", sessionMW.Session, h.UserHandler.Logout, errorHandler.Middleware())
 	}
 
 	api := router.Group("/api")
 	{
 		user := api.Group("/user")
 		{
-			user.GET("/:id", sessionMW.Session, h.UserHandler.GetUser, middleware.ErrorHandler())
-			user.GET("/safety/:id", h.UserHandler.GetUserSafety, middleware.ErrorHandler())
-			user.GET("/preview/:id", h.UserHandler.GetPreview, middleware.ErrorHandler())
-			user.POST("/", sessionMW.Session, h.UserHandler.UpdateUser, middleware.ErrorHandler())
+			user.GET("/:id", sessionMW.Session, h.UserHandler.GetUser, errorHandler.Middleware())
+			user.GET("/safety/:id", h.UserHandler.GetUserSafety, errorHandler.Middleware())
+			user.GET("/preview/:id", h.UserHandler.GetPreview, errorHandler.Middleware())
+			user.POST("/", sessionMW.Session, h.UserHandler.UpdateUser, errorHandler.Middleware())
 			image := user.Group("/image")
 			{
-				image.POST("/", sessionMW.Session, h.UserHandler.UploadUserImage, middleware.ErrorHandler())
-				image.DELETE("/", sessionMW.Session, h.UserHandler.DeleteUserImage, middleware.ErrorHandler())
+				image.POST("/", sessionMW.Session, h.UserHandler.UploadUserImage, errorHandler.Middleware())
+				image.DELETE("/", sessionMW.Session, h.UserHandler.DeleteUserImage, errorHandler.Middleware())
 			}
 		}
-		
+
 		vacancies := api.Group("/vacancy")
 		{
-			vacancies.GET("/", h.VacancyHandler.GetAllVacancies, middleware.ErrorHandler())
-			vacancies.GET("/:id", h.VacancyHandler.GetVacancyById, middleware.ErrorHandler())
-			vacancies.GET("/company/:id", h.VacancyHandler.GetUserVacancies, middleware.ErrorHandler())
-			vacancies.POST("/", sessionMW.Session, h.VacancyHandler.CreateVacancy, middleware.ErrorHandler())
-			vacancies.PUT("/:id", sessionMW.Session, h.VacancyHandler.UpdateVacancy, middleware.ErrorHandler())
-			vacancies.DELETE("/:id", sessionMW.Session, h.VacancyHandler.DeleteVacancy, middleware.ErrorHandler())
-			vacancies.POST("/apply/:id", sessionMW.Session, h.VacancyActivityHandler.ApplyForVacancy, middleware.ErrorHandler())
-			vacancies.GET("/applies/:id", h.VacancyActivityHandler.GetAllVacancyApplies, middleware.ErrorHandler())
-			vacancies.GET("/user_applies/:id", h.VacancyActivityHandler.GetAllUserApplies, middleware.ErrorHandler())
+			vacancies.GET("/", h.VacancyHandler.GetAllVacancies, errorHandler.Middleware())
+			vacancies.GET("/:id", h.VacancyHandler.GetVacancyById, errorHandler.Middleware())
+			vacancies.GET("/company/:id", h.VacancyHandler.GetUserVacancies, errorHandler.Middleware())
+			vacancies.POST("/", sessionMW.Session, h.VacancyHandler.CreateVacancy, errorHandler.Middleware())
+			vacancies.PUT("/:id", sessionMW.Session, h.VacancyHandler.UpdateVacancy, errorHandler.Middleware())
+			vacancies.DELETE("/:id", sessionMW.Session, h.VacancyHandler.DeleteVacancy, errorHandler.Middleware())
+			vacancies.POST("/apply/:id", sessionMW.Session, h.VacancyActivityHandler.ApplyForVacancy, errorHandler.Middleware())
+			vacancies.GET("/applies/:id", h.VacancyActivityHandler.GetAllVacancyApplies, errorHandler.Middleware())
+			vacancies.GET("/user_applies/:id", h.VacancyActivityHandler.GetAllUserApplies, errorHandler.Middleware())
 
 		}
 
 		resumes := api.Group("/resume")
 		{
-			resumes.GET("/:id", sessionMW.Session, h.ResumeHandler.GetResume, middleware.ErrorHandler())
-			resumes.GET("/applicant/:user_id", sessionMW.Session, h.ResumeHandler.GetResumeByApplicant, middleware.ErrorHandler())
-			resumes.GET("/applicant/preview/:user_id", sessionMW.Session, h.ResumeHandler.GetPreviewResumeByApplicant, middleware.ErrorHandler())
-			resumes.POST("/", sessionMW.Session, h.ResumeHandler.CreateResume, middleware.ErrorHandler())
-			resumes.PUT("/:id", sessionMW.Session, h.ResumeHandler.UpdateResume, middleware.ErrorHandler())
-			resumes.DELETE("/:id", sessionMW.Session, h.ResumeHandler.DeleteResume, middleware.ErrorHandler())
+			resumes.GET("/:id", sessionMW.Session, h.ResumeHandler.GetResume, errorHandler.Middleware())
+			resumes.GET("/applicant/:user_id", sessionMW.Session, h.ResumeHandler.GetResumeByApplicant, errorHandler.Middleware())
+			resumes.GET("/applicant/preview/:user_id", sessionMW.Session, h.ResumeHandler.GetPreviewResumeByApplicant, errorHandler.Middleware())
+			resumes.POST("/", sessionMW.Session, h.ResumeHandler.CreateResume, errorHandler.Middleware())
+			resumes.PUT("/:id", sessionMW.Session, h.ResumeHandler.UpdateResume, errorHandler.Middleware())
+			resumes.DELETE("/:id", sessionMW.Session, h.ResumeHandler.DeleteResume, errorHandler.Middleware())
 		}
 	}
 

@@ -1,7 +1,7 @@
 package impl
 
 import (
-	"HeadHunter/internal/errorHandler"
+	"HeadHunter/pkg/errorHandler"
 	"github.com/gin-gonic/gin"
 )
 

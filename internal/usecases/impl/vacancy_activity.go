@@ -2,8 +2,8 @@ package impl
 
 import (
 	"HeadHunter/internal/entity/models"
-	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/repository"
+	"HeadHunter/pkg/errorHandler"
 )
 
 type VacancyActivityService struct {

@@ -1,16 +1,15 @@
-package middleware
+package errorHandler
 
 import (
-	"HeadHunter/internal/network/response"
 	"github.com/gin-gonic/gin"
 )
 
-func ErrorHandler() gin.HandlerFunc {
+func Middleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if len(c.Errors) > 0 {
 			c.Next()
 			rawErr := c.Errors.Last()
-			response.SendErrorData(c, rawErr.Err)
+			Response(c, rawErr.Err)
 		}
 		return
 	}

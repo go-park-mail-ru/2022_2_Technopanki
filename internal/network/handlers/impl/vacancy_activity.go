@@ -2,8 +2,8 @@ package impl
 
 import (
 	"HeadHunter/internal/entity/models"
-	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/usecases"
+	"HeadHunter/pkg/errorHandler"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"

@@ -3,10 +3,10 @@ package impl
 import (
 	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
-	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/network/middleware"
 	mock_session "HeadHunter/internal/repository/session/mocks"
 	mock_usecases "HeadHunter/internal/usecases/mocks"
+	errorHandler2 "HeadHunter/pkg/errorHandler"
 	"bytes"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -85,7 +85,7 @@ func TestUserHandler_SignUp(t *testing.T) {
     			"user_type": "employer"
 }`,
 			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
-				r.EXPECT().SignUp(user).Return("", errorHandler.ErrUserExists)
+				r.EXPECT().SignUp(user).Return("", errorHandler2.ErrUserExists)
 			},
 			expectedStatusCode:   200,
 			expectedResponseBody: "",
@@ -166,7 +166,7 @@ func TestUserHandler_SignIn(t *testing.T) {
     			"password": "123456a!"
 }`,
 			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
-				r.EXPECT().SignIn(user).Return(gomock.Any().String(), errorHandler.InvalidUserType)
+				r.EXPECT().SignIn(user).Return(gomock.Any().String(), errorHandler2.InvalidUserType)
 			},
 			expectedStatusCode:   400,
 			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"\"Некорректный входной тип пользователя\"}",
@@ -182,7 +182,7 @@ func TestUserHandler_SignIn(t *testing.T) {
     			"password": "123456a!"
 }`,
 			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
-				r.EXPECT().SignIn(user).Return("", errorHandler.ErrUserNotExists)
+				r.EXPECT().SignIn(user).Return("", errorHandler2.ErrUserNotExists)
 			},
 			expectedStatusCode:   401,
 			expectedResponseBody: "{\"descriptors\":\"email\",\"error\":\"Пользователя с таким email не существует\"}",
@@ -209,7 +209,7 @@ func TestUserHandler_SignIn(t *testing.T) {
 			}
 
 			r := gin.New()
-			r.POST("/sign-in", handler.SignIn, middleware.ErrorHandler())
+			r.POST("/sign-in", handler.SignIn, errorHandler2.Middleware())
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("POST", "/sign-in",
@@ -237,7 +237,7 @@ func TestUserHandler_Logout(t *testing.T) {
 			name:       "no cookie",
 			inputToken: "invalid_token",
 			mockBehavior: func(r *mock_usecases.MockUser, token string) {
-				r.EXPECT().Logout(token).Return(errorHandler.ErrBadRequest)
+				r.EXPECT().Logout(token).Return(errorHandler2.ErrBadRequest)
 			},
 			expectedStatusCode:   400,
 			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Некорректный запрос\"}",
@@ -246,7 +246,7 @@ func TestUserHandler_Logout(t *testing.T) {
 			name:       "with cookie",
 			inputToken: "valid_token",
 			mockBehavior: func(r *mock_usecases.MockUser, token string) {
-				r.EXPECT().Logout(token).Return(errorHandler.ErrBadRequest)
+				r.EXPECT().Logout(token).Return(errorHandler2.ErrBadRequest)
 			},
 			expectedStatusCode:   200,
 			expectedResponseBody: "",
@@ -368,7 +368,7 @@ func TestUserHandler_AuthCheck(t *testing.T) {
 			}
 			testCase.sessionRepBehavior(sessionRep, testCase.inputToken)
 			r := gin.New()
-			r.GET("/auth", sessionMiddlware.Session, handler.AuthCheck, middleware.ErrorHandler())
+			r.GET("/auth", sessionMiddlware.Session, handler.AuthCheck, errorHandler2.Middleware())
 			w := httptest.NewRecorder()
 
 			cookie := &http.Cookie{
@@ -436,7 +436,7 @@ func TestUserHandler_GetUser(t *testing.T) {
 					UserType:    "employer",
 					Image:       "basic_applicant_avatar.webp",
 				}
-				r.EXPECT().GetUser(id).Return(expectedUser, errorHandler.ErrUserNotExists)
+				r.EXPECT().GetUser(id).Return(expectedUser, errorHandler2.ErrUserNotExists)
 			},
 			sessionRepBehavior: func(sessionRep *mock_session.MockRepository, token string) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
@@ -457,7 +457,7 @@ func TestUserHandler_GetUser(t *testing.T) {
 					UserType:    "employer",
 					Image:       "basic_applicant_avatar.webp",
 				}
-				r.EXPECT().GetUser(id).Return(expectedUser, errorHandler.ErrUserNotExists)
+				r.EXPECT().GetUser(id).Return(expectedUser, errorHandler2.ErrUserNotExists)
 			},
 			sessionRepBehavior: func(sessionRep *mock_session.MockRepository, token string) {
 				sessionRep.EXPECT().GetSession(token).Return("", fmt.Errorf("getting session error:"))
@@ -495,7 +495,7 @@ func TestUserHandler_GetUser(t *testing.T) {
 			}
 
 			r := gin.New()
-			r.GET("/:id", sessionMiddlware.Session, handler.GetUser, middleware.ErrorHandler())
+			r.GET("/:id", sessionMiddlware.Session, handler.GetUser, errorHandler2.Middleware())
 
 			cookie := &http.Cookie{
 				Name:  "session",
@@ -556,7 +556,7 @@ func TestUserHandler_GetUserSafety(t *testing.T) {
 					UserType:    "employer",
 					Image:       "basic_applicant_avatar.webp",
 				}
-				r.EXPECT().GetUserSafety(id).Return(expectedUser, errorHandler.ErrUserNotExists)
+				r.EXPECT().GetUserSafety(id).Return(expectedUser, errorHandler2.ErrUserNotExists)
 			},
 			expectedStatusCode:   401,
 			expectedResponseBody: "{\"descriptors\":\"email\",\"error\":\"Пользователя с таким email не существует\"}",
@@ -584,7 +584,7 @@ func TestUserHandler_GetUserSafety(t *testing.T) {
 			}
 
 			r := gin.New()
-			r.GET("/safety/:id", handler.GetUserSafety, middleware.ErrorHandler())
+			r.GET("/safety/:id", handler.GetUserSafety, errorHandler2.Middleware())
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("GET", "/safety/"+testCase.requestParam,
@@ -639,7 +639,7 @@ func TestUserHandler_GetPreview(t *testing.T) {
 					UserType:    "employer",
 					Image:       "basic_applicant_avatar.webp",
 				}
-				r.EXPECT().GetUserSafety(id).Return(expectedUser, errorHandler.ErrUserNotExists)
+				r.EXPECT().GetUserSafety(id).Return(expectedUser, errorHandler2.ErrUserNotExists)
 			},
 			expectedStatusCode:   401,
 			expectedResponseBody: "{\"descriptors\":\"email\",\"error\":\"Пользователя с таким email не существует\"}",
@@ -667,7 +667,7 @@ func TestUserHandler_GetPreview(t *testing.T) {
 			}
 
 			r := gin.New()
-			r.GET("/preview/:id", handler.GetPreview, middleware.ErrorHandler())
+			r.GET("/preview/:id", handler.GetPreview, errorHandler2.Middleware())
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("GET", "/preview/"+testCase.requestParam,
@@ -730,7 +730,7 @@ func TestUserHandler_UpdateUser(t *testing.T) {
 			inputToken:     "valid_token",
 			emailFromToken: "test@gmail.com",
 			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
-				r.EXPECT().UpdateUser(user).Return(errorHandler.InvalidUserType)
+				r.EXPECT().UpdateUser(user).Return(errorHandler2.InvalidUserType)
 			},
 			inputUser: models.UserAccount{
 				UserType:         "aplicant",
@@ -759,7 +759,7 @@ func TestUserHandler_UpdateUser(t *testing.T) {
 			inputToken:     "valid_token",
 			emailFromToken: "",
 			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
-				r.EXPECT().UpdateUser(user).Return(errorHandler.InvalidUserType)
+				r.EXPECT().UpdateUser(user).Return(errorHandler2.InvalidUserType)
 			},
 			inputUser: models.UserAccount{
 				UserType:         "aplicant",
@@ -809,7 +809,7 @@ func TestUserHandler_UpdateUser(t *testing.T) {
 			}
 			testCase.sessionRepBehavior(sessionRep, testCase.inputToken)
 			r := gin.New()
-			r.POST("/user", sessionMiddlware.Session, handler.UpdateUser, middleware.ErrorHandler())
+			r.POST("/user", sessionMiddlware.Session, handler.UpdateUser, errorHandler2.Middleware())
 			w := httptest.NewRecorder()
 
 			cookie := &http.Cookie{
@@ -903,7 +903,7 @@ func TestUserHandler_DeleteUserImage(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			deleteImageMockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
-				r.EXPECT().DeleteUserImage(user).Return(errorHandler.ErrBadRequest)
+				r.EXPECT().DeleteUserImage(user).Return(errorHandler2.ErrBadRequest)
 			},
 			expectedStatusCode:   400,
 			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Некорректный запрос\"}",
@@ -933,7 +933,7 @@ func TestUserHandler_DeleteUserImage(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("", fmt.Errorf("getting session error:"))
 			},
 			deleteImageMockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
-				r.EXPECT().DeleteUserImage(user).Return(errorHandler.ErrBadRequest)
+				r.EXPECT().DeleteUserImage(user).Return(errorHandler2.ErrBadRequest)
 			},
 			expectedStatusCode:   401,
 			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Клиент не авторизован\"}",
@@ -967,7 +967,7 @@ func TestUserHandler_DeleteUserImage(t *testing.T) {
 			}
 			testCase.sessionRepBehavior(sessionRep, testCase.inputToken)
 			r := gin.New()
-			r.DELETE("/image", sessionMiddlware.Session, handler.DeleteUserImage, middleware.ErrorHandler())
+			r.DELETE("/image", sessionMiddlware.Session, handler.DeleteUserImage, errorHandler2.Middleware())
 			w := httptest.NewRecorder()
 
 			cookie := &http.Cookie{

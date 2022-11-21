@@ -2,7 +2,7 @@ package images
 
 import (
 	"HeadHunter/configs"
-	"HeadHunter/internal/errorHandler"
+	"HeadHunter/pkg/errorHandler"
 	"github.com/kolesa-team/go-webp/encoder"
 	"github.com/kolesa-team/go-webp/webp"
 	"image"

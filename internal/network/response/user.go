@@ -2,7 +2,7 @@ package response
 
 import (
 	"HeadHunter/internal/entity/models"
-	"HeadHunter/internal/errorHandler"
+	"HeadHunter/pkg/errorHandler"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

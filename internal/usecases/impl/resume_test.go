@@ -3,8 +3,8 @@ package impl
 import (
 	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
-	"HeadHunter/internal/errorHandler"
 	mock_repository "HeadHunter/internal/repository/mocks"
+	"HeadHunter/pkg/errorHandler"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"testing"

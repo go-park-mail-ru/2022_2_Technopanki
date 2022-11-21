@@ -2,7 +2,7 @@ package utils
 
 import (
 	"HeadHunter/internal/entity/models"
-	"HeadHunter/internal/errorHandler"
+	"HeadHunter/pkg/errorHandler"
 )
 
 func FillUser(user, reference *models.UserAccount) error {

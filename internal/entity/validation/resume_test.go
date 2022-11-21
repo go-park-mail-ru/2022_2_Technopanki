@@ -3,7 +3,7 @@ package validation
 import (
 	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
-	"HeadHunter/internal/errorHandler"
+	"HeadHunter/pkg/errorHandler"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

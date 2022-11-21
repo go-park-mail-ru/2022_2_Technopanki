@@ -3,7 +3,7 @@ package utils
 import (
 	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
-	"HeadHunter/internal/errorHandler"
+	"HeadHunter/pkg/errorHandler"
 	"golang.org/x/crypto/bcrypt"
 )
 

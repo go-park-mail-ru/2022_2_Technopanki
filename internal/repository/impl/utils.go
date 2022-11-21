@@ -2,7 +2,7 @@ package impl
 
 import (
 	"HeadHunter/internal/entity/models"
-	"HeadHunter/internal/errorHandler"
+	"HeadHunter/pkg/errorHandler"
 	"errors"
 	"fmt"
 	"gorm.io/gorm"

@@ -4,9 +4,9 @@ import (
 	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/entity/validation"
-	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/usecases/escaping"
+	"HeadHunter/pkg/errorHandler"
 )
 
 type ResumeService struct {

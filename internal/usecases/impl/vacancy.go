@@ -2,9 +2,9 @@ package impl
 
 import (
 	"HeadHunter/internal/entity/models"
-	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/usecases/escaping"
+	"HeadHunter/pkg/errorHandler"
 )
 
 type VacancyService struct {

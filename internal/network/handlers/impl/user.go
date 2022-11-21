@@ -3,9 +3,9 @@ package impl
 import (
 	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
-	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/network/response"
 	"HeadHunter/internal/usecases"
+	"HeadHunter/pkg/errorHandler"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
