@@ -7,11 +7,12 @@ import (
 )
 
 type ResumePostgres struct {
-	db *gorm.DB
+	db        *gorm.DB
+	authorRep *AuthorPostgres
 }
 
 func NewResumePostgres(db *gorm.DB) *ResumePostgres {
-	return &ResumePostgres{db: db}
+	return &ResumePostgres{db: db, authorRep: NewAuthorPostgres(db)}
 }
 
 func (rp *ResumePostgres) GetResume(id uint) (*models.Resume, error) {
@@ -84,10 +85,6 @@ func (rp *ResumePostgres) UpdateResume(id uint, resume *models.Resume) error {
 
 func (rp *ResumePostgres) DeleteResume(id uint) error {
 	return rp.db.Delete(&models.Resume{ID: id}).Error
-}
-
-func (rp *ResumePostgres) GetAuthor(email string) (*models.UserAccount, error) {
-	return GetUser(email, rp.db)
 }
 
 func (rp *ResumePostgres) GetEmployerIdByVacancyActivity(id uint) (uint, error) {

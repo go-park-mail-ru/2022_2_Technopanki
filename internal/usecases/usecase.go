@@ -21,7 +21,7 @@ type UseCases struct {
 func NewUseCases(repos *repository.Repository, session session.Repository, _cfg *configs.Config) *UseCases {
 	return &UseCases{
 		User:            impl.NewUserService(repos.UserRepository, session, _cfg),
-		Resume:          impl.NewResumeService(repos.ResumeRepository, _cfg),
+		Resume:          impl.NewResumeService(repos.ResumeRepository, _cfg, repos.AuthorRepository),
 		Vacancy:         impl.NewVacancyService(repos.VacancyRepository),
 		VacancyActivity: impl.NewVacancyActivityService(repos.VacancyActivityRepository),
 	}

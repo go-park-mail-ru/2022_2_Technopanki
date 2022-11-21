@@ -11,6 +11,7 @@ type Repository struct {
 	VacancyRepository         VacancyRepository
 	VacancyActivityRepository VacancyActivityRepository
 	ResumeRepository          ResumeRepository
+	AuthorRepository          AuthorRepository
 }
 
 func NewPostgresRepository(db *gorm.DB) *Repository {
@@ -19,6 +20,7 @@ func NewPostgresRepository(db *gorm.DB) *Repository {
 		ResumeRepository:          impl.NewResumePostgres(db),
 		VacancyRepository:         impl.NewVacancyPostgres(db),
 		VacancyActivityRepository: impl.NewVacancyActivityPostgres(db),
+		AuthorRepository:          impl.NewAuthorPostgres(db),
 	}
 }
 
@@ -59,6 +61,9 @@ type ResumeRepository interface {
 	CreateResume(resume *models.Resume, userId uint) error
 	UpdateResume(id uint, resume *models.Resume) error
 	DeleteResume(id uint) error
-	GetAuthor(email string) (*models.UserAccount, error)
 	GetEmployerIdByVacancyActivity(id uint) (uint, error)
+}
+
+type AuthorRepository interface {
+	GetAuthor(email string) (*models.UserAccount, error)
 }
