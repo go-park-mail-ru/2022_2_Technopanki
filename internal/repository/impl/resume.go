@@ -7,12 +7,11 @@ import (
 )
 
 type ResumePostgres struct {
-	db        *gorm.DB
-	authorRep *AuthorPostgres
+	db *gorm.DB
 }
 
 func NewResumePostgres(db *gorm.DB) *ResumePostgres {
-	return &ResumePostgres{db: db, authorRep: NewAuthorPostgres(db)}
+	return &ResumePostgres{db: db}
 }
 
 func (rp *ResumePostgres) GetResume(id uint) (*models.Resume, error) {

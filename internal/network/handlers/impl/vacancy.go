@@ -2,6 +2,7 @@ package impl
 
 import (
 	"HeadHunter/internal/entity/models"
+	"HeadHunter/internal/network/handlers/utils"
 	"HeadHunter/internal/usecases"
 	"HeadHunter/pkg/errorHandler"
 	"github.com/gin-gonic/gin"
@@ -61,7 +62,7 @@ func (vh *VacancyHandler) GetUserVacancies(c *gin.Context) {
 }
 
 func (vh *VacancyHandler) CreateVacancy(c *gin.Context) {
-	email, contextErr := getEmailFromContext(c)
+	email, contextErr := utils.getEmailFromContext(c)
 	if contextErr != nil {
 		_ = c.Error(contextErr)
 		return
@@ -88,7 +89,7 @@ func (vh *VacancyHandler) DeleteVacancy(c *gin.Context) {
 		return
 	}
 
-	email, contextErr := getEmailFromContext(c)
+	email, contextErr := utils.getEmailFromContext(c)
 	if contextErr != nil {
 		_ = c.Error(contextErr)
 		return
@@ -110,7 +111,7 @@ func (vh *VacancyHandler) UpdateVacancy(c *gin.Context) {
 		return
 	}
 
-	email, contextErr := getEmailFromContext(c)
+	email, contextErr := utils.getEmailFromContext(c)
 	if contextErr != nil {
 		_ = c.Error(contextErr)
 		return
