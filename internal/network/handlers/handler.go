@@ -17,7 +17,7 @@ type Handlers struct {
 func NewHandlers(usecases *usecases.UseCases, _cfg *configs.Config) *Handlers {
 	return &Handlers{
 		UserHandler:            impl.NewUserHandler(usecases, _cfg),
-		ResumeHandler:          impl.NewResumeHandler(usecases, _cfg),
+		ResumeHandler:          impl.NewResumeHandler(usecases),
 		VacancyHandler:         impl.NewVacancyHandler(usecases),
 		VacancyActivityHandler: impl.NewVacancyActivityHandler(usecases),
 	}
@@ -34,7 +34,6 @@ type UserH interface {
 	UploadUserImage(c *gin.Context)
 	DeleteUserImage(c *gin.Context)
 	GetPreview(c *gin.Context)
-	GetUserId(c *gin.Context) (uint, error)
 }
 
 type VacancyH interface {

@@ -160,7 +160,7 @@ func (us *UserService) GetUserSafety(id uint) (*models.UserAccount, error) {
 	}
 	fields := strings.Split(user.PublicFields, " ")
 
-	if len(fields) == 1 && (fields[0] == "" || fields[0] == "null") {
+	if len(fields) == 1 && (fields[0] == "" || fields[0] == models.NoPublicFields) {
 		fields = []string{}
 	}
 	return us.userRep.GetUserSafety(id, fields)
@@ -198,7 +198,6 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 }
 
 func (us *UserService) DeleteUserImage(user *models.UserAccount) error {
-	//
 	//user = escaping.EscapingObject[*models.UserAccount](user)
 	//
 	//if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {

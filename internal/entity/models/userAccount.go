@@ -34,3 +34,5 @@ var PrivateUserFields = []string{"email", "contact_number",
 var SafeUserFields = []string{"id", "user_type", "description", "status", "date_of_birth", "image",
 	"applicant_name", "applicant_surname", "company_name",
 	"location", "company_size", "company_website_url", "public_fields"}
+
+const NoPublicFields string = "null"

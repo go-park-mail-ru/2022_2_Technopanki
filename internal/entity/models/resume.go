@@ -14,9 +14,10 @@ type Resume struct {
 }
 
 type ResumePreview struct {
-	Image            string `json:"image"`
-	ApplicantName    string `json:"applicant_name"`
-	ApplicantSurname string `json:"applicant_surname"`
-	Id               uint   `json:"id"`
-	Title            string `json:"title"`
+	Image            string    `json:"image"`
+	ApplicantName    string    `json:"applicant_name"`
+	ApplicantSurname string    `json:"applicant_surname"`
+	Id               uint      `json:"id"`
+	Title            string    `json:"title"`
+	CreatedTime      time.Time `json:"created_date" gorm:"autoCreateTime"`
 }
