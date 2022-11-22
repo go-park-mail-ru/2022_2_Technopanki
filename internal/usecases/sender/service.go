@@ -1,6 +1,7 @@
 package sender
 
 import (
+	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
 	"gopkg.in/gomail.v2"
 	"strings"
@@ -9,9 +10,10 @@ import (
 type SenderService struct {
 	dial     gomail.SendCloser
 	username string
+	cfg      *configs.Config
 }
 
-func NewSender(username, password string) (*SenderService, error) {
+func NewSender(username, password string, _cfg *configs.Config) (*SenderService, error) {
 
 	dialer := gomail.NewDialer("smtp.mail.ru", 587, username, password)
 	dial, dialErr := dialer.Dial()
@@ -19,7 +21,7 @@ func NewSender(username, password string) (*SenderService, error) {
 		return nil, dialErr
 	}
 
-	return &SenderService{dial: dial, username: username}, nil
+	return &SenderService{dial: dial, username: username, cfg: _cfg}, nil
 }
 
 func (ss *SenderService) SendMail(to []string, subject, body string) error {
@@ -45,19 +47,14 @@ func (ss *SenderService) CloseSender() error {
 
 }
 
-func (ss *SenderService) SendConfirmToken(token string) error {
-	//	form := `<form action="http://localhost:8080" method="post">
-	//  <div>
-	//    <label for="say">What greeting do you want to say?</label>
-	//    <input name="say" id="say" value="Hi">
-	//  </div>
-	//  <div>
-	//	<label> your token is: ` + token + `</label>
-	//    <button>Send my greetings</button>
-	//  </div>
-	//</form>`
-	form := `<h1 style="color: blue"> your token is: ` + token + `</h1>`
-	return ss.SendMail([]string{"zahvinar358@gmail.com"}, "Form", form)
+func (ss *SenderService) SendConfirmToken(email, token string) error {
+	form := `<form action="http://` + ss.cfg.Domain + ss.cfg.Port + `/auth/confirm" method="post">
+	 <div>
+		<input type="hidden" name="token" value="` + token + `" />
+	<button>Подтвердить аккаунт</button>
+	 </div>
+	</form>`
+	return ss.SendMail([]string{email}, "Подтверждение аккаунта", form)
 }
 
 func (ss *SenderService) SendApplicantMailing(email string, vacancies []*models.Vacancy) error {

@@ -28,6 +28,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 		auth.POST("/sign-up", h.UserHandler.SignUp, errorHandler.Middleware())
 		auth.POST("/sign-in", h.UserHandler.SignIn, errorHandler.Middleware())
 		auth.POST("/logout", sessionMW.Session, h.UserHandler.Logout, errorHandler.Middleware())
+		auth.POST("/confirm", sessionMW.Session, h.UserHandler.ConfirmUser, errorHandler.Middleware())
 	}
 
 	api := router.Group("/api")
