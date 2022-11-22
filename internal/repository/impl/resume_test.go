@@ -2,6 +2,7 @@ package impl
 
 import (
 	"HeadHunter/pkg/errorHandler"
+	"fmt"
 	"regexp"
 	"testing"
 
@@ -133,7 +134,6 @@ func TestResumePostgres_GetPreviewResumeByApplicant(t *testing.T) {
 	for _, tc := range testTable {
 		testCase := tc
 		t.Run(testCase.name, func(t *testing.T) {
-			t.Parallel()
 
 			resumeRows := sqlmock.NewRows([]string{"id", "title", "applicant_name", "applicant_surname"})
 			if len(testCase.expected) > 0 {
@@ -234,6 +234,68 @@ func TestResumePostgres_GetResumeByApplicant(t *testing.T) {
 				assert.Equal(t, *testCase.expected[i], *actualResume[i])
 			}
 
+			if err := mock.ExpectationsWereMet(); err != nil {
+				t.Errorf("there were unfulfilled expectations: %s", err)
+			}
+		})
+	}
+}
+
+func TestResumePostgres_DeleteResume(t *testing.T) {
+	t.Parallel()
+	ResumeDB, mock, mockErr := CreateResumeMock()
+	if mockErr != nil {
+		t.Errorf("error with creating mock: %s", mockErr)
+	}
+
+	testTable := []struct {
+		name        string
+		id          uint
+		expectedErr error
+		expected    []*models.Resume
+	}{
+		{
+			name:        "ok",
+			id:          1,
+			expectedErr: nil,
+			expected: []*models.Resume{{
+				ID:            1,
+				Title:         "title",
+				Description:   "desc",
+				UserAccountId: 1,
+				ExperienceDetail: models.ExperienceDetail{
+					ResumeId: 1,
+				},
+				EducationDetail: models.EducationDetail{
+					ResumeId: 1,
+				},
+			}},
+		},
+	}
+
+	for _, tc := range testTable {
+		testCase := tc
+		t.Run(testCase.name, func(t *testing.T) {
+
+			resumeRows := sqlmock.NewRows([]string{"id", "title", "description", "user_account_id"})
+			if len(testCase.expected) > 0 {
+				resumeRows = resumeRows.AddRow(testCase.expected[0].ID, testCase.expected[0].Title,
+					testCase.expected[0].Description, testCase.expected[0].UserAccountId)
+			}
+			mock.ExpectBegin()
+			if testCase.expectedErr == nil {
+				mock.
+					ExpectExec(regexp.QuoteMeta(`DELETE FROM "resumes" WHERE "resumes"."id" = $1`)).
+					WithArgs(1).WillReturnResult(sqlmock.NewResult(1, 1))
+			} else {
+				mock.
+					ExpectExec(regexp.QuoteMeta(`DELETE FROM "resumes" WHERE "resumes"."id" = $1`)).
+					WithArgs(1).WillReturnError(fmt.Errorf("%w", errorHandler.ErrResumeNotFound))
+			}
+			mock.ExpectCommit()
+
+			deleteErr := ResumeDB.DeleteResume(1)
+			assert.Equal(t, testCase.expectedErr, deleteErr)
 			if err := mock.ExpectationsWereMet(); err != nil {
 				t.Errorf("there were unfulfilled expectations: %s", err)
 			}
