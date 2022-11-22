@@ -3,7 +3,7 @@ package models
 import "time"
 
 type Resume struct {
-	ID               uint             `json:"resume_id" gorm:"primaryKey;"`
+	ID               uint             `json:"id" gorm:"primaryKey;"`
 	UserAccountId    uint             `json:"user_account_id" gorm:"not null;"`
 	Title            string           `json:"title" gorm:"not null"`
 	Description      string           `json:"description" gorm:"not null;"`
@@ -14,9 +14,10 @@ type Resume struct {
 }
 
 type ResumePreview struct {
-	Image            string `json:"image"`
-	ApplicantName    string `json:"applicant_name"`
-	ApplicantSurname string `json:"applicant_surname"`
-	Id               uint   `json:"id"`
-	Title            string `json:"title"`
+	Image            string    `json:"image"`
+	ApplicantName    string    `json:"applicant_name"`
+	ApplicantSurname string    `json:"applicant_surname"`
+	Id               uint      `json:"id"`
+	Title            string    `json:"title"`
+	CreatedTime      time.Time `json:"created_date" gorm:"autoCreateTime"`
 }
