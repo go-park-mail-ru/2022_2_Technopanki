@@ -7,12 +7,11 @@ import (
 )
 
 type ResumePostgres struct {
-	db        *gorm.DB
-	authorRep *AuthorPostgres
+	db *gorm.DB
 }
 
 func NewResumePostgres(db *gorm.DB) *ResumePostgres {
-	return &ResumePostgres{db: db, authorRep: NewAuthorPostgres(db)}
+	return &ResumePostgres{db: db}
 }
 
 func (rp *ResumePostgres) GetResume(id uint) (*models.Resume, error) {
@@ -51,7 +50,7 @@ func (rp *ResumePostgres) GetPreviewResumeByApplicant(userId uint) ([]*models.Re
 	var resultPreview []*models.ResumePreview
 	query := rp.db.Table("resumes").
 		Select("user_accounts.applicant_name, user_accounts.applicant_surname, user_accounts.image,"+
-			"resumes.id, resumes.title").
+			"resumes.id, resumes.title, resumes.created_time").
 		Joins("left join user_accounts on resumes.user_account_id = user_accounts.id").
 		Where("user_account_id = ?", userId).
 		Scan(&resultPreview)

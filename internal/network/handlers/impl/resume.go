@@ -2,6 +2,7 @@ package impl
 
 import (
 	"HeadHunter/internal/entity/models"
+	"HeadHunter/internal/network/handlers/utils"
 	"HeadHunter/internal/usecases"
 	"HeadHunter/pkg/errorHandler"
 	"github.com/gin-gonic/gin"
@@ -24,7 +25,7 @@ func (rh *ResumeHandler) GetResume(c *gin.Context) {
 		return
 	}
 
-	email, contextErr := getEmailFromContext(c)
+	email, contextErr := utils.GetEmailFromContext(c)
 	if contextErr != nil {
 		_ = c.Error(contextErr)
 		return
@@ -46,7 +47,7 @@ func (rh *ResumeHandler) GetResumeByApplicant(c *gin.Context) {
 		return
 	}
 
-	email, contextErr := getEmailFromContext(c)
+	email, contextErr := utils.GetEmailFromContext(c)
 	if contextErr != nil {
 		_ = c.Error(contextErr)
 		return
@@ -68,7 +69,7 @@ func (rh *ResumeHandler) GetPreviewResumeByApplicant(c *gin.Context) {
 		return
 	}
 
-	email, contextErr := getEmailFromContext(c)
+	email, contextErr := utils.GetEmailFromContext(c)
 	if contextErr != nil {
 		_ = c.Error(contextErr)
 		return
@@ -85,7 +86,7 @@ func (rh *ResumeHandler) GetPreviewResumeByApplicant(c *gin.Context) {
 
 func (rh *ResumeHandler) CreateResume(c *gin.Context) {
 
-	email, contextErr := getEmailFromContext(c)
+	email, contextErr := utils.GetEmailFromContext(c)
 	if contextErr != nil {
 		_ = c.Error(contextErr)
 		return
@@ -113,7 +114,7 @@ func (rh *ResumeHandler) UpdateResume(c *gin.Context) {
 		return
 	}
 
-	email, contextErr := getEmailFromContext(c)
+	email, contextErr := utils.GetEmailFromContext(c)
 	if contextErr != nil {
 		_ = c.Error(contextErr)
 		return
@@ -141,7 +142,7 @@ func (rh *ResumeHandler) DeleteResume(c *gin.Context) {
 		return
 	}
 
-	email, contextErr := getEmailFromContext(c)
+	email, contextErr := utils.GetEmailFromContext(c)
 	if contextErr != nil {
 		_ = c.Error(contextErr)
 		return

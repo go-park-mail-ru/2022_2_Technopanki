@@ -36,7 +36,6 @@ type UserH interface {
 	UploadUserImage(c *gin.Context)
 	DeleteUserImage(c *gin.Context)
 	GetPreview(c *gin.Context)
-	GetUserId(c *gin.Context) (uint, error)
 	ConfirmUser(c *gin.Context)
 }
 

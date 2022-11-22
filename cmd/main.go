@@ -37,11 +37,13 @@ func main() {
 	}
 
 	postgresRepository := repository.NewPostgresRepository(db)
+
 	senderService, senderErr := sender.NewSender(mainConfig.Mail.Username, mainConfig.Mail.Password, &mainConfig)
 
 	if senderErr != nil {
 		logrus.Fatal(senderErr)
 	}
+
 	useCase := usecases.NewUseCases(
 		postgresRepository,
 		redisRepository,
