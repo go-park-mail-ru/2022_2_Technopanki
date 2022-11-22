@@ -21,7 +21,7 @@ func (ms *MailService) ConfirmationAccount(email string) error {
 	if tokenErr != nil {
 		return tokenErr
 	}
-	sendErr := ms.sender.SendConfirmToken(token)
+	sendErr := ms.sender.SendConfirmToken(email, token)
 	if sendErr != nil {
 		return sendErr
 	}

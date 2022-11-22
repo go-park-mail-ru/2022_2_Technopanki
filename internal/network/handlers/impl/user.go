@@ -215,8 +215,12 @@ func (uh *UserHandler) ConfirmUser(c *gin.Context) {
 		_ = c.Error(emailErr)
 		return
 	}
-
-	token := c.Query("token")
+	token, ok := c.GetPostForm("token")
+	if !ok {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+	
 	confirmErr := uh.userUseCase.ConfirmUser(token, email)
 	if confirmErr != nil {
 		_ = c.Error(confirmErr)

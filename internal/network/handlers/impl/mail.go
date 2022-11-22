@@ -3,6 +3,7 @@ package impl
 import (
 	"HeadHunter/internal/usecases"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type MailHandler struct {
@@ -14,7 +15,14 @@ func NewMailHandler(cases *usecases.UseCases) *MailHandler {
 }
 
 func (mh *MailHandler) ConfirmationAccount(c *gin.Context) {
+	email := c.Param("email")
+	confirmErr := mh.mail.ConfirmationAccount(email)
+	if confirmErr != nil {
+		_ = c.Error(confirmErr)
+		return
+	}
 
+	c.Status(http.StatusOK)
 }
 func (mh *MailHandler) UpdatePassword(c *gin.Context) {
 
