@@ -1,7 +1,6 @@
 package impl
 
 import (
-	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/usecases"
 	"HeadHunter/pkg/errorHandler"
@@ -11,12 +10,11 @@ import (
 )
 
 type ResumeHandler struct {
-	cfg           *configs.Config
 	resumeUseCase usecases.Resume
 }
 
-func NewResumeHandler(useCases *usecases.UseCases, _cfg *configs.Config) *ResumeHandler {
-	return &ResumeHandler{cfg: _cfg, resumeUseCase: useCases.Resume}
+func NewResumeHandler(useCases *usecases.UseCases) *ResumeHandler {
+	return &ResumeHandler{resumeUseCase: useCases.Resume}
 }
 
 func (rh *ResumeHandler) GetResume(c *gin.Context) {

@@ -37,3 +37,7 @@ image:
 security:
   csrfSecret: "jobFlowSecretWorld112351235125"
   csrfMode: false
+  confirmationTime: 600
+mail:
+  username:
+  password:

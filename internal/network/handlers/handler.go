@@ -12,14 +12,16 @@ type Handlers struct {
 	VacancyHandler         VacancyH
 	VacancyActivityHandler VacancyActivityH
 	ResumeHandler          ResumeH
+	MailHandler            MailH
 }
 
 func NewHandlers(usecases *usecases.UseCases, _cfg *configs.Config) *Handlers {
 	return &Handlers{
 		UserHandler:            impl.NewUserHandler(usecases, _cfg),
-		ResumeHandler:          impl.NewResumeHandler(usecases, _cfg),
+		ResumeHandler:          impl.NewResumeHandler(usecases),
 		VacancyHandler:         impl.NewVacancyHandler(usecases),
 		VacancyActivityHandler: impl.NewVacancyActivityHandler(usecases),
+		MailHandler:            impl.NewMailHandler(usecases),
 	}
 }
 
@@ -35,6 +37,7 @@ type UserH interface {
 	DeleteUserImage(c *gin.Context)
 	GetPreview(c *gin.Context)
 	GetUserId(c *gin.Context) (uint, error)
+	ConfirmUser(c *gin.Context)
 }
 
 type VacancyH interface {
@@ -60,4 +63,10 @@ type ResumeH interface {
 	CreateResume(c *gin.Context)
 	UpdateResume(c *gin.Context)
 	DeleteResume(c *gin.Context)
+}
+
+type MailH interface {
+	ConfirmationAccount(c *gin.Context)
+	UpdatePassword(c *gin.Context)
+	TwoFactorSignIn(c *gin.Context)
 }

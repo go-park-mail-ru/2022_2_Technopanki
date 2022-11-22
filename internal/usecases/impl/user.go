@@ -212,3 +212,26 @@ func (us *UserService) DeleteUserImage(user *models.UserAccount) error {
 	user.Image = fmt.Sprintf("basic_%s_avatar.webp", user.UserType)
 	return us.UpdateUser(user)
 }
+
+func (us *UserService) ConfirmUser(token, emailFromContext string) error {
+	if token == "" {
+		return errorHandler.ErrBadRequest
+	}
+
+	email, getTokenErr := us.sessionRepo.GetEmailFromConfirmationToken(token)
+	if getTokenErr != nil {
+		return getTokenErr
+	}
+
+	if email != emailFromContext {
+		return errorHandler.ErrUnauthorized
+	}
+	
+	user, getUserErr := us.GetUserByEmail(email)
+	if getUserErr != nil {
+		return getUserErr
+	}
+	newUser := user
+	newUser.IsConfirmed = true
+	return us.userRep.UpdateUser(user, newUser)
+}

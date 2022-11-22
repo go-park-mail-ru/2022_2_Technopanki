@@ -208,3 +208,19 @@ func (uh *UserHandler) GetPreview(c *gin.Context) {
 	}
 	response.SendPreviewData(c, user)
 }
+
+func (uh *UserHandler) ConfirmUser(c *gin.Context) {
+	email, emailErr := getEmailFromContext(c)
+	if emailErr != nil {
+		_ = c.Error(emailErr)
+		return
+	}
+
+	token := c.Query("token")
+	confirmErr := uh.userUseCase.ConfirmUser(token, email)
+	if confirmErr != nil {
+		_ = c.Error(confirmErr)
+		return
+	}
+	c.Status(http.StatusOK)
+}

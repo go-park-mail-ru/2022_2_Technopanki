@@ -8,6 +8,7 @@ import (
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases"
+	"HeadHunter/internal/usecases/sender"
 	repositorypkg "HeadHunter/pkg/repository"
 	"github.com/sirupsen/logrus"
 )
@@ -36,10 +37,15 @@ func main() {
 	}
 
 	postgresRepository := repository.NewPostgresRepository(db)
+	senderService, senderErr := sender.NewSender(mainConfig.Mail.Username, mainConfig.Mail.Password)
 
+	if senderErr != nil {
+		logrus.Fatal(senderErr)
+	}
 	useCase := usecases.NewUseCases(
 		postgresRepository,
 		redisRepository,
+		senderService,
 		&mainConfig,
 	)
 

@@ -11,4 +11,6 @@ type Repository interface {
 	NewSession(email string) (string, error)
 	GetSession(token string) (string, error)
 	DeleteSession(token string) error
+	CreateConfirmationToken(email string) (string, error)
+	GetEmailFromConfirmationToken(token string) (string, error)
 }
