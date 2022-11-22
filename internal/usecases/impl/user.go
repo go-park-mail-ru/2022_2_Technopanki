@@ -162,7 +162,7 @@ func (us *UserService) GetUserSafety(id uint) (*models.UserAccount, error) {
 	}
 	fields := strings.Split(user.PublicFields, " ")
 
-	if len(fields) == 1 && (fields[0] == "" || fields[0] == "null") {
+	if len(fields) == 1 && (fields[0] == "" || fields[0] == models.NoPublicFields) {
 		fields = []string{}
 	}
 	return us.userRep.GetUserSafety(id, fields)

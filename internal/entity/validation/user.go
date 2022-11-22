@@ -81,7 +81,7 @@ func AllowedFieldsValidation(user *models.UserAccount) error {
 		return errorHandler.ErrBadRequest
 	}
 
-	if len(fields) == 1 && (fields[0] == "" || fields[0] == "null") {
+	if len(fields) == 1 && (fields[0] == "" || fields[0] == models.NoPublicFields) {
 		return nil
 	}
 
