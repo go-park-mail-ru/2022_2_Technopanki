@@ -72,7 +72,7 @@ func (uh *UserHandler) Logout(c *gin.Context) {
 }
 
 func (uh *UserHandler) AuthCheck(c *gin.Context) {
-	email, emailErr := utils.getEmailFromContext(c)
+	email, emailErr := utils.GetEmailFromContext(c)
 	if emailErr != nil {
 		_ = c.Error(emailErr)
 		return
@@ -86,7 +86,7 @@ func (uh *UserHandler) AuthCheck(c *gin.Context) {
 }
 
 func (uh *UserHandler) UpdateUser(c *gin.Context) {
-	email, emailErr := utils.getEmailFromContext(c)
+	email, emailErr := utils.GetEmailFromContext(c)
 	if emailErr != nil {
 		_ = c.Error(emailErr)
 		return
@@ -107,7 +107,7 @@ func (uh *UserHandler) UpdateUser(c *gin.Context) {
 }
 
 func (uh *UserHandler) GetUser(c *gin.Context) {
-	email, emailErr := utils.getEmailFromContext(c)
+	email, emailErr := utils.GetEmailFromContext(c)
 	if emailErr != nil {
 		_ = c.Error(emailErr)
 		return
@@ -147,7 +147,7 @@ func (uh *UserHandler) GetUserSafety(c *gin.Context) {
 }
 
 func (uh *UserHandler) UploadUserImage(c *gin.Context) {
-	email, emailErr := utils.getEmailFromContext(c)
+	email, emailErr := utils.GetEmailFromContext(c)
 	if emailErr != nil {
 		_ = c.Error(emailErr)
 		return
@@ -174,7 +174,7 @@ func (uh *UserHandler) UploadUserImage(c *gin.Context) {
 }
 
 func (uh *UserHandler) DeleteUserImage(c *gin.Context) {
-	email, emailErr := utils.getEmailFromContext(c)
+	email, emailErr := utils.GetEmailFromContext(c)
 	if emailErr != nil {
 		_ = c.Error(emailErr)
 		return

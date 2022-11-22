@@ -42,7 +42,7 @@ func (vah *VacancyActivityHandler) ApplyForVacancy(c *gin.Context) {
 		return
 	}
 
-	email, contextErr := utils.getEmailFromContext(c)
+	email, contextErr := utils.GetEmailFromContext(c)
 	if contextErr != nil {
 		_ = c.Error(contextErr)
 		return
@@ -86,7 +86,7 @@ func (vah *VacancyActivityHandler) DeleteUserApply(c *gin.Context) {
 		return
 	}
 
-	email, contextErr := utils.getEmailFromContext(c)
+	email, contextErr := utils.GetEmailFromContext(c)
 	if contextErr != nil {
 		_ = c.Error(contextErr)
 		return

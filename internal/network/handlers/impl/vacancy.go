@@ -62,7 +62,7 @@ func (vh *VacancyHandler) GetUserVacancies(c *gin.Context) {
 }
 
 func (vh *VacancyHandler) CreateVacancy(c *gin.Context) {
-	email, contextErr := utils.getEmailFromContext(c)
+	email, contextErr := utils.GetEmailFromContext(c)
 	if contextErr != nil {
 		_ = c.Error(contextErr)
 		return
@@ -89,7 +89,7 @@ func (vh *VacancyHandler) DeleteVacancy(c *gin.Context) {
 		return
 	}
 
-	email, contextErr := utils.getEmailFromContext(c)
+	email, contextErr := utils.GetEmailFromContext(c)
 	if contextErr != nil {
 		_ = c.Error(contextErr)
 		return
@@ -111,7 +111,7 @@ func (vh *VacancyHandler) UpdateVacancy(c *gin.Context) {
 		return
 	}
 
-	email, contextErr := utils.getEmailFromContext(c)
+	email, contextErr := utils.GetEmailFromContext(c)
 	if contextErr != nil {
 		_ = c.Error(contextErr)
 		return
