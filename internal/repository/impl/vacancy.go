@@ -24,6 +24,12 @@ func (vp *VacancyPostgres) GetAll() ([]*models.Vacancy, error) {
 }
 
 func (vp *VacancyPostgres) Create(vacancy *models.Vacancy) (uint, error) {
+	var user models.UserAccount
+	queryUser := vp.db.Where("id = ?", vacancy.PostedByUserId).Find(&user)
+	if queryUser.Error != nil {
+		return 0, queryUser.Error
+	}
+	vacancy.Image = user.Image
 	error := vp.db.Create(vacancy).Error
 	if error != nil {
 		return 0, errorHandler.ErrInvalidParam
