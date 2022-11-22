@@ -1,7 +1,6 @@
 package impl
 
 import (
-	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/network/middleware"
 	mock_session "HeadHunter/internal/repository/session/mocks"
@@ -135,13 +134,6 @@ func TestResumeHandler_GetResume(t *testing.T) {
 
 			handler := ResumeHandler{
 				resumeUseCase: mockUseCase,
-				cfg: &configs.Config{
-					DefaultExpiringSession: 100,
-					Cookie: configs.CookieConfig{
-						Secure:   false,
-						HTTPOnly: true,
-					},
-				},
 			}
 
 			r := gin.New()
@@ -266,13 +258,6 @@ func TestResumeHandler_GetResumeByApplicant(t *testing.T) {
 
 			handler := ResumeHandler{
 				resumeUseCase: mockUseCase,
-				cfg: &configs.Config{
-					DefaultExpiringSession: 100,
-					Cookie: configs.CookieConfig{
-						Secure:   false,
-						HTTPOnly: true,
-					},
-				},
 			}
 
 			r := gin.New()
@@ -329,7 +314,7 @@ func TestResumeHandler_GetPreviewResumeByApplicant(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "[{\"image\":\"\",\"applicant_name\":\"\",\"applicant_surname\":\"\",\"id\":42,\"title\":\"some resume\"}]",
+			expectedResponseBody: "[{\"image\":\"\",\"applicant_name\":\"\",\"applicant_surname\":\"\",\"id\":42,\"title\":\"some resume\",\"created_date\":\"0001-01-01T00:00:00Z\"}]",
 		},
 		{
 			name:           "user not found",
@@ -397,13 +382,6 @@ func TestResumeHandler_GetPreviewResumeByApplicant(t *testing.T) {
 
 			handler := ResumeHandler{
 				resumeUseCase: mockUseCase,
-				cfg: &configs.Config{
-					DefaultExpiringSession: 100,
-					Cookie: configs.CookieConfig{
-						Secure:   false,
-						HTTPOnly: true,
-					},
-				},
 			}
 
 			r := gin.New()
@@ -500,13 +478,6 @@ func TestResumeHandler_CreateResume(t *testing.T) {
 
 			handler := ResumeHandler{
 				resumeUseCase: mockUseCase,
-				cfg: &configs.Config{
-					DefaultExpiringSession: 100,
-					Cookie: configs.CookieConfig{
-						Secure:   false,
-						HTTPOnly: true,
-					},
-				},
 			}
 
 			r := gin.New()
@@ -655,13 +626,6 @@ func TestResumeHandler_UpdateResume(t *testing.T) {
 
 			handler := ResumeHandler{
 				resumeUseCase: mockUseCase,
-				cfg: &configs.Config{
-					DefaultExpiringSession: 100,
-					Cookie: configs.CookieConfig{
-						Secure:   false,
-						HTTPOnly: true,
-					},
-				},
 			}
 
 			r := gin.New()
@@ -776,13 +740,6 @@ func TestResumeHandler_DeleteResume(t *testing.T) {
 
 			handler := ResumeHandler{
 				resumeUseCase: mockUseCase,
-				cfg: &configs.Config{
-					DefaultExpiringSession: 100,
-					Cookie: configs.CookieConfig{
-						Secure:   false,
-						HTTPOnly: true,
-					},
-				},
 			}
 
 			r := gin.New()
