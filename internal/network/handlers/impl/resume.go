@@ -149,12 +149,6 @@ func (rh *ResumeHandler) DeleteResume(c *gin.Context) {
 		return
 	}
 
-	var input models.Resume
-	if err := c.BindJSON(&input); err != nil {
-		_ = c.Error(errorHandler.ErrBadRequest)
-		return
-	}
-
 	deleteErr := rh.resumeUseCase.DeleteResume(uint(id), email)
 	if deleteErr != nil {
 		_ = c.Error(deleteErr)
