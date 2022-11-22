@@ -57,7 +57,3 @@ func (vp *VacancyPostgres) Update(userId uint, vacancyId uint, oldVacancy *model
 	query := vp.db.Model(oldVacancy).Where("id = ? AND posted_by_user_id = ?", vacancyId, userId).Updates(updates)
 	return QueryValidation(query, "vacancy")
 }
-
-func (vp *VacancyPostgres) GetAuthor(email string) (*models.UserAccount, error) {
-	return GetUser(email, vp.db)
-}
