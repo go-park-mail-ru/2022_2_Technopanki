@@ -7,10 +7,9 @@ import (
 	"HeadHunter/internal/network/middleware"
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/session"
-	"HeadHunter/internal/storage"
 	"HeadHunter/internal/usecases"
 	repositorypkg "HeadHunter/pkg/repository"
-	"log"
+	"github.com/sirupsen/logrus"
 )
 
 // @title Jobflow API
@@ -22,30 +21,33 @@ import (
 func main() {
 	var mainConfig configs.Config
 	if configErr := configs.InitConfig(&mainConfig); configErr != nil {
-		log.Fatal(configErr.Error())
+		logrus.Fatal(configErr)
 	}
-	client, redisErr := repositorypkg.RedisConnect(mainConfig.Redis)
+	redisClient, redisErr := repositorypkg.RedisConnect(&mainConfig.Redis)
 	if redisErr != nil {
-		log.Fatal(redisErr)
-	}
-	redisRepository := session.NewRedisStore(mainConfig, client)
-	sessionMiddleware := middleware.NewSessionMiddleware(redisRepository)
-	_, DBErr := repositorypkg.DBConnect(mainConfig.DB) //TODO добавить базу данных
-	if DBErr != nil {
-		log.Fatal(DBErr)
+		logrus.Fatal(redisErr)
 	}
 
-	useCase := usecases.NewUseCases(&repository.Repository{
-		UserRepository: &storage.UserStorage}, //TODO добавить нормальнуб бд
+	redisRepository := session.NewRedisStore(&mainConfig, redisClient)
+	sessionMiddleware := middleware.NewSessionMiddleware(redisRepository)
+	db, DBErr := repositorypkg.DBConnect(&mainConfig.DB)
+	if DBErr != nil {
+		logrus.Fatal(DBErr)
+	}
+
+	postgresRepository := repository.NewPostgresRepository(db)
+
+	useCase := usecases.NewUseCases(
+		postgresRepository,
 		redisRepository,
 		&mainConfig,
 	)
 
-	handler := handlers.NewHandlers(useCase, &mainConfig, redisRepository)
+	handler := handlers.NewHandlers(useCase, &mainConfig)
 
-	router := network.InitRoutes(handler, sessionMiddleware)
+	router := network.InitRoutes(handler, sessionMiddleware, &mainConfig)
 	runErr := router.Run(mainConfig.Port)
 	if runErr != nil {
-		log.Fatal(runErr)
+		logrus.Fatal(runErr)
 	}
 }

@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func DBConnect(cfg configs.DBConfig) (*gorm.DB, error) {
+func DBConnect(cfg *configs.DBConfig) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
 		cfg.Username,
 		cfg.Password,
@@ -19,7 +19,8 @@ func DBConnect(cfg configs.DBConfig) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = db.AutoMigrate(&models.UserAccount{}, &models.Resume{}, &models.EducationDetail{}, &models.ExperienceDetail{}, &models.JobLocation{}, &models.Vacancy{}, &models.Skill{}, &models.VacancyActivity{})
+	err = db.AutoMigrate(&models.UserAccount{}, &models.Resume{}, &models.EducationDetail{}, &models.ExperienceDetail{},
+		&models.Vacancy{}, &models.Skill{}, &models.VacancyActivity{}, &models.BusinessType{})
 	if err != nil {
 		return nil, err
 	}

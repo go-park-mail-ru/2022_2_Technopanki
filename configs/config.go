@@ -14,6 +14,9 @@ type Config struct {
 	Redis                  RedisConfig      `yaml:"redis"`
 	Validation             ValidationConfig `yaml:"validation"`
 	Cookie                 CookieConfig     `yaml:"cookie"`
+	Crypt                  CryptConfig      `yaml:"crypt"`
+	Image                  ImageConfig      `yaml:"image"`
+	Security               SecurityConfig   `yaml:"security"`
 }
 
 type DBConfig struct {
@@ -33,19 +36,38 @@ type RedisConfig struct {
 }
 
 type ValidationConfig struct {
-	MinNameLength     int `yaml:"minNameLength"`
-	MaxNameLength     int `yaml:"maxNameLength"`
-	MinSurnameLength  int `yaml:"minSurnameLength"`
-	MaxSurnameLength  int `yaml:"maxSurnameLength"`
-	MinPasswordLength int `yaml:"minPasswordLength"`
-	MaxPasswordLength int `yaml:"maxPasswordLength"`
-	MinEmailLength    int `yaml:"minEmailLength"`
-	MaxEmailLength    int `yaml:"maxEmailLength"`
+	MinNameLength              int `yaml:"minNameLength"`
+	MaxNameLength              int `yaml:"maxNameLength"`
+	MinSurnameLength           int `yaml:"minSurnameLength"`
+	MaxSurnameLength           int `yaml:"maxSurnameLength"`
+	MinPasswordLength          int `yaml:"minPasswordLength"`
+	MaxPasswordLength          int `yaml:"maxPasswordLength"`
+	MinEmailLength             int `yaml:"minEmailLength"`
+	MaxEmailLength             int `yaml:"maxEmailLength"`
+	MinResumeTitleLength       int `yaml:"minResumeTitleLength"`
+	MaxResumeTitleLength       int `yaml:"maxResumeTitleLength"`
+	MinResumeDescriptionLength int `yaml:"minResumeDescriptionLength"`
 }
 
 type CookieConfig struct {
 	HTTPOnly bool `yaml:"httpOnly"`
 	Secure   bool `yaml:"secure"`
+}
+
+type CryptConfig struct {
+	//COST The cost of the password encryption algorithm
+	COST int `yaml:"cost"`
+}
+
+type ImageConfig struct {
+	Path                   string `yaml:"path"`
+	DefaultEmployerAvatar  string `yaml:"defaultEmployerAvatar"`
+	DefaultApplicantAvatar string `yaml:"defaultApplicantAvatar"`
+}
+
+type SecurityConfig struct {
+	Secret   string `yaml:"csrfSecret"`
+	CsrfMode bool   `yaml:"csrfMode"`
 }
 
 func InitConfig(config *Config) error {

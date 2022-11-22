@@ -7,7 +7,7 @@ db:
   port: "5432"
   dbname: "jobflowDB"
   sslmode: "disable"
-  password: "12345"
+  password: "pgjf12345RTY"
 redis:
   host: "jfRedis"
   port: "6379"
@@ -15,13 +15,25 @@ redis:
   dbname: "sessionDB"
 validation:
   minNameLength: 2
-  maxNameLength: 20
+  maxNameLength: 30
   minSurnameLength: 2
-  maxSurnameLength: 20
+  maxSurnameLength: 30
   minPasswordLength: 8
   maxPasswordLength: 20
   minEmailLength: 8
   maxEmailLength: 30
+  minResumeTitleLength: 3
+  maxResumeTitleLength: 30
+  minResumeDescriptionLength: 3
 cookie:
   httpOnly: true
   secure: false
+crypt:
+  cost: 10
+image:
+  path: "data/image/"
+  defaultEmployerAvatar: "basic_employer_avatar"
+  defaultApplicantAvatar: "basic_applicant_avatar"
+security:
+  csrfSecret: "jobFlowSecretWorld112351235125"
+  csrfMode: false

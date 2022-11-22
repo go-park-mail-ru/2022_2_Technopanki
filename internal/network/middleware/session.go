@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"HeadHunter/internal/errorHandler"
 	"HeadHunter/internal/repository/session"
+	"HeadHunter/pkg/errorHandler"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,6 +13,7 @@ type SessionMiddleware struct {
 func NewSessionMiddleware(sr session.Repository) *SessionMiddleware {
 	return &SessionMiddleware{sessionRepos: sr}
 }
+
 func (sm *SessionMiddleware) Session(c *gin.Context) {
 	sessionToken, err := c.Cookie("session")
 	if err != nil {

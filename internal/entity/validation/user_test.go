@@ -3,7 +3,7 @@ package validation
 import (
 	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
-	"HeadHunter/internal/errorHandler"
+	"HeadHunter/pkg/errorHandler"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -102,7 +102,7 @@ func Test_IsValidateAuthData(t *testing.T) {
 		tc := testCase
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			result := IsAuthDataValid(tc.user, configs.ValidationConfig{
+			result := IsAuthDataValid(&tc.user, configs.ValidationConfig{
 				MinNameLength:     2,
 				MaxNameLength:     20,
 				MinSurnameLength:  3,
@@ -205,7 +205,96 @@ func Test_IsValidate(t *testing.T) {
 		tc := testCase
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			result := IsUserValid(tc.user, configs.ValidationConfig{
+			result := IsUserValid(&tc.user, configs.ValidationConfig{
+				MinNameLength:     2,
+				MaxNameLength:     20,
+				MinSurnameLength:  3,
+				MaxSurnameLength:  20,
+				MinPasswordLength: 8,
+				MaxPasswordLength: 20,
+				MinEmailLength:    8,
+				MaxEmailLength:    30,
+			})
+			assert.Equal(t, tc.expected, result)
+		})
+
+	}
+}
+
+func Test_IsMainDataValid(t *testing.T) {
+	testTable := []struct {
+		name     string
+		user     models.UserAccount
+		expected error
+	}{
+		{
+			name: "valid user",
+			user: models.UserAccount{
+				CompanyName: "Mail.ru",
+				UserType:    "employer",
+			},
+			expected: nil,
+		},
+		{
+			name: "valid user 2",
+			user: models.UserAccount{
+				ApplicantName:    "Zakhar",
+				ApplicantSurname: "Urvancev",
+				UserType:         "applicant",
+			},
+			expected: nil,
+		},
+		{
+			name: "invalid user role",
+			user: models.UserAccount{
+				ApplicantName:    "Zakhar",
+				ApplicantSurname: "Urvancev",
+				UserType:         "some_role)",
+			},
+			expected: errorHandler.InvalidUserType,
+		},
+		{
+			name: "incorrect name length 1",
+			user: models.UserAccount{
+				ApplicantName:    "Z",
+				ApplicantSurname: "Urvancev",
+				UserType:         "applicant",
+			},
+			expected: errorHandler.IncorrectNameLength,
+		},
+		{
+			name: "incorrect name length 2",
+			user: models.UserAccount{
+				ApplicantName:    "Zaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaahar",
+				ApplicantSurname: "Urvancev",
+				UserType:         "applicant",
+			},
+			expected: errorHandler.IncorrectNameLength,
+		},
+		{
+			name: "incorrect surname length 1",
+			user: models.UserAccount{
+				ApplicantName:    "Zakhar",
+				ApplicantSurname: "U",
+				UserType:         "applicant",
+			},
+			expected: errorHandler.IncorrectSurnameLength,
+		},
+		{
+			name: "incorrect surname length 2",
+			user: models.UserAccount{
+				ApplicantName:    "Zakhar",
+				ApplicantSurname: "Urvaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaancev",
+				UserType:         "applicant",
+			},
+			expected: errorHandler.IncorrectSurnameLength,
+		},
+	}
+	for _, testCase := range testTable {
+		tc := testCase
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			result := IsMainDataValid(&tc.user, configs.ValidationConfig{
 				MinNameLength:     2,
 				MaxNameLength:     20,
 				MinSurnameLength:  3,

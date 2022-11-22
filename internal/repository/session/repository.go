@@ -5,6 +5,8 @@ type Session struct {
 	ExpiresAt int
 }
 
+//go:generate mockgen -source repository.go -destination=mocks/mock.go
+
 type Repository interface {
 	NewSession(email string) (string, error)
 	GetSession(token string) (string, error)
