@@ -864,3 +864,59 @@ func TestUserService_UpdateUser(t *testing.T) { //93%
 		})
 	}
 } //93%
+
+func TestUserService_GetUserId(t *testing.T) {
+	type mockBehavior func(r *mock_repository.MockUserRepository, email string)
+
+	testTable := []struct {
+		name         string
+		email        string
+		mockBehavior mockBehavior
+		expected     uint
+		expectedErr  error
+	}{
+		{
+			name:     "ok",
+			email:    "test@gmail.com",
+			expected: 1,
+			mockBehavior: func(r *mock_repository.MockUserRepository, email string) {
+				expected := &models.UserAccount{
+					ID:          1,
+					Email:       "test@gmail.com",
+					Password:    "123456A!",
+					CompanyName: "VK",
+					UserType:    "employer",
+				}
+				r.EXPECT().GetUserByEmail(email).Return(expected, nil)
+			},
+			expectedErr: nil,
+		},
+		{
+			name:     "error",
+			email:    "test@gmail.com",
+			expected: 0,
+			mockBehavior: func(r *mock_repository.MockUserRepository, email string) {
+				expected := &models.UserAccount{}
+				r.EXPECT().GetUserByEmail(email).Return(expected, errorHandler.ErrUserNotExists)
+			},
+			expectedErr: errorHandler.ErrUserNotExists,
+		},
+	}
+
+	for _, test := range testTable {
+		testCase := test
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			mockUserRepository := mock_repository.NewMockUserRepository(c)
+			testCase.mockBehavior(mockUserRepository, test.email)
+			userService := UserService{userRep: mockUserRepository}
+			resultId, err := userService.GetUserId(testCase.email)
+
+			assert.Equal(t, testCase.expected, resultId)
+			assert.Equal(t, testCase.expectedErr, err)
+		})
+	}
+}
