@@ -392,7 +392,7 @@ func TestResumeService_CreateResume(t *testing.T) { //100%
 			},
 			expectedErr: nil,
 		}, {
-			name: "error",
+			name: "valid error",
 			mockBehavior: func(r *mock_repository.MockResumeRepository, ur *mock_repository.MockUserRepository, resume *models.Resume, userId uint, email string) {
 			},
 			input: &models.Resume{
@@ -423,6 +423,17 @@ func TestResumeService_CreateResume(t *testing.T) { //100%
 			},
 			expectedErr: errorHandler.ErrBadRequest,
 		},
+		{
+			name: "invalid user type",
+			mockBehavior: func(r *mock_repository.MockResumeRepository, ur *mock_repository.MockUserRepository, resume *models.Resume, userId uint, email string) {
+				ur.EXPECT().GetUserByEmail(email).Return(&models.UserAccount{UserType: "employer"}, nil)
+			},
+			input: &models.Resume{
+				Title:       "Job",
+				Description: "some description for job",
+			},
+			expectedErr: errorHandler.InvalidUserType,
+		},
 	}
 	for _, test := range testTable {
 		testCase := test
@@ -439,7 +450,7 @@ func TestResumeService_CreateResume(t *testing.T) { //100%
 			assert.Equal(t, testCase.expectedErr, err)
 		})
 	}
-} //100%
+} //90%
 
 func TestResumeService_UpdateResume(t *testing.T) { //100%
 	type mockBehavior func(r *mock_repository.MockResumeRepository, ur *mock_repository.MockUserRepository, resume *models.Resume, id uint, email string)
