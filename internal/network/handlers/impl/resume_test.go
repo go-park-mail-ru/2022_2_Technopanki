@@ -155,7 +155,7 @@ func TestResumeHandler_GetResume(t *testing.T) {
 			assert.Equal(t, testCase.expectedResponseBody, w.Body.String())
 		})
 	}
-} //100%
+}
 
 func TestResumeHandler_GetResumeByApplicant(t *testing.T) {
 	type mockBehavior func(r *mock_usecases.MockResume, id uint)
@@ -279,7 +279,7 @@ func TestResumeHandler_GetResumeByApplicant(t *testing.T) {
 			assert.Equal(t, testCase.expectedResponseBody, w.Body.String())
 		})
 	}
-} //100%
+}
 
 func TestResumeHandler_GetPreviewResumeByApplicant(t *testing.T) {
 	type mockBehavior func(r *mock_usecases.MockResume, id uint)
@@ -403,7 +403,7 @@ func TestResumeHandler_GetPreviewResumeByApplicant(t *testing.T) {
 			assert.Equal(t, testCase.expectedResponseBody, w.Body.String())
 		})
 	}
-} //100%
+}
 
 func TestResumeHandler_CreateResume(t *testing.T) {
 	type mockBehavior func(r *mock_usecases.MockResume, resume *models.Resume)
@@ -499,7 +499,7 @@ func TestResumeHandler_CreateResume(t *testing.T) {
 			assert.Equal(t, testCase.expectedResponseBody, w.Body.String())
 		})
 	}
-} //90%
+}
 
 func TestResumeHandler_UpdateResume(t *testing.T) {
 	type mockBehavior func(r *mock_usecases.MockResume, id uint, resume *models.Resume)
@@ -647,7 +647,7 @@ func TestResumeHandler_UpdateResume(t *testing.T) {
 			assert.Equal(t, testCase.expectedResponseBody, w.Body.String())
 		})
 	}
-} //100%
+}
 
 func TestResumeHandler_DeleteResume(t *testing.T) {
 	type mockBehavior func(r *mock_usecases.MockResume, id uint)
@@ -761,4 +761,4 @@ func TestResumeHandler_DeleteResume(t *testing.T) {
 			assert.Equal(t, testCase.expectedResponseBody, w.Body.String())
 		})
 	}
-} //100%
+}

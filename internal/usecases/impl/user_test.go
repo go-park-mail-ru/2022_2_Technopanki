@@ -919,4 +919,4 @@ func TestUserService_GetUserId(t *testing.T) {
 			assert.Equal(t, testCase.expectedErr, err)
 		})
 	}
-}
+} //100%
