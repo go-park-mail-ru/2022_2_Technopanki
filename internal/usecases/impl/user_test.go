@@ -235,7 +235,7 @@ func TestUserService_SignIn(t *testing.T) { //%100
 	}
 } //100%
 
-func TestUserService_SignUp(t *testing.T) {
+func TestUserService_SignUp(t *testing.T) { //91%
 	type mockBehavior func(r *mock_repository.MockUserRepository, email string, user *models.UserAccount)
 	type sessionRepBehavior func(r *mock_session.MockRepository, email string)
 	testTable := []struct {
@@ -390,7 +390,8 @@ func TestUserService_SignUp(t *testing.T) {
 			assert.Equal(t, testCase.expectedErr, err)
 		})
 	}
-} //36%
+} //91%
+
 func TestUserService_Logout(t *testing.T) {
 	type sessionRepBehavior func(r *mock_session.MockRepository, email string)
 	testTable := []struct {
@@ -548,7 +549,7 @@ func TestUserService_GetUser(t *testing.T) { //100%
 	}
 } //100%
 
-func TestUserService_GetUserSafety(t *testing.T) { //80+%
+func TestUserService_GetUserSafety(t *testing.T) { //89%
 	type mockBehavior func(r *mock_repository.MockUserRepository, id uint, fields []string)
 	testTable := []struct {
 		name         string
@@ -646,7 +647,7 @@ func TestUserService_GetUserSafety(t *testing.T) { //80+%
 			assert.Equal(t, testCase.expectedErr, err)
 		})
 	}
-} //80%
+} //89%
 
 func TestUserService_UpdateUser(t *testing.T) { //70%
 	type getMockBehavior func(r *mock_repository.MockUserRepository, email string)
@@ -688,6 +689,26 @@ func TestUserService_UpdateUser(t *testing.T) { //70%
 			expectedErr: nil,
 		},
 		{
+			name: "user is not valid",
+			inputUser: &models.UserAccount{
+				Email:            "testgmail.com",
+				ApplicantSurname: "K",
+				ApplicantName:    "Zakhar",
+				UserType:         "applicant",
+			},
+			oldUser: &models.UserAccount{
+				Email:            "test@gmail.com",
+				ApplicantSurname: "Urvancev",
+				ApplicantName:    "Zakhar",
+				UserType:         "applicant",
+			},
+			getMockBehavior: func(r *mock_repository.MockUserRepository, email string) {
+			},
+			updateMockBehavior: func(r *mock_repository.MockUserRepository, oldUser, newUser *models.UserAccount) {
+			},
+			expectedErr: errorHandler.IncorrectSurnameLength,
+		},
+		{
 			name: "user not exists",
 			inputUser: &models.UserAccount{
 				Email:            "test@gmail.com",
@@ -700,7 +721,6 @@ func TestUserService_UpdateUser(t *testing.T) { //70%
 				r.EXPECT().GetUserByEmail(email).Return(nil, errorHandler.ErrUserNotExists)
 			},
 			updateMockBehavior: func(r *mock_repository.MockUserRepository, oldUser, newUser *models.UserAccount) {
-				r.EXPECT().UpdateUser(oldUser, newUser).Return(nil)
 			},
 			expectedErr: errorHandler.ErrUserNotExists,
 		},
@@ -728,7 +748,6 @@ func TestUserService_UpdateUser(t *testing.T) { //70%
 				r.EXPECT().GetUserByEmail(email).Return(old, nil)
 			},
 			updateMockBehavior: func(r *mock_repository.MockUserRepository, oldUser, newUser *models.UserAccount) {
-				r.EXPECT().UpdateUser(oldUser, newUser).Return(nil)
 			},
 			expectedErr: errorHandler.ErrBadRequest,
 		},
@@ -773,9 +792,8 @@ func TestUserService_UpdateUser(t *testing.T) { //70%
 			mockSessionRep := mock_session.NewMockRepository(c)
 
 			testCase.getMockBehavior(mockUserRepository, testCase.inputUser.Email)
-			if testCase.oldUser != nil && testCase.oldUser.UserType == testCase.inputUser.UserType {
-				testCase.updateMockBehavior(mockUserRepository, testCase.oldUser, testCase.inputUser)
-			}
+			testCase.updateMockBehavior(mockUserRepository, testCase.oldUser, testCase.inputUser)
+
 			userService := UserService{userRep: mockUserRepository, sessionRepo: mockSessionRep, cfg: &configs.Config{
 				Validation: configs.ValidationConfig{
 					MaxEmailLength:    30,

@@ -499,7 +499,7 @@ func TestResumeHandler_CreateResume(t *testing.T) {
 			assert.Equal(t, testCase.expectedResponseBody, w.Body.String())
 		})
 	}
-}
+} //90%
 
 func TestResumeHandler_UpdateResume(t *testing.T) {
 	type mockBehavior func(r *mock_usecases.MockResume, id uint, resume *models.Resume)
