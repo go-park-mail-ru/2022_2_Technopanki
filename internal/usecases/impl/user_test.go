@@ -549,7 +549,7 @@ func TestUserService_GetUser(t *testing.T) { //100%
 	}
 } //100%
 
-func TestUserService_GetUserSafety(t *testing.T) { //89%
+func TestUserService_GetUserSafety(t *testing.T) { //100%
 	type mockBehavior func(r *mock_repository.MockUserRepository, id uint, fields []string)
 	testTable := []struct {
 		name           string
@@ -670,7 +670,7 @@ func TestUserService_GetUserSafety(t *testing.T) { //89%
 			assert.Equal(t, testCase.expectedErr, err)
 		})
 	}
-} //89%
+} //100%
 
 func TestUserService_UpdateUser(t *testing.T) { //93%
 	type getMockBehavior func(r *mock_repository.MockUserRepository, email string)
