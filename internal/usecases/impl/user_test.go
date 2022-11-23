@@ -188,6 +188,20 @@ func TestUserService_SignIn(t *testing.T) {
 			},
 			expectedErr: errorHandler.InvalidUserType,
 		},
+		{
+			name: "invalid auth data",
+			inputUser: &models.UserAccount{
+				Email:    "test@gmail.com",
+				Password: "123456",
+			},
+			expectedToken: "valid_token",
+			expectedUser:  nil,
+			mockBehavior: func(r *mock_repository.MockUserRepository, email string) {
+			},
+			sessionRepBehavior: func(r *mock_session.MockRepository, email string) {
+			},
+			expectedErr: errorHandler.InvalidPasswordFormat,
+		},
 	}
 
 	for _, test := range testTable {
