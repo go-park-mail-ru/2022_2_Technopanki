@@ -3,7 +3,7 @@ package models
 import "time"
 
 type Resume struct {
-	ID               uint             `json:"resume_id" gorm:"primaryKey;"`
+	ID               uint             `json:"id" gorm:"primaryKey;"`
 	UserAccountId    uint             `json:"user_account_id" gorm:"not null;"`
 	Title            string           `json:"title" gorm:"not null"`
 	Description      string           `json:"description" gorm:"not null;"`
