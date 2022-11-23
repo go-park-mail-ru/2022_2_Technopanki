@@ -69,7 +69,7 @@ func TestUserService_GetUserByEmail(t *testing.T) {
 			assert.Equal(t, testCase.expectedErr, err)
 		})
 	}
-}
+} //100%
 
 func TestUserService_SignIn(t *testing.T) {
 	type mockBehavior func(r *mock_repository.MockUserRepository, email string)
@@ -83,6 +83,33 @@ func TestUserService_SignIn(t *testing.T) {
 		expectedUser       *models.UserAccount
 		expectedErr        error
 	}{
+		{
+			name: "ok",
+			inputUser: &models.UserAccount{
+				Email:    "test@gmail.com",
+				Password: "123456A!",
+			},
+			expectedToken: "valid_token",
+			expectedUser: &models.UserAccount{
+				Email:       "test@gmail.com",
+				Password:    "123456A!",
+				CompanyName: "VK",
+				UserType:    "employer",
+			},
+			mockBehavior: func(r *mock_repository.MockUserRepository, email string) {
+				expected := &models.UserAccount{
+					Email:       "test@gmail.com",
+					Password:    "$2a$10$AN0zyrlPjIZvO12mLf8PierYf579fxzfqh6j9aZn3LWetXMjJjYb.",
+					CompanyName: "VK",
+					UserType:    "employer",
+				}
+				r.EXPECT().GetUserByEmail(email).Return(expected, nil)
+			},
+			sessionRepBehavior: func(r *mock_session.MockRepository, email string) {
+				r.EXPECT().NewSession(email).Return("valid_token", nil)
+			},
+			expectedErr: nil,
+		},
 		{
 			name: "wrong answer",
 			inputUser: &models.UserAccount{
@@ -100,10 +127,8 @@ func TestUserService_SignIn(t *testing.T) {
 				}
 				r.EXPECT().GetUserByEmail(email).Return(expected, nil)
 			},
-			sessionRepBehavior: func(r *mock_session.MockRepository, email string) {
-				r.EXPECT().NewSession(email).Return("valid_token", nil)
-			},
-			expectedErr: errorHandler.ErrWrongPassword,
+			sessionRepBehavior: func(r *mock_session.MockRepository, email string) {},
+			expectedErr:        errorHandler.ErrWrongPassword,
 		},
 		{
 			name: "user not found",
@@ -116,10 +141,52 @@ func TestUserService_SignIn(t *testing.T) {
 			mockBehavior: func(r *mock_repository.MockUserRepository, email string) {
 				r.EXPECT().GetUserByEmail(email).Return(nil, errorHandler.ErrUserNotExists)
 			},
+			sessionRepBehavior: func(r *mock_session.MockRepository, email string) {},
+			expectedErr:        errorHandler.ErrUserNotExists,
+		},
+		{
+			name: "cannot create session",
+			inputUser: &models.UserAccount{
+				Email:    "test@gmail.com",
+				Password: "123456A!",
+			},
+			expectedToken: "valid_token",
+			expectedUser:  nil,
+			mockBehavior: func(r *mock_repository.MockUserRepository, email string) {
+				expected := &models.UserAccount{
+					Email:       "test@gmail.com",
+					Password:    "$2a$10$AN0zyrlPjIZvO12mLf8PierYf579fxzfqh6j9aZn3LWetXMjJjYb.",
+					CompanyName: "VK",
+					UserType:    "employer",
+				}
+				r.EXPECT().GetUserByEmail(email).Return(expected, nil)
+			},
+			sessionRepBehavior: func(r *mock_session.MockRepository, email string) {
+				r.EXPECT().NewSession(email).Return("", errorHandler.ErrBadRequest)
+			},
+			expectedErr: errorHandler.ErrBadRequest,
+		},
+		{
+			name: "cannot create session",
+			inputUser: &models.UserAccount{
+				Email:    "test@gmail.com",
+				Password: "123456A!",
+			},
+			expectedToken: "valid_token",
+			expectedUser:  nil,
+			mockBehavior: func(r *mock_repository.MockUserRepository, email string) {
+				expected := &models.UserAccount{
+					Email:       "test@gmail.com",
+					Password:    "$2a$10$AN0zyrlPjIZvO12mLf8PierYf579fxzfqh6j9aZn3LWetXMjJjYb.",
+					CompanyName: "VK",
+					UserType:    "asfafafa",
+				}
+				r.EXPECT().GetUserByEmail(email).Return(expected, nil)
+			},
 			sessionRepBehavior: func(r *mock_session.MockRepository, email string) {
 				r.EXPECT().NewSession(email).Return("valid_token", nil)
 			},
-			expectedErr: errorHandler.ErrUserNotExists,
+			expectedErr: errorHandler.InvalidUserType,
 		},
 	}
 
@@ -132,9 +199,7 @@ func TestUserService_SignIn(t *testing.T) {
 
 			mockUserRepository := mock_repository.NewMockUserRepository(c)
 			mockSessionRep := mock_session.NewMockRepository(c)
-			if testCase.expectedUser != nil {
-				testCase.sessionRepBehavior(mockSessionRep, testCase.inputUser.Email)
-			}
+			testCase.sessionRepBehavior(mockSessionRep, testCase.inputUser.Email)
 			testCase.mockBehavior(mockUserRepository, testCase.inputUser.Email)
 			userService := UserService{userRep: mockUserRepository, sessionRepo: mockSessionRep, cfg: &configs.Config{
 				Validation: configs.ValidationConfig{
@@ -153,7 +218,7 @@ func TestUserService_SignIn(t *testing.T) {
 			assert.Equal(t, testCase.expectedErr, err)
 		})
 	}
-}
+} //53%
 
 func TestUserService_SignUp(t *testing.T) {
 	type mockBehavior func(r *mock_repository.MockUserRepository, email string)
@@ -258,7 +323,7 @@ func TestUserService_SignUp(t *testing.T) {
 			assert.Equal(t, testCase.expectedErr, err)
 		})
 	}
-}
+} //36%
 func TestUserService_Logout(t *testing.T) {
 	type sessionRepBehavior func(r *mock_session.MockRepository, email string)
 	testTable := []struct {
@@ -308,7 +373,7 @@ func TestUserService_Logout(t *testing.T) {
 			assert.Equal(t, testCase.expectedErr, err)
 		})
 	}
-}
+} //100%
 
 func TestUserService_AuthCheck(t *testing.T) {
 	type mockBehavior func(r *mock_repository.MockUserRepository, email string)
@@ -360,9 +425,9 @@ func TestUserService_AuthCheck(t *testing.T) {
 			assert.Equal(t, testCase.expectedErr, err)
 		})
 	}
-}
+} //100%
 
-func TestUserService_GetUser(t *testing.T) {
+func TestUserService_GetUser(t *testing.T) { //100%
 	type mockBehavior func(r *mock_repository.MockUserRepository, id uint)
 	testTable := []struct {
 		name         string
@@ -414,9 +479,9 @@ func TestUserService_GetUser(t *testing.T) {
 			assert.Equal(t, testCase.expectedErr, err)
 		})
 	}
-}
+} //100%
 
-func TestUserService_GetUserSafety(t *testing.T) {
+func TestUserService_GetUserSafety(t *testing.T) { //80+%
 	type mockBehavior func(r *mock_repository.MockUserRepository, id uint, fields []string)
 	testTable := []struct {
 		name         string
@@ -482,6 +547,21 @@ func TestUserService_GetUserSafety(t *testing.T) {
 			},
 			expectedErr: errorHandler.ErrBadRequest,
 		},
+		{
+			name: "failed fields validation",
+			mockBehavior: func(r *mock_repository.MockUserRepository, id uint, fields []string) {
+				expected := &models.UserAccount{
+					Email:        "test@gmail.com",
+					PublicFields: "email contat_number applicant_current_salary",
+				}
+				r.EXPECT().GetUser(id).Return(expected, nil)
+			},
+			expectedUser: &models.UserAccount{
+				Email:        "test@gmail.com",
+				PublicFields: "email contact_number applicant_current_salary",
+			},
+			expectedErr: errorHandler.ErrBadRequest,
+		},
 	}
 	for _, test := range testTable {
 		testCase := test
@@ -499,9 +579,9 @@ func TestUserService_GetUserSafety(t *testing.T) {
 			assert.Equal(t, testCase.expectedErr, err)
 		})
 	}
-}
+} //80%
 
-func TestUserService_UpdateUser(t *testing.T) {
+func TestUserService_UpdateUser(t *testing.T) { //70%
 	type getMockBehavior func(r *mock_repository.MockUserRepository, email string)
 	type updateMockBehavior func(r *mock_repository.MockUserRepository, oldUser, newUser *models.UserAccount)
 	testTable := []struct {
@@ -646,4 +726,4 @@ func TestUserService_UpdateUser(t *testing.T) {
 			assert.Equal(t, testCase.expectedErr, err)
 		})
 	}
-}
+} //70%
