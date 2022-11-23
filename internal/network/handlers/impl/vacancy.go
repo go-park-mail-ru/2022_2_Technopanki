@@ -19,10 +19,21 @@ func NewVacancyHandler(useCases *usecases.UseCases) *VacancyHandler {
 }
 
 func (vh *VacancyHandler) GetAllVacancies(c *gin.Context) {
-	vacancies, getAllErr := vh.vacancyUseCase.GetAll()
-	if getAllErr != nil {
-		_ = c.Error(getAllErr)
-		return
+	var vacancies []*models.Vacancy
+	var getAllErr error
+
+	if filter := c.Query("filter"); filter != "" {
+		vacancies, getAllErr = vh.vacancyUseCase.GetAllFilter(filter)
+		if getAllErr != nil {
+			_ = c.Error(getAllErr)
+			return
+		}
+	} else {
+		vacancies, getAllErr = vh.vacancyUseCase.GetAll()
+		if getAllErr != nil {
+			_ = c.Error(getAllErr)
+			return
+		}
 	}
 	c.JSON(http.StatusOK, models.GetAllVacanciesResponcePointer{
 		Data: vacancies,

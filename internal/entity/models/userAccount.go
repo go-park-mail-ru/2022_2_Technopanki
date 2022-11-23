@@ -26,6 +26,10 @@ type UserAccount struct {
 	VacancyActivities      []VacancyActivity `json:"vacancy_activities" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`
 }
 
+type GetAllUsersResponcePointer struct {
+	Data []*UserAccount `json:"data"`
+}
+
 // PrivateUserFields Поля, доступ к которым по умолчанию не доступен
 var PrivateUserFields = []string{"email", "contact_number",
 	"applicant_current_salary"}

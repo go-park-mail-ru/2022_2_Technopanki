@@ -23,6 +23,15 @@ func (vp *VacancyPostgres) GetAll() ([]*models.Vacancy, error) {
 	return vacancies, nil
 }
 
+func (vp *VacancyPostgres) GetAllFilter(filter string) ([]*models.Vacancy, error) {
+	var vacancies []*models.Vacancy
+	query := vp.db.Where("title LIKE ?", filter).Find(&vacancies)
+	if query.Error != nil {
+		return vacancies, query.Error
+	}
+	return vacancies, nil
+}
+
 func (vp *VacancyPostgres) Create(vacancy *models.Vacancy) (uint, error) {
 	var user models.UserAccount
 	queryUser := vp.db.Where("id = ?", vacancy.PostedByUserId).Find(&user)

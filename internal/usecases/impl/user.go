@@ -151,6 +151,14 @@ func (us *UserService) GetUser(id uint) (*models.UserAccount, error) {
 	return us.userRep.GetUser(id)
 }
 
+func (us *UserService) GetAllUsers(filter string) ([]*models.UserAccount, error) {
+	if filter != "" {
+		filterFormat := fmt.Sprintf("%%%s%%", filter)
+		return us.userRep.GetAllUsers(filterFormat)
+	}
+	return us.userRep.GetAllUsers(filter)
+}
+
 func (us *UserService) GetUserSafety(id uint) (*models.UserAccount, error) {
 	user, getErr := us.userRep.GetUser(id)
 	if getErr != nil {

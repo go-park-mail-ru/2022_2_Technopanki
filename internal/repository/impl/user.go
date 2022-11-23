@@ -47,6 +47,20 @@ func (up *UserPostgres) GetUser(id uint) (*models.UserAccount, error) {
 	return &result, QueryValidation(query, "user")
 }
 
+func (up *UserPostgres) GetAllUsers(filter string) ([]*models.UserAccount, error) {
+	var users []*models.UserAccount
+	var query *gorm.DB
+	if filter != "" {
+		query = up.db.Where("company_name LIKE ?", filter).Find(&users)
+	} else {
+		query = up.db.Find(&users)
+	}
+	if query.Error != nil {
+		return users, query.Error
+	}
+	return users, nil
+}
+
 func (up *UserPostgres) GetUserSafety(id uint, allowedFields []string) (*models.UserAccount, error) {
 	var result models.UserAccount
 

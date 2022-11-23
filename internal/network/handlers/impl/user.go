@@ -131,6 +131,28 @@ func (uh *UserHandler) GetUser(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
+func (uh *UserHandler) GetAllUsers(c *gin.Context) {
+	var users []*models.UserAccount
+	var getAllErr error
+
+	if filter := c.Query("filter"); filter != "" {
+		users, getAllErr = uh.userUseCase.GetAllUsers(filter)
+		if getAllErr != nil {
+			_ = c.Error(getAllErr)
+			return
+		}
+	} else {
+		users, getAllErr = uh.userUseCase.GetAllUsers(filter)
+		if getAllErr != nil {
+			_ = c.Error(getAllErr)
+			return
+		}
+	}
+	c.JSON(http.StatusOK, models.GetAllUsersResponcePointer{
+		Data: users,
+	})
+}
+
 func (uh *UserHandler) GetUserSafety(c *gin.Context) {
 	id, paramErr := strconv.Atoi(c.Param("id"))
 	if paramErr != nil {

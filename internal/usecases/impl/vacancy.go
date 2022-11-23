@@ -5,6 +5,7 @@ import (
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/usecases/escaping"
 	"HeadHunter/pkg/errorHandler"
+	"fmt"
 )
 
 type VacancyService struct {
@@ -18,6 +19,11 @@ func NewVacancyService(vacancyRepos repository.VacancyRepository, _userRep repos
 
 func (vs *VacancyService) GetAll() ([]*models.Vacancy, error) {
 	return vs.vacancyRep.GetAll()
+}
+
+func (vs *VacancyService) GetAllFilter(filter string) ([]*models.Vacancy, error) {
+	filterFormat := fmt.Sprintf("%%%s%%", filter)
+	return vs.vacancyRep.GetAllFilter(filterFormat)
 }
 
 func (vs *VacancyService) Create(email string, input *models.Vacancy) (uint, error) {

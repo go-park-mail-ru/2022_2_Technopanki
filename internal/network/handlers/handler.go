@@ -30,6 +30,7 @@ type UserH interface {
 	AuthCheck(c *gin.Context)
 	UpdateUser(c *gin.Context)
 	GetUser(c *gin.Context)
+	GetAllUsers(c *gin.Context)
 	GetUserSafety(c *gin.Context)
 	UploadUserImage(c *gin.Context)
 	DeleteUserImage(c *gin.Context)
