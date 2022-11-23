@@ -689,6 +689,35 @@ func TestUserService_UpdateUser(t *testing.T) { //70%
 			expectedErr: nil,
 		},
 		{
+			name: "ok with password",
+			inputUser: &models.UserAccount{
+				Email:            "test@gmail.com",
+				ApplicantSurname: "Kozirev",
+				ApplicantName:    "Zakhar",
+				UserType:         "applicant",
+				Password:         "123456z!",
+			},
+			oldUser: &models.UserAccount{
+				Email:            "test@gmail.com",
+				ApplicantSurname: "Urvancev",
+				ApplicantName:    "Zakhar",
+				UserType:         "applicant",
+			},
+			getMockBehavior: func(r *mock_repository.MockUserRepository, email string) {
+				old := &models.UserAccount{
+					Email:            "test@gmail.com",
+					ApplicantSurname: "Urvancev",
+					ApplicantName:    "Zakhar",
+					UserType:         "applicant",
+				}
+				r.EXPECT().GetUserByEmail(email).Return(old, nil)
+			},
+			updateMockBehavior: func(r *mock_repository.MockUserRepository, oldUser, newUser *models.UserAccount) {
+				r.EXPECT().UpdateUser(oldUser, newUser).Return(nil)
+			},
+			expectedErr: nil,
+		},
+		{
 			name: "user is not valid",
 			inputUser: &models.UserAccount{
 				Email:            "testgmail.com",
