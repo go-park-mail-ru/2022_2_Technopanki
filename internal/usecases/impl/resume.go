@@ -7,6 +7,7 @@ import (
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/usecases/escaping"
 	"HeadHunter/pkg/errorHandler"
+	"fmt"
 )
 
 type ResumeService struct {
@@ -38,6 +39,14 @@ func (rs *ResumeService) GetResume(id uint, email string) (*models.Resume, error
 	}
 
 	return resume, nil
+}
+
+func (rs *ResumeService) GetAllResumes(filter string) ([]*models.Resume, error) {
+	if filter != "" {
+		filterFormat := fmt.Sprintf("%%%s%%", filter)
+		return rs.resumeRep.GetAllResumes(filterFormat)
+	}
+	return rs.resumeRep.GetAllResumes(filter)
 }
 
 func (rs *ResumeService) GetResumeByApplicant(userId uint, email string) ([]*models.Resume, error) {

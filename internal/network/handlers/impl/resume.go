@@ -40,6 +40,28 @@ func (rh *ResumeHandler) GetResume(c *gin.Context) {
 	c.JSON(http.StatusOK, resume)
 }
 
+func (rh *ResumeHandler) GetAllResumes(c *gin.Context) {
+	var resumes []*models.Resume
+	var getAllErr error
+
+	if filter := c.Query("filter"); filter != "" {
+		resumes, getAllErr = rh.resumeUseCase.GetAllResumes(filter)
+		if getAllErr != nil {
+			_ = c.Error(getAllErr)
+			return
+		}
+	} else {
+		resumes, getAllErr = rh.resumeUseCase.GetAllResumes(filter)
+		if getAllErr != nil {
+			_ = c.Error(getAllErr)
+			return
+		}
+	}
+	c.JSON(http.StatusOK, models.GetAllResumesResponcePointer{
+		Data: resumes,
+	})
+}
+
 func (rh *ResumeHandler) GetResumeByApplicant(c *gin.Context) {
 	userId, paramErr := strconv.Atoi(c.Param("user_id"))
 	if paramErr != nil {

@@ -21,3 +21,7 @@ type ResumePreview struct {
 	Title            string    `json:"title"`
 	CreatedTime      time.Time `json:"created_date" gorm:"autoCreateTime"`
 }
+
+type GetAllResumesResponcePointer struct {
+	Data []*Resume `json:"data"`
+}

@@ -26,6 +26,20 @@ func (rp *ResumePostgres) GetResume(id uint) (*models.Resume, error) {
 	return &result, QueryValidation(query, "resume")
 }
 
+func (rp *ResumePostgres) GetAllResumes(filter string) ([]*models.Resume, error) {
+	var resumes []*models.Resume
+	var query *gorm.DB
+	if filter != "" {
+		query = rp.db.Where("title LIKE ?", filter).Find(&resumes)
+	} else {
+		query = rp.db.Find(&resumes)
+	}
+	if query.Error != nil {
+		return resumes, query.Error
+	}
+	return resumes, nil
+}
+
 func (rp *ResumePostgres) GetResumeByApplicant(userId uint) ([]*models.Resume, error) {
 	var result []*models.Resume
 	var resultEdu []*models.EducationDetail
