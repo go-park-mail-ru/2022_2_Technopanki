@@ -49,6 +49,10 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 	if getErr != nil {
 		return "", getErr
 	}
+
+	if !user.IsConfirmed {
+		return "", errorHandler.ErrIsNotConfirmed
+	}
 	if cryptErr := utils.ComparePassword(user, input); cryptErr != nil {
 		return "", cryptErr
 	}

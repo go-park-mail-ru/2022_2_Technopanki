@@ -15,10 +15,11 @@ import (
 type UserHandler struct {
 	cfg         *configs.Config
 	userUseCase usecases.User
+	mailUseCase usecases.Mail
 }
 
 func NewUserHandler(useCases *usecases.UseCases, _cfg *configs.Config) *UserHandler {
-	return &UserHandler{cfg: _cfg, userUseCase: useCases.User}
+	return &UserHandler{cfg: _cfg, userUseCase: useCases.User, mailUseCase: useCases.Mail}
 }
 
 func (uh *UserHandler) SignIn(c *gin.Context) {
@@ -44,14 +45,18 @@ func (uh *UserHandler) SignUp(c *gin.Context) {
 		return
 	}
 
-	token, signUpErr := uh.userUseCase.SignUp(&input)
+	_, signUpErr := uh.userUseCase.SignUp(&input)
 	if signUpErr != nil {
 		_ = c.Error(signUpErr)
 		return
 	}
+
+	sendCodeErr := uh.mailUseCase.SendConfirmCode(input.Email)
+	if sendCodeErr != nil {
+		_ = c.Error(sendCodeErr)
+		return
+	}
 	c.SetSameSite(http.SameSiteLaxMode)
-	c.SetCookie("session", token, uh.cfg.DefaultExpiringSession, "/",
-		uh.cfg.Domain, uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
 	response.SendSuccessData(c, &input)
 }
 
@@ -212,15 +217,15 @@ func (uh *UserHandler) GetPreview(c *gin.Context) {
 
 func (uh *UserHandler) ConfirmUser(c *gin.Context) {
 	var input struct {
-		code  string
-		email string
+		Code  string `json:"code"`
+		Email string `json:"email"`
 	}
 	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
 
-	token, confirmErr := uh.userUseCase.ConfirmUser(input.code, input.email)
+	token, confirmErr := uh.userUseCase.ConfirmUser(input.Code, input.Email)
 	if confirmErr != nil {
 		_ = c.Error(confirmErr)
 		return
