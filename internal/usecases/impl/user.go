@@ -88,16 +88,17 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 
 	input.Image = fmt.Sprintf("basic_%s_avatar.webp", input.UserType)
 	input.PublicFields = "email contact_number applicant_current_salary" //TODO после РК3 убрать для добавления фичи с доступом
+	input.IsConfirmed = false
 	createErr := us.userRep.CreateUser(input)
 	if createErr != nil {
 		return "", fmt.Errorf("creating session user: %w", createErr)
 	}
 
 	token, newSessionErr := us.sessionRepo.NewSession(input.Email)
-
 	if newSessionErr != nil {
 		return "", newSessionErr
 	}
+
 	return token, nil
 }
 
@@ -213,25 +214,32 @@ func (us *UserService) DeleteUserImage(user *models.UserAccount) error {
 	return us.UpdateUser(user)
 }
 
-func (us *UserService) ConfirmUser(token, emailFromContext string) error {
-	if token == "" {
-		return errorHandler.ErrBadRequest
+func (us *UserService) ConfirmUser(code string, email string) (string, error) {
+	if code == "" {
+		return "", errorHandler.ErrBadRequest
 	}
 
-	email, getTokenErr := us.sessionRepo.GetEmailFromConfirmationToken(token)
-	if getTokenErr != nil {
-		return getTokenErr
+	emailFromCode, getCodeErr := us.sessionRepo.GetEmailFromCode(code)
+	if getCodeErr != nil {
+		return "", getCodeErr
 	}
 
-	if email != emailFromContext {
-		return errorHandler.ErrUnauthorized
+	if email != emailFromCode {
+		return "", errorHandler.ErrForbidden
 	}
-	
-	user, getUserErr := us.GetUserByEmail(email)
-	if getUserErr != nil {
-		return getUserErr
+
+	user, getErr := us.userRep.GetUserByEmail(email)
+	if getErr != nil {
+		return "", getErr
 	}
-	newUser := user
-	newUser.IsConfirmed = true
-	return us.userRep.UpdateUser(user, newUser)
+
+	confirmedUser := user
+	confirmedUser.IsConfirmed = true
+
+	token, newSessionErr := us.sessionRepo.NewSession(email)
+	if newSessionErr != nil {
+		return "", newSessionErr
+	}
+
+	return token, us.userRep.UpdateUser(user, confirmedUser)
 }

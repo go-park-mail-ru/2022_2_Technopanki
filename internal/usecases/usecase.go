@@ -43,7 +43,7 @@ type User interface {
 	GetUserByEmail(email string) (*models.UserAccount, error)
 	UploadUserImage(user *models.UserAccount, fileHeader *multipart.FileHeader) (string, error)
 	DeleteUserImage(user *models.UserAccount) error
-	ConfirmUser(token, email string) error
+	ConfirmUser(code string, email string) (string, error)
 }
 
 type Vacancy interface {
@@ -72,7 +72,7 @@ type Resume interface {
 }
 
 type Mail interface {
-	ConfirmationAccount(email string) error
+	SendConfirmCode(email string) error
 	UpdatePassword()
 	TwoFactorSignIn()
 }

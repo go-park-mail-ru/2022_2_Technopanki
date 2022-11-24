@@ -76,6 +76,8 @@ type SecurityConfig struct {
 type MailConfig struct {
 	Username string `yaml:"username"`
 	Password string `yaml:"password"`
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
 }
 
 func InitConfig(config *Config) error {

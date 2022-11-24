@@ -39,5 +39,7 @@ security:
   csrfMode: false
   confirmationTime: 600
 mail:
-  username:
-  password:
+  username: "jobflow@jobflow.su"
+  password: "393hLfdbwzuMxEJ775PC"
+  host: "smtp.mail.ru"
+  port: 587

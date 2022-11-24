@@ -16,12 +16,12 @@ func NewMailService(repo repository.UserRepository, _sessionRepo session.Reposit
 	return &MailService{userRepo: repo, sessionRepo: _sessionRepo, sender: _sender}
 }
 
-func (ms *MailService) ConfirmationAccount(email string) error {
-	token, tokenErr := ms.sessionRepo.CreateConfirmationToken(email)
-	if tokenErr != nil {
-		return tokenErr
+func (ms *MailService) SendConfirmCode(email string) error {
+	code, createErr := ms.sessionRepo.CreateConfirmationCode(email)
+	if createErr != nil {
+		return createErr
 	}
-	sendErr := ms.sender.SendConfirmToken(email, token)
+	sendErr := ms.sender.SendConfirmCode(email, code)
 	if sendErr != nil {
 		return sendErr
 	}

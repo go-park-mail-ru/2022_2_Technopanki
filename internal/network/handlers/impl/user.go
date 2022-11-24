@@ -211,21 +211,22 @@ func (uh *UserHandler) GetPreview(c *gin.Context) {
 }
 
 func (uh *UserHandler) ConfirmUser(c *gin.Context) {
-	email, emailErr := getEmailFromContext(c)
-	if emailErr != nil {
-		_ = c.Error(emailErr)
-		return
+	var input struct {
+		code  string
+		email string
 	}
-	token, ok := c.GetPostForm("token")
-	if !ok {
+	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
-	
-	confirmErr := uh.userUseCase.ConfirmUser(token, email)
+
+	token, confirmErr := uh.userUseCase.ConfirmUser(input.code, input.email)
 	if confirmErr != nil {
 		_ = c.Error(confirmErr)
 		return
 	}
+
+	c.SetCookie("session", token, uh.cfg.DefaultExpiringSession, "/",
+		uh.cfg.Domain, uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
 	c.Status(http.StatusOK)
 }

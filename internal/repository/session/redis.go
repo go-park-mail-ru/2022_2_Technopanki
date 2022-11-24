@@ -2,11 +2,10 @@ package session
 
 import (
 	"HeadHunter/configs"
-	"HeadHunter/pkg/errorHandler"
+	"HeadHunter/internal/usecases/codeGenerator"
 	"fmt"
 	"github.com/go-redis/redis"
 	"github.com/google/uuid"
-	"strings"
 )
 
 type RedisStore struct {
@@ -48,23 +47,32 @@ func (rs *RedisStore) DeleteSession(token string) error {
 	return nil
 }
 
-func (rs *RedisStore) CreateConfirmationToken(email string) (string, error) {
-	token := uuid.NewString()
-	err := rs.client.Do("SETEX", token, rs.ConfirmationTime, "confirm:"+email).Err()
-	if err != nil {
-		return "", fmt.Errorf("creating confirmation token error: %w", err)
+func (rs *RedisStore) CreateConfirmationCode(email string) (string, error) {
+	var code string
+	var generateErr error
+
+	for {
+		code, generateErr = codeGenerator.GenerateCode()
+		if generateErr != nil {
+			return "", generateErr
+		}
+		_, getErr := rs.client.Get(code).Result()
+		if getErr != nil {
+			break
+		}
 	}
-	return token, nil
+
+	err := rs.client.Do("SETEX", code, rs.ConfirmationTime, email).Err()
+	if err != nil {
+		return "", fmt.Errorf("creating confirmation code error: %w", err)
+	}
+	return code, nil
 }
 
-func (rs *RedisStore) GetEmailFromConfirmationToken(token string) (string, error) {
+func (rs *RedisStore) GetEmailFromCode(token string) (string, error) {
 	result, getErr := rs.client.Get(token).Result()
 	if getErr != nil {
-		return "", fmt.Errorf("getting session error: %w", getErr)
+		return "", fmt.Errorf("getting code error: %w", getErr)
 	}
-	splitResult := strings.Split(result, ":")
-	if len(splitResult) != 2 {
-		return "", errorHandler.ErrBadRequest
-	}
-	return splitResult[1], nil
+	return result, nil
 }

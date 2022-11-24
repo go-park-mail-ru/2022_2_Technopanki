@@ -38,7 +38,7 @@ func main() {
 
 	postgresRepository := repository.NewPostgresRepository(db)
 
-	senderService, senderErr := sender.NewSender(mainConfig.Mail.Username, mainConfig.Mail.Password, &mainConfig)
+	senderService, senderErr := sender.NewSender(&mainConfig)
 
 	if senderErr != nil {
 		logrus.Fatal(senderErr)

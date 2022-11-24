@@ -3,7 +3,9 @@ package sender
 import (
 	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
+	"bytes"
 	"gopkg.in/gomail.v2"
+	"html/template"
 	"strings"
 )
 
@@ -13,15 +15,15 @@ type SenderService struct {
 	cfg      *configs.Config
 }
 
-func NewSender(username, password string, _cfg *configs.Config) (*SenderService, error) {
+func NewSender(_cfg *configs.Config) (*SenderService, error) {
 
-	dialer := gomail.NewDialer("smtp.mail.ru", 587, username, password)
+	dialer := gomail.NewDialer(_cfg.Mail.Host, _cfg.Mail.Port, _cfg.Mail.Username, _cfg.Mail.Password)
 	dial, dialErr := dialer.Dial()
 	if dialErr != nil {
 		return nil, dialErr
 	}
 
-	return &SenderService{dial: dial, username: username, cfg: _cfg}, nil
+	return &SenderService{dial: dial, username: _cfg.Mail.Username, cfg: _cfg}, nil
 }
 
 func (ss *SenderService) SendMail(to []string, subject, body string) error {
@@ -47,14 +49,25 @@ func (ss *SenderService) CloseSender() error {
 
 }
 
-func (ss *SenderService) SendConfirmToken(email, token string) error {
-	form := `<form action="http://` + ss.cfg.Domain + ss.cfg.Port + `/auth/confirm" method="post">
-	 <div>
-		<input type="hidden" name="token" value="` + token + `" />
-	<button>Подтвердить аккаунт</button>
-	 </div>
-	</form>`
-	return ss.SendMail([]string{email}, "Подтверждение аккаунта", form)
+func (ss *SenderService) SendConfirmCode(email, code string) error {
+	form, parseErr := template.ParseFiles("./static/html/letter.html")
+	if parseErr != nil {
+		return parseErr
+	}
+
+	data := struct {
+		Code string
+	}{
+		Code: code,
+	}
+
+	formBuf := bytes.NewBuffer([]byte(""))
+	executeErr := form.Execute(formBuf, data)
+	if executeErr != nil {
+		return executeErr
+	}
+
+	return ss.SendMail([]string{email}, "Подтверждение аккаунта", formBuf.String())
 }
 
 func (ss *SenderService) SendApplicantMailing(email string, vacancies []*models.Vacancy) error {

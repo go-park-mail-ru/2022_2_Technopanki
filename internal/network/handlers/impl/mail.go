@@ -14,9 +14,9 @@ func NewMailHandler(cases *usecases.UseCases) *MailHandler {
 	return &MailHandler{mail: cases.Mail}
 }
 
-func (mh *MailHandler) ConfirmationAccount(c *gin.Context) {
+func (mh *MailHandler) SendConfirmCode(c *gin.Context) {
 	email := c.Param("email")
-	confirmErr := mh.mail.ConfirmationAccount(email)
+	confirmErr := mh.mail.SendConfirmCode(email)
 	if confirmErr != nil {
 		_ = c.Error(confirmErr)
 		return
@@ -24,9 +24,11 @@ func (mh *MailHandler) ConfirmationAccount(c *gin.Context) {
 
 	c.Status(http.StatusOK)
 }
+
 func (mh *MailHandler) UpdatePassword(c *gin.Context) {
 
 }
+
 func (mh *MailHandler) TwoFactorSignIn(c *gin.Context) {
 
 }

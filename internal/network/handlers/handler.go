@@ -65,7 +65,7 @@ type ResumeH interface {
 }
 
 type MailH interface {
-	ConfirmationAccount(c *gin.Context)
+	SendConfirmCode(c *gin.Context)
 	UpdatePassword(c *gin.Context)
 	TwoFactorSignIn(c *gin.Context)
 }
