@@ -68,9 +68,10 @@ type ImageConfig struct {
 }
 
 type SecurityConfig struct {
-	Secret           string `yaml:"csrfSecret"`
-	CsrfMode         bool   `yaml:"csrfMode"`
-	ConfirmationTime int    `yaml:"confirmationTime"`
+	Secret             string `yaml:"csrfSecret"`
+	CsrfMode           bool   `yaml:"csrfMode"`
+	ConfirmationTime   int    `yaml:"confirmationTime"`
+	ConfirmAccountMode bool   `yaml:"confirmAccountMode"`
 }
 
 type MailConfig struct {

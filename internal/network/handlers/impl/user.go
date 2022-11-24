@@ -45,17 +45,22 @@ func (uh *UserHandler) SignUp(c *gin.Context) {
 		return
 	}
 
-	_, signUpErr := uh.userUseCase.SignUp(&input)
+	token, signUpErr := uh.userUseCase.SignUp(&input)
 	if signUpErr != nil {
 		_ = c.Error(signUpErr)
 		return
 	}
-
-	sendCodeErr := uh.mailUseCase.SendConfirmCode(input.Email)
-	if sendCodeErr != nil {
-		_ = c.Error(sendCodeErr)
-		return
+	if uh.cfg.Security.ConfirmAccountMode {
+		sendCodeErr := uh.mailUseCase.SendConfirmCode(input.Email)
+		if sendCodeErr != nil {
+			_ = c.Error(sendCodeErr)
+			return
+		}
+	} else {
+		c.SetCookie("session", token, uh.cfg.DefaultExpiringSession, "/", uh.cfg.Domain,
+			uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
 	}
+
 	c.SetSameSite(http.SameSiteLaxMode)
 	response.SendSuccessData(c, &input)
 }

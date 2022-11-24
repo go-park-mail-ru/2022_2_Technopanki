@@ -50,9 +50,10 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 		return "", getErr
 	}
 
-	if !user.IsConfirmed {
+	if !user.IsConfirmed && us.cfg.Security.ConfirmAccountMode {
 		return "", errorHandler.ErrIsNotConfirmed
 	}
+
 	if cryptErr := utils.ComparePassword(user, input); cryptErr != nil {
 		return "", cryptErr
 	}
@@ -92,7 +93,7 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 
 	input.Image = fmt.Sprintf("basic_%s_avatar.webp", input.UserType)
 	input.PublicFields = "email contact_number applicant_current_salary" //TODO после РК3 убрать для добавления фичи с доступом
-	input.IsConfirmed = false
+	input.IsConfirmed = !us.cfg.Security.ConfirmAccountMode
 	createErr := us.userRep.CreateUser(input)
 	if createErr != nil {
 		return "", fmt.Errorf("creating session user: %w", createErr)
