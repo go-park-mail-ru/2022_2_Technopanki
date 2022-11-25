@@ -9,6 +9,7 @@ import (
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases"
+	"HeadHunter/internal/usecases/mail"
 	"HeadHunter/internal/usecases/sender"
 	repositorypkg "HeadHunter/pkg/repository"
 	"github.com/sirupsen/logrus"
@@ -41,6 +42,8 @@ func main() {
 
 	senderService, senderErr := sender.NewSender(&mainConfig)
 
+	mailService := mail.NewMailService(postgresRepository.UserRepository, redisRepository, senderService)
+
 	if senderErr != nil {
 		logrus.Fatal(senderErr)
 	}
@@ -50,6 +53,7 @@ func main() {
 		redisRepository,
 		senderService,
 		&mainConfig,
+		mailService,
 	)
 
 	handler := handlers.NewHandlers(useCase, &mainConfig)

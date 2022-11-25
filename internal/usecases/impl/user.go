@@ -9,6 +9,7 @@ import (
 	"HeadHunter/internal/repository/images"
 	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases/escaping"
+	"HeadHunter/internal/usecases/mail"
 	"HeadHunter/pkg/errorHandler"
 	"fmt"
 	"image"
@@ -23,10 +24,12 @@ type UserService struct {
 	userRep     repository.UserRepository
 	sessionRepo session.Repository
 	cfg         *configs.Config
+	mail        mail.Mail
 }
 
-func NewUserService(userRepos repository.UserRepository, sessionRepos session.Repository, _cfg *configs.Config) *UserService {
-	return &UserService{userRep: userRepos, sessionRepo: sessionRepos, cfg: _cfg}
+func NewUserService(userRepos repository.UserRepository, sessionRepos session.Repository,
+	_mail mail.Mail, _cfg *configs.Config) *UserService {
+	return &UserService{userRep: userRepos, sessionRepo: sessionRepos, mail: _mail, cfg: _cfg}
 }
 
 func (us *UserService) GetUserId(email string) (uint, error) {
@@ -48,6 +51,14 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 	user, getErr := us.userRep.GetUserByEmail(input.Email)
 	if getErr != nil {
 		return "", getErr
+	}
+
+	if user.TwoFactorSignIn {
+		sendErr := us.mail.SendConfirmCode(user.Email)
+		if sendErr != nil {
+			return "", sendErr
+		}
+		return "", errorHandler.ErrIsNotConfirmed
 	}
 
 	if !user.IsConfirmed && us.cfg.Security.ConfirmAccountMode {
@@ -83,6 +94,13 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 	}
 	if isExist {
 		return "", errorHandler.ErrUserExists
+	}
+
+	if us.cfg.Security.ConfirmAccountMode {
+		sendCodeErr := us.mail.SendConfirmCode(input.Email)
+		if sendCodeErr != nil {
+			return "", sendCodeErr
+		}
 	}
 
 	encryptedPassword, encryptErr := utils.GeneratePassword(input.Password, &us.cfg.Crypt)

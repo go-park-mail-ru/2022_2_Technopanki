@@ -1,4 +1,4 @@
-package impl
+package mail
 
 import (
 	"HeadHunter/internal/repository"
@@ -29,9 +29,5 @@ func (ms *MailService) SendConfirmCode(email string) error {
 }
 
 func (ms *MailService) UpdatePassword() {
-
-}
-
-func (ms *MailService) TwoFactorSignIn() {
 
 }

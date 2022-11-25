@@ -6,6 +6,7 @@ import (
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases/impl"
+	"HeadHunter/internal/usecases/mail"
 	"HeadHunter/internal/usecases/sender"
 	"mime/multipart"
 )
@@ -17,17 +18,15 @@ type UseCases struct {
 	Vacancy         Vacancy
 	VacancyActivity VacancyActivity
 	Resume          Resume
-	Mail            Mail
 }
 
 func NewUseCases(repos *repository.Repository, session session.Repository,
-	_sender sender.Sender, _cfg *configs.Config) *UseCases {
+	_sender sender.Sender, _cfg *configs.Config, _mail mail.Mail) *UseCases {
 	return &UseCases{
-		User:            impl.NewUserService(repos.UserRepository, session, _cfg),
+		User:            impl.NewUserService(repos.UserRepository, session, _mail, _cfg),
 		Resume:          impl.NewResumeService(repos.ResumeRepository, _cfg, repos.UserRepository),
 		Vacancy:         impl.NewVacancyService(repos.VacancyRepository, repos.UserRepository),
 		VacancyActivity: impl.NewVacancyActivityService(repos.VacancyActivityRepository, repos.UserRepository),
-		Mail:            impl.NewMailService(repos.UserRepository, session, _sender),
 	}
 }
 
@@ -69,10 +68,4 @@ type Resume interface {
 	CreateResume(resume *models.Resume, email string) error
 	UpdateResume(id uint, resume *models.Resume, email string) error
 	DeleteResume(id uint, email string) error
-}
-
-type Mail interface {
-	SendConfirmCode(email string) error
-	UpdatePassword()
-	TwoFactorSignIn()
 }

@@ -15,11 +15,10 @@ import (
 type UserHandler struct {
 	cfg         *configs.Config
 	userUseCase usecases.User
-	mailUseCase usecases.Mail
 }
 
 func NewUserHandler(useCases *usecases.UseCases, _cfg *configs.Config) *UserHandler {
-	return &UserHandler{cfg: _cfg, userUseCase: useCases.User, mailUseCase: useCases.Mail}
+	return &UserHandler{cfg: _cfg, userUseCase: useCases.User}
 }
 
 func (uh *UserHandler) SignIn(c *gin.Context) {
@@ -29,6 +28,7 @@ func (uh *UserHandler) SignIn(c *gin.Context) {
 		return
 	}
 	token, err := uh.userUseCase.SignIn(&input)
+
 	if err != nil {
 		_ = c.Error(err)
 		return
@@ -50,13 +50,7 @@ func (uh *UserHandler) SignUp(c *gin.Context) {
 		_ = c.Error(signUpErr)
 		return
 	}
-	if uh.cfg.Security.ConfirmAccountMode {
-		sendCodeErr := uh.mailUseCase.SendConfirmCode(input.Email)
-		if sendCodeErr != nil {
-			_ = c.Error(sendCodeErr)
-			return
-		}
-	} else {
+	if !uh.cfg.Security.ConfirmAccountMode {
 		c.SetCookie("session", token, uh.cfg.DefaultExpiringSession, "/", uh.cfg.Domain,
 			uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
 		c.SetSameSite(http.SameSiteLaxMode)
