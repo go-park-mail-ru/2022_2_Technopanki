@@ -23,6 +23,8 @@ type UserAccount struct {
 	CompanySize            uint              `json:"company_size"`
 	PublicFields           string            `json:"public_fields"`
 	IsConfirmed            bool              `json:"is_confirmed"`
+	TwoFactorSignIn        bool              `json:"two_factor_sign_in"`
+	MailingApproval        bool              `json:"mailing_approval"`
 	Resumes                []Resume          `json:"resumes" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`
 	Vacancies              []Vacancy         `json:"vacancies" gorm:"foreignKey:PostedByUserId;constraint:OnDelete:CASCADE;"`
 	VacancyActivities      []VacancyActivity `json:"vacancy_activities" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`

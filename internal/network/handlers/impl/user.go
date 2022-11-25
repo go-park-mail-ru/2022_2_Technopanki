@@ -59,9 +59,9 @@ func (uh *UserHandler) SignUp(c *gin.Context) {
 	} else {
 		c.SetCookie("session", token, uh.cfg.DefaultExpiringSession, "/", uh.cfg.Domain,
 			uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
+		c.SetSameSite(http.SameSiteLaxMode)
 	}
 
-	c.SetSameSite(http.SameSiteLaxMode)
 	response.SendSuccessData(c, &input)
 }
 

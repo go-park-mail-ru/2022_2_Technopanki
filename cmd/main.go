@@ -11,7 +11,6 @@ import (
 	"HeadHunter/internal/usecases"
 	"HeadHunter/internal/usecases/sender"
 	repositorypkg "HeadHunter/pkg/repository"
-	"fmt"
 	"github.com/sirupsen/logrus"
 )
 
@@ -55,14 +54,11 @@ func main() {
 
 	handler := handlers.NewHandlers(useCase, &mainConfig)
 
-	quit := make(chan struct{})
-	go cron.ClearDBFromUnconfirmedUser(db, quit)
+	go cron.ClearDBFromUnconfirmedUser(db)
 
 	router := network.InitRoutes(handler, sessionMiddleware, &mainConfig)
 	runErr := router.Run(mainConfig.Port)
 	if runErr != nil {
 		logrus.Fatal(runErr)
 	}
-	fmt.Println("stop cron")
-	quit <- struct{}{}
 }
