@@ -51,7 +51,6 @@ func main() {
 	useCase := usecases.NewUseCases(
 		postgresRepository,
 		redisRepository,
-		senderService,
 		&mainConfig,
 		mailService,
 	)
