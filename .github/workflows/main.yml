@@ -30,9 +30,10 @@ jobs:
       
     - name: Run go vet
       run: go vet ./...
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
-  
+      
+    - name: Run tests
+      run: go test ./...
+      
   start:
     needs: build
     runs-on: ubuntu-latest
