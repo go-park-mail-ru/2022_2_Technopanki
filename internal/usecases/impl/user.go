@@ -91,7 +91,7 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 	user, getErr := us.userRep.GetUserByEmail(input.Email)
 
 	if getErr == nil && user.IsConfirmed {
-		return "", getErr
+		return "", errorHandler.ErrUserExists
 	}
 
 	if getErr != errorHandler.ErrUserNotExists {
