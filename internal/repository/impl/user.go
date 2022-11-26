@@ -2,7 +2,6 @@ package impl
 
 import (
 	"HeadHunter/internal/entity/models"
-	"HeadHunter/pkg/errorHandler"
 	"gorm.io/gorm"
 )
 
@@ -28,17 +27,6 @@ func (up *UserPostgres) GetUserByEmail(email string) (*models.UserAccount, error
 	var result models.UserAccount
 	query := up.db.Where("email = ?", email).Find(&result)
 	return &result, QueryValidation(query, "user")
-}
-
-func (up *UserPostgres) IsUserExist(email string) (bool, error) {
-	_, getErr := up.GetUserByEmail(email)
-	if getErr == nil {
-		return true, nil
-	}
-	if getErr == errorHandler.ErrUserNotExists {
-		return false, nil
-	}
-	return false, getErr
 }
 
 func (up *UserPostgres) GetUser(id uint) (*models.UserAccount, error) {

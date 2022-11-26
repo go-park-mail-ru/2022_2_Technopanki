@@ -29,7 +29,3 @@ func (mh *MailHandler) SendConfirmCode(c *gin.Context) {
 func (mh *MailHandler) UpdatePassword(c *gin.Context) {
 
 }
-
-func (mh *MailHandler) TwoFactorSignIn(c *gin.Context) {
-
-}

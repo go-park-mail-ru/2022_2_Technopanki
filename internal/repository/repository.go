@@ -27,7 +27,6 @@ func NewPostgresRepository(db *gorm.DB) *Repository {
 type UserRepository interface {
 	CreateUser(user *models.UserAccount) error
 	GetUserByEmail(email string) (*models.UserAccount, error)
-	IsUserExist(email string) (bool, error)
 	UpdateUser(oldUser, newUser *models.UserAccount) error
 	UpdateUserField(oldUser, newUser *models.UserAccount, field ...string) error
 	GetUser(id uint) (*models.UserAccount, error)

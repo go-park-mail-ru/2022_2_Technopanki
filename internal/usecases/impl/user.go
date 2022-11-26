@@ -88,12 +88,13 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 
 	input = escaping.EscapingObject[*models.UserAccount](input)
 
-	isExist, getErr := us.userRep.IsUserExist(input.Email)
-	if getErr != nil {
+	user, getErr := us.userRep.GetUserByEmail(input.Email)
+	if getErr == errorHandler.ErrUserExists && user.IsConfirmed {
 		return "", getErr
 	}
-	if isExist {
-		return "", errorHandler.ErrUserExists
+
+	if getErr != nil {
+		return "", getErr
 	}
 
 	if us.cfg.Security.ConfirmAccountMode {
