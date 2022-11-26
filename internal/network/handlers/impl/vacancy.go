@@ -88,7 +88,6 @@ func (vh *VacancyHandler) DeleteVacancy(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrInvalidParam)
 		return
 	}
-
 	email, contextErr := utils.GetEmailFromContext(c)
 	if contextErr != nil {
 		_ = c.Error(contextErr)
