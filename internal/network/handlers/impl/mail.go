@@ -2,12 +2,13 @@ package impl
 
 import (
 	"HeadHunter/internal/usecases"
+	"HeadHunter/internal/usecases/mail"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 type MailHandler struct {
-	mail usecases.Mail
+	mail mail.Mail
 }
 
 func NewMailHandler(cases *usecases.UseCases) *MailHandler {
