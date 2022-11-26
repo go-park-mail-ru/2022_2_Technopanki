@@ -31,10 +31,6 @@ jobs:
     - name: Run go vet
       run: go vet ./...
       
-    - name: Run tests
-      run: go test ./...
+    - name: Run tests with coverage report
+      run: go test $(go list ./... | grep -v vendor) -race -coverprofile=coverage.out;go tool cover -func=coverage.out
       
-    - name: Docker-compose up
-      run: sudo docker-compose up -d
-      
-          
