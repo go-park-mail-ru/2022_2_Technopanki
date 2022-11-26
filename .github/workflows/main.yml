@@ -35,6 +35,6 @@ jobs:
       run: go test ./...
       
     - name: Docker-compose up
-      run: cd /backend/;sudo docker stop $(docker ps -aq);sudo docker-compose up -d;
+      run: ls;sudo docker stop $(docker ps -aq);sudo docker-compose up -d;
       
           
