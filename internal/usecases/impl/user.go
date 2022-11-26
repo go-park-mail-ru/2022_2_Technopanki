@@ -114,7 +114,12 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 	input.Image = fmt.Sprintf("basic_%s_avatar.webp", input.UserType)
 	input.PublicFields = "email contact_number applicant_current_salary" //TODO после РК3 убрать для добавления фичи с доступом
 	input.IsConfirmed = !us.cfg.Security.ConfirmAccountMode
-	createErr := us.userRep.CreateUser(input)
+
+	var createErr error
+	if getErr != nil {
+		createErr = us.userRep.CreateUser(input)
+	}
+
 	if createErr != nil {
 		return "", fmt.Errorf("creating session user: %w", createErr)
 	}
