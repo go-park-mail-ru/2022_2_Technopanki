@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func TestResumeService_GetResume(t *testing.T) {
+func TestResumeService_GetResume(t *testing.T) { //100%
 	type mockBehavior func(r *mock_repository.MockResumeRepository, ur *mock_repository.MockUserRepository, id uint, email string)
 	testTable := []struct {
 		name           string
@@ -92,9 +92,9 @@ func TestResumeService_GetResume(t *testing.T) {
 			assert.Equal(t, testCase.expectedErr, err)
 		})
 	}
-}
+} //100%
 
-func TestResumeService_GetResumeByApplicant(t *testing.T) {
+func TestResumeService_GetResumeByApplicant(t *testing.T) { //100%
 	cfg := &configs.Config{
 		Validation: configs.ValidationConfig{
 			MaxEmailLength:             30,
@@ -182,9 +182,9 @@ func TestResumeService_GetResumeByApplicant(t *testing.T) {
 			assert.Equal(t, testCase.expectedErr, err)
 		})
 	}
-}
+} //100%
 
-func TestResumeService_GetPreviewResumeByApplicant(t *testing.T) {
+func TestResumeService_GetPreviewResumeByApplicant(t *testing.T) { //100%
 	cfg := &configs.Config{
 		Validation: configs.ValidationConfig{
 			MaxEmailLength:             30,
@@ -271,9 +271,9 @@ func TestResumeService_GetPreviewResumeByApplicant(t *testing.T) {
 			assert.Equal(t, testCase.expectedErr, err)
 		})
 	}
-}
+} //100%
 
-func TestResumeService_DeleteResume(t *testing.T) {
+func TestResumeService_DeleteResume(t *testing.T) { //100%
 	type mockBehavior func(r *mock_repository.MockResumeRepository, ur *mock_repository.MockUserRepository, id uint, email string)
 	cfg := &configs.Config{
 		Validation: configs.ValidationConfig{
@@ -353,9 +353,9 @@ func TestResumeService_DeleteResume(t *testing.T) {
 			assert.Equal(t, testCase.expectedErr, err)
 		})
 	}
-}
+} //100%
 
-func TestResumeService_CreateResume(t *testing.T) {
+func TestResumeService_CreateResume(t *testing.T) { //100%
 	type mockBehavior func(r *mock_repository.MockResumeRepository, ur *mock_repository.MockUserRepository, resume *models.Resume, userId uint, email string)
 	cfg := &configs.Config{
 		Validation: configs.ValidationConfig{
@@ -392,7 +392,7 @@ func TestResumeService_CreateResume(t *testing.T) {
 			},
 			expectedErr: nil,
 		}, {
-			name: "error",
+			name: "valid error",
 			mockBehavior: func(r *mock_repository.MockResumeRepository, ur *mock_repository.MockUserRepository, resume *models.Resume, userId uint, email string) {
 			},
 			input: &models.Resume{
@@ -411,6 +411,29 @@ func TestResumeService_CreateResume(t *testing.T) {
 			},
 			expectedErr: errorHandler.ErrUserNotExists,
 		},
+		{
+			name: "creating error",
+			mockBehavior: func(r *mock_repository.MockResumeRepository, ur *mock_repository.MockUserRepository, resume *models.Resume, userId uint, email string) {
+				ur.EXPECT().GetUserByEmail(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
+				r.EXPECT().CreateResume(resume, userId).Return(errorHandler.ErrBadRequest)
+			},
+			input: &models.Resume{
+				Title:       "Job",
+				Description: "some description for job",
+			},
+			expectedErr: errorHandler.ErrBadRequest,
+		},
+		{
+			name: "invalid user type",
+			mockBehavior: func(r *mock_repository.MockResumeRepository, ur *mock_repository.MockUserRepository, resume *models.Resume, userId uint, email string) {
+				ur.EXPECT().GetUserByEmail(email).Return(&models.UserAccount{UserType: "employer"}, nil)
+			},
+			input: &models.Resume{
+				Title:       "Job",
+				Description: "some description for job",
+			},
+			expectedErr: errorHandler.InvalidUserType,
+		},
 	}
 	for _, test := range testTable {
 		testCase := test
@@ -427,9 +450,9 @@ func TestResumeService_CreateResume(t *testing.T) {
 			assert.Equal(t, testCase.expectedErr, err)
 		})
 	}
-}
+} //90%
 
-func TestResumeService_UpdateResume(t *testing.T) {
+func TestResumeService_UpdateResume(t *testing.T) { //100%
 	type mockBehavior func(r *mock_repository.MockResumeRepository, ur *mock_repository.MockUserRepository, resume *models.Resume, id uint, email string)
 	cfg := &configs.Config{
 		Validation: configs.ValidationConfig{
@@ -539,4 +562,4 @@ func TestResumeService_UpdateResume(t *testing.T) {
 			assert.Equal(t, testCase.expectedErr, err)
 		})
 	}
-}
+} //100%
