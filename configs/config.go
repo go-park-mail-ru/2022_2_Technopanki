@@ -10,7 +10,6 @@ type Config struct {
 	Domain                 string           `yaml:"domain"`
 	Port                   string           `yaml:"port"`
 	DefaultExpiringSession int              `yaml:"defaultExpiringSession"`
-	ConfirmationTime       int              `yaml:"confirmationTime"`
 	DB                     DBConfig         `yaml:"db"`
 	Redis                  RedisConfig      `yaml:"redis"`
 	Validation             ValidationConfig `yaml:"validation"`

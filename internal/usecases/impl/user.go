@@ -18,6 +18,7 @@ import (
 	_ "image/png"
 	"mime/multipart"
 	"strings"
+	"time"
 )
 
 type UserService struct {
@@ -25,6 +26,7 @@ type UserService struct {
 	sessionRepo session.Repository
 	cfg         *configs.Config
 	mail        mail.Mail
+	sync        chan string
 }
 
 func NewUserService(userRepos repository.UserRepository, sessionRepos session.Repository,
@@ -53,20 +55,31 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 		return "", getErr
 	}
 
-	if user.TwoFactorSignIn {
-		sendErr := us.mail.SendConfirmCode(user.Email)
-		if sendErr != nil {
-			return "", sendErr
-		}
-		input.TwoFactorSignIn = true
-	}
-
 	if !user.IsConfirmed && us.cfg.Security.ConfirmAccountMode {
 		return "", errorHandler.ErrIsNotConfirmed
 	}
 
 	if cryptErr := utils.ComparePassword(user, input); cryptErr != nil {
 		return "", cryptErr
+	}
+
+	if user.TwoFactorSignIn {
+		sendErr := us.mail.SendConfirmCode(user.Email)
+		if sendErr != nil {
+			return "", sendErr
+		}
+		input.TwoFactorSignIn = true
+		timer := time.After(time.Duration(us.cfg.Security.ConfirmationTime) * time.Second)
+		for {
+			select {
+			case <-timer:
+				return "", errorHandler.ErrForbidden
+			case email := <-us.sync:
+				if email == user.Email {
+
+				}
+			}
+		}
 	}
 
 	token, newSessionErr := us.sessionRepo.NewSession(input.Email)
@@ -91,7 +104,11 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 	user, getErr := us.userRep.GetUserByEmail(input.Email)
 
 	if getErr == nil && user.IsConfirmed {
-		return "", errorHandler.ErrUserExists
+		if user.IsConfirmed {
+			return "", errorHandler.ErrUserExists
+		} else {
+			return "", errorHandler.ErrIsNotConfirmed
+		}
 	}
 
 	if getErr != errorHandler.ErrUserNotExists {
@@ -115,10 +132,7 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 	input.PublicFields = "email contact_number applicant_current_salary" //TODO после РК3 убрать для добавления фичи с доступом
 	input.IsConfirmed = !us.cfg.Security.ConfirmAccountMode
 
-	var createErr error
-	if getErr != nil {
-		createErr = us.userRep.CreateUser(input)
-	}
+	createErr := us.userRep.CreateUser(input)
 
 	if createErr != nil {
 		return "", fmt.Errorf("creating session user: %w", createErr)
@@ -296,5 +310,5 @@ func (us *UserService) UpdatePassword(code, email, password string) error {
 		return encryptErr
 	}
 	user.Password = encryptedPassword
-	return us.userRep.UpdatePassword(user)
+	return us.userRep.UpdateUser(user)
 }

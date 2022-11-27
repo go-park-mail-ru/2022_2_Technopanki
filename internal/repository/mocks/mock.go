@@ -49,33 +49,33 @@ func (mr *MockUserRepositoryMockRecorder) CreateUser(user interface{}) *gomock.C
 }
 
 // GetBestApplicantForEmployer mocks base method.
-func (m *MockUserRepository) GetBestApplicantForEmployer(user *models.UserAccount) ([]*models.UserAccount, error) {
+func (m *MockUserRepository) GetBestApplicantForEmployer() ([]*models.UserAccount, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetBestApplicantForEmployer", user)
+	ret := m.ctrl.Call(m, "GetBestApplicantForEmployer")
 	ret0, _ := ret[0].([]*models.UserAccount)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetBestApplicantForEmployer indicates an expected call of GetBestApplicantForEmployer.
-func (mr *MockUserRepositoryMockRecorder) GetBestApplicantForEmployer(user interface{}) *gomock.Call {
+func (mr *MockUserRepositoryMockRecorder) GetBestApplicantForEmployer() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBestApplicantForEmployer", reflect.TypeOf((*MockUserRepository)(nil).GetBestApplicantForEmployer), user)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBestApplicantForEmployer", reflect.TypeOf((*MockUserRepository)(nil).GetBestApplicantForEmployer))
 }
 
 // GetBestVacanciesForApplicant mocks base method.
-func (m *MockUserRepository) GetBestVacanciesForApplicant(user *models.UserAccount) ([]*models.Vacancy, error) {
+func (m *MockUserRepository) GetBestVacanciesForApplicant() ([]*models.Vacancy, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetBestVacanciesForApplicant", user)
+	ret := m.ctrl.Call(m, "GetBestVacanciesForApplicant")
 	ret0, _ := ret[0].([]*models.Vacancy)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetBestVacanciesForApplicant indicates an expected call of GetBestVacanciesForApplicant.
-func (mr *MockUserRepositoryMockRecorder) GetBestVacanciesForApplicant(user interface{}) *gomock.Call {
+func (mr *MockUserRepositoryMockRecorder) GetBestVacanciesForApplicant() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBestVacanciesForApplicant", reflect.TypeOf((*MockUserRepository)(nil).GetBestVacanciesForApplicant), user)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBestVacanciesForApplicant", reflect.TypeOf((*MockUserRepository)(nil).GetBestVacanciesForApplicant))
 }
 
 // GetUser mocks base method.
@@ -121,20 +121,6 @@ func (m *MockUserRepository) GetUserSafety(id uint, safeFields []string) (*model
 func (mr *MockUserRepositoryMockRecorder) GetUserSafety(id, safeFields interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserSafety", reflect.TypeOf((*MockUserRepository)(nil).GetUserSafety), id, safeFields)
-}
-
-// UpdatePassword mocks base method.
-func (m *MockUserRepository) UpdatePassword(user *models.UserAccount) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdatePassword", user)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// UpdatePassword indicates an expected call of UpdatePassword.
-func (mr *MockUserRepositoryMockRecorder) UpdatePassword(user interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePassword", reflect.TypeOf((*MockUserRepository)(nil).UpdatePassword), user)
 }
 
 // UpdateUser mocks base method.

@@ -41,26 +41,21 @@ func (up *UserPostgres) GetUserSafety(id uint, allowedFields []string) (*models.
 	return &result, QueryValidation(query, "user")
 }
 
-func (up *UserPostgres) UpdatePassword(user *models.UserAccount) error {
-	query := up.db.Model(user).Select("password").Updates(user)
-	return query.Error
-}
-
-func (up *UserPostgres) GetBestVacanciesForApplicant(user *models.UserAccount) ([]*models.Vacancy, error) {
+func (up *UserPostgres) GetBestVacanciesForApplicant() ([]*models.Vacancy, error) {
 	var result []*models.Vacancy
 	query := up.db.Table("vacancies").Order("created_date asc").Limit(10).Scan(&result)
 	if query.Error != nil {
-		return result, fmt.Errorf("error with getting best vacancies: %w", query.Error)
+		return nil, fmt.Errorf("error with getting best vacancies: %w", query.Error)
 	}
 	return result, nil
 }
 
-func (up *UserPostgres) GetBestApplicantForEmployer(user *models.UserAccount) ([]*models.UserAccount, error) {
+func (up *UserPostgres) GetBestApplicantForEmployer() ([]*models.UserAccount, error) {
 	var result []*models.UserAccount
 	query := up.db.Table("user_accounts").Select(models.SafeUserFields).Where("user_accounts.user_type = ?", "applicant").
-		Order("created_time desc").Limit(10).Scan(&result)
+		Order("created_time asc").Limit(10).Scan(&result)
 	if query.Error != nil {
-		return result, fmt.Errorf("error with getting best applicants: %w", query.Error)
+		return nil, fmt.Errorf("error with getting best applicants: %w", query.Error)
 	}
 	return result, nil
 }

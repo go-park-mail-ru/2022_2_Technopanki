@@ -30,9 +30,8 @@ type UserRepository interface {
 	UpdateUser(newUser *models.UserAccount) error
 	GetUser(id uint) (*models.UserAccount, error)
 	GetUserSafety(id uint, safeFields []string) (*models.UserAccount, error)
-	UpdatePassword(user *models.UserAccount) error
-	GetBestVacanciesForApplicant(user *models.UserAccount) ([]*models.Vacancy, error)
-	GetBestApplicantForEmployer(user *models.UserAccount) ([]*models.UserAccount, error)
+	GetBestVacanciesForApplicant() ([]*models.Vacancy, error)
+	GetBestApplicantForEmployer() ([]*models.UserAccount, error)
 }
 
 type VacancyRepository interface {
