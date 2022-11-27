@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+// protoc --go_out=plugins=grpc:. *.proto
+
+package session;
+
+message Email {
+  string value = 1;
+}
+
+message Token {
+  string value = 1;
+}
+
+message Nothing {
+  bool dummy = 1;
+}
+
+service AuthChecker {
+  rpc NewSession (Email) returns (Token) {}
+  rpc GetSession (Token) returns (Email) {}
+  rpc DeleteSession (Token) returns (Nothing) {}
+  rpc CreateConfirmationCode (Email) returns (Token) {}
+  rpc GetEmailFromCode (Token) returns (Email) {}
+}
