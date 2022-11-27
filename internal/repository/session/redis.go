@@ -74,5 +74,10 @@ func (rs *RedisStore) GetEmailFromCode(token string) (string, error) {
 	if getErr != nil {
 		return "", fmt.Errorf("getting code error: %w", getErr)
 	}
+
+	deleteErr := rs.client.Del(token).Err()
+	if deleteErr != nil {
+		return "", fmt.Errorf("deleting confirmation code error: %w", deleteErr)
+	}
 	return result, nil
 }

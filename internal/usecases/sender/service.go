@@ -50,7 +50,7 @@ func (ss *SenderService) CloseSender() error {
 }
 
 func (ss *SenderService) SendConfirmCode(email, code string) error {
-	form, parseErr := template.ParseFiles("./static/html/letter.html")
+	form, parseErr := template.ParseFiles("./static/html/confirmLetter.html")
 	if parseErr != nil {
 		return parseErr
 	}

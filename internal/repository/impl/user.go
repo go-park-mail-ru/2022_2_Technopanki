@@ -41,3 +41,8 @@ func (up *UserPostgres) GetUserSafety(id uint, allowedFields []string) (*models.
 	query := up.db.Select(append(models.SafeUserFields, allowedFields...)).Find(&result, id)
 	return &result, QueryValidation(query, "user")
 }
+
+func (up *UserPostgres) UpdatePassword(user *models.UserAccount) error {
+	query := up.db.Model(user).Select("password").Updates(user)
+	return query.Error
+}

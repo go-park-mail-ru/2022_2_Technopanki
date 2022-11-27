@@ -42,7 +42,8 @@ type User interface {
 	GetUserByEmail(email string) (*models.UserAccount, error)
 	UploadUserImage(user *models.UserAccount, fileHeader *multipart.FileHeader) (string, error)
 	DeleteUserImage(user *models.UserAccount) error
-	ConfirmUser(code string, email string) (string, error)
+	ConfirmUser(code, email string) (string, error)
+	UpdatePassword(code, email, password string) error
 }
 
 type Vacancy interface {

@@ -28,6 +28,10 @@ func (ms *MailService) SendConfirmCode(email string) error {
 	return nil
 }
 
-func (ms *MailService) UpdatePassword() {
+func (ms *MailService) SendApplicantMailing(email string) error {
+	return nil
+}
 
+func (ms *MailService) SendEmployerMailing(email string) error {
+	return nil
 }

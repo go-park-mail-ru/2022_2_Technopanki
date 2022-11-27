@@ -244,7 +244,7 @@ func (us *UserService) DeleteUserImage(user *models.UserAccount) error {
 	return us.UpdateUser(user)
 }
 
-func (us *UserService) ConfirmUser(code string, email string) (string, error) {
+func (us *UserService) ConfirmUser(code, email string) (string, error) {
 	if code == "" {
 		return "", errorHandler.ErrBadRequest
 	}
@@ -272,4 +272,23 @@ func (us *UserService) ConfirmUser(code string, email string) (string, error) {
 	}
 
 	return token, us.userRep.UpdateUser(user, confirmedUser)
+}
+
+func (us *UserService) UpdatePassword(code, email, password string) error {
+	emailFromCode, getCodeErr := us.sessionRepo.GetEmailFromCode(code)
+	if getCodeErr != nil {
+		return getCodeErr
+	}
+
+	if email != emailFromCode {
+		return errorHandler.ErrForbidden
+	}
+
+	user, getErr := us.userRep.GetUserByEmail(email)
+	if getErr != nil {
+		return getErr
+	}
+
+	user.Password = password
+	return us.userRep.UpdatePassword(user)
 }

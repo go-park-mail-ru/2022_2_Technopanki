@@ -234,3 +234,29 @@ func (uh *UserHandler) ConfirmUser(c *gin.Context) {
 		uh.cfg.Domain, uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
 	c.Status(http.StatusOK)
 }
+
+func (uh *UserHandler) UpdatePassword(c *gin.Context) {
+	email, emailErr := utils.GetEmailFromContext(c)
+	if emailErr != nil {
+		_ = c.Error(emailErr)
+		return
+	}
+
+	var input struct {
+		Code     string `json:"code"`
+		Password string `json:"email"`
+	}
+	if err := c.BindJSON(&input); err != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+
+	updatePasswordErr := uh.userUseCase.UpdatePassword(input.Code, email, input.Password)
+
+	if updatePasswordErr != nil {
+		_ = c.Error(updatePasswordErr)
+		return
+	}
+
+	c.Status(http.StatusOK)
+}
