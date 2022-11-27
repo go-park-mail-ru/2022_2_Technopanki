@@ -138,36 +138,17 @@ func (mr *MockUserRepositoryMockRecorder) UpdatePassword(user interface{}) *gomo
 }
 
 // UpdateUser mocks base method.
-func (m *MockUserRepository) UpdateUser(oldUser, newUser *models.UserAccount) error {
+func (m *MockUserRepository) UpdateUser(newUser *models.UserAccount) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateUser", oldUser, newUser)
+	ret := m.ctrl.Call(m, "UpdateUser", newUser)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // UpdateUser indicates an expected call of UpdateUser.
-func (mr *MockUserRepositoryMockRecorder) UpdateUser(oldUser, newUser interface{}) *gomock.Call {
+func (mr *MockUserRepositoryMockRecorder) UpdateUser(newUser interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUser", reflect.TypeOf((*MockUserRepository)(nil).UpdateUser), oldUser, newUser)
-}
-
-// UpdateUserField mocks base method.
-func (m *MockUserRepository) UpdateUserField(oldUser, newUser *models.UserAccount, field ...string) error {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{oldUser, newUser}
-	for _, a := range field {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "UpdateUserField", varargs...)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// UpdateUserField indicates an expected call of UpdateUserField.
-func (mr *MockUserRepositoryMockRecorder) UpdateUserField(oldUser, newUser interface{}, field ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	varargs := append([]interface{}{oldUser, newUser}, field...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserField", reflect.TypeOf((*MockUserRepository)(nil).UpdateUserField), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUser", reflect.TypeOf((*MockUserRepository)(nil).UpdateUser), newUser)
 }
 
 // MockVacancyRepository is a mock of VacancyRepository interface.

@@ -170,7 +170,10 @@ func (us *UserService) UpdateUser(input *models.UserAccount) error {
 		input.Password = encryptedPassword
 	}
 	input.ID = oldUser.ID
-	dbError := us.userRep.UpdateUser(oldUser, input)
+	input.Image = oldUser.Image
+	input.IsConfirmed = oldUser.IsConfirmed
+
+	dbError := us.userRep.UpdateUser(input)
 	if dbError != nil {
 		return dbError
 	}
@@ -270,7 +273,7 @@ func (us *UserService) ConfirmUser(code, email string) (string, error) {
 		return "", newSessionErr
 	}
 
-	return token, us.userRep.UpdateUser(user, confirmedUser)
+	return token, us.userRep.UpdateUser(confirmedUser)
 }
 
 func (us *UserService) UpdatePassword(code, email, password string) error {
