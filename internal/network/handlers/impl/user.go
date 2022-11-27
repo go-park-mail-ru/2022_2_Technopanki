@@ -175,7 +175,34 @@ func (uh *UserHandler) GetAllEmployers(c *gin.Context) {
 }
 
 func (uh *UserHandler) GetAllApplicants(c *gin.Context) {
+	var applicants []*models.UserAccount
+	var getAllErr error
+	var filters models.UserFilter
 
+	search := c.Query("search")
+	if search != "" {
+		if strings.Index(search, " ") != -1 {
+			split := strings.Split(search, " ")
+			filters.ApplicantName = split[0]
+			filters.ApplicantSurname = split[1]
+		} else {
+			filters.ApplicantSurname = search
+		}
+	}
+
+	city := c.Query("city")
+	if city != "" {
+		filters.Location = city
+	}
+
+	applicants, getAllErr = uh.userUseCase.GetAllApplicants(filters)
+	if getAllErr != nil {
+		_ = c.Error(getAllErr)
+		return
+	}
+	c.JSON(http.StatusOK, models.GetAllUsersResponcePointer{
+		Data: applicants,
+	})
 }
 
 //func (uh *UserHandler) GetAllUsers(c *gin.Context) {

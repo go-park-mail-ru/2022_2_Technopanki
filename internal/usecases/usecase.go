@@ -36,7 +36,7 @@ type User interface {
 	GetUser(id uint) (*models.UserAccount, error)
 	//GetAllUsers(filter string) ([]*models.UserAccount, error)
 	GetAllEmployers(filters models.UserFilter) ([]*models.UserAccount, error)
-	//GetAllApplicants(filters models.UserFilter) ([]*models.UserAccount, error)
+	GetAllApplicants(filters models.UserFilter) ([]*models.UserAccount, error)
 	GetUserId(email string) (uint, error)
 	GetUserSafety(id uint) (*models.UserAccount, error)
 	GetUserByEmail(email string) (*models.UserAccount, error)

@@ -35,8 +35,8 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 		user := api.Group("/user")
 		{
 			user.GET("/:id", sessionMW.Session, h.UserHandler.GetUser, errorHandler.Middleware())
-			user.GET("/employers/", h.UserHandler.GetAllEmployers, errorHandler.Middleware())
-			user.GET("/applicants/", h.UserHandler.GetAllApplicants, errorHandler.Middleware())
+			user.GET("/employers", h.UserHandler.GetAllEmployers, errorHandler.Middleware())
+			user.GET("/applicants", h.UserHandler.GetAllApplicants, errorHandler.Middleware())
 			user.GET("/safety/:id", h.UserHandler.GetUserSafety, errorHandler.Middleware())
 			user.GET("/preview/:id", h.UserHandler.GetPreview, errorHandler.Middleware())
 			user.POST("/", sessionMW.Session, h.UserHandler.UpdateUser, errorHandler.Middleware())
@@ -49,7 +49,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 
 		vacancies := api.Group("/vacancy")
 		{
-			vacancies.GET("/", h.VacancyHandler.GetAllVacancies, errorHandler.Middleware())
+			vacancies.GET("", h.VacancyHandler.GetAllVacancies, errorHandler.Middleware())
 			vacancies.GET("/:id", h.VacancyHandler.GetVacancyById, errorHandler.Middleware())
 			vacancies.GET("/company/:id", h.VacancyHandler.GetUserVacancies, errorHandler.Middleware())
 			vacancies.POST("/", sessionMW.Session, h.VacancyHandler.CreateVacancy, errorHandler.Middleware())

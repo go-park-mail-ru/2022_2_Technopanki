@@ -31,3 +31,16 @@ func EmployerFilterQueries(filterName string) string {
 		return ""
 	}
 }
+
+func ApplicantFilterQueries(filterName string) string {
+	switch filterName {
+	case "ApplicantName":
+		return "applicant_name LIKE ?"
+	case "ApplicantSurname":
+		return "applicant_surname LIKE ?"
+	case "Location":
+		return "location = ? AND user_type = 'applicant'"
+	default:
+		return ""
+	}
+}

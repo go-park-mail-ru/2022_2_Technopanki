@@ -177,9 +177,22 @@ func (us *UserService) GetAllEmployers(filters models.UserFilter) ([]*models.Use
 	return us.userRep.GetAllUsers(conditions, filterValues, "employer")
 }
 
-//func (us *UserService) GetAllApplicants(filters models.UserFilter) ([]*models.UserAccount, error) {
-//
-//}
+func (us *UserService) GetAllApplicants(filters models.UserFilter) ([]*models.UserAccount, error) {
+	var conditions []string
+	var filterValues []string
+	values := reflect.ValueOf(filters)
+	types := values.Type()
+	for i := 0; i < values.NumField(); i++ {
+		if values.Field(i).Interface().(string) != "" {
+			query := ApplicantFilterQueries(types.Field(i).Name)
+			if query != "" {
+				conditions = append(conditions, query)
+			}
+			filterValues = append(filterValues, values.Field(i).Interface().(string))
+		}
+	}
+	return us.userRep.GetAllUsers(conditions, filterValues, "applicant")
+}
 
 func (us *UserService) GetUserSafety(id uint) (*models.UserAccount, error) {
 	user, getErr := us.userRep.GetUser(id)
