@@ -1,9 +1,11 @@
 package mail
 
 import (
+	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases/sender"
+	"fmt"
 )
 
 type MailService struct {
@@ -26,4 +28,26 @@ func (ms *MailService) SendConfirmCode(email string) error {
 		return sendErr
 	}
 	return nil
+}
+
+func (ms *MailService) SendApplicantMailing(users []*models.UserAccount, vacancies []*models.Vacancy) error {
+	var returnedErr error
+	for _, user := range users {
+		err := ms.sender.SendApplicantMailing(user.Email, vacancies)
+		if err != nil {
+			returnedErr = fmt.Errorf("%w %w", returnedErr, err)
+		}
+	}
+	return returnedErr
+}
+
+func (ms *MailService) SendEmployerMailing(employers, applicants []*models.UserAccount) error {
+	var returnedErr error
+	for _, user := range employers {
+		err := ms.sender.SendEmployerMailing(user.Email, applicants)
+		if err != nil {
+			returnedErr = fmt.Errorf("%w %w", returnedErr, err)
+		}
+	}
+	return returnedErr
 }
