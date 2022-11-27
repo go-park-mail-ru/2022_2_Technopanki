@@ -135,7 +135,6 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 			return "", newSessionErr
 		}
 	}
-
 	return token, nil
 }
 
