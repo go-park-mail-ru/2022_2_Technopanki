@@ -24,7 +24,7 @@ func (vh *VacancyHandler) GetAllVacancies(c *gin.Context) {
 	var getAllErr error
 	var filters models.VacancyFilter
 
-	title := c.Query("title")
+	title := c.Query("search")
 	if title != "" {
 		filters.Title = title
 	}
