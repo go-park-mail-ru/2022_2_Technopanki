@@ -17,7 +17,7 @@ type UserAccount struct {
 	ApplicantCurrentSalary uint      `json:"applicant_current_salary,omitempty"`
 	CompanyName            string    `json:"company_name,omitempty"`
 	//BusinessType           []BusinessType    `json:"business_type,omitempty" gorm:"many2many:business_type;"`
-	BusinessType      string            `json:"business_type, omitempty"`
+	BusinessType      string            `json:"business_type,omitempty"`
 	CompanyWebsiteUrl string            `json:"company_website_url,omitempty"`
 	Location          string            `json:"location,omitempty"`
 	CompanySize       uint              `json:"company_size"`

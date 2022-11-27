@@ -61,20 +61,6 @@ func (vh *VacancyHandler) GetAllVacancies(c *gin.Context) {
 		_ = c.Error(getAllErr)
 		return
 	}
-
-	//if filter := c.Query("title"); filter != "" {
-	//	vacancies, getAllErr = vh.vacancyUseCase.GetAllFilter(filter)
-	//	if getAllErr != nil {
-	//		_ = c.Error(getAllErr)
-	//		return
-	//	}
-	//} else {
-	//	vacancies, getAllErr = vh.vacancyUseCase.GetAll()
-	//	if getAllErr != nil {
-	//		_ = c.Error(getAllErr)
-	//		return
-	//	}
-	//}
 	c.JSON(http.StatusOK, models.GetAllVacanciesResponcePointer{
 		Data: vacancies,
 	})
