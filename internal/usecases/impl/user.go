@@ -18,7 +18,6 @@ import (
 	_ "image/png"
 	"mime/multipart"
 	"strings"
-	"time"
 )
 
 type UserService struct {
@@ -26,7 +25,6 @@ type UserService struct {
 	sessionRepo session.Repository
 	cfg         *configs.Config
 	mail        mail.Mail
-	sync        chan string
 }
 
 func NewUserService(userRepos repository.UserRepository, sessionRepos session.Repository,
@@ -68,18 +66,7 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 		if sendErr != nil {
 			return "", sendErr
 		}
-		input.TwoFactorSignIn = true
-		timer := time.After(time.Duration(us.cfg.Security.ConfirmationTime) * time.Second)
-		for {
-			select {
-			case <-timer:
-				return "", errorHandler.ErrForbidden
-			case email := <-us.sync:
-				if email == user.Email {
-
-				}
-			}
-		}
+		return "", errorHandler.ErrForbidden
 	}
 
 	token, newSessionErr := us.sessionRepo.NewSession(input.Email)
