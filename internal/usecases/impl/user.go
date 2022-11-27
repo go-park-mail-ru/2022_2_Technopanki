@@ -6,10 +6,12 @@ import (
 	"HeadHunter/internal/entity/utils"
 	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/repository"
+	"HeadHunter/internal/repository/images"
 	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases/escaping"
 	"HeadHunter/pkg/errorHandler"
 	"fmt"
+	"image"
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
@@ -171,43 +173,41 @@ func (us *UserService) GetUserByEmail(email string) (*models.UserAccount, error)
 }
 
 func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *multipart.FileHeader) (string, error) {
-	//file, fileErr := fileHeader.Open()
-	//if fileErr != nil {
-	//	return "", fileErr
-	//}
-	//
-	//user = escaping.EscapingObject[*models.UserAccount](user)
-	//
-	//if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
-	//	user.Image = fmt.Sprintf("%d.webp", user.ID)
-	//
-	//	updateErr := us.UpdateUser(user)
-	//	if updateErr != nil {
-	//		return "", updateErr
-	//	}
-	//}
-	//
-	//img, _, decodeErr := image.Decode(file)
-	//if decodeErr != nil {
-	//	fmt.Println("Error in decoding (UploadUserImage)")
-	//	return "", errorHandler.ErrBadRequest
-	//}
-	//
-	//return user.Image, images.UploadUserAvatar(user.Image, &img, &us.cfg.Image)
-	return "", nil
+	file, fileErr := fileHeader.Open()
+	if fileErr != nil {
+		return "", fileErr
+	}
+
+	user = escaping.EscapingObject[*models.UserAccount](user)
+
+	if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
+		user.Image = fmt.Sprintf("%d.webp", user.ID)
+
+		updateErr := us.UpdateUser(user)
+		if updateErr != nil {
+			return "", updateErr
+		}
+	}
+
+	img, _, decodeErr := image.Decode(file)
+	if decodeErr != nil {
+		fmt.Println("Error in decoding (UploadUserImage)")
+		return "", errorHandler.ErrBadRequest
+	}
+
+	return user.Image, images.UploadUserAvatar(user.Image, &img, &us.cfg.Image)
 }
 
 func (us *UserService) DeleteUserImage(user *models.UserAccount) error {
-	//user = escaping.EscapingObject[*models.UserAccount](user)
-	//
-	//if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
-	//	return errorHandler.ErrBadRequest
-	//}
-	//deleteErr := images.DeleteUserAvatar(user.Image, &us.cfg.Image)
-	//if deleteErr != nil {
-	//	return errorHandler.ErrCannotDeleteAvatar
-	//}
-	//user.Image = fmt.Sprintf("basic_%s_avatar.webp", user.UserType)
-	//return us.UpdateUser(user)
-	return nil
+	user = escaping.EscapingObject[*models.UserAccount](user)
+
+	if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
+		return errorHandler.ErrBadRequest
+	}
+	deleteErr := images.DeleteUserAvatar(user.Image, &us.cfg.Image)
+	if deleteErr != nil {
+		return errorHandler.ErrCannotDeleteAvatar
+	}
+	user.Image = fmt.Sprintf("basic_%s_avatar.webp", user.UserType)
+	return us.UpdateUser(user)
 }
