@@ -58,6 +58,7 @@ type VacancyActivityH interface {
 type ResumeH interface {
 	GetResume(c *gin.Context)
 	GetResumeByApplicant(c *gin.Context)
+	GetAllResumes(c *gin.Context)
 	GetPreviewResumeByApplicant(c *gin.Context)
 	CreateResume(c *gin.Context)
 	UpdateResume(c *gin.Context)

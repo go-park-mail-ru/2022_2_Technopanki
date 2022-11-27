@@ -63,6 +63,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 
 		resumes := api.Group("/resume")
 		{
+			resumes.GET("", h.ResumeHandler.GetAllResumes, errorHandler.Middleware())
 			resumes.GET("/:id", sessionMW.Session, h.ResumeHandler.GetResume, errorHandler.Middleware())
 			resumes.GET("/applicant/:user_id", sessionMW.Session, h.ResumeHandler.GetResumeByApplicant, errorHandler.Middleware())
 			resumes.GET("/applicant/preview/:user_id", sessionMW.Session, h.ResumeHandler.GetPreviewResumeByApplicant, errorHandler.Middleware())
