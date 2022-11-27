@@ -33,8 +33,11 @@ func (uh *UserHandler) SignIn(c *gin.Context) {
 		_ = c.Error(err)
 		return
 	}
-	c.SetCookie("session", token, uh.cfg.DefaultExpiringSession, "/", uh.cfg.Domain,
-		uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
+
+	if !input.TwoFactorSignIn {
+		c.SetCookie("session", token, uh.cfg.DefaultExpiringSession, "/", uh.cfg.Domain,
+			uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
+	}
 	response.SendSuccessData(c, &input)
 }
 
