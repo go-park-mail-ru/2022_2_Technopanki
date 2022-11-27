@@ -25,7 +25,3 @@ func (mh *MailHandler) SendConfirmCode(c *gin.Context) {
 
 	c.Status(http.StatusOK)
 }
-
-func (mh *MailHandler) UpdatePassword(c *gin.Context) {
-
-}

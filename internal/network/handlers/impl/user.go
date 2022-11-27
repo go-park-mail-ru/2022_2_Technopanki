@@ -244,7 +244,7 @@ func (uh *UserHandler) UpdatePassword(c *gin.Context) {
 
 	var input struct {
 		Code     string `json:"code"`
-		Password string `json:"email"`
+		Password string `json:"password"`
 	}
 	if err := c.BindJSON(&input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)

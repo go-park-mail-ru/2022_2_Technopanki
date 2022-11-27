@@ -37,6 +37,7 @@ type UserH interface {
 	DeleteUserImage(c *gin.Context)
 	GetPreview(c *gin.Context)
 	ConfirmUser(c *gin.Context)
+	UpdatePassword(c *gin.Context)
 }
 
 type VacancyH interface {
@@ -66,5 +67,4 @@ type ResumeH interface {
 
 type MailH interface {
 	SendConfirmCode(c *gin.Context)
-	UpdatePassword(c *gin.Context)
 }

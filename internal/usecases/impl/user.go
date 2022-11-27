@@ -289,6 +289,10 @@ func (us *UserService) UpdatePassword(code, email, password string) error {
 		return getErr
 	}
 
-	user.Password = password
+	encryptedPassword, encryptErr := utils.GeneratePassword(password, &us.cfg.Crypt)
+	if encryptErr != nil {
+		return encryptErr
+	}
+	user.Password = encryptedPassword
 	return us.userRep.UpdatePassword(user)
 }
