@@ -31,12 +31,12 @@ type UserRepository interface {
 	UpdateUser(oldUser, newUser *models.UserAccount) error
 	UpdateUserField(oldUser, newUser *models.UserAccount, field ...string) error
 	GetUser(id uint) (*models.UserAccount, error)
-	GetAllUsers(filter string) ([]*models.UserAccount, error)
+	GetAllUsers(conditions []string, filterValues []string, flag string) ([]*models.UserAccount, error)
 	GetUserSafety(id uint, safeFields []string) (*models.UserAccount, error)
 }
 
 type VacancyRepository interface {
-	GetAll() ([]*models.Vacancy, error)
+	GetAll(conditions []string, filterValues []string) ([]*models.Vacancy, error)
 	GetAllFilter(filter string) ([]*models.Vacancy, error)
 	GetById(vacancyId uint) (*models.Vacancy, error)
 	GetByUserId(userId uint) ([]*models.Vacancy, error)

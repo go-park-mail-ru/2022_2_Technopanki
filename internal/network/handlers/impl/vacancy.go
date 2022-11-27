@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type VacancyHandler struct {
@@ -21,20 +22,59 @@ func NewVacancyHandler(useCases *usecases.UseCases) *VacancyHandler {
 func (vh *VacancyHandler) GetAllVacancies(c *gin.Context) {
 	var vacancies []*models.Vacancy
 	var getAllErr error
+	var filters models.VacancyFilter
 
-	if filter := c.Query("filter"); filter != "" {
-		vacancies, getAllErr = vh.vacancyUseCase.GetAllFilter(filter)
-		if getAllErr != nil {
-			_ = c.Error(getAllErr)
-			return
-		}
-	} else {
-		vacancies, getAllErr = vh.vacancyUseCase.GetAll()
-		if getAllErr != nil {
-			_ = c.Error(getAllErr)
+	title := c.Query("title")
+	if title != "" {
+		filters.Title = title
+	}
+
+	experience := c.Query("experience")
+	if experience != "" {
+		filters.Experience = experience
+	}
+
+	city := c.Query("city")
+	if city != "" {
+		filters.Location = city
+	}
+
+	format := c.Query("format")
+	if format != "" {
+		filters.Format = format
+	}
+
+	salary := c.Query("salary")
+	if salary != "" {
+		if strings.Index(salary, ":") != -1 {
+			split := strings.Split(salary, ":")
+			filters.FirstSalaryValue = split[0]
+			filters.SecondSalaryValue = split[1]
+		} else {
+			c.Error(errorHandler.ErrBadRequest)
 			return
 		}
 	}
+
+	vacancies, getAllErr = vh.vacancyUseCase.GetAll(filters)
+	if getAllErr != nil {
+		_ = c.Error(getAllErr)
+		return
+	}
+
+	//if filter := c.Query("title"); filter != "" {
+	//	vacancies, getAllErr = vh.vacancyUseCase.GetAllFilter(filter)
+	//	if getAllErr != nil {
+	//		_ = c.Error(getAllErr)
+	//		return
+	//	}
+	//} else {
+	//	vacancies, getAllErr = vh.vacancyUseCase.GetAll()
+	//	if getAllErr != nil {
+	//		_ = c.Error(getAllErr)
+	//		return
+	//	}
+	//}
 	c.JSON(http.StatusOK, models.GetAllVacanciesResponcePointer{
 		Data: vacancies,
 	})

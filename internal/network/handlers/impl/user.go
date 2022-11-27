@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type UserHandler struct {
@@ -131,27 +132,106 @@ func (uh *UserHandler) GetUser(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-func (uh *UserHandler) GetAllUsers(c *gin.Context) {
-	var users []*models.UserAccount
+func (uh *UserHandler) GetAllEmployers(c *gin.Context) {
+	var employers []*models.UserAccount
 	var getAllErr error
+	var filters models.UserFilter
 
-	if filter := c.Query("filter"); filter != "" {
-		users, getAllErr = uh.userUseCase.GetAllUsers(filter)
-		if getAllErr != nil {
-			_ = c.Error(getAllErr)
-			return
-		}
-	} else {
-		users, getAllErr = uh.userUseCase.GetAllUsers(filter)
-		if getAllErr != nil {
-			_ = c.Error(getAllErr)
+	search := c.Query("search")
+	if search != "" {
+		filters.CompanyName = search
+	}
+
+	workField := c.Query("field")
+	if workField != "" {
+		filters.BusinessType = workField
+	}
+
+	size := c.Query("size")
+	if size != "" {
+		if strings.Index(size, ":") != -1 {
+			split := strings.Split(size, ":")
+			filters.FirstCompanySizeValue = split[0]
+			filters.SecondCompanySizeValue = split[1]
+		} else {
+			c.Error(errorHandler.ErrBadRequest)
 			return
 		}
 	}
+
+	city := c.Query("city")
+	if city != "" {
+		filters.Location = city
+	}
+
+	employers, getAllErr = uh.userUseCase.GetAllEmployers(filters)
+	if getAllErr != nil {
+		_ = c.Error(getAllErr)
+		return
+	}
 	c.JSON(http.StatusOK, models.GetAllUsersResponcePointer{
-		Data: users,
+		Data: employers,
 	})
 }
+
+func (uh *UserHandler) GetAllApplicants(c *gin.Context) {
+
+}
+
+//func (uh *UserHandler) GetAllUsers(c *gin.Context) {
+//	var users []*models.UserAccount
+//	var getAllErr error
+//	var filters models.VacancyFilter
+//
+//	title := c.Query("title")
+//	if title != "" {
+//		filters.Title = title
+//	}
+//
+//	experience := c.Query("experience")
+//	if experience != "" {
+//		filters.Experience = experience
+//	}
+//
+//	city := c.Query("city")
+//	if city != "" {
+//		filters.Location = city
+//	}
+//
+//	format := c.Query("format")
+//	if format != "" {
+//		filters.Format = format
+//	}
+//
+//	salary := c.Query("salary")
+//	if salary != "" {
+//		if strings.Index(salary, ":") != -1 {
+//			split := strings.Split(salary, ":")
+//			filters.FirstSalaryValue = split[0]
+//			filters.SecondSalaryValue = split[1]
+//		} else {
+//			c.Error(errorHandler.ErrBadRequest)
+//			return
+//		}
+//	}
+//
+//	if filter := c.Query("filter"); filter != "" {
+//		users, getAllErr = uh.userUseCase.GetAllUsers(filter)
+//		if getAllErr != nil {
+//			_ = c.Error(getAllErr)
+//			return
+//		}
+//	} else {
+//		users, getAllErr = uh.userUseCase.GetAllUsers(filter)
+//		if getAllErr != nil {
+//			_ = c.Error(getAllErr)
+//			return
+//		}
+//	}
+//	c.JSON(http.StatusOK, models.GetAllUsersResponcePointer{
+//		Data: users,
+//	})
+//}
 
 func (uh *UserHandler) GetUserSafety(c *gin.Context) {
 	id, paramErr := strconv.Atoi(c.Param("id"))

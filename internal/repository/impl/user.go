@@ -4,6 +4,7 @@ import (
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/pkg/errorHandler"
 	"gorm.io/gorm"
+	"strings"
 )
 
 type UserPostgres struct {
@@ -47,18 +48,24 @@ func (up *UserPostgres) GetUser(id uint) (*models.UserAccount, error) {
 	return &result, QueryValidation(query, "user")
 }
 
-func (up *UserPostgres) GetAllUsers(filter string) ([]*models.UserAccount, error) {
+func (up *UserPostgres) GetAllUsers(conditions []string, filterValues []string, flag string) ([]*models.UserAccount, error) {
 	var users []*models.UserAccount
-	var query *gorm.DB
-	if filter != "" {
-		query = up.db.Where("company_name LIKE ?", filter).Find(&users)
+	if conditions == nil {
+		query := up.db.Where("user_type = ?", flag).Find(&users)
+		if query.Error != nil {
+			return users, query.Error
+		}
+		return users, nil
+
 	} else {
-		query = up.db.Find(&users)
+		queryString := strings.Join(conditions, " AND ")
+		queryConditions := FilterQueryStringFormatter(queryString, filterValues, up.db)
+		query := queryConditions.Find(&users)
+		if query.Error != nil {
+			return users, query.Error
+		}
+		return users, nil
 	}
-	if query.Error != nil {
-		return users, query.Error
-	}
-	return users, nil
 }
 
 func (up *UserPostgres) GetUserSafety(id uint, allowedFields []string) (*models.UserAccount, error) {
