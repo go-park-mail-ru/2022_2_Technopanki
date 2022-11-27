@@ -44,3 +44,18 @@ func ApplicantFilterQueries(filterName string) string {
 		return ""
 	}
 }
+
+func ResumeFilterQueries(filterName string) string {
+	switch filterName {
+	case "Title":
+		return "title LIKE ?"
+	case "Location":
+		return "location = ?"
+	case "ExperienceInYears":
+		return "experience_in_years = ?"
+	case "FirstSalaryValue":
+		return "salary BETWEEN ? AND ?"
+	default:
+		return ""
+	}
+}

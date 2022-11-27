@@ -54,7 +54,7 @@ type VacancyActivityRepository interface {
 
 type ResumeRepository interface {
 	GetResume(id uint) (*models.Resume, error)
-	GetAllResumes(filter string) ([]*models.Resume, error)
+	GetAllResumes(conditions []string, filterValues []string) ([]*models.Resume, error)
 	GetResumeByApplicant(userId uint) ([]*models.Resume, error)
 	GetPreviewResumeByApplicant(userId uint) ([]*models.ResumePreview, error)
 	CreateResume(resume *models.Resume, userId uint) error

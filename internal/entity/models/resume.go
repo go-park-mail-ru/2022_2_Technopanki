@@ -28,3 +28,11 @@ type ResumePreview struct {
 type GetAllResumesResponcePointer struct {
 	Data []*Resume `json:"data"`
 }
+
+type ResumeFilter struct {
+	Title             string
+	Location          string
+	ExperienceInYears string
+	FirstSalaryValue  string
+	SecondSalaryValue string
+}
