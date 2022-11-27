@@ -33,6 +33,21 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 	return m.recorder
 }
 
+// CreateConfirmationCode mocks base method.
+func (m *MockRepository) CreateConfirmationCode(email string) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateConfirmationCode", email)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateConfirmationCode indicates an expected call of CreateConfirmationCode.
+func (mr *MockRepositoryMockRecorder) CreateConfirmationCode(email interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateConfirmationCode", reflect.TypeOf((*MockRepository)(nil).CreateConfirmationCode), email)
+}
+
 // DeleteSession mocks base method.
 func (m *MockRepository) DeleteSession(token string) error {
 	m.ctrl.T.Helper()
@@ -45,6 +60,21 @@ func (m *MockRepository) DeleteSession(token string) error {
 func (mr *MockRepositoryMockRecorder) DeleteSession(token interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSession", reflect.TypeOf((*MockRepository)(nil).DeleteSession), token)
+}
+
+// GetEmailFromCode mocks base method.
+func (m *MockRepository) GetEmailFromCode(token string) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetEmailFromCode", token)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetEmailFromCode indicates an expected call of GetEmailFromCode.
+func (mr *MockRepositoryMockRecorder) GetEmailFromCode(token interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEmailFromCode", reflect.TypeOf((*MockRepository)(nil).GetEmailFromCode), token)
 }
 
 // GetSession mocks base method.
