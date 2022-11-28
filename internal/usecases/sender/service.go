@@ -4,20 +4,23 @@ import (
 	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
 	"bytes"
-	"gopkg.in/gomail.v2"
+	"errors"
+	"fmt"
+	"gopkg.in/mail.v2"
 	"html/template"
 	"strings"
+	"syscall"
 )
 
 type SenderService struct {
-	dial     gomail.SendCloser
+	dial     mail.SendCloser
 	username string
 	cfg      *configs.Config
 }
 
 func NewSender(_cfg *configs.Config) (*SenderService, error) {
 
-	dialer := gomail.NewDialer(_cfg.Mail.Host, _cfg.Mail.Port, _cfg.Mail.Username, _cfg.Mail.Password)
+	dialer := mail.NewDialer(_cfg.Mail.Host, _cfg.Mail.Port, _cfg.Mail.Username, _cfg.Mail.Password)
 	dial, dialErr := dialer.Dial()
 	if dialErr != nil {
 		return nil, dialErr
@@ -27,7 +30,7 @@ func NewSender(_cfg *configs.Config) (*SenderService, error) {
 }
 
 func (ss *SenderService) SendMail(to []string, subject, body string) error {
-	msg := gomail.NewMessage()
+	msg := mail.NewMessage()
 	msg.SetHeader("From", ss.username)
 	msg.SetHeader("To", strings.Join(to, ", "))
 	msg.SetHeader("Subject", subject)
@@ -35,6 +38,9 @@ func (ss *SenderService) SendMail(to []string, subject, body string) error {
 
 	sendErr := ss.dial.Send(ss.username, to, msg)
 	if sendErr != nil {
+		if errors.Is(sendErr, syscall.ERROR_BROKEN_PIPE) {
+			fmt.Println("broken pipe")
+		}
 		return sendErr
 	}
 	return nil
