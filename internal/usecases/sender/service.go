@@ -38,7 +38,7 @@ func (ss *SenderService) SendMail(to []string, subject, body string) error {
 
 	sendErr := ss.dial.Send(ss.username, to, msg)
 	if sendErr != nil {
-		if errors.Is(sendErr, syscall.ERROR_BROKEN_PIPE) {
+		if errors.Is(sendErr, syscall.EPIPE) {
 			fmt.Println("broken pipe")
 			return nil
 		}
