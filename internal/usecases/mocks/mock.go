@@ -51,12 +51,12 @@ func (mr *MockUserMockRecorder) AuthCheck(email interface{}) *gomock.Call {
 }
 
 // ConfirmUser mocks base method.
-func (m *MockUser) ConfirmUser(code, email string) (string, error) {
+func (m *MockUser) ConfirmUser(code, email string) (*models.UserAccount, string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ConfirmUser", code, email)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	return nil, ret0, ret1
 }
 
 // ConfirmUser indicates an expected call of ConfirmUser.

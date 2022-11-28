@@ -37,8 +37,10 @@ func (uh *UserHandler) SignIn(c *gin.Context) {
 	if !input.TwoFactorSignIn {
 		c.SetCookie("session", token, uh.cfg.DefaultExpiringSession, "/", uh.cfg.Domain,
 			uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
+		response.SendSuccessData(c, &input)
+	} else {
+		c.Status(http.StatusOK)
 	}
-	response.SendSuccessData(c, &input)
 }
 
 func (uh *UserHandler) SignUp(c *gin.Context) {
@@ -57,9 +59,11 @@ func (uh *UserHandler) SignUp(c *gin.Context) {
 		c.SetCookie("session", token, uh.cfg.DefaultExpiringSession, "/", uh.cfg.Domain,
 			uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
 		c.SetSameSite(http.SameSiteLaxMode)
+		response.SendSuccessData(c, &input)
+	} else {
+		c.Status(http.StatusOK)
 	}
 
-	response.SendSuccessData(c, &input)
 }
 
 func (uh *UserHandler) Logout(c *gin.Context) {
@@ -227,7 +231,7 @@ func (uh *UserHandler) ConfirmUser(c *gin.Context) {
 		return
 	}
 
-	token, confirmErr := uh.userUseCase.ConfirmUser(input.Code, input.Email)
+	user, token, confirmErr := uh.userUseCase.ConfirmUser(input.Code, input.Email)
 	if confirmErr != nil {
 		_ = c.Error(confirmErr)
 		return
@@ -235,7 +239,7 @@ func (uh *UserHandler) ConfirmUser(c *gin.Context) {
 
 	c.SetCookie("session", token, uh.cfg.DefaultExpiringSession, "/",
 		uh.cfg.Domain, uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
-	c.Status(http.StatusOK)
+	response.SendSuccessData(c, user)
 }
 
 func (uh *UserHandler) UpdatePassword(c *gin.Context) {

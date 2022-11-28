@@ -13,7 +13,7 @@ import (
 )
 
 type SenderService struct {
-	dial     mail.SendCloser
+	dialer   *mail.Dialer
 	username string
 	cfg      *configs.Config
 }
@@ -21,12 +21,7 @@ type SenderService struct {
 func NewSender(_cfg *configs.Config) (*SenderService, error) {
 
 	dialer := mail.NewDialer(_cfg.Mail.Host, _cfg.Mail.Port, _cfg.Mail.Username, _cfg.Mail.Password)
-	dial, dialErr := dialer.Dial()
-	if dialErr != nil {
-		return nil, dialErr
-	}
-
-	return &SenderService{dial: dial, username: _cfg.Mail.Username, cfg: _cfg}, nil
+	return &SenderService{dialer: dialer, username: _cfg.Mail.Username, cfg: _cfg}, nil
 }
 
 func (ss *SenderService) SendMail(to []string, subject, body string) error {
@@ -35,25 +30,15 @@ func (ss *SenderService) SendMail(to []string, subject, body string) error {
 	msg.SetHeader("To", strings.Join(to, ", "))
 	msg.SetHeader("Subject", subject)
 	msg.SetBody("text/html", body)
-
-	sendErr := ss.dial.Send(ss.username, to, msg)
+	sendErr := ss.dialer.DialAndSend(msg)
 	if sendErr != nil {
 		if errors.Is(sendErr, syscall.EPIPE) {
 			fmt.Println("broken pipe")
-			return nil
+			return ss.dialer.DialAndSend(msg)
 		}
 		return sendErr
 	}
 	return nil
-}
-
-func (ss *SenderService) CloseSender() error {
-	err := ss.dial.Close()
-	if err != nil {
-		return err
-	}
-	return nil
-
 }
 
 func (ss *SenderService) SendConfirmCode(email, code string) error {

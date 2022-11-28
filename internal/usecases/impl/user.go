@@ -90,7 +90,7 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 
 	user, getErr := us.userRep.GetUserByEmail(input.Email)
 
-	if getErr == nil && user.IsConfirmed {
+	if getErr == nil {
 		if user.IsConfirmed {
 			return "", errorHandler.ErrUserExists
 		} else {
@@ -125,9 +125,13 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 		return "", fmt.Errorf("creating session user: %w", createErr)
 	}
 
-	token, newSessionErr := us.sessionRepo.NewSession(input.Email)
-	if newSessionErr != nil {
-		return "", newSessionErr
+	var token string
+	var newSessionErr error
+	if !us.cfg.Security.ConfirmAccountMode {
+		token, newSessionErr = us.sessionRepo.NewSession(input.Email)
+		if newSessionErr != nil {
+			return "", newSessionErr
+		}
 	}
 
 	return token, nil
@@ -248,23 +252,23 @@ func (us *UserService) DeleteUserImage(user *models.UserAccount) error {
 
 }
 
-func (us *UserService) ConfirmUser(code, email string) (string, error) {
+func (us *UserService) ConfirmUser(code, email string) (*models.UserAccount, string, error) {
 	if code == "" {
-		return "", errorHandler.ErrBadRequest
+		return nil, "", errorHandler.ErrBadRequest
 	}
 
 	emailFromCode, getCodeErr := us.sessionRepo.GetEmailFromCode(code)
 	if getCodeErr != nil {
-		return "", getCodeErr
+		return nil, "", getCodeErr
 	}
 
 	if email != emailFromCode {
-		return "", errorHandler.ErrForbidden
+		return nil, "", errorHandler.ErrForbidden
 	}
 
 	user, getErr := us.userRep.GetUserByEmail(email)
 	if getErr != nil {
-		return "", getErr
+		return nil, "", getErr
 	}
 
 	confirmedUser := user
@@ -272,10 +276,10 @@ func (us *UserService) ConfirmUser(code, email string) (string, error) {
 
 	token, newSessionErr := us.sessionRepo.NewSession(email)
 	if newSessionErr != nil {
-		return "", newSessionErr
+		return nil, "", newSessionErr
 	}
 
-	return token, us.userRep.UpdateUser(confirmedUser)
+	return confirmedUser, token, us.userRep.UpdateUser(confirmedUser)
 }
 
 func (us *UserService) UpdatePassword(code, email, password string) error {
