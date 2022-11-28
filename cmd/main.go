@@ -16,6 +16,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"strings"
 )
 
 // @title Jobflow API
@@ -31,7 +32,7 @@ func main() {
 	}
 
 	grpcSession, sessionErr := grpc.Dial(
-		"auth_service:8081",
+		strings.Join([]string{mainConfig.SessionDomain, mainConfig.SessionPort}, ""),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if sessionErr != nil {
@@ -40,7 +41,7 @@ func main() {
 
 	sessionClient := auth_handler.NewAuthCheckerClient(grpcSession)
 
-	redisRepository := session.NewGRPCStore(sessionClient)
+	redisRepository := session.NewSessionMicroservice(sessionClient)
 	sessionMiddleware := middleware.NewSessionMiddleware(redisRepository)
 	db, DBErr := repositorypkg.DBConnect(&mainConfig.DB)
 	if DBErr != nil {

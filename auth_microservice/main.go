@@ -32,7 +32,7 @@ func main() {
 	grpcSrv := grpc.NewServer()
 	handler.RegisterAuthCheckerServer(grpcSrv, sessionHandler)
 
-	listener, listenErr := net.Listen("tcp", ":8081")
+	listener, listenErr := net.Listen("tcp", sessionConfig.Port)
 	if listenErr != nil {
 		log.Fatal("cant listen port: ", listenErr)
 	}

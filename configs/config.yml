@@ -1,6 +1,10 @@
 domain: "localhost"
 port: ":8080"
 defaultExpiringSession: 259200
+sessionDomain: "auth_service"
+sessionPort: ":8081"
+mailDomain: "mail_service"
+mailPort: "8082"
 db:
   username: "jobflowAdmin"
   host: "jfPostgres"

@@ -8,8 +8,10 @@ import (
 )
 
 type SessionConfig struct {
-	DefaultExpiringSession int `yaml:"defaultExpiringSession"`
-	ConfirmationTime       int `yaml:"confirmationTime"`
+	Domain                 string `yaml:"domain"`
+	Port                   string `yaml:"port"`
+	DefaultExpiringSession int    `yaml:"defaultExpiringSession"`
+	ConfirmationTime       int    `yaml:"confirmationTime"`
 	Redis                  configs.RedisConfig
 }
 

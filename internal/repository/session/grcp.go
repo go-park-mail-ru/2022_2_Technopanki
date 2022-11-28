@@ -5,19 +5,19 @@ import (
 	"context"
 )
 
-type GRPCStore struct {
+type SessionMicroservice struct {
 	ctx    context.Context
 	client handler.AuthCheckerClient
 }
 
-func NewGRPCStore(_client handler.AuthCheckerClient) *GRPCStore {
-	return &GRPCStore{
+func NewSessionMicroservice(_client handler.AuthCheckerClient) *SessionMicroservice {
+	return &SessionMicroservice{
 		client: _client,
 		ctx:    context.Background(),
 	}
 }
 
-func (gs *GRPCStore) NewSession(email string) (string, error) {
+func (gs *SessionMicroservice) NewSession(email string) (string, error) {
 	token, createErr := gs.client.NewSession(gs.ctx, &handler.Email{Value: email})
 	if createErr != nil {
 		return "", createErr
@@ -25,7 +25,7 @@ func (gs *GRPCStore) NewSession(email string) (string, error) {
 	return token.Value, nil
 }
 
-func (gs *GRPCStore) GetSession(token string) (string, error) {
+func (gs *SessionMicroservice) GetSession(token string) (string, error) {
 	email, getErr := gs.client.GetSession(gs.ctx, &handler.Token{Value: token})
 	if getErr != nil {
 		return "", getErr
@@ -33,7 +33,7 @@ func (gs *GRPCStore) GetSession(token string) (string, error) {
 	return email.Value, nil
 }
 
-func (gs *GRPCStore) DeleteSession(token string) error {
+func (gs *SessionMicroservice) DeleteSession(token string) error {
 	_, deleteErr := gs.client.DeleteSession(gs.ctx, &handler.Token{Value: token})
 	if deleteErr != nil {
 		return deleteErr
@@ -41,7 +41,7 @@ func (gs *GRPCStore) DeleteSession(token string) error {
 	return nil
 }
 
-func (gs *GRPCStore) CreateConfirmationCode(email string) (string, error) {
+func (gs *SessionMicroservice) CreateConfirmationCode(email string) (string, error) {
 	code, createErr := gs.client.CreateConfirmationCode(gs.ctx, &handler.Email{Value: email})
 	if createErr != nil {
 		return "", createErr
@@ -49,7 +49,7 @@ func (gs *GRPCStore) CreateConfirmationCode(email string) (string, error) {
 	return code.Value, nil
 }
 
-func (gs *GRPCStore) GetEmailFromCode(token string) (string, error) {
+func (gs *SessionMicroservice) GetEmailFromCode(token string) (string, error) {
 	email, getErr := gs.client.GetEmailFromCode(gs.ctx, &handler.Token{Value: token})
 	if getErr != nil {
 		return "", getErr

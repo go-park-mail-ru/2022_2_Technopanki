@@ -1,3 +1,5 @@
+domain: "auth_service"
+port: ":8081"
 confirmationTime: 600
 defaultExpiringSession: 259200
 redis:

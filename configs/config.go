@@ -9,6 +9,10 @@ import (
 type Config struct {
 	Domain                 string           `yaml:"domain"`
 	Port                   string           `yaml:"port"`
+	SessionDomain          string           `yaml:"sessionDomain"`
+	SessionPort            string           `yaml:"sessionPort"`
+	MailDomain             string           `yaml:"mailDomain"`
+	MailPort               string           `yaml:"mailPort"`
 	DefaultExpiringSession int              `yaml:"defaultExpiringSession"`
 	DB                     DBConfig         `yaml:"db"`
 	Redis                  RedisConfig      `yaml:"redis"`
