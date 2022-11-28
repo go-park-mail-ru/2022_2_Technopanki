@@ -2,7 +2,7 @@ package impl
 
 import (
 	"HeadHunter/auth_microservice/configs"
-	"HeadHunter/internal/usecases/codeGenerator"
+	"HeadHunter/auth_microservice/usecase/codeGenerator"
 	"fmt"
 	"github.com/go-redis/redis"
 	"github.com/google/uuid"
