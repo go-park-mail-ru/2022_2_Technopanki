@@ -4,6 +4,7 @@ syntax = "proto3";
 
 package mail;
 option go_package = "./handler";
+
 message Email {
   string value = 1;
 }

@@ -1,21 +1,27 @@
 package configs
 
 import (
-	"HeadHunter/configs"
 	"gopkg.in/yaml.v2"
 	"os"
 	"path/filepath"
 )
 
-type MailConfig struct {
-	Domain        string             `yaml:"domain"`
-	Port          string             `yaml:"port"`
-	Mail          configs.MailConfig `yaml:"mail"`
-	SessionDomain string             `yaml:"sessionDomain"`
-	SessionPort   string             `yaml:"sessionPort"`
+type Config struct {
+	Domain     string     `yaml:"domain"`
+	Port       string     `yaml:"port"`
+	Mail       MailConfig `yaml:"mail"`
+	AuthDomain string     `yaml:"authDomain"`
+	AuthPort   string     `yaml:"authPort"`
 }
 
-func InitConfig(config *MailConfig) error {
+type MailConfig struct {
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+}
+
+func InitConfig(config *Config) error {
 	filename, fileErr := filepath.Abs("./mail_microservice/configs/config.yml")
 	if fileErr != nil {
 		return fileErr

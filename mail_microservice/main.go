@@ -6,8 +6,8 @@ import (
 	"HeadHunter/mail_microservice/handler"
 	mail_handler "HeadHunter/mail_microservice/handler/impl"
 	"HeadHunter/mail_microservice/repository/session"
-	"HeadHunter/mail_microservice/usecase/impl"
-	sender2 "HeadHunter/mail_microservice/usecase/sender"
+	usecase "HeadHunter/mail_microservice/usecase/impl"
+	"HeadHunter/mail_microservice/usecase/sender"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -17,13 +17,13 @@ import (
 )
 
 func main() {
-	var mailConfig configs.MailConfig
+	var mailConfig configs.Config
 	configErr := configs.InitConfig(&mailConfig)
 	if configErr != nil {
 		logrus.Fatal(configErr)
 	}
 	grpcSession, sessionErr := grpc.Dial(
-		strings.Join([]string{mailConfig.SessionDomain, mailConfig.SessionPort}, ""),
+		strings.Join([]string{mailConfig.AuthDomain, mailConfig.AuthPort}, ""),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if sessionErr != nil {
@@ -34,12 +34,12 @@ func main() {
 
 	sessionRep := session.NewSessionMicroservice(sessionClient)
 
-	sender, senderErr := sender2.NewSender(&mailConfig)
+	senderService, senderErr := sender.NewSender(&mailConfig)
 	if senderErr != nil {
 		logrus.Fatal(senderErr)
 	}
 
-	mailService := impl.NewMailService(sessionRep, sender)
+	mailService := usecase.NewMailService(sessionRep, senderService)
 
 	mailHandler := mail_handler.NewMailHandler(mailService)
 

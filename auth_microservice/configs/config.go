@@ -1,7 +1,6 @@
 package configs
 
 import (
-	"HeadHunter/configs"
 	"gopkg.in/yaml.v2"
 	"os"
 	"path/filepath"
@@ -12,7 +11,14 @@ type SessionConfig struct {
 	Port                   string `yaml:"port"`
 	DefaultExpiringSession int    `yaml:"defaultExpiringSession"`
 	ConfirmationTime       int    `yaml:"confirmationTime"`
-	Redis                  configs.RedisConfig
+	Redis                  RedisConfig
+}
+
+type RedisConfig struct {
+	Host     string `yaml:"host"`
+	Port     string `yaml:"port"`
+	Password string `yaml:"password"`
+	DBName   string `yaml:"dbname"`
 }
 
 func InitConfig(config *SessionConfig) error {

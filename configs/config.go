@@ -9,19 +9,17 @@ import (
 type Config struct {
 	Domain                 string           `yaml:"domain"`
 	Port                   string           `yaml:"port"`
-	SessionDomain          string           `yaml:"sessionDomain"`
-	SessionPort            string           `yaml:"sessionPort"`
+	AuthDomain             string           `yaml:"authDomain"`
+	AuthPort               string           `yaml:"authPort"`
 	MailDomain             string           `yaml:"mailDomain"`
 	MailPort               string           `yaml:"mailPort"`
 	DefaultExpiringSession int              `yaml:"defaultExpiringSession"`
 	DB                     DBConfig         `yaml:"db"`
-	Redis                  RedisConfig      `yaml:"redis"`
 	Validation             ValidationConfig `yaml:"validation"`
 	Cookie                 CookieConfig     `yaml:"cookie"`
 	Crypt                  CryptConfig      `yaml:"crypt"`
 	Image                  ImageConfig      `yaml:"image"`
 	Security               SecurityConfig   `yaml:"security"`
-	Mail                   MailConfig       `yaml:"mail"`
 }
 
 type DBConfig struct {
@@ -31,13 +29,6 @@ type DBConfig struct {
 	DBName   string `yaml:"dbname"`
 	Password string `yaml:"password"`
 	SSLMode  string `yaml:"sslmode"`
-}
-
-type RedisConfig struct {
-	Host     string `yaml:"host"`
-	Port     string `yaml:"port"`
-	Password string `yaml:"password"`
-	DBName   string `yaml:"dbname"`
 }
 
 type ValidationConfig struct {
@@ -75,13 +66,6 @@ type SecurityConfig struct {
 	CsrfMode           bool   `yaml:"csrfMode"`
 	ConfirmationTime   int    `yaml:"confirmationTime"`
 	ConfirmAccountMode bool   `yaml:"confirmAccountMode"`
-}
-
-type MailConfig struct {
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
-	Host     string `yaml:"host"`
-	Port     int    `yaml:"port"`
 }
 
 func InitConfig(config *Config) error {

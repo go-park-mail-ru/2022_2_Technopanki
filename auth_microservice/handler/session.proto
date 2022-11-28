@@ -3,6 +3,7 @@ syntax = "proto3";
 // protoc --go_out=. --go-grpc_out=. --go-grpc_opt=paths=source_relative --go_opt=paths=source_relative *.proto
 
 package session;
+option go_package = "./handler";
 
 message Email {
   string value = 1;

@@ -5,7 +5,7 @@ import (
 	"HeadHunter/mail_microservice/configs"
 	"bytes"
 	"errors"
-	"fmt"
+	"github.com/sirupsen/logrus"
 	"gopkg.in/mail.v2"
 	"html/template"
 	"strings"
@@ -15,10 +15,10 @@ import (
 type SenderService struct {
 	dialer   *mail.Dialer
 	username string
-	cfg      *configs.MailConfig
+	cfg      *configs.Config
 }
 
-func NewSender(_cfg *configs.MailConfig) (*SenderService, error) {
+func NewSender(_cfg *configs.Config) (*SenderService, error) {
 
 	dialer := mail.NewDialer(_cfg.Mail.Host, _cfg.Mail.Port, _cfg.Mail.Username, _cfg.Mail.Password)
 	return &SenderService{dialer: dialer, username: _cfg.Mail.Username, cfg: _cfg}, nil
@@ -33,7 +33,7 @@ func (ss *SenderService) SendMail(to []string, subject, body string) error {
 	sendErr := ss.dialer.DialAndSend(msg)
 	if sendErr != nil {
 		if errors.Is(sendErr, syscall.EPIPE) {
-			fmt.Println("broken pipe")
+			logrus.Println("broken pipe")
 			return ss.dialer.DialAndSend(msg)
 		}
 		return sendErr

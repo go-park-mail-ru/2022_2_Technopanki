@@ -1,8 +1,8 @@
 domain: "localhost"
 port: ":8080"
 defaultExpiringSession: 259200
-sessionDomain: "auth_service"
-sessionPort: ":8081"
+authDomain: "auth_service"
+authPort: ":8081"
 mailDomain: "mail_service"
 mailPort: ":8082"
 db:
@@ -12,11 +12,6 @@ db:
   dbname: "jobflowDB"
   sslmode: "disable"
   password: "pgjf12345RTY"
-redis:
-  host: "jfRedis"
-  port: "6379"
-  password: "rjf358123QWE"
-  dbname: "sessionDB"
 validation:
   minNameLength: 2
   maxNameLength: 30
@@ -43,8 +38,3 @@ security:
   csrfMode: false
   confirmationTime: 600
   confirmAccountMode: true
-mail:
-  username: "jobflow@jobflow.su"
-  password: "393hLfdbwzuMxEJ775PC"
-  host: "smtp.mail.ru"
-  port: 587

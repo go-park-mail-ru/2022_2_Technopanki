@@ -32,7 +32,7 @@ func main() {
 	}
 
 	grpcSession, sessionErr := grpc.Dial(
-		strings.Join([]string{mainConfig.SessionDomain, mainConfig.SessionPort}, ""),
+		strings.Join([]string{mainConfig.AuthDomain, mainConfig.AuthPort}, ""),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if sessionErr != nil {
