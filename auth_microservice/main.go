@@ -1,7 +1,7 @@
 package main
 
 import (
-	"HeadHunter/auth_microservice/config"
+	"HeadHunter/auth_microservice/configs"
 	"HeadHunter/auth_microservice/handler"
 	handlerImpl "HeadHunter/auth_microservice/handler/impl"
 	repository "HeadHunter/auth_microservice/repository/impl"
@@ -14,8 +14,8 @@ import (
 )
 
 func main() {
-	var sessionConfig config.SessionConfig
-	if configErr := config.InitConfig(&sessionConfig); configErr != nil {
+	var sessionConfig configs.SessionConfig
+	if configErr := configs.InitConfig(&sessionConfig); configErr != nil {
 		logrus.Fatal(configErr)
 	}
 	redisClient, redisErr := repositorypkg.RedisConnect(&sessionConfig.Redis)

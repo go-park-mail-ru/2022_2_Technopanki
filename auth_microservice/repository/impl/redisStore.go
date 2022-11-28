@@ -1,7 +1,7 @@
 package impl
 
 import (
-	"HeadHunter/auth_microservice/config"
+	"HeadHunter/auth_microservice/configs"
 	"HeadHunter/internal/usecases/codeGenerator"
 	"fmt"
 	"github.com/go-redis/redis"
@@ -14,7 +14,7 @@ type RedisStore struct {
 	client           *redis.Client
 }
 
-func NewRedisStore(cfg *config.SessionConfig, _redis *redis.Client) *RedisStore {
+func NewRedisStore(cfg *configs.SessionConfig, _redis *redis.Client) *RedisStore {
 	return &RedisStore{
 		client:           _redis,
 		DefaultExpiresAt: cfg.DefaultExpiringSession,

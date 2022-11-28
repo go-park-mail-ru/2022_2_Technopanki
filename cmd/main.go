@@ -1,6 +1,7 @@
 package main
 
 import (
+	auth_handler "HeadHunter/auth_microservice/handler"
 	"HeadHunter/configs"
 	"HeadHunter/internal/cron"
 	"HeadHunter/internal/network"
@@ -13,6 +14,8 @@ import (
 	"HeadHunter/internal/usecases/sender"
 	repositorypkg "HeadHunter/pkg/repository"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 // @title Jobflow API
@@ -26,12 +29,18 @@ func main() {
 	if configErr := configs.InitConfig(&mainConfig); configErr != nil {
 		logrus.Fatal(configErr)
 	}
-	redisClient, redisErr := repositorypkg.RedisConnect(&mainConfig.Redis)
-	if redisErr != nil {
-		logrus.Fatal(redisErr)
+
+	grpcSession, sessionErr := grpc.Dial(
+		"auth_service:8081",
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+	if sessionErr != nil {
+		logrus.Fatal(sessionErr)
 	}
 
-	redisRepository := session.NewRedisStore(&mainConfig, redisClient)
+	sessionClient := auth_handler.NewAuthCheckerClient(grpcSession)
+
+	redisRepository := session.NewGRPCStore(sessionClient)
 	sessionMiddleware := middleware.NewSessionMiddleware(redisRepository)
 	db, DBErr := repositorypkg.DBConnect(&mainConfig.DB)
 	if DBErr != nil {

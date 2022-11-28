@@ -1,4 +1,4 @@
-package config
+package configs
 
 import (
 	"HeadHunter/configs"
@@ -14,7 +14,7 @@ type SessionConfig struct {
 }
 
 func InitConfig(config *SessionConfig) error {
-	filename, fileErr := filepath.Abs(".auth_microservice/configs/config.yml")
+	filename, fileErr := filepath.Abs("./auth_microservice/configs/config.yml")
 	if fileErr != nil {
 		return fileErr
 	}
