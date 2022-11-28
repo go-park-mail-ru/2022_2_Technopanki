@@ -33,6 +33,7 @@ services:
       --requirepass rjf358123QWE
   auth:
     build:
+      context: .
       dockerfile: Dockerfile-auth
     container_name: auth_service
     depends_on:
@@ -41,6 +42,7 @@ services:
       - "8081:8081"
   mail:
     build:
+      context: .
       dockerfile: Dockerfile-mail
     container_name: mail_service
     depends_on:
