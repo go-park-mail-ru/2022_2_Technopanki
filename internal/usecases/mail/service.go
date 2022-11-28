@@ -35,7 +35,7 @@ func (ms *MailService) SendApplicantMailing(users []*models.UserAccount, vacanci
 	for _, user := range users {
 		err := ms.sender.SendApplicantMailing(user.Email, vacancies)
 		if err != nil {
-			returnedErr = fmt.Errorf("%w %w", returnedErr, err)
+			returnedErr = fmt.Errorf("%s %w", err.Error(), returnedErr)
 		}
 	}
 	return returnedErr
@@ -46,7 +46,7 @@ func (ms *MailService) SendEmployerMailing(employers, applicants []*models.UserA
 	for _, user := range employers {
 		err := ms.sender.SendEmployerMailing(user.Email, applicants)
 		if err != nil {
-			returnedErr = fmt.Errorf("%w %w", returnedErr, err)
+			returnedErr = fmt.Errorf("%s %w", err.Error(), returnedErr)
 		}
 	}
 	return returnedErr

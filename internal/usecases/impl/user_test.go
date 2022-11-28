@@ -259,7 +259,7 @@ func TestUserService_SignUp(t *testing.T) { //91%
 			isUserValid:  true,
 			expectedUser: nil,
 			mockBehavior: func(r *mock_repository.MockUserRepository, email string, user *models.UserAccount) {
-				r.EXPECT().IsUserExist(email).Return(false, nil)
+				r.EXPECT().GetUserByEmail(email).Return(nil, errorHandler.ErrUserNotExists)
 				r.EXPECT().CreateUser(user).Return(nil)
 			},
 			sessionRepBehavior: func(r *mock_session.MockRepository, email string) {
@@ -279,7 +279,7 @@ func TestUserService_SignUp(t *testing.T) { //91%
 			isUserValid:  true,
 			expectedUser: nil,
 			mockBehavior: func(r *mock_repository.MockUserRepository, email string, user *models.UserAccount) {
-				r.EXPECT().IsUserExist(email).Return(false, nil)
+				r.EXPECT().GetUserByEmail(email).Return(nil, errorHandler.ErrUserNotExists)
 				r.EXPECT().CreateUser(user).Return(errorHandler.ErrCannotCreateUser)
 			},
 			sessionRepBehavior: func(r *mock_session.MockRepository, email string) {
@@ -298,7 +298,7 @@ func TestUserService_SignUp(t *testing.T) { //91%
 			isUserValid:  true,
 			expectedUser: nil,
 			mockBehavior: func(r *mock_repository.MockUserRepository, email string, user *models.UserAccount) {
-				r.EXPECT().IsUserExist(email).Return(false, nil)
+				r.EXPECT().GetUserByEmail(email).Return(nil, errorHandler.ErrUserNotExists)
 				r.EXPECT().CreateUser(user).Return(nil)
 			},
 			sessionRepBehavior: func(r *mock_session.MockRepository, email string) {
@@ -318,7 +318,7 @@ func TestUserService_SignUp(t *testing.T) { //91%
 			isUserValid:  true,
 			expectedUser: nil,
 			mockBehavior: func(r *mock_repository.MockUserRepository, email string, user *models.UserAccount) {
-				r.EXPECT().IsUserExist(email).Return(true, nil)
+				r.EXPECT().GetUserByEmail(email).Return(&models.UserAccount{}, nil)
 			},
 			sessionRepBehavior: func(r *mock_session.MockRepository, email string) {
 			},
@@ -707,7 +707,7 @@ func TestUserService_UpdateUser(t *testing.T) { //93%
 				r.EXPECT().GetUserByEmail(email).Return(old, nil)
 			},
 			updateMockBehavior: func(r *mock_repository.MockUserRepository, oldUser, newUser *models.UserAccount) {
-				r.EXPECT().UpdateUser(oldUser, newUser).Return(nil)
+				r.EXPECT().UpdateUser(newUser).Return(nil)
 			},
 			expectedErr: nil,
 		},
@@ -736,7 +736,7 @@ func TestUserService_UpdateUser(t *testing.T) { //93%
 				r.EXPECT().GetUserByEmail(email).Return(old, nil)
 			},
 			updateMockBehavior: func(r *mock_repository.MockUserRepository, oldUser, newUser *models.UserAccount) {
-				r.EXPECT().UpdateUser(oldUser, newUser).Return(nil)
+				r.EXPECT().UpdateUser(newUser).Return(nil)
 			},
 			expectedErr: nil,
 		},
@@ -827,7 +827,7 @@ func TestUserService_UpdateUser(t *testing.T) { //93%
 				r.EXPECT().GetUserByEmail(email).Return(old, nil)
 			},
 			updateMockBehavior: func(r *mock_repository.MockUserRepository, oldUser, newUser *models.UserAccount) {
-				r.EXPECT().UpdateUser(oldUser, newUser).Return(errorHandler.ErrBadRequest)
+				r.EXPECT().UpdateUser(newUser).Return(errorHandler.ErrBadRequest)
 			},
 			expectedErr: errorHandler.ErrBadRequest,
 		},
