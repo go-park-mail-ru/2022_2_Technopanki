@@ -40,6 +40,7 @@ func (ss *SenderService) SendMail(to []string, subject, body string) error {
 	if sendErr != nil {
 		if errors.Is(sendErr, syscall.ERROR_BROKEN_PIPE) {
 			fmt.Println("broken pipe")
+			return nil
 		}
 		return sendErr
 	}
