@@ -181,7 +181,7 @@ func (uh *UserHandler) GetAllApplicants(c *gin.Context) {
 
 	search := c.Query("search")
 	if search != "" {
-		if strings.Index(search, " ") != -1 {
+		if strings.Index(search, "_") != -1 {
 			split := strings.Split(search, " ")
 			filters.ApplicantName = split[0]
 			filters.ApplicantSurname = split[1]
@@ -204,61 +204,6 @@ func (uh *UserHandler) GetAllApplicants(c *gin.Context) {
 		Data: applicants,
 	})
 }
-
-//func (uh *UserHandler) GetAllUsers(c *gin.Context) {
-//	var users []*models.UserAccount
-//	var getAllErr error
-//	var filters models.VacancyFilter
-//
-//	title := c.Query("title")
-//	if title != "" {
-//		filters.Title = title
-//	}
-//
-//	experience := c.Query("experience")
-//	if experience != "" {
-//		filters.Experience = experience
-//	}
-//
-//	city := c.Query("city")
-//	if city != "" {
-//		filters.Location = city
-//	}
-//
-//	format := c.Query("format")
-//	if format != "" {
-//		filters.Format = format
-//	}
-//
-//	salary := c.Query("salary")
-//	if salary != "" {
-//		if strings.Index(salary, ":") != -1 {
-//			split := strings.Split(salary, ":")
-//			filters.FirstSalaryValue = split[0]
-//			filters.SecondSalaryValue = split[1]
-//		} else {
-//			c.Error(errorHandler.ErrBadRequest)
-//			return
-//		}
-//	}
-//
-//	if filter := c.Query("filter"); filter != "" {
-//		users, getAllErr = uh.userUseCase.GetAllUsers(filter)
-//		if getAllErr != nil {
-//			_ = c.Error(getAllErr)
-//			return
-//		}
-//	} else {
-//		users, getAllErr = uh.userUseCase.GetAllUsers(filter)
-//		if getAllErr != nil {
-//			_ = c.Error(getAllErr)
-//			return
-//		}
-//	}
-//	c.JSON(http.StatusOK, models.GetAllUsersResponcePointer{
-//		Data: users,
-//	})
-//}
 
 func (uh *UserHandler) GetUserSafety(c *gin.Context) {
 	id, paramErr := strconv.Atoi(c.Param("id"))

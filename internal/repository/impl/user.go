@@ -48,7 +48,7 @@ func (up *UserPostgres) GetUser(id uint) (*models.UserAccount, error) {
 	return &result, QueryValidation(query, "user")
 }
 
-func (up *UserPostgres) GetAllUsers(conditions []string, filterValues []string, flag string) ([]*models.UserAccount, error) {
+func (up *UserPostgres) GetAllUsers(conditions []string, filterValues []interface{}, flag string) ([]*models.UserAccount, error) {
 	var users []*models.UserAccount
 	if conditions == nil {
 		query := up.db.Where("user_type = ?", flag).Find(&users)

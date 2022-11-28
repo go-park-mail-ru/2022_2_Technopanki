@@ -152,17 +152,9 @@ func (us *UserService) GetUser(id uint) (*models.UserAccount, error) {
 	return us.userRep.GetUser(id)
 }
 
-//func (us *UserService) GetAllUsers(filter string) ([]*models.UserAccount, error) {
-//	if filter != "" {
-//		filterFormat := fmt.Sprintf("%%%s%%", filter)
-//		return us.userRep.GetAllUsers(filterFormat)
-//	}
-//	return us.userRep.GetAllUsers(filter)
-//}
-
 func (us *UserService) GetAllEmployers(filters models.UserFilter) ([]*models.UserAccount, error) {
 	var conditions []string
-	var filterValues []string
+	var filterValues []interface{}
 	values := reflect.ValueOf(filters)
 	types := values.Type()
 	for i := 0; i < values.NumField(); i++ {
@@ -179,7 +171,7 @@ func (us *UserService) GetAllEmployers(filters models.UserFilter) ([]*models.Use
 
 func (us *UserService) GetAllApplicants(filters models.UserFilter) ([]*models.UserAccount, error) {
 	var conditions []string
-	var filterValues []string
+	var filterValues []interface{}
 	values := reflect.ValueOf(filters)
 	types := values.Type()
 	for i := 0; i < values.NumField(); i++ {

@@ -15,7 +15,7 @@ func NewVacancyPostgres(db *gorm.DB) *VacancyPostgres {
 	return &VacancyPostgres{db: db}
 }
 
-func (vp *VacancyPostgres) GetAll(conditions []string, filterValues []string) ([]*models.Vacancy, error) {
+func (vp *VacancyPostgres) GetAll(conditions []string, filterValues []interface{}) ([]*models.Vacancy, error) {
 	var vacancies []*models.Vacancy
 	if conditions == nil {
 		query := vp.db.Find(&vacancies)

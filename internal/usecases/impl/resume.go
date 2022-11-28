@@ -43,7 +43,7 @@ func (rs *ResumeService) GetResume(id uint, email string) (*models.Resume, error
 
 func (rs *ResumeService) GetAllResumes(filters models.ResumeFilter) ([]*models.Resume, error) {
 	var conditions []string
-	var filterValues []string
+	var filterValues []interface{}
 	values := reflect.ValueOf(filters)
 	types := values.Type()
 	for i := 0; i < values.NumField(); i++ {

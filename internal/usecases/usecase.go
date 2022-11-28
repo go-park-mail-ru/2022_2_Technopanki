@@ -46,7 +46,6 @@ type User interface {
 
 type Vacancy interface {
 	GetAll(filters models.VacancyFilter) ([]*models.Vacancy, error)
-	GetAllFilter(filter string) ([]*models.Vacancy, error)
 	GetById(vacancyId uint) (*models.Vacancy, error)
 	GetByUserId(userId uint) ([]*models.Vacancy, error)
 	Create(email string, input *models.Vacancy) (uint, error)

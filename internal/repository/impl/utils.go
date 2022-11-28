@@ -35,38 +35,25 @@ func QueryValidation(query *gorm.DB, object string) error {
 	return nil
 }
 
-func FilterQueries(filterName string) string {
-	switch filterName {
-	case "Title":
-		return "title LIKE ?"
-	case "Location":
-		return "location = ?"
-	case "Format":
-		return "format = ?"
-	case "Experience":
-		return "experience = ?"
-	case "FirstSalaryValue":
-		return "salary BETWEEN ? AND ?"
-	default:
-		return ""
-	}
-}
+//func FilterQueryStringFormatter(queryString string, argsSlice []string, db *gorm.DB) *gorm.DB {
+//	switch len(argsSlice) {
+//	case 1:
+//		return db.Where(queryString, argsSlice[0])
+//	case 2:
+//		return db.Where(queryString, argsSlice[0], argsSlice[1])
+//	case 3:
+//		return db.Where(queryString, argsSlice[0], argsSlice[1], argsSlice[2])
+//	case 4:
+//		return db.Where(queryString, argsSlice[0], argsSlice[1], argsSlice[2], argsSlice[3])
+//	case 5:
+//		return db.Where(queryString, argsSlice[0], argsSlice[1], argsSlice[2], argsSlice[3], argsSlice[4])
+//	case 6:
+//		return db.Where(queryString, argsSlice[0], argsSlice[1], argsSlice[2], argsSlice[3], argsSlice[4], argsSlice[5])
+//	default:
+//		return nil
+//	}
+//}
 
-func FilterQueryStringFormatter(queryString string, argsSlice []string, db *gorm.DB) *gorm.DB {
-	switch len(argsSlice) {
-	case 1:
-		return db.Where(queryString, argsSlice[0])
-	case 2:
-		return db.Where(queryString, argsSlice[0], argsSlice[1])
-	case 3:
-		return db.Where(queryString, argsSlice[0], argsSlice[1], argsSlice[2])
-	case 4:
-		return db.Where(queryString, argsSlice[0], argsSlice[1], argsSlice[2], argsSlice[3])
-	case 5:
-		return db.Where(queryString, argsSlice[0], argsSlice[1], argsSlice[2], argsSlice[3], argsSlice[4])
-	case 6:
-		return db.Where(queryString, argsSlice[0], argsSlice[1], argsSlice[2], argsSlice[3], argsSlice[4], argsSlice[5])
-	default:
-		return nil
-	}
+func FilterQueryStringFormatter(queryString string, argsSlice []interface{}, db *gorm.DB) *gorm.DB {
+	return db.Where(queryString, argsSlice...)
 }

@@ -27,7 +27,7 @@ func (rp *ResumePostgres) GetResume(id uint) (*models.Resume, error) {
 	return &result, QueryValidation(query, "resume")
 }
 
-func (rp *ResumePostgres) GetAllResumes(conditions []string, filterValues []string) ([]*models.Resume, error) {
+func (rp *ResumePostgres) GetAllResumes(conditions []string, filterValues []interface{}) ([]*models.Resume, error) {
 	var resumes []*models.Resume
 	if conditions == nil {
 		query := rp.db.Find(&resumes)
