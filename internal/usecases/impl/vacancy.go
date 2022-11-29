@@ -5,6 +5,7 @@ import (
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/usecases/escaping"
 	"HeadHunter/pkg/errorHandler"
+	"errors"
 )
 
 type VacancyService struct {
@@ -40,7 +41,11 @@ func (vs *VacancyService) GetById(vacancyID uint) (*models.Vacancy, error) {
 }
 
 func (vs *VacancyService) GetByUserId(userId uint) ([]*models.Vacancy, error) {
-	return vs.vacancyRep.GetByUserId(userId)
+	vacancies, getErr := vs.vacancyRep.GetByUserId(userId)
+	if errors.Is(getErr, errorHandler.ErrResumeNotFound) {
+		return []*models.Vacancy{}, nil
+	}
+	return vacancies, getErr
 }
 
 func (vs *VacancyService) Delete(email string, vacancyId uint) error {
