@@ -5,7 +5,6 @@ import (
 	"HeadHunter/auth_microservice/usecase/impl"
 	"HeadHunter/pkg/errorHandler"
 	"context"
-	"fmt"
 )
 
 type SessionHandler struct {
@@ -25,7 +24,6 @@ func (sh *SessionHandler) NewSession(ctx context.Context, in *handler.Email) (*h
 	if createErr != nil {
 		return &handler.Token{}, createErr
 	}
-	fmt.Println("it is okay")
 	return &handler.Token{Value: token}, nil
 }
 
