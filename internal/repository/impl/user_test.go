@@ -43,7 +43,7 @@ func TestUserPostgres_CreateUser(t *testing.T) {
 
 	mock.ExpectBegin()
 	mock.
-		ExpectQuery(regexp.QuoteMeta(`INSERT INTO "user_accounts" ("user_type","email","password","contact_number","status","description","image","date_of_birth","applicant_name","applicant_surname","applicant_current_salary","company_name","company_website_url","location","company_size","public_fields") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)`)).
+		ExpectQuery(regexp.QuoteMeta(`INSERT INTO "user_accounts" ("user_type","email","password","contact_number","status","description","image","date_of_birth","applicant_name","applicant_surname","applicant_current_salary","company_name","business_type","company_website_url","location","company_size","public_fields") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)`)).
 		WithArgs(
 			user.UserType,
 			user.Email,
@@ -57,6 +57,7 @@ func TestUserPostgres_CreateUser(t *testing.T) {
 			user.ApplicantSurname,
 			user.ApplicantCurrentSalary,
 			user.CompanyName,
+			user.BusinessType,
 			user.CompanyWebsiteUrl,
 			user.Location,
 			user.CompanySize,
@@ -77,7 +78,7 @@ func TestUserPostgres_CreateUser(t *testing.T) {
 
 	mock.ExpectBegin()
 	mock.
-		ExpectQuery(regexp.QuoteMeta(`INSERT INTO "user_accounts" ("user_type","email","password","contact_number","status","description","image","date_of_birth","applicant_name","applicant_surname","applicant_current_salary","company_name","company_website_url","location","company_size","public_fields") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)`)).
+		ExpectQuery(regexp.QuoteMeta(`INSERT INTO "user_accounts" ("user_type","email","password","contact_number","status","description","image","date_of_birth","applicant_name","applicant_surname","applicant_current_salary","company_name","business_type","company_website_url","location","company_size","public_fields") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)`)).
 		WithArgs(
 			user.UserType,
 			user.Email,
@@ -91,6 +92,7 @@ func TestUserPostgres_CreateUser(t *testing.T) {
 			user.ApplicantSurname,
 			user.ApplicantCurrentSalary,
 			user.CompanyName,
+			user.BusinessType,
 			user.CompanyWebsiteUrl,
 			user.Location,
 			user.CompanySize,
