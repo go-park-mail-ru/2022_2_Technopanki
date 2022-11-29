@@ -180,7 +180,6 @@ func (us *UserService) UpdateUser(input *models.UserAccount) error {
 		input.Password = encryptedPassword
 	}
 	input.ID = oldUser.ID
-	input.Image = oldUser.Image
 	input.IsConfirmed = oldUser.IsConfirmed
 
 	dbError := us.userRep.UpdateUser(input)
