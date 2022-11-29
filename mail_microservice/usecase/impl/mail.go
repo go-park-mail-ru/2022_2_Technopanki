@@ -33,7 +33,7 @@ func (ms *MailService) SendApplicantMailing(emails []string, vacancies []*models
 	for _, email := range emails {
 		err := ms.sender.SendApplicantMailing(email, vacancies)
 		if err != nil {
-			returnedErr = fmt.Errorf("%w %w", returnedErr, err)
+			returnedErr = fmt.Errorf("%w %s", returnedErr, err.Error())
 		}
 	}
 	return returnedErr
@@ -44,7 +44,7 @@ func (ms *MailService) SendEmployerMailing(emails []string, applicants []*models
 	for _, email := range emails {
 		err := ms.sender.SendEmployerMailing(email, applicants)
 		if err != nil {
-			returnedErr = fmt.Errorf("%w %w", returnedErr, err)
+			returnedErr = fmt.Errorf("%w %s", returnedErr, err.Error())
 		}
 	}
 	return returnedErr
