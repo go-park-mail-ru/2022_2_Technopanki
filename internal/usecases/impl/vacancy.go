@@ -35,7 +35,6 @@ func (vs *VacancyService) GetAll(filters models.VacancyFilter) ([]*models.Vacanc
 }
 
 func (vs *VacancyService) Create(email string, input *models.Vacancy) (uint, error) {
-
 	user, getErr := vs.userRep.GetUserByEmail(email)
 	if getErr != nil {
 		return 0, getErr
