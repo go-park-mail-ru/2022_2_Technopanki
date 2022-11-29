@@ -22,22 +22,22 @@ func NewResumeService(_resumeRep repository.ResumeRepository, _cfg *configs.Conf
 }
 
 func (rs *ResumeService) GetResume(id uint, email string) (*models.Resume, error) {
-	userFromContext, contextErr := rs.userRep.GetUserByEmail(email)
-	if contextErr != nil {
-		return nil, contextErr
-	}
+	//userFromContext, contextErr := rs.userRep.GetUserByEmail(email)
+	//if contextErr != nil {
+	//	return nil, contextErr
+	//}
 
 	resume, getErr := rs.resumeRep.GetResume(id)
 	if getErr != nil {
 		return nil, getErr
 	}
 
-	if userFromContext.ID != resume.UserAccountId {
-		employerId, err := rs.resumeRep.GetEmployerIdByVacancyActivity(id)
-		if err != nil || employerId != userFromContext.ID {
-			return nil, errorHandler.ErrUnauthorized
-		}
-	}
+	//if userFromContext.ID != resume.UserAccountId {
+	//	employerId, err := rs.resumeRep.GetEmployerIdByVacancyActivity(id)
+	//	if err != nil || employerId != userFromContext.ID {
+	//		return nil, errorHandler.ErrUnauthorized
+	//	}
+	//}
 
 	return resume, nil
 }
@@ -60,14 +60,14 @@ func (rs *ResumeService) GetAllResumes(filters models.ResumeFilter) ([]*models.R
 }
 
 func (rs *ResumeService) GetResumeByApplicant(userId uint, email string) ([]*models.Resume, error) {
-	userFromContext, contextErr := rs.userRep.GetUserByEmail(email)
-	if contextErr != nil {
-		return []*models.Resume{}, contextErr
-	}
-
-	if userFromContext.ID != userId {
-		return []*models.Resume{}, errorHandler.ErrUnauthorized
-	}
+	//userFromContext, contextErr := rs.userRep.GetUserByEmail(email)
+	//if contextErr != nil {
+	//	return []*models.Resume{}, contextErr
+	//}
+	//
+	//if userFromContext.ID != userId {
+	//	return []*models.Resume{}, errorHandler.ErrUnauthorized
+	//}
 	resumes, getErr := rs.resumeRep.GetResumeByApplicant(userId)
 	if errors.Is(getErr, errorHandler.ErrResumeNotFound) {
 		return []*models.Resume{}, nil
@@ -76,14 +76,14 @@ func (rs *ResumeService) GetResumeByApplicant(userId uint, email string) ([]*mod
 }
 
 func (rs *ResumeService) GetPreviewResumeByApplicant(userId uint, email string) ([]*models.ResumePreview, error) {
-	userFromContext, contextErr := rs.userRep.GetUserByEmail(email)
-	if contextErr != nil {
-		return []*models.ResumePreview{}, contextErr
-	}
-
-	if userFromContext.ID != userId {
-		return []*models.ResumePreview{}, errorHandler.ErrUnauthorized
-	}
+	//userFromContext, contextErr := rs.userRep.GetUserByEmail(email)
+	//if contextErr != nil {
+	//	return []*models.ResumePreview{}, contextErr
+	//}
+	//
+	//if userFromContext.ID != userId {
+	//	return []*models.ResumePreview{}, errorHandler.ErrUnauthorized
+	//}
 	resumesPreview, getErr := rs.resumeRep.GetPreviewResumeByApplicant(userId)
 	if errors.Is(getErr, errorHandler.ErrResumeNotFound) {
 		return []*models.ResumePreview{}, nil
