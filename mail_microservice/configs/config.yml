@@ -1,7 +1,7 @@
 domain: "mail_service"
 port: ":8082"
-authDomain: "auth_service"
-authPort: ":8081"
+authMsHost: "auth_service"
+authMsPort: ":8081"
 mail:
   username: "jobflow@jobflow.su"
   password: "393hLfdbwzuMxEJ775PC"

@@ -32,7 +32,7 @@ func main() {
 	}
 
 	grpcSession, sessionErr := grpc.Dial(
-		strings.Join([]string{mainConfig.AuthDomain, mainConfig.AuthPort}, ""),
+		strings.Join([]string{mainConfig.AuthMsHost, mainConfig.AuthMsPort}, ""),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if sessionErr != nil {
@@ -41,8 +41,8 @@ func main() {
 
 	sessionClient := auth_handler.NewAuthCheckerClient(grpcSession)
 
-	redisRepository := session.NewSessionMicroservice(sessionClient)
-	sessionMiddleware := middleware.NewSessionMiddleware(redisRepository)
+	sessionRepository := session.NewSessionMicroservice(sessionClient)
+	sessionMiddleware := middleware.NewSessionMiddleware(sessionRepository)
 	db, DBErr := repositorypkg.DBConnect(&mainConfig.DB)
 	if DBErr != nil {
 		logrus.Fatal(DBErr)
@@ -51,7 +51,7 @@ func main() {
 	postgresRepository := repository.NewPostgresRepository(db)
 
 	grpcMail, mailErr := grpc.Dial(
-		strings.Join([]string{mainConfig.MailDomain, mainConfig.MailPort}, ""),
+		strings.Join([]string{mainConfig.MailMsHost, mainConfig.MailMsPort}, ""),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if mailErr != nil {
@@ -64,7 +64,7 @@ func main() {
 
 	useCase := usecases.NewUseCases(
 		postgresRepository,
-		redisRepository,
+		sessionRepository,
 		&mainConfig,
 		mailService,
 	)

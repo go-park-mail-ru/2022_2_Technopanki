@@ -23,7 +23,7 @@ func main() {
 		logrus.Fatal(configErr)
 	}
 	grpcSession, sessionErr := grpc.Dial(
-		strings.Join([]string{mailConfig.AuthDomain, mailConfig.AuthPort}, ""),
+		strings.Join([]string{mailConfig.AuthMsHost, mailConfig.AuthMsPort}, ""),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if sessionErr != nil {

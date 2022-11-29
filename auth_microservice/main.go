@@ -3,7 +3,7 @@ package main
 import (
 	"HeadHunter/auth_microservice/configs"
 	"HeadHunter/auth_microservice/handler"
-	handlerImpl "HeadHunter/auth_microservice/handler/impl"
+	auth_handler "HeadHunter/auth_microservice/handler/impl"
 	repository "HeadHunter/auth_microservice/repository/impl"
 	usecase "HeadHunter/auth_microservice/usecase/impl"
 	repositorypkg "HeadHunter/pkg/repository"
@@ -27,7 +27,7 @@ func main() {
 
 	sessionUseCase := usecase.NewSessionUseCase(*redisRepository)
 
-	sessionHandler := handlerImpl.NewSessionHandler(*sessionUseCase)
+	sessionHandler := auth_handler.NewSessionHandler(*sessionUseCase)
 
 	grpcSrv := grpc.NewServer()
 	handler.RegisterAuthCheckerServer(grpcSrv, sessionHandler)

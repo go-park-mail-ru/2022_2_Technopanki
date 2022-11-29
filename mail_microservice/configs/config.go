@@ -10,8 +10,8 @@ type Config struct {
 	Domain     string     `yaml:"domain"`
 	Port       string     `yaml:"port"`
 	Mail       MailConfig `yaml:"mail"`
-	AuthDomain string     `yaml:"authDomain"`
-	AuthPort   string     `yaml:"authPort"`
+	AuthMsHost string     `yaml:"authMsHost"`
+	AuthMsPort string     `yaml:"authMsPort"`
 }
 
 type MailConfig struct {

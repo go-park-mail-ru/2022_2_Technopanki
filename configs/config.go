@@ -9,10 +9,10 @@ import (
 type Config struct {
 	Domain                 string           `yaml:"domain"`
 	Port                   string           `yaml:"port"`
-	AuthDomain             string           `yaml:"authDomain"`
-	AuthPort               string           `yaml:"authPort"`
-	MailDomain             string           `yaml:"mailDomain"`
-	MailPort               string           `yaml:"mailPort"`
+	AuthMsHost             string           `yaml:"authMsHost"`
+	AuthMsPort             string           `yaml:"authMsPort"`
+	MailMsHost             string           `yaml:"mailMsHost"`
+	MailMsPort             string           `yaml:"mailMsPort"`
 	DefaultExpiringSession int              `yaml:"defaultExpiringSession"`
 	DB                     DBConfig         `yaml:"db"`
 	Validation             ValidationConfig `yaml:"validation"`
