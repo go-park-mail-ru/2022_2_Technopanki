@@ -1,7 +1,0 @@
-confirmationTime: 600
-defaultExpiringSession: 259200
-redis:
-  host: "jfRedis"
-  port: "6379"
-  password: "rjf358123QWE"
-  dbname: "sessionDB"
