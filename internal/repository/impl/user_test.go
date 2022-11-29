@@ -20,7 +20,6 @@ func (a AnyTime) Match(v driver.Value) bool {
 	_, ok := v.(time.Time)
 	return ok
 }
-
 func CreateUserMock() (*UserPostgres, sqlmock.Sqlmock, error) {
 	db, mock, mockErr := sqlmock.New()
 	if mockErr != nil {

@@ -11,7 +11,7 @@ type Vacancy struct {
 	Requirements      string            `json:"requirements,omitempty"`
 	Extra             string            `json:"extra,omitempty"`
 	CreatedDate       time.Time         `json:"createdDate" gorm:"autoCreateTime"`
-	Salary            string            `json:"salary,omitempty"`
+	Salary            uint              `json:"salary,omitempty"`
 	Location          string            `json:"location,omitempty"`
 	IsActive          bool              `json:"isActive,omitempty"`
 	Experience        string            `json:"experience,omitempty"`
@@ -24,4 +24,13 @@ type Vacancy struct {
 
 type GetAllVacanciesResponcePointer struct {
 	Data []*Vacancy `json:"data"`
+}
+
+type VacancyFilter struct {
+	Title             string
+	Location          string
+	Format            string
+	Experience        string
+	FirstSalaryValue  string
+	SecondSalaryValue string
 }

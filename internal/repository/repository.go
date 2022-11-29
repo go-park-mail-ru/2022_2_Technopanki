@@ -29,13 +29,15 @@ type UserRepository interface {
 	GetUserByEmail(email string) (*models.UserAccount, error)
 	UpdateUser(newUser *models.UserAccount) error
 	GetUser(id uint) (*models.UserAccount, error)
+	GetAllUsers(conditions []string, filterValues []interface{}, flag string) ([]*models.UserAccount, error)
 	GetUserSafety(id uint, safeFields []string) (*models.UserAccount, error)
 	GetBestVacanciesForApplicant() ([]*models.Vacancy, error)
 	GetBestApplicantForEmployer() ([]*models.UserAccount, error)
 }
 
 type VacancyRepository interface {
-	GetAll() ([]*models.Vacancy, error)
+	GetAll(conditions []string, filterValues []interface{}) ([]*models.Vacancy, error)
+	GetAllFilter(filter string) ([]*models.Vacancy, error)
 	GetById(vacancyId uint) (*models.Vacancy, error)
 	GetByUserId(userId uint) ([]*models.Vacancy, error)
 	Create(vacancy *models.Vacancy) (uint, error)
@@ -52,6 +54,7 @@ type VacancyActivityRepository interface {
 
 type ResumeRepository interface {
 	GetResume(id uint) (*models.Resume, error)
+	GetAllResumes(conditions []string, filterValues []interface{}) ([]*models.Resume, error)
 	GetResumeByApplicant(userId uint) ([]*models.Resume, error)
 	GetPreviewResumeByApplicant(userId uint) ([]*models.ResumePreview, error)
 	CreateResume(resume *models.Resume, userId uint) error

@@ -5,6 +5,7 @@ import (
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/usecases/escaping"
 	"HeadHunter/pkg/errorHandler"
+	"reflect"
 	"errors"
 )
 
@@ -17,8 +18,21 @@ func NewVacancyService(vacancyRepos repository.VacancyRepository, _userRep repos
 	return &VacancyService{vacancyRep: vacancyRepos, userRep: _userRep}
 }
 
-func (vs *VacancyService) GetAll() ([]*models.Vacancy, error) {
-	return vs.vacancyRep.GetAll()
+func (vs *VacancyService) GetAll(filters models.VacancyFilter) ([]*models.Vacancy, error) {
+	var conditions []string
+	var filterValues []interface{}
+	values := reflect.ValueOf(filters)
+	types := values.Type()
+	for i := 0; i < values.NumField(); i++ {
+		if values.Field(i).Interface().(string) != "" {
+			query := VacancyFilterQueries(types.Field(i).Name)
+			if query != "" {
+				conditions = append(conditions, query)
+			}
+			filterValues = append(filterValues, values.Field(i).Interface().(string))
+		}
+	}
+	return vs.vacancyRep.GetAll(conditions, filterValues)
 }
 
 func (vs *VacancyService) Create(email string, input *models.Vacancy) (uint, error) {

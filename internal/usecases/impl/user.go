@@ -17,6 +17,7 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"mime/multipart"
+	"reflect"
 	"strings"
 )
 
@@ -194,6 +195,40 @@ func (us *UserService) GetUser(id uint) (*models.UserAccount, error) {
 	return us.userRep.GetUser(id)
 }
 
+func (us *UserService) GetAllEmployers(filters models.UserFilter) ([]*models.UserAccount, error) {
+	var conditions []string
+	var filterValues []interface{}
+	values := reflect.ValueOf(filters)
+	types := values.Type()
+	for i := 0; i < values.NumField(); i++ {
+		if values.Field(i).Interface().(string) != "" {
+			query := EmployerFilterQueries(types.Field(i).Name)
+			if query != "" {
+				conditions = append(conditions, query)
+			}
+			filterValues = append(filterValues, values.Field(i).Interface().(string))
+		}
+	}
+	return us.userRep.GetAllUsers(conditions, filterValues, "employer")
+}
+
+func (us *UserService) GetAllApplicants(filters models.UserFilter) ([]*models.UserAccount, error) {
+	var conditions []string
+	var filterValues []interface{}
+	values := reflect.ValueOf(filters)
+	types := values.Type()
+	for i := 0; i < values.NumField(); i++ {
+		if values.Field(i).Interface().(string) != "" {
+			query := ApplicantFilterQueries(types.Field(i).Name)
+			if query != "" {
+				conditions = append(conditions, query)
+			}
+			filterValues = append(filterValues, values.Field(i).Interface().(string))
+		}
+	}
+	return us.userRep.GetAllUsers(conditions, filterValues, "applicant")
+}
+
 func (us *UserService) GetUserSafety(id uint) (*models.UserAccount, error) {
 	user, getErr := us.userRep.GetUser(id)
 	if getErr != nil {
@@ -239,6 +274,7 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 	}
 
 	return user.Image, images.UploadUserAvatar(user.Image, &img, &us.cfg.Image)
+	//return "", nil
 }
 
 func (us *UserService) DeleteUserImage(user *models.UserAccount) error {

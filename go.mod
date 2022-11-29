@@ -9,6 +9,7 @@ require (
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
+	github.com/kolesa-team/go-webp v1.0.1
 	github.com/microcosm-cc/bluemonday v1.0.21
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.8.1
@@ -17,6 +18,7 @@ require (
 	github.com/swaggo/swag v1.8.1
 	github.com/utrack/gin-csrf v0.0.0-20190424104817-40fb8d2c8fca
 	golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be
+	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.3.0
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/postgres v1.4.4
 	gorm.io/gorm v1.24.0

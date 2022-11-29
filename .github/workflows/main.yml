@@ -1,5 +1,4 @@
 name: Jobflow CI
-
 on:
   push:
     branches: [ "master" ]

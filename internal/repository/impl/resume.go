@@ -4,6 +4,7 @@ import (
 	"HeadHunter/internal/entity/models"
 	"fmt"
 	"gorm.io/gorm"
+	"strings"
 )
 
 type ResumePostgres struct {
@@ -24,6 +25,26 @@ func (rp *ResumePostgres) GetResume(id uint) (*models.Resume, error) {
 		Scan(&result.ExperienceDetail).Scan(&result.EducationDetail)
 
 	return &result, QueryValidation(query, "resume")
+}
+
+func (rp *ResumePostgres) GetAllResumes(conditions []string, filterValues []interface{}) ([]*models.Resume, error) {
+	var resumes []*models.Resume
+	if conditions == nil {
+		query := rp.db.Find(&resumes)
+		if query.Error != nil {
+			return resumes, query.Error
+		}
+		return resumes, nil
+
+	} else {
+		queryString := strings.Join(conditions, " AND ")
+		queryConditions := FilterQueryStringFormatter(queryString, filterValues, rp.db)
+		query := queryConditions.Find(&resumes)
+		if query.Error != nil {
+			return resumes, query.Error
+		}
+		return resumes, nil
+	}
 }
 
 func (rp *ResumePostgres) GetResumeByApplicant(userId uint) ([]*models.Resume, error) {

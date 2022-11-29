@@ -37,6 +37,9 @@ type User interface {
 	AuthCheck(email string) (*models.UserAccount, error)
 	UpdateUser(input *models.UserAccount) error
 	GetUser(id uint) (*models.UserAccount, error)
+	//GetAllUsers(filter string) ([]*models.UserAccount, error)
+	GetAllEmployers(filters models.UserFilter) ([]*models.UserAccount, error)
+	GetAllApplicants(filters models.UserFilter) ([]*models.UserAccount, error)
 	GetUserId(email string) (uint, error)
 	GetUserSafety(id uint) (*models.UserAccount, error)
 	GetUserByEmail(email string) (*models.UserAccount, error)
@@ -47,7 +50,7 @@ type User interface {
 }
 
 type Vacancy interface {
-	GetAll() ([]*models.Vacancy, error)
+	GetAll(filters models.VacancyFilter) ([]*models.Vacancy, error)
 	GetById(vacancyId uint) (*models.Vacancy, error)
 	GetByUserId(userId uint) ([]*models.Vacancy, error)
 	Create(email string, input *models.Vacancy) (uint, error)
@@ -64,6 +67,7 @@ type VacancyActivity interface {
 
 type Resume interface {
 	GetResume(id uint, email string) (*models.Resume, error)
+	GetAllResumes(filters models.ResumeFilter) ([]*models.Resume, error)
 	GetResumeByApplicant(userId uint, email string) ([]*models.Resume, error)
 	GetPreviewResumeByApplicant(userId uint, email string) ([]*models.ResumePreview, error)
 	CreateResume(resume *models.Resume, email string) error
