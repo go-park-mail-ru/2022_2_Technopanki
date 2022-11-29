@@ -57,7 +57,7 @@ func (c *authCheckerClient) GetSession(ctx context.Context, in *Token, opts ...g
 
 func (c *authCheckerClient) DeleteSession(ctx context.Context, in *Token, opts ...grpc.CallOption) (*Nothing, error) {
 	out := new(Nothing)
-	err := c.cc.Invoke(ctx, "/session.AuthChecker/DeleteSession", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/session.AuthChecker/Delete", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +105,7 @@ func (UnimplementedAuthCheckerServer) GetSession(context.Context, *Token) (*Emai
 	return nil, status.Errorf(codes.Unimplemented, "method GetSession not implemented")
 }
 func (UnimplementedAuthCheckerServer) DeleteSession(context.Context, *Token) (*Nothing, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteSession not implemented")
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedAuthCheckerServer) CreateConfirmationCode(context.Context, *Email) (*Token, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateConfirmationCode not implemented")
@@ -172,7 +172,7 @@ func _AuthChecker_DeleteSession_Handler(srv interface{}, ctx context.Context, de
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/session.AuthChecker/DeleteSession",
+		FullMethod: "/session.AuthChecker/Delete",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthCheckerServer).DeleteSession(ctx, req.(*Token))
@@ -232,7 +232,7 @@ var AuthChecker_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthChecker_GetSession_Handler,
 		},
 		{
-			MethodName: "DeleteSession",
+			MethodName: "Delete",
 			Handler:    _AuthChecker_DeleteSession_Handler,
 		},
 		{

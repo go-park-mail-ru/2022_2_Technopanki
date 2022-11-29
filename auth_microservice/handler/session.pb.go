@@ -216,12 +216,12 @@ var file_session_proto_goTypes = []interface{}{
 var file_session_proto_depIdxs = []int32{
 	0, // 0: session.AuthChecker.NewSession:input_type -> session.Email
 	1, // 1: session.AuthChecker.GetSession:input_type -> session.Token
-	1, // 2: session.AuthChecker.DeleteSession:input_type -> session.Token
+	1, // 2: session.AuthChecker.Delete:input_type -> session.Token
 	0, // 3: session.AuthChecker.CreateConfirmationCode:input_type -> session.Email
 	1, // 4: session.AuthChecker.GetEmailFromCode:input_type -> session.Token
 	1, // 5: session.AuthChecker.NewSession:output_type -> session.Token
 	0, // 6: session.AuthChecker.GetSession:output_type -> session.Email
-	2, // 7: session.AuthChecker.DeleteSession:output_type -> session.Nothing
+	2, // 7: session.AuthChecker.Delete:output_type -> session.Nothing
 	1, // 8: session.AuthChecker.CreateConfirmationCode:output_type -> session.Token
 	0, // 9: session.AuthChecker.GetEmailFromCode:output_type -> session.Email
 	5, // [5:10] is the sub-list for method output_type

@@ -43,6 +43,7 @@ var (
 
 	InvalidUserType   = errors.New("Некорректный входной тип пользователя")
 	ErrIsNotConfirmed = errors.New("Пользователь не подтвержден")
+	ErrCodeNotFound   = errors.New("Подходящий код не найден")
 )
 
 var errorToCode = map[error]int{
@@ -97,6 +98,7 @@ var errorToCode = map[error]int{
 	InvalidPasswordFormat:   http.StatusBadRequest,
 	IncorrectPasswordLength: http.StatusBadRequest,
 	ErrIsNotConfirmed:       http.StatusForbidden,
+	ErrCodeNotFound:         http.StatusNotFound,
 }
 
 func ConvertError(err error) int {

@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"github.com/go-redis/redis"
+	"github.com/sirupsen/logrus"
 )
 
 type SessionMicroservice struct {
@@ -34,12 +35,12 @@ func (gs *SessionMicroservice) GetSession(token string) (string, error) {
 		if errors.Is(getErr, redis.Nil) {
 			return "", errorHandler.ErrUnauthorized
 		}
-		return "", errors.Unwrap(getErr)
+		return "", errorHandler.ErrSessionNotFound
 	}
 	return email.Value, nil
 }
 
-func (gs *SessionMicroservice) DeleteSession(token string) error {
+func (gs *SessionMicroservice) Delete(token string) error {
 	_, deleteErr := gs.client.DeleteSession(gs.ctx, &handler.Token{Value: token})
 	if deleteErr != nil {
 		return errors.Unwrap(deleteErr)
@@ -58,7 +59,16 @@ func (gs *SessionMicroservice) CreateConfirmationCode(email string) (string, err
 func (gs *SessionMicroservice) GetEmailFromCode(token string) (string, error) {
 	email, getErr := gs.client.GetEmailFromCode(gs.ctx, &handler.Token{Value: token})
 	if getErr != nil {
-		return "", errors.Unwrap(getErr)
+		logrus.Println(getErr)
+		return "", errorHandler.ErrCodeNotFound
 	}
 	return email.Value, nil
+}
+
+func (gs *SessionMicroservice) GetCodeFromEmail(email string) (string, error) {
+	code, getErr := gs.client.GetCodeFromEmail(gs.ctx, &handler.Email{Value: email})
+	if getErr != nil {
+		return "", errorHandler.ErrCodeNotFound
+	}
+	return code.Value, nil
 }

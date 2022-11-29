@@ -19,7 +19,7 @@ func (sus *SessionUseCase) GetSession(token string) (string, error) {
 }
 
 func (sus *SessionUseCase) DeleteSession(token string) error {
-	return sus.redisStore.DeleteSession(token)
+	return sus.redisStore.Delete(token)
 }
 
 func (sus *SessionUseCase) CreateConfirmationCode(email string) (string, error) {

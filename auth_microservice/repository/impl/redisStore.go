@@ -39,10 +39,10 @@ func (rs *RedisStore) GetSession(token string) (string, error) {
 	return result, nil
 }
 
-func (rs *RedisStore) DeleteSession(token string) error {
+func (rs *RedisStore) Delete(token string) error {
 	err := rs.client.Del(token).Err()
 	if err != nil {
-		return fmt.Errorf("deleting session error: %w", err)
+		return fmt.Errorf("deleting error: %w", err)
 	}
 	return nil
 }
@@ -75,9 +75,14 @@ func (rs *RedisStore) GetEmailFromCode(token string) (string, error) {
 		return "", fmt.Errorf("getting code error: %w", getErr)
 	}
 
-	deleteErr := rs.client.Del(token).Err()
-	if deleteErr != nil {
-		return "", fmt.Errorf("deleting confirmation code error: %w", deleteErr)
+	return result, nil
+}
+
+func (rs *RedisStore) GetCodeFromEmail(email string) (string, error) {
+	result, getErr := rs.client.Get(email).Result()
+	if getErr != nil {
+		return "", fmt.Errorf("getting code error: %w", getErr)
 	}
+	
 	return result, nil
 }

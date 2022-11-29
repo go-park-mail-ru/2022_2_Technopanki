@@ -1,8 +1,8 @@
 package impl
 
 import (
+	"HeadHunter/common/session"
 	"HeadHunter/internal/entity/models"
-	"HeadHunter/mail_microservice/repository/session"
 	"HeadHunter/mail_microservice/usecase/sender"
 )
 

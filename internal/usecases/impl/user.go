@@ -1,13 +1,13 @@
 package impl
 
 import (
+	"HeadHunter/common/session"
 	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/entity/utils"
 	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/images"
-	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases/escaping"
 	"HeadHunter/internal/usecases/mail"
 	"HeadHunter/pkg/errorHandler"
@@ -143,7 +143,7 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 }
 
 func (us *UserService) Logout(token string) error {
-	return us.sessionRepo.DeleteSession(token)
+	return us.sessionRepo.Delete(token)
 }
 
 func (us *UserService) AuthCheck(email string) (*models.UserAccount, error) {
@@ -180,7 +180,9 @@ func (us *UserService) UpdateUser(input *models.UserAccount) error {
 		input.Password = encryptedPassword
 	}
 	input.ID = oldUser.ID
-	input.Image = oldUser.Image
+	if input.Image == "" {
+		input.Image = oldUser.Image
+	}
 	input.IsConfirmed = oldUser.IsConfirmed
 
 	dbError := us.userRep.UpdateUser(input)
@@ -262,12 +264,12 @@ func (us *UserService) ConfirmUser(code, email string) (*models.UserAccount, str
 		return nil, "", errorHandler.ErrBadRequest
 	}
 
-	emailFromCode, getCodeErr := us.sessionRepo.GetEmailFromCode(code)
+	CodeFromEmail, getCodeErr := us.sessionRepo.GetCodeFromEmail(email)
 	if getCodeErr != nil {
 		return nil, "", getCodeErr
 	}
 
-	if email != emailFromCode {
+	if code != CodeFromEmail {
 		return nil, "", errorHandler.ErrForbidden
 	}
 

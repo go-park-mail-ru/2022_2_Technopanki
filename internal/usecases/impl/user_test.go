@@ -1,10 +1,10 @@
 package impl
 
 import (
+	"HeadHunter/common/session/mocks"
 	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
 	mock_repository "HeadHunter/internal/repository/mocks"
-	mock_session "HeadHunter/internal/repository/session/mocks"
 	"HeadHunter/pkg/errorHandler"
 	"fmt"
 	"github.com/golang/mock/gomock"

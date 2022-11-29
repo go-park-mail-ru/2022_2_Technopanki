@@ -1,10 +1,10 @@
 package usecases
 
 import (
+	"HeadHunter/common/session"
 	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/repository"
-	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases/impl"
 	"HeadHunter/internal/usecases/mail"
 	"mime/multipart"

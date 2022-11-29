@@ -2,13 +2,13 @@ package main
 
 import (
 	auth_handler "HeadHunter/auth_microservice/handler"
+	"HeadHunter/common/session"
 	"HeadHunter/configs"
 	"HeadHunter/internal/cron"
 	"HeadHunter/internal/network"
 	"HeadHunter/internal/network/handlers"
 	"HeadHunter/internal/network/middleware"
 	"HeadHunter/internal/repository"
-	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases"
 	"HeadHunter/internal/usecases/mail"
 	mail_handler "HeadHunter/mail_microservice/handler"

@@ -2,10 +2,10 @@ package main
 
 import (
 	auth_handler "HeadHunter/auth_microservice/handler"
+	"HeadHunter/common/session"
 	"HeadHunter/mail_microservice/configs"
 	"HeadHunter/mail_microservice/handler"
 	mail_handler "HeadHunter/mail_microservice/handler/impl"
-	"HeadHunter/mail_microservice/repository/session"
 	usecase "HeadHunter/mail_microservice/usecase/impl"
 	"HeadHunter/mail_microservice/usecase/sender"
 	"github.com/sirupsen/logrus"

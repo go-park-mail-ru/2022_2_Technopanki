@@ -51,7 +51,7 @@ func (mr *MockRepositoryMockRecorder) CreateConfirmationCode(email interface{}) 
 // DeleteSession mocks base method.
 func (m *MockRepository) DeleteSession(token string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteSession", token)
+	ret := m.ctrl.Call(m, "Delete", token)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
@@ -59,7 +59,7 @@ func (m *MockRepository) DeleteSession(token string) error {
 // DeleteSession indicates an expected call of DeleteSession.
 func (mr *MockRepositoryMockRecorder) DeleteSession(token interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSession", reflect.TypeOf((*MockRepository)(nil).DeleteSession), token)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockRepository)(nil).DeleteSession), token)
 }
 
 // GetEmailFromCode mocks base method.
