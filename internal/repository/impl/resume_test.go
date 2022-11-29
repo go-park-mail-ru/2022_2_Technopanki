@@ -1,13 +1,11 @@
 package impl
 
 import (
+	"HeadHunter/internal/entity/models"
 	"HeadHunter/pkg/errorHandler"
 	"fmt"
 	"regexp"
 	"testing"
-	"time"
-
-	"HeadHunter/internal/entity/models"
 
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
@@ -398,5 +396,5 @@ func TestResumePostgres_DeleteResume(t *testing.T) {
 //				t.Errorf("there were unfulfilled expectations: %s", err)
 //			}
 //		})
-	}
-}
+//	}
+//}
