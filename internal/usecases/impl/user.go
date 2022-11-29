@@ -9,6 +9,7 @@ import (
 	"HeadHunter/internal/repository/images"
 	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases/escaping"
+	"HeadHunter/internal/usecases/mail"
 	"HeadHunter/pkg/errorHandler"
 	"fmt"
 	"image"
@@ -24,10 +25,12 @@ type UserService struct {
 	userRep     repository.UserRepository
 	sessionRepo session.Repository
 	cfg         *configs.Config
+	mail        mail.Mail
 }
 
-func NewUserService(userRepos repository.UserRepository, sessionRepos session.Repository, _cfg *configs.Config) *UserService {
-	return &UserService{userRep: userRepos, sessionRepo: sessionRepos, cfg: _cfg}
+func NewUserService(userRepos repository.UserRepository, sessionRepos session.Repository,
+	_mail mail.Mail, _cfg *configs.Config) *UserService {
+	return &UserService{userRep: userRepos, sessionRepo: sessionRepos, mail: _mail, cfg: _cfg}
 }
 
 func (us *UserService) GetUserId(email string) (uint, error) {
@@ -50,8 +53,21 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 	if getErr != nil {
 		return "", getErr
 	}
+
+	if !user.IsConfirmed && us.cfg.Security.ConfirmAccountMode {
+		return "", errorHandler.ErrIsNotConfirmed
+	}
+
 	if cryptErr := utils.ComparePassword(user, input); cryptErr != nil {
 		return "", cryptErr
+	}
+
+	if user.TwoFactorSignIn {
+		sendErr := us.mail.SendConfirmCode(user.Email)
+		if sendErr != nil {
+			return "", sendErr
+		}
+		return "", errorHandler.ErrForbidden
 	}
 
 	token, newSessionErr := us.sessionRepo.NewSession(input.Email)
@@ -73,12 +89,31 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 
 	input = escaping.EscapingObject[*models.UserAccount](input)
 
-	isExist, getErr := us.userRep.IsUserExist(input.Email)
-	if getErr != nil {
+	user, getErr := us.userRep.GetUserByEmail(input.Email)
+
+	if getErr == nil {
+		if us.cfg.Security.ConfirmAccountMode {
+			if user.IsConfirmed {
+				return "", errorHandler.ErrUserExists
+			}
+			sendCodeErr := us.mail.SendConfirmCode(input.Email)
+			if sendCodeErr != nil {
+				return "", sendCodeErr
+			}
+			return "", errorHandler.ErrIsNotConfirmed
+		}
+		return "", errorHandler.ErrUserExists
+	}
+
+	if getErr != errorHandler.ErrUserNotExists {
 		return "", getErr
 	}
-	if isExist {
-		return "", errorHandler.ErrUserExists
+
+	if us.cfg.Security.ConfirmAccountMode {
+		sendCodeErr := us.mail.SendConfirmCode(input.Email)
+		if sendCodeErr != nil {
+			return "", sendCodeErr
+		}
 	}
 
 	encryptedPassword, encryptErr := utils.GeneratePassword(input.Password, &us.cfg.Crypt)
@@ -89,15 +124,21 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 
 	input.Image = fmt.Sprintf("basic_%s_avatar.webp", input.UserType)
 	input.PublicFields = "email contact_number applicant_current_salary" //TODO после РК3 убрать для добавления фичи с доступом
+	input.IsConfirmed = !us.cfg.Security.ConfirmAccountMode
+
 	createErr := us.userRep.CreateUser(input)
+
 	if createErr != nil {
 		return "", fmt.Errorf("creating session user: %w", createErr)
 	}
 
-	token, newSessionErr := us.sessionRepo.NewSession(input.Email)
-
-	if newSessionErr != nil {
-		return "", newSessionErr
+	var token string
+	var newSessionErr error
+	if !us.cfg.Security.ConfirmAccountMode {
+		token, newSessionErr = us.sessionRepo.NewSession(input.Email)
+		if newSessionErr != nil {
+			return "", newSessionErr
+		}
 	}
 	return token, nil
 }
@@ -140,7 +181,9 @@ func (us *UserService) UpdateUser(input *models.UserAccount) error {
 		input.Password = encryptedPassword
 	}
 	input.ID = oldUser.ID
-	dbError := us.userRep.UpdateUser(oldUser, input)
+	input.IsConfirmed = oldUser.IsConfirmed
+
+	dbError := us.userRep.UpdateUser(input)
 	if dbError != nil {
 		return dbError
 	}
@@ -246,5 +289,58 @@ func (us *UserService) DeleteUserImage(user *models.UserAccount) error {
 	}
 	user.Image = fmt.Sprintf("basic_%s_avatar.webp", user.UserType)
 	return us.UpdateUser(user)
-	//return nil
+
+}
+
+func (us *UserService) ConfirmUser(code, email string) (*models.UserAccount, string, error) {
+	if code == "" {
+		return nil, "", errorHandler.ErrBadRequest
+	}
+
+	emailFromCode, getCodeErr := us.sessionRepo.GetEmailFromCode(code)
+	if getCodeErr != nil {
+		return nil, "", getCodeErr
+	}
+
+	if email != emailFromCode {
+		return nil, "", errorHandler.ErrForbidden
+	}
+
+	user, getErr := us.userRep.GetUserByEmail(email)
+	if getErr != nil {
+		return nil, "", getErr
+	}
+
+	confirmedUser := user
+	confirmedUser.IsConfirmed = true
+
+	token, newSessionErr := us.sessionRepo.NewSession(email)
+	if newSessionErr != nil {
+		return nil, "", newSessionErr
+	}
+
+	return confirmedUser, token, us.userRep.UpdateUser(confirmedUser)
+}
+
+func (us *UserService) UpdatePassword(code, email, password string) error {
+	emailFromCode, getCodeErr := us.sessionRepo.GetEmailFromCode(code)
+	if getCodeErr != nil {
+		return getCodeErr
+	}
+
+	if email != emailFromCode {
+		return errorHandler.ErrForbidden
+	}
+
+	user, getErr := us.userRep.GetUserByEmail(email)
+	if getErr != nil {
+		return getErr
+	}
+
+	encryptedPassword, encryptErr := utils.GeneratePassword(password, &us.cfg.Crypt)
+	if encryptErr != nil {
+		return encryptErr
+	}
+	user.Password = encryptedPassword
+	return us.userRep.UpdateUser(user)
 }

@@ -41,7 +41,8 @@ var (
 	InvalidPasswordFormat   = errors.New("Пароль должен содержать буквы латиницы, цифры и спецсимволы(!#%^$)")
 	IncorrectPasswordLength = errors.New("Длина пароля должна быть между 8 и 20 символами")
 
-	InvalidUserType = errors.New("Некорректный входной тип пользователя")
+	InvalidUserType   = errors.New("Некорректный входной тип пользователя")
+	ErrIsNotConfirmed = errors.New("Пользователь не подтвержден")
 )
 
 var errorToCode = map[error]int{
@@ -95,6 +96,7 @@ var errorToCode = map[error]int{
 
 	InvalidPasswordFormat:   http.StatusBadRequest,
 	IncorrectPasswordLength: http.StatusBadRequest,
+	ErrIsNotConfirmed:       http.StatusForbidden,
 }
 
 func ConvertError(err error) int {
@@ -117,6 +119,7 @@ var errorDescriptors = map[error]string{
 	IncorrectPasswordLength:        "password",
 	InvalidResumeTitleLength:       "resume_title",
 	InvalidResumeDescriptionLength: "resume_descriptors",
+	ErrIsNotConfirmed:              "email",
 }
 
 func GetErrorDescriptors(err error) string {

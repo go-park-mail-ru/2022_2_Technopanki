@@ -6,6 +6,7 @@ import (
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases/impl"
+	"HeadHunter/internal/usecases/mail"
 	"mime/multipart"
 )
 
@@ -16,14 +17,16 @@ type UseCases struct {
 	Vacancy         Vacancy
 	VacancyActivity VacancyActivity
 	Resume          Resume
+	Mail            mail.Mail
 }
 
-func NewUseCases(repos *repository.Repository, session session.Repository, _cfg *configs.Config) *UseCases {
+func NewUseCases(repos *repository.Repository, session session.Repository, _cfg *configs.Config, _mail mail.Mail) *UseCases {
 	return &UseCases{
-		User:            impl.NewUserService(repos.UserRepository, session, _cfg),
+		User:            impl.NewUserService(repos.UserRepository, session, _mail, _cfg),
 		Resume:          impl.NewResumeService(repos.ResumeRepository, _cfg, repos.UserRepository),
 		Vacancy:         impl.NewVacancyService(repos.VacancyRepository, repos.UserRepository),
 		VacancyActivity: impl.NewVacancyActivityService(repos.VacancyActivityRepository, repos.UserRepository),
+		Mail:            _mail,
 	}
 }
 
@@ -42,6 +45,8 @@ type User interface {
 	GetUserByEmail(email string) (*models.UserAccount, error)
 	UploadUserImage(user *models.UserAccount, fileHeader *multipart.FileHeader) (string, error)
 	DeleteUserImage(user *models.UserAccount) error
+	ConfirmUser(code, email string) (*models.UserAccount, string, error)
+	UpdatePassword(code, email, password string) error
 }
 
 type Vacancy interface {

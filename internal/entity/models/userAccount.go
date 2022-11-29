@@ -22,6 +22,9 @@ type UserAccount struct {
 	Location          string            `json:"location,omitempty"`
 	CompanySize       uint              `json:"company_size"`
 	PublicFields      string            `json:"public_fields"`
+  IsConfirmed            bool              `json:"is_confirmed"`
+	TwoFactorSignIn        bool              `json:"two_factor_sign_in"`
+	MailingApproval        bool              `json:"mailing_approval"`
 	Resumes           []Resume          `json:"resumes" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`
 	Vacancies         []Vacancy         `json:"vacancies" gorm:"foreignKey:PostedByUserId;constraint:OnDelete:CASCADE;"`
 	VacancyActivities []VacancyActivity `json:"vacancy_activities" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`
@@ -48,6 +51,15 @@ var PrivateUserFields = []string{"email", "contact_number",
 // SafeUserFields Поля, доступ к которым доступен всегда
 var SafeUserFields = []string{"id", "user_type", "description", "status", "date_of_birth", "image",
 	"applicant_name", "applicant_surname", "company_name",
-	"location", "company_size", "company_website_url", "public_fields"}
+	"location", "company_size", "company_website_url", "public_fields", "is_confirmed"}
 
 const NoPublicFields string = "null"
+
+type ApplicantPreview struct {
+	ID               uint   `json:"id"`
+	Image            string `json:"image"`
+	ApplicantName    string `json:"applicant_name"`
+	ApplicantSurname string `json:"applicant_surname"`
+	Status           string `json:"status"`
+	Location         string `json:"location"`
+}

@@ -9,6 +9,8 @@ services:
     depends_on:
       - postgres
       - redis
+      - auth
+      - mail
     volumes:
       - ./data/image/avatar:/backend/data/image/avatar
   postgres:
@@ -30,3 +32,22 @@ services:
       - "6379:6379"
     command: >
       --requirepass rjf358123QWE
+  auth:
+    build:
+      context: .
+      dockerfile: Dockerfile-auth
+    container_name: auth_service
+    depends_on:
+      - redis
+    ports:
+      - "8081:8081"
+  mail:
+    build:
+      context: .
+      dockerfile: Dockerfile-mail
+    container_name: mail_service
+    depends_on:
+      - redis
+      - auth
+    ports:
+      - "8082:8082"

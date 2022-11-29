@@ -1,15 +1,22 @@
 package main
 
 import (
+	auth_handler "HeadHunter/auth_microservice/handler"
 	"HeadHunter/configs"
+	"HeadHunter/internal/cron"
 	"HeadHunter/internal/network"
 	"HeadHunter/internal/network/handlers"
 	"HeadHunter/internal/network/middleware"
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases"
+	"HeadHunter/internal/usecases/mail"
+	mail_handler "HeadHunter/mail_microservice/handler"
 	repositorypkg "HeadHunter/pkg/repository"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"strings"
 )
 
 // @title Jobflow API
@@ -23,12 +30,18 @@ func main() {
 	if configErr := configs.InitConfig(&mainConfig); configErr != nil {
 		logrus.Fatal(configErr)
 	}
-	redisClient, redisErr := repositorypkg.RedisConnect(&mainConfig.Redis)
-	if redisErr != nil {
-		logrus.Fatal(redisErr)
+
+	grpcSession, sessionErr := grpc.Dial(
+		strings.Join([]string{mainConfig.AuthDomain, mainConfig.AuthPort}, ""),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+	if sessionErr != nil {
+		logrus.Fatal(sessionErr)
 	}
 
-	redisRepository := session.NewRedisStore(&mainConfig, redisClient)
+	sessionClient := auth_handler.NewAuthCheckerClient(grpcSession)
+
+	redisRepository := session.NewSessionMicroservice(sessionClient)
 	sessionMiddleware := middleware.NewSessionMiddleware(redisRepository)
 	db, DBErr := repositorypkg.DBConnect(&mainConfig.DB)
 	if DBErr != nil {
@@ -37,13 +50,28 @@ func main() {
 
 	postgresRepository := repository.NewPostgresRepository(db)
 
+	grpcMail, mailErr := grpc.Dial(
+		strings.Join([]string{mainConfig.MailDomain, mainConfig.MailPort}, ""),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+	if mailErr != nil {
+		logrus.Fatal(mailErr)
+	}
+
+	mailClient := mail_handler.NewMailServiceClient(grpcMail)
+
+	mailService := mail.NewMailService(mailClient)
+
 	useCase := usecases.NewUseCases(
 		postgresRepository,
 		redisRepository,
 		&mainConfig,
+		mailService,
 	)
 
 	handler := handlers.NewHandlers(useCase, &mainConfig)
+
+	go cron.ClearDBFromUnconfirmedUser(db)
 
 	router := network.InitRoutes(handler, sessionMiddleware, &mainConfig)
 	runErr := router.Run(mainConfig.Port)

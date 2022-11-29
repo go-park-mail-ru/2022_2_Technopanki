@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"HeadHunter/configs"
+	"HeadHunter/auth_microservice/configs"
 	"fmt"
 	"github.com/go-redis/redis"
 )

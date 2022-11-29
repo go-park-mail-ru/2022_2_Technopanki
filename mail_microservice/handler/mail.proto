@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+// protoc --go_out=. --go-grpc_out=. --go-grpc_opt=paths=source_relative --go_opt=paths=source_relative *.proto
+
+package mail;
+option go_package = "./handler";
+
+message Email {
+  string value = 1;
+}
+
+message Nothing {
+  bool dummy = 1;
+}
+
+message ApplicantPreview {
+  uint64 id = 1;
+  string image = 2;
+  string applicantName = 3;
+  string applicantSurname = 4;
+  string status = 5;
+  string location = 6;
+
+}
+
+message VacancyPreview {
+  uint64 id = 1;
+  string image = 2;
+  string title = 3;
+}
+
+message ApplicantMailingData {
+  repeated string emails = 1;
+  repeated VacancyPreview vac = 2;
+}
+
+message EmployerMailingData {
+  repeated string emails = 1;
+  repeated ApplicantPreview emp = 2;
+}
+
+service MailService {
+  rpc SendConfirmCode (Email) returns (Nothing) {}
+  rpc SendApplicantMailing (ApplicantMailingData) returns (Nothing) {}
+  rpc SendEmployerMailing (EmployerMailingData) returns (Nothing) {}
+}

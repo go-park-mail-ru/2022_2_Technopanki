@@ -28,6 +28,12 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 		auth.POST("/sign-up", h.UserHandler.SignUp, errorHandler.Middleware())
 		auth.POST("/sign-in", h.UserHandler.SignIn, errorHandler.Middleware())
 		auth.POST("/logout", sessionMW.Session, h.UserHandler.Logout, errorHandler.Middleware())
+		auth.POST("/confirm", h.UserHandler.ConfirmUser, errorHandler.Middleware())
+	}
+
+	mail := router.Group("/mail")
+	{
+		mail.POST("/code/:email", h.MailHandler.SendConfirmCode, errorHandler.Middleware())
 	}
 
 	api := router.Group("/api")
@@ -40,6 +46,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 			user.GET("/safety/:id", h.UserHandler.GetUserSafety, errorHandler.Middleware())
 			user.GET("/preview/:id", h.UserHandler.GetPreview, errorHandler.Middleware())
 			user.POST("/", sessionMW.Session, h.UserHandler.UpdateUser, errorHandler.Middleware())
+			user.POST("/password", sessionMW.Session, h.UserHandler.UpdatePassword, errorHandler.Middleware())
 			image := user.Group("/image")
 			{
 				image.POST("/", sessionMW.Session, h.UserHandler.UploadUserImage, errorHandler.Middleware())
