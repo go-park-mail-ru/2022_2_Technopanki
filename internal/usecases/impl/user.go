@@ -233,16 +233,15 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 }
 
 func (us *UserService) DeleteUserImage(user *models.UserAccount) error {
-	//user = escaping.EscapingObject[*models.UserAccount](user)
-	//
-	//if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
-	//	return errorHandler.ErrBadRequest
-	//}
-	//deleteErr := images.DeleteUserAvatar(user.Image, &us.cfg.Image)
-	//if deleteErr != nil {
-	//	return errorHandler.ErrCannotDeleteAvatar
-	//}
-	//user.Image = fmt.Sprintf("basic_%s_avatar.webp", user.UserType)
-	//return us.UpdateUser(user)
-	return nil
+	user = escaping.EscapingObject[*models.UserAccount](user)
+
+	if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
+		return errorHandler.ErrBadRequest
+	}
+	deleteErr := images.DeleteUserAvatar(user.Image, &us.cfg.Image)
+	if deleteErr != nil {
+		return errorHandler.ErrCannotDeleteAvatar
+	}
+	user.Image = fmt.Sprintf("basic_%s_avatar.webp", user.UserType)
+	return us.UpdateUser(user)
 }

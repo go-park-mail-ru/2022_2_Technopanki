@@ -1,4 +1,5 @@
-name: Docker Image CI
+name: Jobflow CI
+
 
 on:
   push:
