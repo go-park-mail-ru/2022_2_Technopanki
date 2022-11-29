@@ -42,7 +42,7 @@ func (vs *VacancyService) GetById(vacancyID uint) (*models.Vacancy, error) {
 
 func (vs *VacancyService) GetByUserId(userId uint) ([]*models.Vacancy, error) {
 	vacancies, getErr := vs.vacancyRep.GetByUserId(userId)
-	if errors.Is(getErr, errorHandler.ErrResumeNotFound) {
+	if errors.Is(getErr, errorHandler.ErrVacancyNotFound) {
 		return []*models.Vacancy{}, nil
 	}
 	return vacancies, getErr
