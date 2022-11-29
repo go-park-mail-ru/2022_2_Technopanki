@@ -21,22 +21,22 @@ func NewResumeService(_resumeRep repository.ResumeRepository, _cfg *configs.Conf
 }
 
 func (rs *ResumeService) GetResume(id uint, email string) (*models.Resume, error) {
-	userFromContext, contextErr := rs.userRep.GetUserByEmail(email)
-	if contextErr != nil {
-		return nil, contextErr
-	}
+	//userFromContext, contextErr := rs.userRep.GetUserByEmail(email)
+	//if contextErr != nil {
+	//	return nil, contextErr
+	//}
 
 	resume, getErr := rs.resumeRep.GetResume(id)
 	if getErr != nil {
 		return nil, getErr
 	}
 
-	if userFromContext.ID != resume.UserAccountId {
-		employerId, err := rs.resumeRep.GetEmployerIdByVacancyActivity(id)
-		if err != nil || employerId != userFromContext.ID {
-			return nil, errorHandler.ErrUnauthorized
-		}
-	}
+	//if userFromContext.ID != resume.UserAccountId {
+	//	employerId, err := rs.resumeRep.GetEmployerIdByVacancyActivity(id)
+	//	if err != nil || employerId != userFromContext.ID {
+	//		return nil, errorHandler.ErrUnauthorized
+	//	}
+	//}
 
 	return resume, nil
 }
