@@ -4,7 +4,6 @@ import (
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/mail_microservice/repository/session"
 	"HeadHunter/mail_microservice/usecase/sender"
-	"fmt"
 )
 
 type MailService struct {
@@ -29,23 +28,21 @@ func (ms *MailService) SendConfirmCode(email string) error {
 }
 
 func (ms *MailService) SendApplicantMailing(emails []string, vacancies []*models.Vacancy) error {
-	var returnedErr error
 	for _, email := range emails {
 		err := ms.sender.SendApplicantMailing(email, vacancies)
 		if err != nil {
-			returnedErr = fmt.Errorf("%w %s", returnedErr, err.Error())
+			return err
 		}
 	}
-	return returnedErr
+	return nil
 }
 
 func (ms *MailService) SendEmployerMailing(emails []string, applicants []*models.UserAccount) error {
-	var returnedErr error
 	for _, email := range emails {
 		err := ms.sender.SendEmployerMailing(email, applicants)
 		if err != nil {
-			returnedErr = fmt.Errorf("%w %s", returnedErr, err.Error())
+			return err
 		}
 	}
-	return returnedErr
+	return nil
 }

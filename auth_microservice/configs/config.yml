@@ -1,6 +1,7 @@
 domain: "auth_service"
 port: ":8081"
 confirmationTime: 600
+getConfirmInterval: 60
 defaultExpiringSession: 259200
 redis:
   host: "jfRedis"

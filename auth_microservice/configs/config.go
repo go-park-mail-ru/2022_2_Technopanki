@@ -10,6 +10,7 @@ type SessionConfig struct {
 	Domain                 string `yaml:"domain"`
 	Port                   string `yaml:"port"`
 	DefaultExpiringSession int    `yaml:"defaultExpiringSession"`
+	GetConfirmInterval     int    `yaml:"getConfirmInterval"`
 	ConfirmationTime       int    `yaml:"confirmationTime"`
 	Redis                  RedisConfig
 }
