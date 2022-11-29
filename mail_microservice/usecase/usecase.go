@@ -1,4 +1,4 @@
-package mail
+package usecase
 
 import "HeadHunter/internal/entity/models"
 

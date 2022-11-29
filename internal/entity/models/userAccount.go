@@ -40,3 +40,12 @@ var SafeUserFields = []string{"id", "user_type", "description", "status", "date_
 	"location", "company_size", "company_website_url", "public_fields", "is_confirmed"}
 
 const NoPublicFields string = "null"
+
+type ApplicantPreview struct {
+	ID               uint   `json:"id"`
+	Image            string `json:"image"`
+	ApplicantName    string `json:"applicant_name"`
+	ApplicantSurname string `json:"applicant_surname"`
+	Status           string `json:"status"`
+	Location         string `json:"location"`
+}

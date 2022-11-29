@@ -10,6 +10,7 @@ services:
       - postgres
       - redis
       - auth
+      - mail
     volumes:
       - ./data/image/avatar:/backend/data/image/avatar
   postgres:
@@ -38,3 +39,12 @@ services:
       - redis
     ports:
       - "8081:8081"
+  mail:
+    build:
+      dockerfile: Dockerfile-mail
+    container_name: mail_service
+    depends_on:
+      - redis
+      - auth
+    ports:
+      - "8082:8082"

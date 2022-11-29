@@ -11,7 +11,7 @@ import (
 	"HeadHunter/internal/repository/session"
 	"HeadHunter/internal/usecases"
 	"HeadHunter/internal/usecases/mail"
-	"HeadHunter/internal/usecases/sender"
+	mail_handler "HeadHunter/mail_microservice/handler"
 	repositorypkg "HeadHunter/pkg/repository"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -50,13 +50,17 @@ func main() {
 
 	postgresRepository := repository.NewPostgresRepository(db)
 
-	senderService, senderErr := sender.NewSender(&mainConfig)
-
-	mailService := mail.NewMailService(postgresRepository.UserRepository, redisRepository, senderService)
-
-	if senderErr != nil {
-		logrus.Fatal(senderErr)
+	grpcMail, mailErr := grpc.Dial(
+		strings.Join([]string{mainConfig.MailDomain, mainConfig.MailPort}, ""),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+	if mailErr != nil {
+		logrus.Fatal(mailErr)
 	}
+
+	mailClient := mail_handler.NewMailServiceClient(grpcMail)
+
+	mailService := mail.NewMailService(mailClient)
 
 	useCase := usecases.NewUseCases(
 		postgresRepository,
