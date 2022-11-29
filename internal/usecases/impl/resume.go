@@ -7,6 +7,7 @@ import (
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/usecases/escaping"
 	"HeadHunter/pkg/errorHandler"
+	"errors"
 )
 
 type ResumeService struct {
@@ -49,7 +50,11 @@ func (rs *ResumeService) GetResumeByApplicant(userId uint, email string) ([]*mod
 	if userFromContext.ID != userId {
 		return []*models.Resume{}, errorHandler.ErrUnauthorized
 	}
-	return rs.resumeRep.GetResumeByApplicant(userId)
+	resumes, getErr := rs.resumeRep.GetResumeByApplicant(userId)
+	if errors.Is(getErr, errorHandler.ErrResumeNotFound) {
+		return []*models.Resume{}, nil
+	}
+	return resumes, getErr
 }
 
 func (rs *ResumeService) GetPreviewResumeByApplicant(userId uint, email string) ([]*models.ResumePreview, error) {
@@ -61,7 +66,11 @@ func (rs *ResumeService) GetPreviewResumeByApplicant(userId uint, email string) 
 	if userFromContext.ID != userId {
 		return []*models.ResumePreview{}, errorHandler.ErrUnauthorized
 	}
-	return rs.resumeRep.GetPreviewResumeByApplicant(userId)
+	resumesPreview, getErr := rs.resumeRep.GetPreviewResumeByApplicant(userId)
+	if errors.Is(getErr, errorHandler.ErrResumeNotFound) {
+		return []*models.ResumePreview{}, nil
+	}
+	return resumesPreview, getErr
 }
 
 func (rs *ResumeService) CreateResume(resume *models.Resume, email string) error {
