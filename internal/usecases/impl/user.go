@@ -290,12 +290,12 @@ func (us *UserService) ConfirmUser(code, email string) (*models.UserAccount, str
 }
 
 func (us *UserService) UpdatePassword(code, email, password string) error {
-	emailFromCode, getCodeErr := us.sessionRepo.GetEmailFromCode(code)
+	codeFromCode, getCodeErr := us.sessionRepo.GetCodeFromEmail(email)
 	if getCodeErr != nil {
 		return getCodeErr
 	}
 
-	if email != emailFromCode {
+	if code != codeFromCode {
 		return errorHandler.ErrForbidden
 	}
 

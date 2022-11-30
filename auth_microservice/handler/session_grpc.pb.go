@@ -26,7 +26,6 @@ type AuthCheckerClient interface {
 	GetSession(ctx context.Context, in *Token, opts ...grpc.CallOption) (*Email, error)
 	DeleteSession(ctx context.Context, in *Token, opts ...grpc.CallOption) (*Nothing, error)
 	CreateConfirmationCode(ctx context.Context, in *Email, opts ...grpc.CallOption) (*Token, error)
-	GetEmailFromCode(ctx context.Context, in *Token, opts ...grpc.CallOption) (*Email, error)
 	GetCodeFromEmail(ctx context.Context, in *Email, opts ...grpc.CallOption) (*Token, error)
 }
 
@@ -74,15 +73,6 @@ func (c *authCheckerClient) CreateConfirmationCode(ctx context.Context, in *Emai
 	return out, nil
 }
 
-func (c *authCheckerClient) GetEmailFromCode(ctx context.Context, in *Token, opts ...grpc.CallOption) (*Email, error) {
-	out := new(Email)
-	err := c.cc.Invoke(ctx, "/session.AuthChecker/GetEmailFromCode", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *authCheckerClient) GetCodeFromEmail(ctx context.Context, in *Email, opts ...grpc.CallOption) (*Token, error) {
 	out := new(Token)
 	err := c.cc.Invoke(ctx, "/session.AuthChecker/GetCodeFromEmail", in, out, opts...)
@@ -100,7 +90,6 @@ type AuthCheckerServer interface {
 	GetSession(context.Context, *Token) (*Email, error)
 	DeleteSession(context.Context, *Token) (*Nothing, error)
 	CreateConfirmationCode(context.Context, *Email) (*Token, error)
-	GetEmailFromCode(context.Context, *Token) (*Email, error)
 	GetCodeFromEmail(context.Context, *Email) (*Token, error)
 	mustEmbedUnimplementedAuthCheckerServer()
 }
@@ -120,9 +109,6 @@ func (UnimplementedAuthCheckerServer) DeleteSession(context.Context, *Token) (*N
 }
 func (UnimplementedAuthCheckerServer) CreateConfirmationCode(context.Context, *Email) (*Token, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateConfirmationCode not implemented")
-}
-func (UnimplementedAuthCheckerServer) GetEmailFromCode(context.Context, *Token) (*Email, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetEmailFromCode not implemented")
 }
 func (UnimplementedAuthCheckerServer) GetCodeFromEmail(context.Context, *Email) (*Token, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCodeFromEmail not implemented")
@@ -212,24 +198,6 @@ func _AuthChecker_CreateConfirmationCode_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthChecker_GetEmailFromCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Token)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AuthCheckerServer).GetEmailFromCode(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/session.AuthChecker/GetEmailFromCode",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthCheckerServer).GetEmailFromCode(ctx, req.(*Token))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _AuthChecker_GetCodeFromEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Email)
 	if err := dec(in); err != nil {
@@ -270,10 +238,6 @@ var AuthChecker_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateConfirmationCode",
 			Handler:    _AuthChecker_CreateConfirmationCode_Handler,
-		},
-		{
-			MethodName: "GetEmailFromCode",
-			Handler:    _AuthChecker_GetEmailFromCode_Handler,
 		},
 		{
 			MethodName: "GetCodeFromEmail",

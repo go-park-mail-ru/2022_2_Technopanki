@@ -60,17 +60,6 @@ func (sh *SessionHandler) CreateConfirmationCode(ctx context.Context, in *handle
 	return &handler.Token{Value: code}, nil
 }
 
-func (sh *SessionHandler) GetEmailFromCode(ctx context.Context, in *handler.Token) (*handler.Email, error) {
-	if in == nil {
-		return &handler.Email{}, errorHandler.ErrBadRequest
-	}
-	email, getErr := sh.sessionUseCase.GetEmailFromCode(in.Value)
-	if getErr != nil {
-		return &handler.Email{}, getErr
-	}
-	return &handler.Email{Value: email}, nil
-}
-
 func (sh *SessionHandler) GetCodeFromEmail(ctx context.Context, in *handler.Email) (*handler.Token, error) {
 	if in == nil {
 		return &handler.Token{}, errorHandler.ErrBadRequest

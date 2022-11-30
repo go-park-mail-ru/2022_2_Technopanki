@@ -22,6 +22,5 @@ service AuthChecker {
   rpc GetSession (Token) returns (Email) {}
   rpc DeleteSession (Token) returns (Nothing) {}
   rpc CreateConfirmationCode (Email) returns (Token) {}
-  rpc GetEmailFromCode (Token) returns (Email) {}
   rpc GetCodeFromEmail (Email) returns (Token) {}
 }

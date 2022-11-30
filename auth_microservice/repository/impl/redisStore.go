@@ -69,15 +69,6 @@ func (rs *RedisStore) CreateConfirmationCode(email string) (string, error) {
 	return code, nil
 }
 
-func (rs *RedisStore) GetEmailFromCode(token string) (string, error) {
-	result, getErr := rs.client.Get(token).Result()
-	if getErr != nil {
-		return "", fmt.Errorf("getting code error: %w", getErr)
-	}
-
-	return result, nil
-}
-
 func (rs *RedisStore) GetCodeFromEmail(email string) (string, error) {
 	result, getErr := rs.client.Get(email).Result()
 	if getErr != nil {
