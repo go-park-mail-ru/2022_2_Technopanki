@@ -271,7 +271,8 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 
 	user = escaping.EscapingObject[*models.UserAccount](user)
 	imageName := fmt.Sprintf("%d.webp", user.ID)
-	user.Image = fmt.Sprintf("%d.webp?%d", user.ID, time.Now().Unix())
+
+	user.Image = fmt.Sprintf("%d.webp?%s", user.ID, time.Now().String())
 
 	updateErr := us.userRep.UpdateUser(&models.UserAccount{ID: user.ID, Image: user.Image})
 	if updateErr != nil {
