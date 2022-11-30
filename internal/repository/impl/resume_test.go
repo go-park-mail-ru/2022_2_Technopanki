@@ -1,13 +1,12 @@
 package impl
 
 import (
+	"HeadHunter/internal/entity/models"
 	"HeadHunter/pkg/errorHandler"
 	"fmt"
 	"regexp"
 	"testing"
 	"time"
-
-	"HeadHunter/internal/entity/models"
 
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
@@ -322,10 +321,13 @@ func TestResumePostgres_CreateResume(t *testing.T) {
 			id:          1,
 			expectedErr: nil,
 			expected: []*models.Resume{{
-				ID:            1,
-				Title:         "title",
-				Description:   "desc",
-				UserAccountId: 1,
+				ID:                1,
+				Title:             "title",
+				Description:       "desc",
+				Location:          "loc",
+				ExperienceInYears: 1,
+				Salary:            1,
+				UserAccountId:     1,
 				ExperienceDetail: models.ExperienceDetail{
 					ResumeId: 1,
 				},
@@ -340,10 +342,10 @@ func TestResumePostgres_CreateResume(t *testing.T) {
 		testCase := tc
 		t.Run(testCase.name, func(t *testing.T) {
 
-			resumeRows := sqlmock.NewRows([]string{"id", "title", "description", "user_account_id"})
+			resumeRows := sqlmock.NewRows([]string{"id", "title", "description", "location", "experience_in_years", "user_account_id", "salary"})
 			if len(testCase.expected) > 0 {
 				resumeRows = resumeRows.AddRow(testCase.expected[0].ID, testCase.expected[0].Title,
-					testCase.expected[0].Description, testCase.expected[0].UserAccountId)
+					testCase.expected[0].Description, testCase.expected[0].Location, testCase.expected[0].ExperienceInYears, testCase.expected[0].UserAccountId, testCase.expected[0].Salary)
 			}
 
 			mock.
@@ -354,29 +356,38 @@ func TestResumePostgres_CreateResume(t *testing.T) {
 
 			mock.ExpectBegin()
 			mock.
-				ExpectQuery(regexp.QuoteMeta(`INSERT INTO "resumes" ("user_account_id","title","description","created_time") VALUES ($1,$2,$3,$4) RETURNING "id"`)).
+				ExpectQuery(regexp.QuoteMeta(`INSERT INTO "resumes" ("user_account_id","title","description","created_time","location","experience_in_years","salary") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "id"`)).
 				WithArgs(1,
 					"title",
 					"desc",
-					timeNow).
+					timeNow,
+					"loc",
+					1,
+					1).
 				WillReturnRows(sqlmock.NewRows([]string{"1"}))
 			mock.ExpectCommit()
 
 			mock.ExpectBegin()
 			mock.
-				ExpectQuery(regexp.QuoteMeta(`INSERT INTO "resumes" ("user_account_id","title","description","created_time") VALUES ($1,$2,$3,$4) RETURNING "id"`)).
+				ExpectQuery(regexp.QuoteMeta(`INSERT INTO "resumes" ("user_account_id","title","description","created_time","location","experience_in_years","salary") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "id"`)).
 				WithArgs(1,
 					"title",
 					"desc",
-					timeNow).
+					timeNow,
+					"loc",
+					1,
+					1).
 				WillReturnRows(sqlmock.NewRows([]string{"1"}))
 			mock.ExpectCommit()
 
 			resume := &models.Resume{
-				UserAccountId: 1,
-				Title:         "title",
-				Description:   "desc",
-				CreatedTime:   timeNow,
+				UserAccountId:     1,
+				Title:             "title",
+				Description:       "desc",
+				CreatedTime:       timeNow,
+				Location:          "loc",
+				ExperienceInYears: 1,
+				Salary:            1,
 			}
 
 			createErr := ResumeDB.CreateResume(resume, 1)

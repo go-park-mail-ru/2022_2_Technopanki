@@ -8,6 +8,7 @@ import (
 	"HeadHunter/internal/usecases/escaping"
 	"HeadHunter/pkg/errorHandler"
 	"errors"
+	"reflect"
 )
 
 type ResumeService struct {
@@ -39,6 +40,23 @@ func (rs *ResumeService) GetResume(id uint, email string) (*models.Resume, error
 	}
 
 	return resume, nil
+}
+
+func (rs *ResumeService) GetAllResumes(filters models.ResumeFilter) ([]*models.Resume, error) {
+	var conditions []string
+	var filterValues []interface{}
+	values := reflect.ValueOf(filters)
+	types := values.Type()
+	for i := 0; i < values.NumField(); i++ {
+		if values.Field(i).Interface().(string) != "" {
+			query := ResumeFilterQueries(types.Field(i).Name)
+			if query != "" {
+				conditions = append(conditions, query)
+			}
+			filterValues = append(filterValues, values.Field(i).Interface().(string))
+		}
+	}
+	return rs.resumeRep.GetAllResumes(conditions, filterValues)
 }
 
 func (rs *ResumeService) GetResumeByApplicant(userId uint, email string) ([]*models.Resume, error) {

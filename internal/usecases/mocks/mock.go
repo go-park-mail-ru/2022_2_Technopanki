@@ -79,6 +79,36 @@ func (mr *MockUserMockRecorder) DeleteUserImage(user interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteUserImage", reflect.TypeOf((*MockUser)(nil).DeleteUserImage), user)
 }
 
+// GetAllApplicants mocks base method.
+func (m *MockUser) GetAllApplicants(filters models.UserFilter) ([]*models.UserAccount, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllApplicants", filters)
+	ret0, _ := ret[0].([]*models.UserAccount)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllApplicants indicates an expected call of GetAllApplicants.
+func (mr *MockUserMockRecorder) GetAllApplicants(filters interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllApplicants", reflect.TypeOf((*MockUser)(nil).GetAllApplicants), filters)
+}
+
+// GetAllEmployers mocks base method.
+func (m *MockUser) GetAllEmployers(filters models.UserFilter) ([]*models.UserAccount, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllEmployers", filters)
+	ret0, _ := ret[0].([]*models.UserAccount)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllEmployers indicates an expected call of GetAllEmployers.
+func (mr *MockUserMockRecorder) GetAllEmployers(filters interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllEmployers", reflect.TypeOf((*MockUser)(nil).GetAllEmployers), filters)
+}
+
 // GetUser mocks base method.
 func (m *MockUser) GetUser(id uint) (*models.UserAccount, error) {
 	m.ctrl.T.Helper()
@@ -279,18 +309,18 @@ func (mr *MockVacancyMockRecorder) Delete(email, vacancyId interface{}) *gomock.
 }
 
 // GetAll mocks base method.
-func (m *MockVacancy) GetAll() ([]*models.Vacancy, error) {
+func (m *MockVacancy) GetAll(filters models.VacancyFilter) ([]*models.Vacancy, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAll")
+	ret := m.ctrl.Call(m, "GetAll", filters)
 	ret0, _ := ret[0].([]*models.Vacancy)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetAll indicates an expected call of GetAll.
-func (mr *MockVacancyMockRecorder) GetAll() *gomock.Call {
+func (mr *MockVacancyMockRecorder) GetAll(filters interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockVacancy)(nil).GetAll))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockVacancy)(nil).GetAll), filters)
 }
 
 // GetById mocks base method.
@@ -467,6 +497,21 @@ func (m *MockResume) DeleteResume(id uint, email string) error {
 func (mr *MockResumeMockRecorder) DeleteResume(id, email interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteResume", reflect.TypeOf((*MockResume)(nil).DeleteResume), id, email)
+}
+
+// GetAllResumes mocks base method.
+func (m *MockResume) GetAllResumes(filters models.ResumeFilter) ([]*models.Resume, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllResumes", filters)
+	ret0, _ := ret[0].([]*models.Resume)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllResumes indicates an expected call of GetAllResumes.
+func (mr *MockResumeMockRecorder) GetAllResumes(filters interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllResumes", reflect.TypeOf((*MockResume)(nil).GetAllResumes), filters)
 }
 
 // GetPreviewResumeByApplicant mocks base method.

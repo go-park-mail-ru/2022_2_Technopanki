@@ -17,7 +17,7 @@ type UserAccount struct {
 	ApplicantSurname       string            `json:"applicant_surname,omitempty"`
 	ApplicantCurrentSalary uint              `json:"applicant_current_salary,omitempty"`
 	CompanyName            string            `json:"company_name,omitempty"`
-	BusinessType           []BusinessType    `json:"business_type,omitempty" gorm:"many2many:business_type;"`
+	BusinessType           string            `json:"business_type,omitempty"`
 	CompanyWebsiteUrl      string            `json:"company_website_url,omitempty"`
 	Location               string            `json:"location,omitempty"`
 	CompanySize            uint              `json:"company_size"`
@@ -28,6 +28,20 @@ type UserAccount struct {
 	Resumes                []Resume          `json:"resumes" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`
 	Vacancies              []Vacancy         `json:"vacancies" gorm:"foreignKey:PostedByUserId;constraint:OnDelete:CASCADE;"`
 	VacancyActivities      []VacancyActivity `json:"vacancy_activities" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`
+}
+
+type UserFilter struct {
+	ApplicantName          string
+	ApplicantSurname       string
+	CompanyName            string
+	Location               string
+	BusinessType           string
+	FirstCompanySizeValue  string
+	SecondCompanySizeValue string
+	DateOfBirth            string
+}
+type GetAllUsersResponcePointer struct {
+	Data []*UserAccount `json:"data"`
 }
 
 // PrivateUserFields Поля, доступ к которым по умолчанию не доступен
