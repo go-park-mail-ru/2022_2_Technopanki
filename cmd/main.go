@@ -71,7 +71,7 @@ func main() {
 
 	handler := handlers.NewHandlers(useCase, &mainConfig)
 
-	go cron.ClearDBFromUnconfirmedUser(db)
+	go cron.ClearDBFromUnconfirmedUser(db, &mainConfig)
 
 	router := network.InitRoutes(handler, sessionMiddleware, &mainConfig)
 	runErr := router.Run(mainConfig.Port)

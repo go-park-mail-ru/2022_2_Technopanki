@@ -2,8 +2,8 @@ package main
 
 import (
 	"HeadHunter/auth_microservice/configs"
-	"HeadHunter/auth_microservice/handler"
-	auth_handler "HeadHunter/auth_microservice/handler/impl"
+	proto "HeadHunter/auth_microservice/handler"
+	handler "HeadHunter/auth_microservice/handler/impl"
 	repository "HeadHunter/auth_microservice/repository/impl"
 	usecase "HeadHunter/auth_microservice/usecase/impl"
 	repositorypkg "HeadHunter/pkg/repository"
@@ -27,10 +27,10 @@ func main() {
 
 	sessionUseCase := usecase.NewSessionUseCase(*redisRepository)
 
-	sessionHandler := auth_handler.NewSessionHandler(*sessionUseCase)
+	sessionHandler := handler.NewSessionHandler(*sessionUseCase)
 
 	grpcSrv := grpc.NewServer()
-	handler.RegisterAuthCheckerServer(grpcSrv, sessionHandler)
+	proto.RegisterAuthCheckerServer(grpcSrv, sessionHandler)
 
 	listener, listenErr := net.Listen("tcp", sessionConfig.Port)
 	if listenErr != nil {

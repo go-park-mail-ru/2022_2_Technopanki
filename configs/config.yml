@@ -5,6 +5,7 @@ authMsHost: "auth_service"
 authMsPort: ":8081"
 mailMsHost: "mail_service"
 mailMsPort: ":8082"
+cleaningPeriod: 2
 db:
   username: "jobflowAdmin"
   host: "jfPostgres"

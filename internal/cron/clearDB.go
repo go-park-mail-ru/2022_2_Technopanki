@@ -1,13 +1,14 @@
 package cron
 
 import (
+	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
 	"gorm.io/gorm"
 	"time"
 )
 
-func ClearDBFromUnconfirmedUser(db *gorm.DB) {
-	ticker := time.NewTicker(2 * time.Hour)
+func ClearDBFromUnconfirmedUser(db *gorm.DB, cfg *configs.Config) {
+	ticker := time.NewTicker(time.Duration(cfg.CleaningPeriod) * time.Hour)
 	for range ticker.C {
 		deleteUnconfirmedUsers(db)
 	}

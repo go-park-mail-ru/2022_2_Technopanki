@@ -269,12 +269,12 @@ func (us *UserService) ConfirmUser(code, email string) (*models.UserAccount, str
 		return nil, "", errorHandler.ErrBadRequest
 	}
 
-	CodeFromEmail, getCodeErr := us.sessionRepo.GetCodeFromEmail(email)
+	codeFromEmail, getCodeErr := us.sessionRepo.GetCodeFromEmail(email)
 	if getCodeErr != nil {
 		return nil, "", getCodeErr
 	}
 
-	if code != CodeFromEmail {
+	if code != codeFromEmail {
 		return nil, "", errorHandler.ErrForbidden
 	}
 
