@@ -16,6 +16,7 @@ import (
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
+	"math/rand"
 	"mime/multipart"
 	"reflect"
 	"strings"
@@ -272,8 +273,7 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 		fmt.Println("Error in decoding (UploadUserImage)")
 		return "", errorHandler.ErrBadRequest
 	}
-
-	return user.Image, images.UploadUserAvatar(user.Image, &img, &us.cfg.Image)
+	return strings.Join([]string{user.Image, generateRandomQuery()}, ""), images.UploadUserAvatar(user.Image, &img, &us.cfg.Image)
 	//return "", nil
 }
 
@@ -343,4 +343,17 @@ func (us *UserService) UpdatePassword(code, email, password string) error {
 	}
 	user.Password = encryptedPassword
 	return us.userRep.UpdateUser(user)
+}
+
+func generateRandomQuery() string {
+	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ" +
+		"abcdefghijklmnopqrstuvwxyzåäö" +
+		"0123456789")
+	length := 8
+	var b strings.Builder
+	b.WriteRune('?')
+	for i := 1; i < length; i++ {
+		b.WriteRune(chars[rand.Intn(len(chars))])
+	}
+	return b.String()
 }
