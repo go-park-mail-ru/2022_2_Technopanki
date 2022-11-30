@@ -614,3 +614,101 @@ func TestVacancyHandler_GetAllVacancies(t *testing.T) {
 		})
 	}
 }
+
+func TestVacancyHandler_GetPreviewVacanciesByEmployer(t *testing.T) {
+	type mockBehavior func(r *mock_usecases.MockVacancy, id uint)
+	type sessionRepBehavior func(r *mock_session.MockRepository, token string)
+
+	testTable := []struct {
+		name                 string
+		inputId              uint
+		inputToken           string
+		requestParam         string
+		emailFromToken       string
+		mockBehavior         mockBehavior
+		sessionRepBehavior   sessionRepBehavior
+		expectedStatusCode   int
+		expectedResponseBody string
+	}{
+		{
+			name:           "valid",
+			inputId:        42,
+			requestParam:   "42",
+			emailFromToken: "test@gmail.com",
+			mockBehavior: func(r *mock_usecases.MockVacancy, id uint) {
+				expectedVacancy := []*models.VacancyPreview{
+					{
+						Id:    42,
+						Title: "some vacancy",
+					},
+				}
+				r.EXPECT().GetPreviewVacanciesByEmployer(id).Return(expectedVacancy, nil)
+			},
+			sessionRepBehavior: func(sessionRep *mock_session.MockRepository, token string) {
+				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
+			},
+			expectedStatusCode:   200,
+			expectedResponseBody: "[{\"id\":42,\"title\":\"some vacancy\",\"image\":\"\",\"salary\":0,\"location\":\"\",\"format\":\"\",\"hours\":\"\",\"description\":\"\"}]",
+		},
+		{
+			name:           "user not found",
+			inputId:        42,
+			requestParam:   "42",
+			emailFromToken: "test@gmail.com",
+			mockBehavior: func(r *mock_usecases.MockVacancy, id uint) {
+				expectedVacancy := []*models.VacancyPreview{
+					{
+						Id:    42,
+						Title: "some vacancy",
+					},
+				}
+				r.EXPECT().GetPreviewVacanciesByEmployer(id).Return(expectedVacancy, errorHandler.ErrBadRequest)
+			},
+			sessionRepBehavior: func(sessionRep *mock_session.MockRepository, token string) {
+				sessionRep.EXPECT().GetSession(token).Return("", fmt.Errorf("getting session error:"))
+			},
+			expectedStatusCode:   400,
+			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Некорректный запрос\"}",
+		},
+	}
+	for _, test := range testTable {
+		testCase := test
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			mockUseCase := mock_usecases.NewMockVacancy(c)
+			sessionRep := mock_session.NewMockRepository(c)
+			sessionMiddlware := middleware.NewSessionMiddleware(sessionRep)
+
+			if testCase.emailFromToken != "" {
+				testCase.mockBehavior(mockUseCase, testCase.inputId)
+			}
+
+			testCase.sessionRepBehavior(sessionRep, testCase.inputToken)
+
+			handler := VacancyHandler{
+				vacancyUseCase: mockUseCase,
+			}
+
+			r := gin.New()
+			r.GET("/:id", sessionMiddlware.Session, handler.GetPreviewVacanciesByEmployer, errorHandler.Middleware())
+
+			cookie := &http.Cookie{
+				Name:  "session",
+				Value: testCase.inputToken,
+			}
+
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest("GET", "/"+testCase.requestParam,
+				bytes.NewBufferString(""))
+
+			req.AddCookie(cookie)
+			r.ServeHTTP(w, req)
+
+			assert.Equal(t, testCase.expectedStatusCode, w.Code)
+			assert.Equal(t, testCase.expectedResponseBody, w.Body.String())
+		})
+	}
+}
