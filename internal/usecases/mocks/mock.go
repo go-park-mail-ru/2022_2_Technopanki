@@ -50,6 +50,21 @@ func (mr *MockUserMockRecorder) AuthCheck(email interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthCheck", reflect.TypeOf((*MockUser)(nil).AuthCheck), email)
 }
 
+// ConfirmUser mocks base method.
+func (m *MockUser) ConfirmUser(code, email string) (*models.UserAccount, string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ConfirmUser", code, email)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return nil, ret0, ret1
+}
+
+// ConfirmUser indicates an expected call of ConfirmUser.
+func (mr *MockUserMockRecorder) ConfirmUser(code, email interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConfirmUser", reflect.TypeOf((*MockUser)(nil).ConfirmUser), code, email)
+}
+
 // DeleteUserImage mocks base method.
 func (m *MockUser) DeleteUserImage(user *models.UserAccount) error {
 	m.ctrl.T.Helper()
@@ -196,6 +211,20 @@ func (m *MockUser) SignUp(input *models.UserAccount) (string, error) {
 func (mr *MockUserMockRecorder) SignUp(input interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignUp", reflect.TypeOf((*MockUser)(nil).SignUp), input)
+}
+
+// UpdatePassword mocks base method.
+func (m *MockUser) UpdatePassword(code, email, password string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdatePassword", code, email, password)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdatePassword indicates an expected call of UpdatePassword.
+func (mr *MockUserMockRecorder) UpdatePassword(code, email, password interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePassword", reflect.TypeOf((*MockUser)(nil).UpdatePassword), code, email, password)
 }
 
 // UpdateUser mocks base method.

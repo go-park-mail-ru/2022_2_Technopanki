@@ -27,12 +27,12 @@ func NewPostgresRepository(db *gorm.DB) *Repository {
 type UserRepository interface {
 	CreateUser(user *models.UserAccount) error
 	GetUserByEmail(email string) (*models.UserAccount, error)
-	IsUserExist(email string) (bool, error)
-	UpdateUser(oldUser, newUser *models.UserAccount) error
-	UpdateUserField(oldUser, newUser *models.UserAccount, field ...string) error
+	UpdateUser(newUser *models.UserAccount) error
 	GetUser(id uint) (*models.UserAccount, error)
 	GetAllUsers(conditions []string, filterValues []interface{}, flag string) ([]*models.UserAccount, error)
 	GetUserSafety(id uint, safeFields []string) (*models.UserAccount, error)
+	GetBestVacanciesForApplicant() ([]*models.Vacancy, error)
+	GetBestApplicantForEmployer() ([]*models.UserAccount, error)
 }
 
 type VacancyRepository interface {

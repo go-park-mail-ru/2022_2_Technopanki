@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"HeadHunter/internal/repository/session"
+	"HeadHunter/common/session"
 	"HeadHunter/pkg/errorHandler"
 	"github.com/gin-gonic/gin"
 )

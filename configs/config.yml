@@ -1,6 +1,11 @@
 domain: "localhost"
 port: ":8080"
 defaultExpiringSession: 259200
+authMsHost: "auth_service"
+authMsPort: ":8081"
+mailMsHost: "mail_service"
+mailMsPort: ":8082"
+cleaningPeriod: 2
 db:
   username: "jobflowAdmin"
   host: "jfPostgres"
@@ -8,11 +13,6 @@ db:
   dbname: "jobflowDB"
   sslmode: "disable"
   password: "pgjf12345RTY"
-redis:
-  host: "jfRedis"
-  port: "6379"
-  password: "rjf358123QWE"
-  dbname: "sessionDB"
 validation:
   minNameLength: 2
   maxNameLength: 30
@@ -37,3 +37,5 @@ image:
 security:
   csrfSecret: "jobFlowSecretWorld112351235125"
   csrfMode: false
+  confirmationTime: 600
+  confirmAccountMode: true

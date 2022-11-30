@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+// protoc --go_out=. --go-grpc_out=. --go-grpc_opt=paths=source_relative --go_opt=paths=source_relative *.proto
+
+package session;
+option go_package = "./handler";
+
+message Email {
+  string value = 1;
+}
+
+message Token {
+  string value = 1;
+}
+
+message Nothing {
+  bool dummy = 1;
+}
+
+service AuthChecker {
+  rpc NewSession (Email) returns (Token) {}
+  rpc GetSession (Token) returns (Email) {}
+  rpc DeleteSession (Token) returns (Nothing) {}
+  rpc CreateConfirmationCode (Email) returns (Token) {}
+  rpc GetCodeFromEmail (Email) returns (Token) {}
+}

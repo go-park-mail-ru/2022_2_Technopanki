@@ -1,0 +1,10 @@
+domain: "auth_service"
+port: ":8081"
+confirmationTime: 600
+getConfirmInterval: 60
+defaultExpiringSession: 259200
+redis:
+  host: "jfRedis"
+  port: "6379"
+  password: "rjf358123QWE"
+  dbname: "sessionDB"

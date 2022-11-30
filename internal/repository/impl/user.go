@@ -2,7 +2,7 @@ package impl
 
 import (
 	"HeadHunter/internal/entity/models"
-	"HeadHunter/pkg/errorHandler"
+	"fmt"
 	"gorm.io/gorm"
 	"strings"
 )
@@ -19,27 +19,14 @@ func (up *UserPostgres) CreateUser(user *models.UserAccount) error {
 	return up.db.Create(user).Error
 }
 
-func (up *UserPostgres) UpdateUser(oldUser, newUser *models.UserAccount) error {
-	return up.db.Model(oldUser).Updates(newUser).Error
+func (up *UserPostgres) UpdateUser(newUser *models.UserAccount) error {
+	return up.db.Model(newUser).Updates(newUser).Error
 }
-func (up *UserPostgres) UpdateUserField(oldUser, newUser *models.UserAccount, field ...string) error {
-	return up.db.Model(oldUser).Select(field).Updates(newUser).Error
-}
+
 func (up *UserPostgres) GetUserByEmail(email string) (*models.UserAccount, error) {
 	var result models.UserAccount
 	query := up.db.Where("email = ?", email).Find(&result)
 	return &result, QueryValidation(query, "user")
-}
-
-func (up *UserPostgres) IsUserExist(email string) (bool, error) {
-	_, getErr := up.GetUserByEmail(email)
-	if getErr == nil {
-		return true, nil
-	}
-	if getErr == errorHandler.ErrUserNotExists {
-		return false, nil
-	}
-	return false, getErr
 }
 
 func (up *UserPostgres) GetUser(id uint) (*models.UserAccount, error) {
@@ -73,4 +60,23 @@ func (up *UserPostgres) GetUserSafety(id uint, allowedFields []string) (*models.
 
 	query := up.db.Select(append(models.SafeUserFields, allowedFields...)).Find(&result, id)
 	return &result, QueryValidation(query, "user")
+}
+
+func (up *UserPostgres) GetBestVacanciesForApplicant() ([]*models.Vacancy, error) {
+	var result []*models.Vacancy
+	query := up.db.Table("vacancies").Order("created_date asc").Limit(10).Scan(&result)
+	if query.Error != nil {
+		return nil, fmt.Errorf("error with getting best vacancies: %w", query.Error)
+	}
+	return result, nil
+}
+
+func (up *UserPostgres) GetBestApplicantForEmployer() ([]*models.UserAccount, error) {
+	var result []*models.UserAccount
+	query := up.db.Table("user_accounts").Select(models.SafeUserFields).Where("user_accounts.user_type = ?", "applicant").
+		Order("created_time asc").Limit(10).Scan(&result)
+	if query.Error != nil {
+		return nil, fmt.Errorf("error with getting best applicants: %w", query.Error)
+	}
+	return result, nil
 }

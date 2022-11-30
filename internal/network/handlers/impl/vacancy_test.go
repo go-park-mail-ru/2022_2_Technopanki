@@ -1,9 +1,9 @@
 package impl
 
 import (
+	"HeadHunter/common/session/mocks"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/network/middleware"
-	mock_session "HeadHunter/internal/repository/session/mocks"
 	mock_usecases "HeadHunter/internal/usecases/mocks"
 	"HeadHunter/pkg/errorHandler"
 	"bytes"

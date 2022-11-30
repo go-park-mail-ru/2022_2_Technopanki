@@ -10,5 +10,7 @@ type Session struct {
 type Repository interface {
 	NewSession(email string) (string, error)
 	GetSession(token string) (string, error)
-	DeleteSession(token string) error
+	Delete(token string) error
+	CreateConfirmationCode(token string) (string, error)
+	GetCodeFromEmail(email string) (string, error)
 }

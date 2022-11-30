@@ -9,9 +9,13 @@ import (
 type Config struct {
 	Domain                 string           `yaml:"domain"`
 	Port                   string           `yaml:"port"`
+	AuthMsHost             string           `yaml:"authMsHost"`
+	AuthMsPort             string           `yaml:"authMsPort"`
+	MailMsHost             string           `yaml:"mailMsHost"`
+	MailMsPort             string           `yaml:"mailMsPort"`
+	CleaningPeriod         int64            `yaml:"cleaningPeriod"`
 	DefaultExpiringSession int              `yaml:"defaultExpiringSession"`
 	DB                     DBConfig         `yaml:"db"`
-	Redis                  RedisConfig      `yaml:"redis"`
 	Validation             ValidationConfig `yaml:"validation"`
 	Cookie                 CookieConfig     `yaml:"cookie"`
 	Crypt                  CryptConfig      `yaml:"crypt"`
@@ -26,13 +30,6 @@ type DBConfig struct {
 	DBName   string `yaml:"dbname"`
 	Password string `yaml:"password"`
 	SSLMode  string `yaml:"sslmode"`
-}
-
-type RedisConfig struct {
-	Host     string `yaml:"host"`
-	Port     string `yaml:"port"`
-	Password string `yaml:"password"`
-	DBName   string `yaml:"dbname"`
 }
 
 type ValidationConfig struct {
@@ -66,8 +63,10 @@ type ImageConfig struct {
 }
 
 type SecurityConfig struct {
-	Secret   string `yaml:"csrfSecret"`
-	CsrfMode bool   `yaml:"csrfMode"`
+	Secret             string `yaml:"csrfSecret"`
+	CsrfMode           bool   `yaml:"csrfMode"`
+	ConfirmationTime   int    `yaml:"confirmationTime"`
+	ConfirmAccountMode bool   `yaml:"confirmAccountMode"`
 }
 
 func InitConfig(config *Config) error {

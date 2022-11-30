@@ -1,10 +1,10 @@
 package impl
 
 import (
+	"HeadHunter/common/session/mocks"
 	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/internal/network/middleware"
-	mock_session "HeadHunter/internal/repository/session/mocks"
 	mock_usecases "HeadHunter/internal/usecases/mocks"
 	errorHandler2 "HeadHunter/pkg/errorHandler"
 	"bytes"
@@ -321,7 +321,7 @@ func TestUserHandler_AuthCheck(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":0,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":0,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name:           "invalid cookie",
@@ -421,7 +421,7 @@ func TestUserHandler_GetUser(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":42,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":42,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name:           "not found",
@@ -542,7 +542,7 @@ func TestUserHandler_GetUserSafety(t *testing.T) {
 				r.EXPECT().GetUserSafety(id).Return(expectedUser, nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":42,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":42,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name:         "not found",
@@ -625,7 +625,7 @@ func TestUserHandler_GetPreview(t *testing.T) {
 				r.EXPECT().GetUserSafety(id).Return(expectedUser, nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":42,\"user_type\":\"employer\",\"email\":\"\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":42,\"user_type\":\"employer\",\"email\":\"\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name:         "not found",
@@ -723,7 +723,7 @@ func TestUserHandler_UpdateUser(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":0,\"user_type\":\"applicant\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"applicant_name\":\"Ivan\",\"applicant_surname\":\"Kozirev\",\"company_size\":0,\"public_fields\":\"\",\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":0,\"user_type\":\"applicant\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"applicant_name\":\"Ivan\",\"applicant_surname\":\"Kozirev\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name:           "error",
