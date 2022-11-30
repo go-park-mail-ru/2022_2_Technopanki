@@ -95,6 +95,11 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 			if user.IsConfirmed {
 				return "", errorHandler.ErrUserExists
 			}
+			_, getCodeErr := us.sessionRepo.GetSession(input.Email)
+			if getCodeErr == nil {
+				return "", errorHandler.ErrIsNotConfirmed
+			}
+
 			sendCodeErr := us.mail.SendConfirmCode(input.Email)
 			if sendCodeErr != nil {
 				return "", sendCodeErr
