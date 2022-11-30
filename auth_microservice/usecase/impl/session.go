@@ -29,3 +29,7 @@ func (sus *SessionUseCase) CreateConfirmationCode(email string) (string, error) 
 func (sus *SessionUseCase) GetEmailFromCode(token string) (string, error) {
 	return sus.redisStore.GetEmailFromCode(token)
 }
+
+func (sus *SessionUseCase) GetCodeFromEmail(email string) (string, error) {
+	return sus.redisStore.GetCodeFromEmail(email)
+}

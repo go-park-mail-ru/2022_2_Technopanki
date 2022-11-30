@@ -56,18 +56,10 @@ func (gs *SessionMicroservice) CreateConfirmationCode(email string) (string, err
 	return code.Value, nil
 }
 
-func (gs *SessionMicroservice) GetEmailFromCode(token string) (string, error) {
-	email, getErr := gs.client.GetEmailFromCode(gs.ctx, &handler.Token{Value: token})
-	if getErr != nil {
-		logrus.Println(getErr)
-		return "", errorHandler.ErrCodeNotFound
-	}
-	return email.Value, nil
-}
-
 func (gs *SessionMicroservice) GetCodeFromEmail(email string) (string, error) {
 	code, getErr := gs.client.GetCodeFromEmail(gs.ctx, &handler.Email{Value: email})
 	if getErr != nil {
+		logrus.Println(getErr)
 		return "", errorHandler.ErrCodeNotFound
 	}
 	return code.Value, nil

@@ -70,3 +70,14 @@ func (sh *SessionHandler) GetEmailFromCode(ctx context.Context, in *handler.Toke
 	}
 	return &handler.Email{Value: email}, nil
 }
+
+func (sh *SessionHandler) GetCodeFromEmail(ctx context.Context, in *handler.Email) (*handler.Token, error) {
+	if in == nil {
+		return &handler.Token{}, errorHandler.ErrBadRequest
+	}
+	code, getErr := sh.sessionUseCase.GetCodeFromEmail(in.Value)
+	if getErr != nil {
+		return &handler.Token{}, getErr
+	}
+	return &handler.Token{Value: code}, nil
+}

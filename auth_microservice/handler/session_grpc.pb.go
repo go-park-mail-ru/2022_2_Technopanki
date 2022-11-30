@@ -27,6 +27,7 @@ type AuthCheckerClient interface {
 	DeleteSession(ctx context.Context, in *Token, opts ...grpc.CallOption) (*Nothing, error)
 	CreateConfirmationCode(ctx context.Context, in *Email, opts ...grpc.CallOption) (*Token, error)
 	GetEmailFromCode(ctx context.Context, in *Token, opts ...grpc.CallOption) (*Email, error)
+	GetCodeFromEmail(ctx context.Context, in *Email, opts ...grpc.CallOption) (*Token, error)
 }
 
 type authCheckerClient struct {
@@ -57,7 +58,7 @@ func (c *authCheckerClient) GetSession(ctx context.Context, in *Token, opts ...g
 
 func (c *authCheckerClient) DeleteSession(ctx context.Context, in *Token, opts ...grpc.CallOption) (*Nothing, error) {
 	out := new(Nothing)
-	err := c.cc.Invoke(ctx, "/session.AuthChecker/Delete", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/session.AuthChecker/DeleteSession", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -82,6 +83,15 @@ func (c *authCheckerClient) GetEmailFromCode(ctx context.Context, in *Token, opt
 	return out, nil
 }
 
+func (c *authCheckerClient) GetCodeFromEmail(ctx context.Context, in *Email, opts ...grpc.CallOption) (*Token, error) {
+	out := new(Token)
+	err := c.cc.Invoke(ctx, "/session.AuthChecker/GetCodeFromEmail", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthCheckerServer is the server API for AuthChecker service.
 // All implementations must embed UnimplementedAuthCheckerServer
 // for forward compatibility
@@ -91,6 +101,7 @@ type AuthCheckerServer interface {
 	DeleteSession(context.Context, *Token) (*Nothing, error)
 	CreateConfirmationCode(context.Context, *Email) (*Token, error)
 	GetEmailFromCode(context.Context, *Token) (*Email, error)
+	GetCodeFromEmail(context.Context, *Email) (*Token, error)
 	mustEmbedUnimplementedAuthCheckerServer()
 }
 
@@ -105,13 +116,16 @@ func (UnimplementedAuthCheckerServer) GetSession(context.Context, *Token) (*Emai
 	return nil, status.Errorf(codes.Unimplemented, "method GetSession not implemented")
 }
 func (UnimplementedAuthCheckerServer) DeleteSession(context.Context, *Token) (*Nothing, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteSession not implemented")
 }
 func (UnimplementedAuthCheckerServer) CreateConfirmationCode(context.Context, *Email) (*Token, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateConfirmationCode not implemented")
 }
 func (UnimplementedAuthCheckerServer) GetEmailFromCode(context.Context, *Token) (*Email, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEmailFromCode not implemented")
+}
+func (UnimplementedAuthCheckerServer) GetCodeFromEmail(context.Context, *Email) (*Token, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCodeFromEmail not implemented")
 }
 func (UnimplementedAuthCheckerServer) mustEmbedUnimplementedAuthCheckerServer() {}
 
@@ -172,7 +186,7 @@ func _AuthChecker_DeleteSession_Handler(srv interface{}, ctx context.Context, de
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/session.AuthChecker/Delete",
+		FullMethod: "/session.AuthChecker/DeleteSession",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthCheckerServer).DeleteSession(ctx, req.(*Token))
@@ -216,6 +230,24 @@ func _AuthChecker_GetEmailFromCode_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthChecker_GetCodeFromEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Email)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthCheckerServer).GetCodeFromEmail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/session.AuthChecker/GetCodeFromEmail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthCheckerServer).GetCodeFromEmail(ctx, req.(*Email))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthChecker_ServiceDesc is the grpc.ServiceDesc for AuthChecker service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -232,7 +264,7 @@ var AuthChecker_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthChecker_GetSession_Handler,
 		},
 		{
-			MethodName: "Delete",
+			MethodName: "DeleteSession",
 			Handler:    _AuthChecker_DeleteSession_Handler,
 		},
 		{
@@ -242,6 +274,10 @@ var AuthChecker_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetEmailFromCode",
 			Handler:    _AuthChecker_GetEmailFromCode_Handler,
+		},
+		{
+			MethodName: "GetCodeFromEmail",
+			Handler:    _AuthChecker_GetCodeFromEmail_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

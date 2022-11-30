@@ -62,7 +62,7 @@ func (rs *RedisStore) CreateConfirmationCode(email string) (string, error) {
 		}
 	}
 
-	err := rs.client.Do("SETEX", code, rs.ConfirmationTime, email).Err()
+	err := rs.client.Do("SETEX", email, rs.ConfirmationTime, code).Err()
 	if err != nil {
 		return "", fmt.Errorf("creating confirmation code error: %w", err)
 	}
@@ -83,6 +83,6 @@ func (rs *RedisStore) GetCodeFromEmail(email string) (string, error) {
 	if getErr != nil {
 		return "", fmt.Errorf("getting code error: %w", getErr)
 	}
-	
+
 	return result, nil
 }
