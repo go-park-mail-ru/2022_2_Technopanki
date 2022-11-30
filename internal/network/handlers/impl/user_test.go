@@ -1101,7 +1101,7 @@ func TestUserHandler_GetAllEmployers(t *testing.T) {
 						CompanyName: "some name",
 					},
 				}
-				r.EXPECT().GetAllApplicants(filters).Return(expectedResume, nil)
+				r.EXPECT().GetAllEmployers(filters).Return(expectedResume, nil)
 			},
 			expectedStatusCode:   200,
 			expectedResponseBody: "{\"data\":[{\"id\":42,\"user_type\":\"\",\"email\":\"\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"some name\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}]}",
@@ -1118,7 +1118,7 @@ func TestUserHandler_GetAllEmployers(t *testing.T) {
 						CompanyName: "some name",
 					},
 				}
-				r.EXPECT().GetAllApplicants(filters).Return(expectedResume, errorHandler2.ErrResumeNotFound)
+				r.EXPECT().GetAllEmployers(filters).Return(expectedResume, errorHandler2.ErrResumeNotFound)
 			},
 			expectedStatusCode:   404,
 			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Резюме не найдено\"}",
@@ -1142,7 +1142,7 @@ func TestUserHandler_GetAllEmployers(t *testing.T) {
 			}
 
 			r := gin.New()
-			r.GET("/", handler.GetAllApplicants, errorHandler2.Middleware())
+			r.GET("/", handler.GetAllEmployers, errorHandler2.Middleware())
 
 			cookie := &http.Cookie{
 				Name:  "session",
