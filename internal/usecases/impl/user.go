@@ -19,6 +19,7 @@ import (
 	"mime/multipart"
 	"reflect"
 	"strings"
+	"time"
 )
 
 type UserService struct {
@@ -266,13 +267,11 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 
 	user = escaping.EscapingObject[*models.UserAccount](user)
 
-	if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
-		user.Image = fmt.Sprintf("%d.webp", user.ID)
+	user.Image = fmt.Sprintf("%d.webp?%s", user.ID, time.Now().String())
 
-		updateErr := us.UpdateUser(user)
-		if updateErr != nil {
-			return "", updateErr
-		}
+	updateErr := us.userRep.UpdateUser(&models.UserAccount{ID: user.ID, Image: user.Image})
+	if updateErr != nil {
+		return "", updateErr
 	}
 
 	img, _, decodeErr := image.Decode(file)

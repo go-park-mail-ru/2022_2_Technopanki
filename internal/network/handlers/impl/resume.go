@@ -26,13 +26,7 @@ func (rh *ResumeHandler) GetResume(c *gin.Context) {
 		return
 	}
 
-	email, contextErr := utils.GetEmailFromContext(c)
-	if contextErr != nil {
-		_ = c.Error(contextErr)
-		return
-	}
-
-	resume, getResumeErr := rh.resumeUseCase.GetResume(uint(id), email)
+	resume, getResumeErr := rh.resumeUseCase.GetResume(uint(id))
 	if getResumeErr != nil {
 		_ = c.Error(getResumeErr)
 		return
@@ -90,13 +84,7 @@ func (rh *ResumeHandler) GetResumeByApplicant(c *gin.Context) {
 		return
 	}
 
-	email, contextErr := utils.GetEmailFromContext(c)
-	if contextErr != nil {
-		_ = c.Error(contextErr)
-		return
-	}
-
-	resumes, getResumeErr := rh.resumeUseCase.GetResumeByApplicant(uint(userId), email)
+	resumes, getResumeErr := rh.resumeUseCase.GetResumeByApplicant(uint(userId))
 	if getResumeErr != nil {
 		_ = c.Error(getResumeErr)
 		return
@@ -112,13 +100,7 @@ func (rh *ResumeHandler) GetPreviewResumeByApplicant(c *gin.Context) {
 		return
 	}
 
-	email, contextErr := utils.GetEmailFromContext(c)
-	if contextErr != nil {
-		_ = c.Error(contextErr)
-		return
-	}
-
-	resumes, getResumeErr := rh.resumeUseCase.GetPreviewResumeByApplicant(uint(userId), email)
+	resumes, getResumeErr := rh.resumeUseCase.GetPreviewResumeByApplicant(uint(userId))
 	if getResumeErr != nil {
 		_ = c.Error(getResumeErr)
 		return

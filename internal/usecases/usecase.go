@@ -67,10 +67,10 @@ type VacancyActivity interface {
 }
 
 type Resume interface {
-	GetResume(id uint, email string) (*models.Resume, error)
+	GetResume(id uint) (*models.Resume, error)
 	GetAllResumes(filters models.ResumeFilter) ([]*models.Resume, error)
-	GetResumeByApplicant(userId uint, email string) ([]*models.Resume, error)
-	GetPreviewResumeByApplicant(userId uint, email string) ([]*models.ResumePreview, error)
+	GetResumeByApplicant(userId uint) ([]*models.Resume, error)
+	GetPreviewResumeByApplicant(userId uint) ([]*models.ResumePreview, error)
 	CreateResume(resume *models.Resume, email string) error
 	UpdateResume(id uint, resume *models.Resume, email string) error
 	DeleteResume(id uint, email string) error

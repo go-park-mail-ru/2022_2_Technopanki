@@ -54,9 +54,10 @@ func (mr *MockUserMockRecorder) AuthCheck(email interface{}) *gomock.Call {
 func (m *MockUser) ConfirmUser(code, email string) (*models.UserAccount, string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ConfirmUser", code, email)
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return nil, ret0, ret1
+	ret0, _ := ret[0].(*models.UserAccount)
+	ret1, _ := ret[1].(string)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // ConfirmUser indicates an expected call of ConfirmUser.
@@ -353,6 +354,21 @@ func (mr *MockVacancyMockRecorder) GetByUserId(userId interface{}) *gomock.Call 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUserId", reflect.TypeOf((*MockVacancy)(nil).GetByUserId), userId)
 }
 
+// GetPreviewVacanciesByEmployer mocks base method.
+func (m *MockVacancy) GetPreviewVacanciesByEmployer(userId uint) ([]*models.VacancyPreview, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetPreviewVacanciesByEmployer", userId)
+	ret0, _ := ret[0].([]*models.VacancyPreview)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetPreviewVacanciesByEmployer indicates an expected call of GetPreviewVacanciesByEmployer.
+func (mr *MockVacancyMockRecorder) GetPreviewVacanciesByEmployer(userId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPreviewVacanciesByEmployer", reflect.TypeOf((*MockVacancy)(nil).GetPreviewVacanciesByEmployer), userId)
+}
+
 // Update mocks base method.
 func (m *MockVacancy) Update(email string, vacancyId uint, updates *models.Vacancy) error {
 	m.ctrl.T.Helper()
@@ -515,48 +531,48 @@ func (mr *MockResumeMockRecorder) GetAllResumes(filters interface{}) *gomock.Cal
 }
 
 // GetPreviewResumeByApplicant mocks base method.
-func (m *MockResume) GetPreviewResumeByApplicant(userId uint, email string) ([]*models.ResumePreview, error) {
+func (m *MockResume) GetPreviewResumeByApplicant(userId uint) ([]*models.ResumePreview, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetPreviewResumeByApplicant", userId, email)
+	ret := m.ctrl.Call(m, "GetPreviewResumeByApplicant", userId)
 	ret0, _ := ret[0].([]*models.ResumePreview)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetPreviewResumeByApplicant indicates an expected call of GetPreviewResumeByApplicant.
-func (mr *MockResumeMockRecorder) GetPreviewResumeByApplicant(userId, email interface{}) *gomock.Call {
+func (mr *MockResumeMockRecorder) GetPreviewResumeByApplicant(userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPreviewResumeByApplicant", reflect.TypeOf((*MockResume)(nil).GetPreviewResumeByApplicant), userId, email)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPreviewResumeByApplicant", reflect.TypeOf((*MockResume)(nil).GetPreviewResumeByApplicant), userId)
 }
 
 // GetResume mocks base method.
-func (m *MockResume) GetResume(id uint, email string) (*models.Resume, error) {
+func (m *MockResume) GetResume(id uint) (*models.Resume, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetResume", id, email)
+	ret := m.ctrl.Call(m, "GetResume", id)
 	ret0, _ := ret[0].(*models.Resume)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetResume indicates an expected call of GetResume.
-func (mr *MockResumeMockRecorder) GetResume(id, email interface{}) *gomock.Call {
+func (mr *MockResumeMockRecorder) GetResume(id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetResume", reflect.TypeOf((*MockResume)(nil).GetResume), id, email)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetResume", reflect.TypeOf((*MockResume)(nil).GetResume), id)
 }
 
 // GetResumeByApplicant mocks base method.
-func (m *MockResume) GetResumeByApplicant(userId uint, email string) ([]*models.Resume, error) {
+func (m *MockResume) GetResumeByApplicant(userId uint) ([]*models.Resume, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetResumeByApplicant", userId, email)
+	ret := m.ctrl.Call(m, "GetResumeByApplicant", userId)
 	ret0, _ := ret[0].([]*models.Resume)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetResumeByApplicant indicates an expected call of GetResumeByApplicant.
-func (mr *MockResumeMockRecorder) GetResumeByApplicant(userId, email interface{}) *gomock.Call {
+func (mr *MockResumeMockRecorder) GetResumeByApplicant(userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetResumeByApplicant", reflect.TypeOf((*MockResume)(nil).GetResumeByApplicant), userId, email)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetResumeByApplicant", reflect.TypeOf((*MockResume)(nil).GetResumeByApplicant), userId)
 }
 
 // UpdateResume mocks base method.
