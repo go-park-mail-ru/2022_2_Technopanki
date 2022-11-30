@@ -356,7 +356,7 @@ func TestResumePostgres_CreateResume(t *testing.T) {
 
 			mock.ExpectBegin()
 			mock.
-				ExpectQuery(regexp.QuoteMeta(`INSERT INTO "resumes" ("user_account_id","title","description","created_time", "location", "experience_in_years", "salary") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "id"`)).
+				ExpectQuery(regexp.QuoteMeta(`INSERT INTO "resumes" ("user_account_id","title","description","created_time","location","experience_in_years","salary") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "id"`)).
 				WithArgs(1,
 					"title",
 					"desc",
@@ -369,7 +369,7 @@ func TestResumePostgres_CreateResume(t *testing.T) {
 
 			mock.ExpectBegin()
 			mock.
-				ExpectQuery(regexp.QuoteMeta(`INSERT INTO "resumes" ("user_account_id","title","description","created_time", "location", "experience_in_years", "salary") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "id"`)).
+				ExpectQuery(regexp.QuoteMeta(`INSERT INTO "resumes" ("user_account_id","title","description","created_time","location","experience_in_years","salary") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "id"`)).
 				WithArgs(1,
 					"title",
 					"desc",
