@@ -98,6 +98,20 @@ func (vh *VacancyHandler) GetUserVacancies(c *gin.Context) {
 
 }
 
+func (vh *VacancyHandler) GetPreviewVacanciesByEmployer(c *gin.Context) {
+	companyId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		_ = c.Error(errorHandler.ErrInvalidParam)
+		return
+	}
+	vacancies, GetErr := vh.vacancyUseCase.GetPreviewVacanciesByEmployer(uint(companyId))
+	if GetErr != nil {
+		_ = c.Error(GetErr)
+		return
+	}
+	c.JSON(http.StatusOK, vacancies)
+}
+
 func (vh *VacancyHandler) CreateVacancy(c *gin.Context) {
 	email, contextErr := utils.GetEmailFromContext(c)
 	if contextErr != nil {

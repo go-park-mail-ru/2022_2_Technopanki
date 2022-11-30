@@ -346,8 +346,8 @@ func (us *UserService) UpdatePassword(code, email, password string) error {
 }
 
 func generateRandomQuery() string {
-	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ" +
-		"abcdefghijklmnopqrstuvwxyzåäö" +
+	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+		"abcdefghijklmnopqrstuvwxyz" +
 		"0123456789")
 	length := 8
 	var b strings.Builder
