@@ -404,7 +404,7 @@ func TestUserService_Logout(t *testing.T) {
 			name:  "ok",
 			token: "valid_token",
 			sessionRepBehavior: func(r *mock_session.MockRepository, token string) {
-				r.EXPECT().DeleteSession(token).Return(nil)
+				r.EXPECT().Delete(token).Return(nil)
 			},
 			expectedErr: nil,
 		},
@@ -412,7 +412,7 @@ func TestUserService_Logout(t *testing.T) {
 			name:  "error",
 			token: "valid_token",
 			sessionRepBehavior: func(r *mock_session.MockRepository, token string) {
-				r.EXPECT().DeleteSession(token).Return(errorHandler.ErrCannotDeleteSession)
+				r.EXPECT().Delete(token).Return(errorHandler.ErrCannotDeleteSession)
 			},
 			expectedErr: errorHandler.ErrCannotDeleteSession,
 		},
