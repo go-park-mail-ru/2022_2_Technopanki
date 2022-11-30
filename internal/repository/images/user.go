@@ -44,6 +44,7 @@ func UploadUserAvatar(name string, image *image.Image, cfg *configs.ImageConfig)
 		return encodingErr
 	}
 	return nil
+	//return nil
 }
 
 func DeleteUserAvatar(name string, cfg *configs.ImageConfig) error {

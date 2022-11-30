@@ -231,6 +231,7 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 	}
 
 	return user.Image, images.UploadUserAvatar(user.Image, &img, &us.cfg.Image)
+	//return "", nil
 }
 
 func (us *UserService) DeleteUserImage(user *models.UserAccount) error {
