@@ -261,7 +261,7 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 	if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
 		user.Image = fmt.Sprintf("%d.webp", user.ID)
 
-		updateErr := us.UpdateUser(user)
+		updateErr := us.userRep.UpdateUser(&models.UserAccount{ID: user.ID, Image: user.Image})
 		if updateErr != nil {
 			return "", updateErr
 		}
