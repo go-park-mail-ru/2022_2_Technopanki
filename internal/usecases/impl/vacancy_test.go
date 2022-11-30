@@ -302,57 +302,60 @@ func TestVacancyService_Update(t *testing.T) {
 	}
 }
 
-//func TestVacancyService_GetAll(t *testing.T) {
-//	type mockBehavior func(r *mock_repository.MockVacancyRepository)
-//	testTable := []struct {
-//		name              string
-//		mockBehavior      mockBehavior
-//		expectedVacancies []*models.Vacancy
-//		expectedErr       error
-//	}{
-//		{
-//			name: "ok",
-//			mockBehavior: func(r *mock_repository.MockVacancyRepository) {
-//				expected := []*models.Vacancy{
-//					{
-//						Title: "Job",
-//					},
-//				}
-//				r.EXPECT().GetAll().Return(expected, nil)
-//			},
-//			expectedVacancies: []*models.Vacancy{
-//				{
-//					Title: "Job",
-//				},
-//			},
-//			expectedErr: nil,
-//		},
-//		{
-//			name: "cannot get vacancies",
-//			mockBehavior: func(r *mock_repository.MockVacancyRepository) {
-//				r.EXPECT().GetAll().Return([]*models.Vacancy{}, errorHandler.ErrBadRequest)
-//			},
-//			expectedVacancies: []*models.Vacancy{},
-//			expectedErr:       errorHandler.ErrBadRequest,
-//		},
-//	}
-//	for _, test := range testTable {
-//		testCase := test
-//		t.Run(test.name, func(t *testing.T) {
-//			t.Parallel()
-//			c := gomock.NewController(t)
-//			defer c.Finish()
-//
-//			vacancyRepository := mock_repository.NewMockVacancyRepository(c)
-//			userRep := mock_repository.NewMockUserRepository(c)
-//			testCase.mockBehavior(vacancyRepository)
-//			vacancyService := VacancyService{vacancyRep: vacancyRepository, userRep: userRep}
-//			vacancy, err := vacancyService.GetAll()
-//			if testCase.expectedErr == nil {
-//				assert.Equal(t, testCase.expectedVacancies, vacancy)
-//			}
-//			assert.Equal(t, testCase.expectedErr, err)
-//		})
-//
-//	}
-//}
+func TestVacancyService_GetAll(t *testing.T) {
+	type mockBehavior func(r *mock_repository.MockVacancyRepository, conditions interface{}, filterValues interface{}, filters models.VacancyFilter)
+	testTable := []struct {
+		name              string
+		conditions        interface{}
+		filterValues      interface{}
+		mockBehavior      mockBehavior
+		expectedVacancies []*models.Vacancy
+		filters           models.VacancyFilter
+		expectedErr       error
+	}{
+		{
+			name: "ok",
+			mockBehavior: func(r *mock_repository.MockVacancyRepository, conditions interface{}, filterValues interface{}, filters models.VacancyFilter) {
+				expected := []*models.Vacancy{
+					{
+						Title: "Job",
+					},
+				}
+				r.EXPECT().GetAll(conditions, filterValues).Return(expected, nil)
+			},
+			expectedVacancies: []*models.Vacancy{
+				{
+					Title: "Job",
+				},
+			},
+			expectedErr: nil,
+		},
+		{
+			name: "cannot get vacancies",
+			mockBehavior: func(r *mock_repository.MockVacancyRepository, conditions interface{}, filterValues interface{}, filters models.VacancyFilter) {
+				r.EXPECT().GetAll(conditions, filterValues).Return([]*models.Vacancy{}, errorHandler.ErrBadRequest)
+			},
+			expectedVacancies: []*models.Vacancy{},
+			expectedErr:       errorHandler.ErrBadRequest,
+		},
+	}
+	for _, test := range testTable {
+		testCase := test
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			vacancyRepository := mock_repository.NewMockVacancyRepository(c)
+			userRep := mock_repository.NewMockUserRepository(c)
+			testCase.mockBehavior(vacancyRepository, testCase.conditions, testCase.filterValues, testCase.filters)
+			vacancyService := VacancyService{vacancyRep: vacancyRepository, userRep: userRep}
+			vacancy, err := vacancyService.GetAll(testCase.filters)
+			if testCase.expectedErr == nil {
+				assert.Equal(t, testCase.expectedVacancies, vacancy)
+			}
+			assert.Equal(t, testCase.expectedErr, err)
+		})
+
+	}
+}
