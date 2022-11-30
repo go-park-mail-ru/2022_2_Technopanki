@@ -54,9 +54,10 @@ func (mr *MockUserMockRecorder) AuthCheck(email interface{}) *gomock.Call {
 func (m *MockUser) ConfirmUser(code, email string) (*models.UserAccount, string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ConfirmUser", code, email)
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return nil, ret0, ret1
+	ret0, _ := ret[0].(*models.UserAccount)
+	ret1, _ := ret[1].(string)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // ConfirmUser indicates an expected call of ConfirmUser.
@@ -351,6 +352,21 @@ func (m *MockVacancy) GetByUserId(userId uint) ([]*models.Vacancy, error) {
 func (mr *MockVacancyMockRecorder) GetByUserId(userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUserId", reflect.TypeOf((*MockVacancy)(nil).GetByUserId), userId)
+}
+
+// GetPreviewVacanciesByEmployer mocks base method.
+func (m *MockVacancy) GetPreviewVacanciesByEmployer(userId uint) ([]*models.VacancyPreview, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetPreviewVacanciesByEmployer", userId)
+	ret0, _ := ret[0].([]*models.VacancyPreview)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetPreviewVacanciesByEmployer indicates an expected call of GetPreviewVacanciesByEmployer.
+func (mr *MockVacancyMockRecorder) GetPreviewVacanciesByEmployer(userId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPreviewVacanciesByEmployer", reflect.TypeOf((*MockVacancy)(nil).GetPreviewVacanciesByEmployer), userId)
 }
 
 // Update mocks base method.
