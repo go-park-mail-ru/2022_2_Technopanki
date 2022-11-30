@@ -58,6 +58,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 		{
 			vacancies.GET("", h.VacancyHandler.GetAllVacancies, errorHandler.Middleware())
 			vacancies.GET("/:id", h.VacancyHandler.GetVacancyById, errorHandler.Middleware())
+			vacancies.GET("/employer/preview/:id", h.VacancyHandler.GetPreviewVacanciesByEmployer, errorHandler.Middleware())
 			vacancies.GET("/company/:id", h.VacancyHandler.GetUserVacancies, errorHandler.Middleware())
 			vacancies.POST("/", sessionMW.Session, h.VacancyHandler.CreateVacancy, errorHandler.Middleware())
 			vacancies.PUT("/:id", sessionMW.Session, h.VacancyHandler.UpdateVacancy, errorHandler.Middleware())

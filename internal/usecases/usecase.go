@@ -53,6 +53,7 @@ type Vacancy interface {
 	GetAll(filters models.VacancyFilter) ([]*models.Vacancy, error)
 	GetById(vacancyId uint) (*models.Vacancy, error)
 	GetByUserId(userId uint) ([]*models.Vacancy, error)
+	GetPreviewVacanciesByEmployer(userId uint) ([]*models.VacancyPreview, error)
 	Create(email string, input *models.Vacancy) (uint, error)
 	Update(email string, vacancyId uint, updates *models.Vacancy) error
 	Delete(email string, vacancyId uint) error
