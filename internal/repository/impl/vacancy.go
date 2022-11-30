@@ -4,6 +4,7 @@ import (
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/pkg/errorHandler"
 	"gorm.io/gorm"
+	"strings"
 )
 
 type VacancyPostgres struct {
@@ -14,9 +15,29 @@ func NewVacancyPostgres(db *gorm.DB) *VacancyPostgres {
 	return &VacancyPostgres{db: db}
 }
 
-func (vp *VacancyPostgres) GetAll() ([]*models.Vacancy, error) {
+func (vp *VacancyPostgres) GetAll(conditions []string, filterValues []interface{}) ([]*models.Vacancy, error) {
 	var vacancies []*models.Vacancy
-	query := vp.db.Find(&vacancies)
+	if conditions == nil {
+		query := vp.db.Find(&vacancies)
+		if query.Error != nil {
+			return vacancies, query.Error
+		}
+		return vacancies, nil
+
+	} else {
+		queryString := strings.Join(conditions, " AND ")
+		queryConditions := FilterQueryStringFormatter(queryString, filterValues, vp.db)
+		query := queryConditions.Find(&vacancies)
+		if query.Error != nil {
+			return vacancies, query.Error
+		}
+		return vacancies, nil
+	}
+}
+
+func (vp *VacancyPostgres) GetAllFilter(filter string) ([]*models.Vacancy, error) {
+	var vacancies []*models.Vacancy
+	query := vp.db.Where("title LIKE ?", filter).Find(&vacancies)
 	if query.Error != nil {
 		return vacancies, query.Error
 	}

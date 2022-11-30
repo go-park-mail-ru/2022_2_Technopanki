@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type UserHandler struct {
@@ -129,6 +130,79 @@ func (uh *UserHandler) GetUser(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, user)
+}
+
+func (uh *UserHandler) GetAllEmployers(c *gin.Context) {
+	var employers []*models.UserAccount
+	var getAllErr error
+	var filters models.UserFilter
+
+	search := c.Query("search")
+	if search != "" {
+		filters.CompanyName = search
+	}
+
+	workField := c.Query("field")
+	if workField != "" {
+		filters.BusinessType = workField
+	}
+
+	size := c.Query("size")
+	if size != "" {
+		if strings.Index(size, ":") != -1 {
+			split := strings.Split(size, ":")
+			filters.FirstCompanySizeValue = split[0]
+			filters.SecondCompanySizeValue = split[1]
+		} else {
+			c.Error(errorHandler.ErrBadRequest)
+			return
+		}
+	}
+
+	city := c.Query("city")
+	if city != "" {
+		filters.Location = city
+	}
+
+	employers, getAllErr = uh.userUseCase.GetAllEmployers(filters)
+	if getAllErr != nil {
+		_ = c.Error(getAllErr)
+		return
+	}
+	c.JSON(http.StatusOK, models.GetAllUsersResponcePointer{
+		Data: employers,
+	})
+}
+
+func (uh *UserHandler) GetAllApplicants(c *gin.Context) {
+	var applicants []*models.UserAccount
+	var getAllErr error
+	var filters models.UserFilter
+
+	search := c.Query("search")
+	if search != "" {
+		if strings.Index(search, "_") != -1 {
+			split := strings.Split(search, " ")
+			filters.ApplicantName = split[0]
+			filters.ApplicantSurname = split[1]
+		} else {
+			filters.ApplicantSurname = search
+		}
+	}
+
+	city := c.Query("city")
+	if city != "" {
+		filters.Location = city
+	}
+
+	applicants, getAllErr = uh.userUseCase.GetAllApplicants(filters)
+	if getAllErr != nil {
+		_ = c.Error(getAllErr)
+		return
+	}
+	c.JSON(http.StatusOK, models.GetAllUsersResponcePointer{
+		Data: applicants,
+	})
 }
 
 func (uh *UserHandler) GetUserSafety(c *gin.Context) {

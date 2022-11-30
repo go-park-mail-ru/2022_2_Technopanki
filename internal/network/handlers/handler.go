@@ -30,6 +30,8 @@ type UserH interface {
 	AuthCheck(c *gin.Context)
 	UpdateUser(c *gin.Context)
 	GetUser(c *gin.Context)
+	GetAllEmployers(c *gin.Context)
+	GetAllApplicants(c *gin.Context)
 	GetUserSafety(c *gin.Context)
 	UploadUserImage(c *gin.Context)
 	DeleteUserImage(c *gin.Context)
@@ -55,6 +57,7 @@ type VacancyActivityH interface {
 type ResumeH interface {
 	GetResume(c *gin.Context)
 	GetResumeByApplicant(c *gin.Context)
+	GetAllResumes(c *gin.Context)
 	GetPreviewResumeByApplicant(c *gin.Context)
 	CreateResume(c *gin.Context)
 	UpdateResume(c *gin.Context)

@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type ResumeHandler struct {
@@ -38,6 +39,48 @@ func (rh *ResumeHandler) GetResume(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, resume)
+}
+
+func (rh *ResumeHandler) GetAllResumes(c *gin.Context) {
+	var resumes []*models.Resume
+	var getAllErr error
+	var filters models.ResumeFilter
+
+	title := c.Query("search")
+	if title != "" {
+		filters.Title = title
+	}
+
+	experience := c.Query("experience")
+	if experience != "" {
+		filters.ExperienceInYears = experience
+	}
+
+	city := c.Query("city")
+	if city != "" {
+		filters.Location = city
+	}
+
+	salary := c.Query("salary")
+	if salary != "" {
+		if strings.Index(salary, ":") != -1 {
+			split := strings.Split(salary, ":")
+			filters.FirstSalaryValue = split[0]
+			filters.SecondSalaryValue = split[1]
+		} else {
+			c.Error(errorHandler.ErrBadRequest)
+			return
+		}
+	}
+
+	resumes, getAllErr = rh.resumeUseCase.GetAllResumes(filters)
+	if getAllErr != nil {
+		_ = c.Error(getAllErr)
+		return
+	}
+	c.JSON(http.StatusOK, models.GetAllResumesResponcePointer{
+		Data: resumes,
+	})
 }
 
 func (rh *ResumeHandler) GetResumeByApplicant(c *gin.Context) {

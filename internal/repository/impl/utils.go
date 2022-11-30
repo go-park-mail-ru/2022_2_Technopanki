@@ -34,3 +34,7 @@ func QueryValidation(query *gorm.DB, object string) error {
 	}
 	return nil
 }
+
+func FilterQueryStringFormatter(queryString string, argsSlice []interface{}, db *gorm.DB) *gorm.DB {
+	return db.Where(queryString, argsSlice...)
+}
