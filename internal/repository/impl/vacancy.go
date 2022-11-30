@@ -70,6 +70,18 @@ func (vp *VacancyPostgres) GetByUserId(userId uint) ([]*models.Vacancy, error) {
 	return vacancies, QueryValidation(query, "vacancy")
 }
 
+func (vp *VacancyPostgres) GetPreviewVacanciesByEmployer(userId uint) ([]*models.VacancyPreview, error) {
+	var resultPreview []*models.VacancyPreview
+	query := vp.db.Table("vacancies").
+		Select("user_accounts.image,"+
+			"vacancies.id, vacancies.title, vacancies.salary, vacancies.location, vacancies.format, vacancies.hours, vacancies.description").
+		Joins("left join user_accounts on vacancies.posted_by_user_id = user_accounts.id").
+		Where("posted_by_user_id = ?", userId).
+		Scan(&resultPreview)
+	return resultPreview, QueryValidation(query, "vacancy")
+
+}
+
 func (vp *VacancyPostgres) Delete(userId uint, vacancyId uint) error {
 
 	error := vp.db.Where("posted_by_user_id = ?", userId).Delete(&models.Vacancy{}, vacancyId).Error

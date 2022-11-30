@@ -40,6 +40,7 @@ type VacancyRepository interface {
 	GetAllFilter(filter string) ([]*models.Vacancy, error)
 	GetById(vacancyId uint) (*models.Vacancy, error)
 	GetByUserId(userId uint) ([]*models.Vacancy, error)
+	GetPreviewVacanciesByEmployer(userId uint) ([]*models.VacancyPreview, error)
 	Create(vacancy *models.Vacancy) (uint, error)
 	Update(userId uint, vacancyId uint, oldVacancy *models.Vacancy, updates *models.Vacancy) error
 	Delete(userId, vacancyId uint) error
