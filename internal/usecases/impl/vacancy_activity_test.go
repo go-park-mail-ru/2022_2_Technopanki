@@ -27,8 +27,8 @@ func TestVacancyActivityService_ApplyForVacancy(t *testing.T) {
 				r.EXPECT().ApplyForVacancy(input).Return(nil)
 			},
 			input: &models.VacancyActivity{
-				UserName:    "User",
-				UserSurname: "User",
+				ApplicantName:    "User",
+				ApplicantSurname: "User",
 			},
 			expectedErr: nil,
 		},
@@ -38,8 +38,8 @@ func TestVacancyActivityService_ApplyForVacancy(t *testing.T) {
 				ur.EXPECT().GetUserByEmail(email).Return(nil, errorHandler.ErrUserNotExists)
 			},
 			input: &models.VacancyActivity{
-				UserName:    "User",
-				UserSurname: "User",
+				ApplicantName:    "User",
+				ApplicantSurname: "User",
 			},
 			expectedErr: errorHandler.ErrUserNotExists,
 		},
@@ -124,16 +124,16 @@ func TestVacancyActivityService_GetAllVacancyApplies(t *testing.T) {
 			mockBehavior: func(r *mock_repository.MockVacancyActivityRepository, ur *mock_repository.MockUserRepository, vacancyId uint) {
 				expected := []*models.VacancyActivity{
 					{
-						UserName:    "User",
-						UserSurname: "User",
+						ApplicantName:    "User",
+						ApplicantSurname: "User",
 					},
 				}
 				r.EXPECT().GetAllVacancyApplies(vacancyId).Return(expected, nil)
 			},
 			expectedApplies: []*models.VacancyActivity{
 				{
-					UserName:    "User",
-					UserSurname: "User",
+					ApplicantName:    "User",
+					ApplicantSurname: "User",
 				},
 			},
 			expectedErr: nil,
@@ -181,16 +181,16 @@ func TestVacancyActivityService_GetAllUserApplies(t *testing.T) {
 			mockBehavior: func(r *mock_repository.MockVacancyActivityRepository, ur *mock_repository.MockUserRepository, userId uint) {
 				expected := []*models.VacancyActivity{
 					{
-						UserName:    "User",
-						UserSurname: "User",
+						ApplicantName:    "User",
+						ApplicantSurname: "User",
 					},
 				}
 				r.EXPECT().GetAllUserApplies(userId).Return(expected, nil)
 			},
 			expectedApplies: []*models.VacancyActivity{
 				{
-					UserName:    "User",
-					UserSurname: "User",
+					ApplicantName:    "User",
+					ApplicantSurname: "User",
 				},
 			},
 			expectedErr: nil,
