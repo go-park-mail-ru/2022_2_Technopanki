@@ -8,11 +8,15 @@ import (
 	mail_handler "HeadHunter/mail_microservice/handler/impl"
 	usecase "HeadHunter/mail_microservice/usecase/impl"
 	"HeadHunter/mail_microservice/usecase/sender"
+	"HeadHunter/metrics"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"net"
+	"net/http"
 	"strings"
 )
 
@@ -45,6 +49,13 @@ func main() {
 
 	grpcSrv := grpc.NewServer()
 	handler.RegisterMailServiceServer(grpcSrv, mailHandler)
+
+	prometheus.MustRegister(metrics.MailRequest)
+	prometheus.MustRegister(metrics.MailRequestDuration)
+	http.Handle(mailConfig.MetricPath, promhttp.Handler())
+	go func() {
+		log.Fatal(http.ListenAndServe(mailConfig.MetricPort, nil))
+	}()
 
 	listener, listenErr := net.Listen("tcp", mailConfig.Port)
 	if listenErr != nil {
