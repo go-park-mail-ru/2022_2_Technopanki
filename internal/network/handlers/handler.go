@@ -45,6 +45,7 @@ type UserH interface {
 type VacancyH interface {
 	GetAllVacancies(c *gin.Context)
 	GetVacancyById(c *gin.Context)
+	GetPreviewVacanciesByEmployer(c *gin.Context)
 	GetUserVacancies(c *gin.Context)
 	CreateVacancy(c *gin.Context)
 	UpdateVacancy(c *gin.Context)

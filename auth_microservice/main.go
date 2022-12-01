@@ -25,9 +25,9 @@ func main() {
 
 	redisRepository := repository.NewRedisStore(&sessionConfig, redisClient)
 
-	sessionUseCase := usecase.NewSessionUseCase(*redisRepository)
+	sessionUseCase := usecase.NewSessionUseCase(redisRepository)
 
-	sessionHandler := handler.NewSessionHandler(*sessionUseCase)
+	sessionHandler := handler.NewSessionHandler(sessionUseCase)
 
 	grpcSrv := grpc.NewServer()
 	proto.RegisterAuthCheckerServer(grpcSrv, sessionHandler)

@@ -5,6 +5,7 @@ import (
 	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
 	mock_repository "HeadHunter/internal/repository/mocks"
+	mock_usecase "HeadHunter/mail_microservice/usecase/mocks"
 	"HeadHunter/pkg/errorHandler"
 	"fmt"
 	"github.com/golang/mock/gomock"
@@ -75,14 +76,17 @@ func TestUserService_GetUserByEmail(t *testing.T) {
 func TestUserService_SignIn(t *testing.T) { //%100
 	type mockBehavior func(r *mock_repository.MockUserRepository, email string)
 	type sessionRepBehavior func(r *mock_session.MockRepository, email string)
+	type mailBehavior func(r *mock_usecase.MockMail, email string)
 	testTable := []struct {
 		name               string
 		inputUser          *models.UserAccount
 		mockBehavior       mockBehavior
 		sessionRepBehavior sessionRepBehavior
+		mailBehavior       mailBehavior
 		expectedToken      string
 		expectedUser       *models.UserAccount
 		expectedErr        error
+		confirmMode        bool
 	}{
 		{
 			name: "ok",
@@ -109,7 +113,138 @@ func TestUserService_SignIn(t *testing.T) { //%100
 			sessionRepBehavior: func(r *mock_session.MockRepository, email string) {
 				r.EXPECT().NewSession(email).Return("valid_token", nil)
 			},
-			expectedErr: nil,
+			mailBehavior: func(r *mock_usecase.MockMail, email string) {},
+			expectedErr:  nil,
+		},
+		{
+			name: "ok (confirmation mode)",
+			inputUser: &models.UserAccount{
+				Email:    "test@gmail.com",
+				Password: "123456A!",
+			},
+			expectedToken: "valid_token",
+			expectedUser: &models.UserAccount{
+				Email:       "test@gmail.com",
+				Password:    "123456A!",
+				CompanyName: "VK",
+				UserType:    "employer",
+				IsConfirmed: true,
+			},
+			mockBehavior: func(r *mock_repository.MockUserRepository, email string) {
+				expected := &models.UserAccount{
+					Email:       "test@gmail.com",
+					Password:    "$2a$10$AN0zyrlPjIZvO12mLf8PierYf579fxzfqh6j9aZn3LWetXMjJjYb.",
+					CompanyName: "VK",
+					UserType:    "employer",
+					IsConfirmed: true,
+				}
+				r.EXPECT().GetUserByEmail(email).Return(expected, nil)
+			},
+			sessionRepBehavior: func(r *mock_session.MockRepository, email string) {
+				r.EXPECT().NewSession(email).Return("valid_token", nil)
+			},
+			mailBehavior: func(r *mock_usecase.MockMail, email string) {},
+			confirmMode:  true,
+			expectedErr:  nil,
+		},
+		{
+			name: "forbidden (two-factor)",
+			inputUser: &models.UserAccount{
+				Email:           "test@gmail.com",
+				Password:        "123456A!",
+				TwoFactorSignIn: true,
+				IsConfirmed:     true,
+			},
+			confirmMode:   true,
+			expectedToken: "valid_token",
+			expectedUser: &models.UserAccount{
+				Email:           "test@gmail.com",
+				Password:        "123456A!",
+				CompanyName:     "VK",
+				UserType:        "employer",
+				TwoFactorSignIn: true,
+				IsConfirmed:     true,
+			},
+			mockBehavior: func(r *mock_repository.MockUserRepository, email string) {
+				expected := &models.UserAccount{
+					Email:           "test@gmail.com",
+					Password:        "$2a$10$AN0zyrlPjIZvO12mLf8PierYf579fxzfqh6j9aZn3LWetXMjJjYb.",
+					CompanyName:     "VK",
+					UserType:        "employer",
+					TwoFactorSignIn: true,
+					IsConfirmed:     true,
+				}
+				r.EXPECT().GetUserByEmail(email).Return(expected, nil)
+			},
+			sessionRepBehavior: func(r *mock_session.MockRepository, email string) {
+			},
+			mailBehavior: func(r *mock_usecase.MockMail, email string) {
+				r.EXPECT().SendConfirmCode(email).Return(nil)
+			},
+			expectedErr: errorHandler.ErrForbidden,
+		},
+		{
+			name: "send error (two-factor)",
+			inputUser: &models.UserAccount{
+				Email:           "test@gmail.com",
+				Password:        "123456A!",
+				TwoFactorSignIn: true,
+				IsConfirmed:     true,
+			},
+			confirmMode:   true,
+			expectedToken: "valid_token",
+			expectedUser: &models.UserAccount{
+				Email:           "test@gmail.com",
+				Password:        "123456A!",
+				CompanyName:     "VK",
+				UserType:        "employer",
+				TwoFactorSignIn: true,
+				IsConfirmed:     true,
+			},
+			mockBehavior: func(r *mock_repository.MockUserRepository, email string) {
+				expected := &models.UserAccount{
+					Email:           "test@gmail.com",
+					Password:        "$2a$10$AN0zyrlPjIZvO12mLf8PierYf579fxzfqh6j9aZn3LWetXMjJjYb.",
+					CompanyName:     "VK",
+					UserType:        "employer",
+					TwoFactorSignIn: true,
+					IsConfirmed:     true,
+				}
+				r.EXPECT().GetUserByEmail(email).Return(expected, nil)
+			},
+			sessionRepBehavior: func(r *mock_session.MockRepository, email string) {
+			},
+			mailBehavior: func(r *mock_usecase.MockMail, email string) {
+				r.EXPECT().SendConfirmCode(email).Return(errorHandler.ErrBadRequest)
+			},
+			expectedErr: errorHandler.ErrBadRequest,
+		},
+		{
+			name: "user is not confirmed",
+			inputUser: &models.UserAccount{
+				Email:    "test@gmail.com",
+				Password: "123456A!",
+			},
+			expectedToken: "valid_token",
+			expectedUser: &models.UserAccount{
+				Email:       "test@gmail.com",
+				Password:    "123456A!",
+				CompanyName: "VK",
+				UserType:    "employer",
+			},
+			mockBehavior: func(r *mock_repository.MockUserRepository, email string) {
+				expected := &models.UserAccount{
+					Email:       "test@gmail.com",
+					Password:    "$2a$10$AN0zyrlPjIZvO12mLf8PierYf579fxzfqh6j9aZn3LWetXMjJjYb.",
+					CompanyName: "VK",
+					UserType:    "employer",
+				}
+				r.EXPECT().GetUserByEmail(email).Return(expected, nil)
+			},
+			sessionRepBehavior: func(r *mock_session.MockRepository, email string) {},
+			mailBehavior:       func(r *mock_usecase.MockMail, email string) {},
+			expectedErr:        errorHandler.ErrIsNotConfirmed,
+			confirmMode:        true,
 		},
 		{
 			name: "wrong answer",
@@ -129,6 +264,7 @@ func TestUserService_SignIn(t *testing.T) { //%100
 				r.EXPECT().GetUserByEmail(email).Return(expected, nil)
 			},
 			sessionRepBehavior: func(r *mock_session.MockRepository, email string) {},
+			mailBehavior:       func(r *mock_usecase.MockMail, email string) {},
 			expectedErr:        errorHandler.ErrWrongPassword,
 		},
 		{
@@ -143,6 +279,7 @@ func TestUserService_SignIn(t *testing.T) { //%100
 				r.EXPECT().GetUserByEmail(email).Return(nil, errorHandler.ErrUserNotExists)
 			},
 			sessionRepBehavior: func(r *mock_session.MockRepository, email string) {},
+			mailBehavior:       func(r *mock_usecase.MockMail, email string) {},
 			expectedErr:        errorHandler.ErrUserNotExists,
 		},
 		{
@@ -165,7 +302,8 @@ func TestUserService_SignIn(t *testing.T) { //%100
 			sessionRepBehavior: func(r *mock_session.MockRepository, email string) {
 				r.EXPECT().NewSession(email).Return("", errorHandler.ErrBadRequest)
 			},
-			expectedErr: errorHandler.ErrBadRequest,
+			mailBehavior: func(r *mock_usecase.MockMail, email string) {},
+			expectedErr:  errorHandler.ErrBadRequest,
 		},
 		{
 			name: "cannot create session",
@@ -187,7 +325,8 @@ func TestUserService_SignIn(t *testing.T) { //%100
 			sessionRepBehavior: func(r *mock_session.MockRepository, email string) {
 				r.EXPECT().NewSession(email).Return("valid_token", nil)
 			},
-			expectedErr: errorHandler.InvalidUserType,
+			mailBehavior: func(r *mock_usecase.MockMail, email string) {},
+			expectedErr:  errorHandler.InvalidUserType,
 		},
 		{
 			name: "invalid auth data",
@@ -201,7 +340,8 @@ func TestUserService_SignIn(t *testing.T) { //%100
 			},
 			sessionRepBehavior: func(r *mock_session.MockRepository, email string) {
 			},
-			expectedErr: errorHandler.InvalidPasswordFormat,
+			mailBehavior: func(r *mock_usecase.MockMail, email string) {},
+			expectedErr:  errorHandler.InvalidPasswordFormat,
 		},
 	}
 
@@ -214,9 +354,11 @@ func TestUserService_SignIn(t *testing.T) { //%100
 
 			mockUserRepository := mock_repository.NewMockUserRepository(c)
 			mockSessionRep := mock_session.NewMockRepository(c)
+			mailRep := mock_usecase.NewMockMail(c)
 			testCase.sessionRepBehavior(mockSessionRep, testCase.inputUser.Email)
 			testCase.mockBehavior(mockUserRepository, testCase.inputUser.Email)
-			userService := UserService{userRep: mockUserRepository, sessionRepo: mockSessionRep, cfg: &configs.Config{
+			testCase.mailBehavior(mailRep, testCase.inputUser.Email)
+			cfg := &configs.Config{
 				Validation: configs.ValidationConfig{
 					MaxEmailLength:    30,
 					MinSurnameLength:  2,
@@ -226,8 +368,13 @@ func TestUserService_SignIn(t *testing.T) { //%100
 					MaxPasswordLength: 20,
 					MinPasswordLength: 8,
 					MinEmailLength:    8,
-				},
-			}}
+				}}
+			if testCase.confirmMode {
+				cfg.Security.ConfirmAccountMode = true
+			}
+			userService := UserService{
+				userRep: mockUserRepository, sessionRepo: mockSessionRep, cfg: cfg, mail: mailRep,
+			}
 			_, err := userService.SignIn(testCase.inputUser)
 
 			assert.Equal(t, testCase.expectedErr, err)
@@ -920,3 +1067,117 @@ func TestUserService_GetUserId(t *testing.T) {
 		})
 	}
 } //100%
+
+func TestUserService_GetAllEmployers(t *testing.T) {
+	type mockBehavior func(r *mock_repository.MockUserRepository, conditions interface{}, filterValues interface{}, filters models.UserFilter)
+	testTable := []struct {
+		name          string
+		conditions    interface{}
+		filterValues  interface{}
+		mockBehavior  mockBehavior
+		expectedUsers []*models.UserAccount
+		filters       models.UserFilter
+		expectedErr   error
+	}{
+		{
+			name: "ok",
+			mockBehavior: func(r *mock_repository.MockUserRepository, conditions interface{}, filterValues interface{}, filters models.UserFilter) {
+				expected := []*models.UserAccount{
+					{
+						CompanyName: "Job",
+					},
+				}
+				r.EXPECT().GetAllUsers(conditions, filterValues, "employer").Return(expected, nil)
+			},
+			expectedUsers: []*models.UserAccount{
+				{
+					CompanyName: "Job",
+				},
+			},
+			expectedErr: nil,
+		},
+		{
+			name: "cannot get employers",
+			mockBehavior: func(r *mock_repository.MockUserRepository, conditions interface{}, filterValues interface{}, filters models.UserFilter) {
+				r.EXPECT().GetAllUsers(conditions, filterValues, "employer").Return([]*models.UserAccount{}, errorHandler.ErrBadRequest)
+			},
+			expectedUsers: []*models.UserAccount{},
+			expectedErr:   errorHandler.ErrBadRequest,
+		},
+	}
+	for _, test := range testTable {
+		testCase := test
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			userRep := mock_repository.NewMockUserRepository(c)
+			testCase.mockBehavior(userRep, testCase.conditions, testCase.filterValues, testCase.filters)
+			userService := UserService{userRep: userRep}
+			user, err := userService.GetAllEmployers(testCase.filters)
+			if testCase.expectedErr == nil {
+				assert.Equal(t, testCase.expectedUsers, user)
+			}
+			assert.Equal(t, testCase.expectedErr, err)
+		})
+
+	}
+}
+
+func TestUserService_GetAllApplicants(t *testing.T) {
+	type mockBehavior func(r *mock_repository.MockUserRepository, conditions interface{}, filterValues interface{}, filters models.UserFilter)
+	testTable := []struct {
+		name          string
+		conditions    interface{}
+		filterValues  interface{}
+		mockBehavior  mockBehavior
+		expectedUsers []*models.UserAccount
+		filters       models.UserFilter
+		expectedErr   error
+	}{
+		{
+			name: "ok",
+			mockBehavior: func(r *mock_repository.MockUserRepository, conditions interface{}, filterValues interface{}, filters models.UserFilter) {
+				expected := []*models.UserAccount{
+					{
+						CompanyName: "Job",
+					},
+				}
+				r.EXPECT().GetAllUsers(conditions, filterValues, "applicant").Return(expected, nil)
+			},
+			expectedUsers: []*models.UserAccount{
+				{
+					CompanyName: "Job",
+				},
+			},
+			expectedErr: nil,
+		},
+		{
+			name: "cannot get applicants",
+			mockBehavior: func(r *mock_repository.MockUserRepository, conditions interface{}, filterValues interface{}, filters models.UserFilter) {
+				r.EXPECT().GetAllUsers(conditions, filterValues, "applicant").Return([]*models.UserAccount{}, errorHandler.ErrBadRequest)
+			},
+			expectedUsers: []*models.UserAccount{},
+			expectedErr:   errorHandler.ErrBadRequest,
+		},
+	}
+	for _, test := range testTable {
+		testCase := test
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			userRep := mock_repository.NewMockUserRepository(c)
+			testCase.mockBehavior(userRep, testCase.conditions, testCase.filterValues, testCase.filters)
+			userService := UserService{userRep: userRep}
+			user, err := userService.GetAllApplicants(testCase.filters)
+			if testCase.expectedErr == nil {
+				assert.Equal(t, testCase.expectedUsers, user)
+			}
+			assert.Equal(t, testCase.expectedErr, err)
+		})
+
+	}
+}

@@ -19,6 +19,7 @@ import (
 	"mime/multipart"
 	"reflect"
 	"strings"
+	"time"
 )
 
 type UserService struct {
@@ -265,14 +266,12 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 	}
 
 	user = escaping.EscapingObject[*models.UserAccount](user)
+	imageName := fmt.Sprintf("%d.webp", user.ID)
+	user.Image = fmt.Sprintf("%d.webp?%d", user.ID, time.Now().Unix())
 
-	if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
-		user.Image = fmt.Sprintf("%d.webp", user.ID)
-
-		updateErr := us.UpdateUser(user)
-		if updateErr != nil {
-			return "", updateErr
-		}
+	updateErr := us.userRep.UpdateUser(&models.UserAccount{ID: user.ID, Image: user.Image})
+	if updateErr != nil {
+		return "", updateErr
 	}
 
 	img, _, decodeErr := image.Decode(file)
@@ -281,7 +280,7 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 		return "", errorHandler.ErrBadRequest
 	}
 
-	return user.Image, images.UploadUserAvatar(user.Image, &img, &us.cfg.Image)
+	return user.Image, images.UploadUserAvatar(imageName, &img, &us.cfg.Image)
 }
 
 func (us *UserService) DeleteUserImage(user *models.UserAccount) error {
@@ -296,7 +295,6 @@ func (us *UserService) DeleteUserImage(user *models.UserAccount) error {
 	}
 	user.Image = fmt.Sprintf("basic_%s_avatar.webp", user.UserType)
 	return us.UpdateUser(user)
-
 }
 
 func (us *UserService) ConfirmUser(code, email string) (*models.UserAccount, string, error) {

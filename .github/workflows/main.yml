@@ -33,4 +33,7 @@ jobs:
         run: go vet ./...
 
       - name: Run go test
-        run: go test -race -coverpkg=./... -coverprofile cover.out.tmp ./...; cat cover.out.tmp | grep -v ".pb.go" > cover.out ; go tool cover -func cover.out
+        run: go test $(go list ./... | grep -v vendor) -race -coverprofile=coverage.out
+
+      - name: Coverage report
+        run: go tool cover -func=coverage.out

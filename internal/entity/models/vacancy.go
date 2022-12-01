@@ -34,3 +34,14 @@ type VacancyFilter struct {
 	FirstSalaryValue  string
 	SecondSalaryValue string
 }
+
+type VacancyPreview struct {
+	Id          uint   `json:"id"`
+	Title       string `json:"title"`
+	Image       string `json:"image"`
+	Salary      uint   `json:"salary"`
+	Location    string `json:"location"`
+	Format      string `json:"format"`
+	Hours       string `json:"hours"`
+	Description string `json:"description"`
+}

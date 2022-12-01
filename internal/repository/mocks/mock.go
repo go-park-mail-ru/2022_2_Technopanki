@@ -264,6 +264,21 @@ func (mr *MockVacancyRepositoryMockRecorder) GetByUserId(userId interface{}) *go
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUserId", reflect.TypeOf((*MockVacancyRepository)(nil).GetByUserId), userId)
 }
 
+// GetPreviewVacanciesByEmployer mocks base method.
+func (m *MockVacancyRepository) GetPreviewVacanciesByEmployer(userId uint) ([]*models.VacancyPreview, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetPreviewVacanciesByEmployer", userId)
+	ret0, _ := ret[0].([]*models.VacancyPreview)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetPreviewVacanciesByEmployer indicates an expected call of GetPreviewVacanciesByEmployer.
+func (mr *MockVacancyRepositoryMockRecorder) GetPreviewVacanciesByEmployer(userId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPreviewVacanciesByEmployer", reflect.TypeOf((*MockVacancyRepository)(nil).GetPreviewVacanciesByEmployer), userId)
+}
+
 // Update mocks base method.
 func (m *MockVacancyRepository) Update(userId, vacancyId uint, oldVacancy, updates *models.Vacancy) error {
 	m.ctrl.T.Helper()

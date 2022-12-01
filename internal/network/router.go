@@ -58,6 +58,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 		{
 			vacancies.GET("", h.VacancyHandler.GetAllVacancies, errorHandler.Middleware())
 			vacancies.GET("/:id", h.VacancyHandler.GetVacancyById, errorHandler.Middleware())
+			vacancies.GET("/employer/preview/:id", h.VacancyHandler.GetPreviewVacanciesByEmployer, errorHandler.Middleware())
 			vacancies.GET("/company/:id", h.VacancyHandler.GetUserVacancies, errorHandler.Middleware())
 			vacancies.POST("/", sessionMW.Session, h.VacancyHandler.CreateVacancy, errorHandler.Middleware())
 			vacancies.PUT("/:id", sessionMW.Session, h.VacancyHandler.UpdateVacancy, errorHandler.Middleware())
@@ -71,9 +72,9 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 		resumes := api.Group("/resume")
 		{
 			resumes.GET("", h.ResumeHandler.GetAllResumes, errorHandler.Middleware())
-			resumes.GET("/:id", sessionMW.Session, h.ResumeHandler.GetResume, errorHandler.Middleware())
-			resumes.GET("/applicant/:user_id", sessionMW.Session, h.ResumeHandler.GetResumeByApplicant, errorHandler.Middleware())
-			resumes.GET("/applicant/preview/:user_id", sessionMW.Session, h.ResumeHandler.GetPreviewResumeByApplicant, errorHandler.Middleware())
+			resumes.GET("/:id", h.ResumeHandler.GetResume, errorHandler.Middleware())
+			resumes.GET("/applicant/:user_id", h.ResumeHandler.GetResumeByApplicant, errorHandler.Middleware())
+			resumes.GET("/applicant/preview/:user_id", h.ResumeHandler.GetPreviewResumeByApplicant, errorHandler.Middleware())
 			resumes.POST("/", sessionMW.Session, h.ResumeHandler.CreateResume, errorHandler.Middleware())
 			resumes.PUT("/:id", sessionMW.Session, h.ResumeHandler.UpdateResume, errorHandler.Middleware())
 			resumes.DELETE("/:id", sessionMW.Session, h.ResumeHandler.DeleteResume, errorHandler.Middleware())

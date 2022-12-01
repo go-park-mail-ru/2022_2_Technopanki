@@ -30,8 +30,8 @@ func CreateResumeMock() (*ResumePostgres, sqlmock.Sqlmock, error) {
 		return nil, nil, closeErr
 	}
 
-	repoBoard := NewResumePostgres(gormDB)
-	return repoBoard, mock, nil
+	repoResume := NewResumePostgres(gormDB)
+	return repoResume, mock, nil
 }
 
 func TestResumePostgres_GetResume(t *testing.T) {
