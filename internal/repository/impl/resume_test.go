@@ -324,7 +324,7 @@ func TestResumePostgres_CreateResume(t *testing.T) {
 				Title:             "title",
 				Description:       "desc",
 				Location:          "loc",
-				ExperienceInYears: 1,
+				ExperienceInYears: "1",
 				Salary:            1,
 				UserAccountId:     1,
 				ExperienceDetail: models.ExperienceDetail{
@@ -385,7 +385,7 @@ func TestResumePostgres_CreateResume(t *testing.T) {
 				Description:       "desc",
 				CreatedTime:       timeNow,
 				Location:          "loc",
-				ExperienceInYears: 1,
+				ExperienceInYears: "1",
 				Salary:            1,
 			}
 
