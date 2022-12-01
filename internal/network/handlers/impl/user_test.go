@@ -1070,3 +1070,179 @@ func TestUserHandler_DeleteUserImage(t *testing.T) {
 		})
 	}
 }
+
+func TestUserHandler_GetAllApplicants(t *testing.T) {
+	type mockBehavior func(r *mock_usecases.MockUser, filters models.UserFilter)
+	//type sessionRepBehavior func(r *mock_session.MockRepository, token string)
+
+	testTable := []struct {
+		name                 string
+		inputId              uint
+		inputToken           string
+		requestParam         string
+		emailFromToken       string
+		filters              models.UserFilter
+		mockBehavior         mockBehavior
+		expectedStatusCode   int
+		expectedResponseBody string
+	}{
+		{
+			name:           "valid",
+			inputId:        42,
+			requestParam:   "42",
+			emailFromToken: "test@gmail.com",
+			mockBehavior: func(r *mock_usecases.MockUser, filters models.UserFilter) {
+				expectedResume := []*models.UserAccount{
+					{
+						ID:            42,
+						ApplicantName: "some name",
+					},
+				}
+				r.EXPECT().GetAllApplicants(filters).Return(expectedResume, nil)
+			},
+			expectedStatusCode:   200,
+			expectedResponseBody: "{\"data\":[{\"id\":42,\"user_type\":\"\",\"email\":\"\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"applicant_name\":\"some name\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}]}",
+		},
+		{
+			name:           "not found",
+			inputId:        42,
+			requestParam:   "42",
+			emailFromToken: "test@gmail.com",
+			mockBehavior: func(r *mock_usecases.MockUser, filters models.UserFilter) {
+				expectedResume := []*models.UserAccount{
+					{
+						ID:            42,
+						ApplicantName: "some name",
+					},
+				}
+				r.EXPECT().GetAllApplicants(filters).Return(expectedResume, errorHandler2.ErrResumeNotFound)
+			},
+			expectedStatusCode:   404,
+			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Резюме не найдено\"}",
+		},
+	}
+	for _, test := range testTable {
+		testCase := test
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			mockUseCase := mock_usecases.NewMockUser(c)
+
+			if testCase.emailFromToken != "" {
+				testCase.mockBehavior(mockUseCase, testCase.filters)
+			}
+
+			handler := UserHandler{
+				userUseCase: mockUseCase,
+			}
+
+			r := gin.New()
+			r.GET("/", handler.GetAllApplicants, errorHandler2.Middleware())
+
+			cookie := &http.Cookie{
+				Name:  "session",
+				Value: testCase.inputToken,
+			}
+
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest("GET", "/",
+				bytes.NewBufferString(""))
+
+			req.AddCookie(cookie)
+			r.ServeHTTP(w, req)
+
+			assert.Equal(t, testCase.expectedStatusCode, w.Code)
+			assert.Equal(t, testCase.expectedResponseBody, w.Body.String())
+		})
+	}
+}
+
+func TestUserHandler_GetAllEmployers(t *testing.T) {
+	type mockBehavior func(r *mock_usecases.MockUser, filters models.UserFilter)
+	//type sessionRepBehavior func(r *mock_session.MockRepository, token string)
+
+	testTable := []struct {
+		name                 string
+		inputId              uint
+		inputToken           string
+		requestParam         string
+		emailFromToken       string
+		filters              models.UserFilter
+		mockBehavior         mockBehavior
+		expectedStatusCode   int
+		expectedResponseBody string
+	}{
+		{
+			name:           "valid",
+			inputId:        42,
+			requestParam:   "42",
+			emailFromToken: "test@gmail.com",
+			mockBehavior: func(r *mock_usecases.MockUser, filters models.UserFilter) {
+				expectedResume := []*models.UserAccount{
+					{
+						ID:          42,
+						CompanyName: "some name",
+					},
+				}
+				r.EXPECT().GetAllEmployers(filters).Return(expectedResume, nil)
+			},
+			expectedStatusCode:   200,
+			expectedResponseBody: "{\"data\":[{\"id\":42,\"user_type\":\"\",\"email\":\"\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"some name\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}]}",
+		},
+		{
+			name:           "not found",
+			inputId:        42,
+			requestParam:   "42",
+			emailFromToken: "test@gmail.com",
+			mockBehavior: func(r *mock_usecases.MockUser, filters models.UserFilter) {
+				expectedResume := []*models.UserAccount{
+					{
+						ID:          42,
+						CompanyName: "some name",
+					},
+				}
+				r.EXPECT().GetAllEmployers(filters).Return(expectedResume, errorHandler2.ErrResumeNotFound)
+			},
+			expectedStatusCode:   404,
+			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Резюме не найдено\"}",
+		},
+	}
+	for _, test := range testTable {
+		testCase := test
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			mockUseCase := mock_usecases.NewMockUser(c)
+
+			if testCase.emailFromToken != "" {
+				testCase.mockBehavior(mockUseCase, testCase.filters)
+			}
+
+			handler := UserHandler{
+				userUseCase: mockUseCase,
+			}
+
+			r := gin.New()
+			r.GET("/", handler.GetAllEmployers, errorHandler2.Middleware())
+
+			cookie := &http.Cookie{
+				Name:  "session",
+				Value: testCase.inputToken,
+			}
+
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest("GET", "/",
+				bytes.NewBufferString(""))
+
+			req.AddCookie(cookie)
+			r.ServeHTTP(w, req)
+
+			assert.Equal(t, testCase.expectedStatusCode, w.Code)
+			assert.Equal(t, testCase.expectedResponseBody, w.Body.String())
+		})
+	}
+}

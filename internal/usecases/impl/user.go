@@ -7,12 +7,10 @@ import (
 	"HeadHunter/internal/entity/utils"
 	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/repository"
-	"HeadHunter/internal/repository/images"
 	"HeadHunter/internal/usecases/escaping"
 	"HeadHunter/internal/usecases/mail"
 	"HeadHunter/pkg/errorHandler"
 	"fmt"
-	"image"
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
@@ -285,7 +283,7 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 
 func (us *UserService) DeleteUserImage(user *models.UserAccount) error {
 	user = escaping.EscapingObject[*models.UserAccount](user)
-
+	
 	if user.Image == fmt.Sprintf("basic_%s_avatar.webp", user.UserType) || user.Image == "" {
 		return errorHandler.ErrBadRequest
 	}
@@ -294,7 +292,8 @@ func (us *UserService) DeleteUserImage(user *models.UserAccount) error {
 		return errorHandler.ErrCannotDeleteAvatar
 	}
 	user.Image = fmt.Sprintf("basic_%s_avatar.webp", user.UserType)
-	return us.UpdateUser(user)
+  return us.UpdateUser(user)
+	return nil
 
 }
 
