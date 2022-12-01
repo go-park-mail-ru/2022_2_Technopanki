@@ -12,7 +12,9 @@ db:
   port: "5432"
   dbname: "jobflowDB"
   sslmode: "disable"
-  password: "pgjf12345RTY"
+  #password: "pgjf12345RTY"
+  password: "12345"
+
 validation:
   minNameLength: 2
   maxNameLength: 30
