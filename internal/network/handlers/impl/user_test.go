@@ -73,6 +73,26 @@ func TestUserHandler_SignUp(t *testing.T) {
 			expectedResponseBody: "",
 		},
 		{
+			name: "invalid body",
+			inputUser: models.UserAccount{
+				Email:            "test@gmail.com",
+				Password:         "123456a!",
+				ApplicantSurname: "Urvancev",
+				ApplicantName:    "Zakhar",
+				UserType:         "applicant",
+			},
+			inputBody: `{
+    			"email": "test@gmail.com",
+    	ar",
+                "applicant_surname": "Urvancev",
+    			"user_type": "applicant"
+}`,
+			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
+			},
+			expectedStatusCode:   400,
+			expectedResponseBody: "",
+		},
+		{
 			name: "valid employer",
 			inputUser: models.UserAccount{
 				Email:       "test@gmail.com",
@@ -199,6 +219,26 @@ func TestUserHandler_SignIn(t *testing.T) {
 			},
 			expectedStatusCode:   200,
 			expectedResponseBody: "{\"id\":0,\"user_type\":\"applicant\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"company_size\":0,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+		},
+		{
+			name: "invalid body",
+			inputUser: models.UserAccount{
+				Email:            "test@gmail.com",
+				Password:         "123456a!",
+				ApplicantSurname: "Urvancev",
+				ApplicantName:    "Zakhar",
+				UserType:         "applicant",
+			},
+			inputBody: `{
+    			"email": "test@gmail.com",
+    	ar",
+                "applicant_surname": "Urvancev",
+    			"user_type": "applicant"
+}`,
+			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
+			},
+			expectedStatusCode:   400,
+			expectedResponseBody: "",
 		},
 		{
 			name: "invalid user type",
