@@ -21,22 +21,11 @@ func NewResumeService(_resumeRep repository.ResumeRepository, _cfg *configs.Conf
 	return &ResumeService{resumeRep: _resumeRep, cfg: _cfg, userRep: _userRep}
 }
 
-func (rs *ResumeService) GetResume(id uint, email string) (*models.Resume, error) {
-	userFromContext, contextErr := rs.userRep.GetUserByEmail(email)
-	if contextErr != nil {
-		return nil, contextErr
-	}
+func (rs *ResumeService) GetResume(id uint) (*models.Resume, error) {
 
 	resume, getErr := rs.resumeRep.GetResume(id)
 	if getErr != nil {
 		return nil, getErr
-	}
-
-	if userFromContext.ID != resume.UserAccountId {
-		employerId, err := rs.resumeRep.GetEmployerIdByVacancyActivity(id)
-		if err != nil || employerId != userFromContext.ID {
-			return nil, errorHandler.ErrUnauthorized
-		}
 	}
 
 	return resume, nil
@@ -59,15 +48,7 @@ func (rs *ResumeService) GetAllResumes(filters models.ResumeFilter) ([]*models.R
 	return rs.resumeRep.GetAllResumes(conditions, filterValues)
 }
 
-func (rs *ResumeService) GetResumeByApplicant(userId uint, email string) ([]*models.Resume, error) {
-	userFromContext, contextErr := rs.userRep.GetUserByEmail(email)
-	if contextErr != nil {
-		return []*models.Resume{}, contextErr
-	}
-
-	if userFromContext.ID != userId {
-		return []*models.Resume{}, errorHandler.ErrUnauthorized
-	}
+func (rs *ResumeService) GetResumeByApplicant(userId uint) ([]*models.Resume, error) {
 	resumes, getErr := rs.resumeRep.GetResumeByApplicant(userId)
 	if errors.Is(getErr, errorHandler.ErrResumeNotFound) {
 		return []*models.Resume{}, nil
@@ -75,15 +56,7 @@ func (rs *ResumeService) GetResumeByApplicant(userId uint, email string) ([]*mod
 	return resumes, getErr
 }
 
-func (rs *ResumeService) GetPreviewResumeByApplicant(userId uint, email string) ([]*models.ResumePreview, error) {
-	userFromContext, contextErr := rs.userRep.GetUserByEmail(email)
-	if contextErr != nil {
-		return []*models.ResumePreview{}, contextErr
-	}
-
-	if userFromContext.ID != userId {
-		return []*models.ResumePreview{}, errorHandler.ErrUnauthorized
-	}
+func (rs *ResumeService) GetPreviewResumeByApplicant(userId uint) ([]*models.ResumePreview, error) {
 	resumesPreview, getErr := rs.resumeRep.GetPreviewResumeByApplicant(userId)
 	if errors.Is(getErr, errorHandler.ErrResumeNotFound) {
 		return []*models.ResumePreview{}, nil

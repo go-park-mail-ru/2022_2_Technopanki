@@ -23,12 +23,19 @@ func (vap *VacancyActivityPostgres) GetAllVacancyApplies(vacancyId uint) ([]*mod
 	return applies, nil
 }
 
-func (vap *VacancyActivityPostgres) ApplyForVacancy(apply *models.VacancyActivity) error {
+func (vap *VacancyActivityPostgres) ApplyForVacancy(apply *models.VacancyActivity) error { //TODO переделать
 	var user models.UserAccount
 	queryUser := vap.db.Where("id = ?", apply.UserAccountId).Find(&user)
 	if queryUser.Error != nil {
 		return queryUser.Error
 	}
+	var resume models.Vacancy
+	queryVacancy := vap.db.Where("id = ?", apply.ResumeId).Find(&resume)
+	if queryVacancy.Error != nil {
+		return queryVacancy.Error
+	}
+
+	apply.ResumeTitle = resume.Title
 	apply.Image = user.Image
 	query := vap.db.Create(&apply)
 	return QueryValidation(query, "vacancy_activity")

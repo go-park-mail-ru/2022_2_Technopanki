@@ -29,7 +29,7 @@ func (vas *VacancyActivityService) ApplyForVacancy(email string, vacancyId uint,
 	}
 
 	input.UserAccountId = user.ID
-	input.VacancyId = uint(vacancyId)
+	input.VacancyId = vacancyId
 	return vas.vacancyActivityRep.ApplyForVacancy(input)
 }
 

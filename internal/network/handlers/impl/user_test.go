@@ -48,7 +48,49 @@ func TestUserHandler_SignUp(t *testing.T) {
 				r.EXPECT().SignUp(user).Return(gomock.Any().String(), nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":0,\"user_type\":\"applicant\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"applicant_name\":\"Zakhar\",\"applicant_surname\":\"Urvancev\",\"company_size\":0,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":0,\"user_type\":\"applicant\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"applicant_name\":\"Zakhar\",\"applicant_surname\":\"Urvancev\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+		},
+		{
+			name: "confirmation mode",
+			inputUser: models.UserAccount{
+				Email:            "test@gmail.com",
+				Password:         "123456a!",
+				ApplicantSurname: "Urvancev",
+				ApplicantName:    "Zakhar",
+				UserType:         "applicant",
+			},
+			inputBody: `{
+    			"email": "test@gmail.com",
+    			"password": "123456a!",
+                "applicant_name": "Zakhar",
+                "applicant_surname": "Urvancev",
+    			"user_type": "applicant"
+}`,
+			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
+				r.EXPECT().SignUp(user).Return(gomock.Any().String(), nil)
+			},
+			expectedStatusCode:   200,
+			expectedResponseBody: "",
+		},
+		{
+			name: "invalid body",
+			inputUser: models.UserAccount{
+				Email:            "test@gmail.com",
+				Password:         "123456a!",
+				ApplicantSurname: "Urvancev",
+				ApplicantName:    "Zakhar",
+				UserType:         "applicant",
+			},
+			inputBody: `{
+    			"email": "test@gmail.com",
+    	ar",
+                "applicant_surname": "Urvancev",
+    			"user_type": "applicant"
+}`,
+			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
+			},
+			expectedStatusCode:   400,
+			expectedResponseBody: "",
 		},
 		{
 			name: "valid employer",
@@ -68,7 +110,7 @@ func TestUserHandler_SignUp(t *testing.T) {
 				r.EXPECT().SignUp(user).Return(gomock.Any().String(), nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":0,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":0,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name: "user already exists",
@@ -92,23 +134,27 @@ func TestUserHandler_SignUp(t *testing.T) {
 		},
 	}
 	for _, test := range testTable {
-		t.Run(test.name, func(t *testing.T) {
+		testCase := test
+		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 			c := gomock.NewController(t)
 			defer c.Finish()
 
 			mockUseCase := mock_usecases.NewMockUser(c)
-			test.mockBehavior(mockUseCase, &test.inputUser)
-
+			testCase.mockBehavior(mockUseCase, &testCase.inputUser)
+			_cfg := &configs.Config{
+				DefaultExpiringSession: 100,
+				Cookie: configs.CookieConfig{
+					Secure:   false,
+					HTTPOnly: true,
+				},
+			}
+			if testCase.name == "confirmation mode" {
+				_cfg.Security.ConfirmAccountMode = true
+			}
 			handler := UserHandler{
 				userUseCase: mockUseCase,
-				cfg: &configs.Config{
-					DefaultExpiringSession: 100,
-					Cookie: configs.CookieConfig{
-						Secure:   false,
-						HTTPOnly: true,
-					},
-				},
+				cfg:         _cfg,
 			}
 
 			r := gin.New()
@@ -116,12 +162,12 @@ func TestUserHandler_SignUp(t *testing.T) {
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("POST", "/sign-up",
-				bytes.NewBufferString(test.inputBody))
+				bytes.NewBufferString(testCase.inputBody))
 
 			r.ServeHTTP(w, req)
 
-			assert.Equal(t, test.expectedStatusCode, w.Code)
-			assert.Equal(t, test.expectedResponseBody, w.Body.String())
+			assert.Equal(t, testCase.expectedStatusCode, w.Code)
+			assert.Equal(t, testCase.expectedResponseBody, w.Body.String())
 		})
 	}
 }
@@ -154,6 +200,45 @@ func TestUserHandler_SignIn(t *testing.T) {
 			},
 			expectedStatusCode:   200,
 			expectedResponseBody: "{\"id\":0,\"user_type\":\"applicant\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"company_size\":0,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+		},
+		{
+			name: "valid applicant(two factor)",
+			inputUser: models.UserAccount{
+				Email:           "test@gmail.com",
+				Password:        "123456a!",
+				UserType:        "applicant",
+				TwoFactorSignIn: true,
+			},
+			inputBody: `{
+    			"email": "test@gmail.com",
+    			"password": "123456a!",
+				"user_type": "applicant"
+}`,
+			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
+				r.EXPECT().SignIn(user).Return(gomock.Any().String(), nil)
+			},
+			expectedStatusCode:   200,
+			expectedResponseBody: "{\"id\":0,\"user_type\":\"applicant\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"company_size\":0,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+		},
+		{
+			name: "invalid body",
+			inputUser: models.UserAccount{
+				Email:            "test@gmail.com",
+				Password:         "123456a!",
+				ApplicantSurname: "Urvancev",
+				ApplicantName:    "Zakhar",
+				UserType:         "applicant",
+			},
+			inputBody: `{
+    			"email": "test@gmail.com",
+    	ar",
+                "applicant_surname": "Urvancev",
+    			"user_type": "applicant"
+}`,
+			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
+			},
+			expectedStatusCode:   400,
+			expectedResponseBody: "",
 		},
 		{
 			name: "invalid user type",

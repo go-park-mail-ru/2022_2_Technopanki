@@ -1,12 +1,15 @@
 package impl
 
-import "HeadHunter/auth_microservice/repository/impl"
+import (
+	"HeadHunter/auth_microservice/repository"
+	"HeadHunter/common/session"
+)
 
 type SessionUseCase struct {
-	redisStore impl.RedisStore
+	redisStore repository.Repository
 }
 
-func NewSessionUseCase(_rs impl.RedisStore) *SessionUseCase {
+func NewSessionUseCase(_rs session.Repository) *SessionUseCase {
 	return &SessionUseCase{redisStore: _rs}
 }
 
