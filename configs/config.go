@@ -13,6 +13,7 @@ type Config struct {
 	AuthMsPort             string           `yaml:"authMsPort"`
 	MailMsHost             string           `yaml:"mailMsHost"`
 	MailMsPort             string           `yaml:"mailMsPort"`
+	MetricPath             string           `yaml:"metricPath"`
 	CleaningPeriod         int64            `yaml:"cleaningPeriod"`
 	DefaultExpiringSession int              `yaml:"defaultExpiringSession"`
 	DB                     DBConfig         `yaml:"db"`

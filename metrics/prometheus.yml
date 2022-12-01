@@ -1,0 +1,24 @@
+global:
+  scrape_interval: 10s
+  evaluation_interval: 10s
+scrape_configs:
+  - job_name: system
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+          - jfNodeExporter:9100
+  - job_name: main
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+          - server:8080
+  - job_name: auth
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+          - auth_service:8081
+  - job_name: mail
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+          - mail_service:8082
