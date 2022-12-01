@@ -10,6 +10,7 @@ import (
 	"gorm.io/gorm"
 	"regexp"
 	"testing"
+	"time"
 )
 
 func CreateResumeMock() (*ResumePostgres, sqlmock.Sqlmock, error) {
