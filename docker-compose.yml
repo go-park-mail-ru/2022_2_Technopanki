@@ -82,7 +82,6 @@ services:
       - "8082:8082"
     volumes:
       - ./bin:/mail/bin
-
   builder:
     ports:
       - "8085:8085"
