@@ -34,6 +34,7 @@ func (vas *VacancyActivityService) ApplyForVacancy(email string, vacancyId uint,
 }
 
 func (vas *VacancyActivityService) GetAllUserApplies(userId uint) ([]*models.VacancyActivity, error) {
+
 	return vas.vacancyActivityRep.GetAllUserApplies(userId)
 }
 
