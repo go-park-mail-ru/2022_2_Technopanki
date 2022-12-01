@@ -251,7 +251,7 @@ func TestVacancyActivityHandler_GetAllUserApplies(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"data\":[{\"user_account_id\":42,\"id\":0,\"vacancy_id\":0,\"user_name\":\"\",\"user_surname\":\"\",\"title\":\"some vacancy\",\"image\":\"\",\"created_date\":\"0001-01-01T00:00:00Z\"}]}",
+			expectedResponseBody: "{\"data\":[{\"user_account_id\":42,\"id\":0,\"vacancy_id\":0,\"applicant_name\":\"\",\"applicant_surname\":\"\",\"title\":\"some vacancy\",\"image\":\"\",\"created_date\":\"0001-01-01T00:00:00Z\"}]}",
 		},
 		{
 			name:           "user not found",
@@ -349,7 +349,7 @@ func TestVacancyActivityHandler_GetAllVacancyApplies(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"data\":[{\"user_account_id\":42,\"id\":0,\"vacancy_id\":0,\"user_name\":\"\",\"user_surname\":\"\",\"title\":\"some vacancy\",\"image\":\"\",\"created_date\":\"0001-01-01T00:00:00Z\"}]}",
+			expectedResponseBody: "{\"data\":[{\"user_account_id\":42,\"id\":0,\"vacancy_id\":0,\"applicant_name\":\"\",\"applicant_surname\":\"\",\"title\":\"some vacancy\",\"image\":\"\",\"created_date\":\"0001-01-01T00:00:00Z\"}]}",
 		},
 		{
 			name:           "user not found",
