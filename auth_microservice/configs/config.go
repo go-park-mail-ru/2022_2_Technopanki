@@ -9,6 +9,8 @@ import (
 type SessionConfig struct {
 	Domain                 string `yaml:"domain"`
 	Port                   string `yaml:"port"`
+	MetricPath             string `yaml:"metricPath"`
+	MetricPort             string `yaml:"metricPort"`
 	DefaultExpiringSession int    `yaml:"defaultExpiringSession"`
 	GetConfirmInterval     int    `yaml:"getConfirmInterval"`
 	ConfirmationTime       int    `yaml:"confirmationTime"`

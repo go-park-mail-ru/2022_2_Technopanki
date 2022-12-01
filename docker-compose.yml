@@ -51,3 +51,42 @@ services:
       - auth
     ports:
       - "8082:8082"
+  prometheus:
+    container_name: "jfPrometheus"
+    image: "prom/prometheus"
+    ports:
+      - "9090:9090"
+    depends_on:
+      - nodeexporter
+    volumes:
+      - ./metrics/:/etc/prometheus/
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+
+  grafana:
+    container_name: "jfGrafana"
+    image: "grafana/grafana-enterprise"
+    depends_on:
+      - prometheus
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+    command:
+      - 'git clone https://github.com/grafana/piechart-panel.git --branch release-1.6.2'
+      - 'sudo service grafana-server restart'
+    ports:
+      - "3000:3000"
+
+  nodeexporter:
+    container_name: "jfNodeExporter"
+    image: prom/node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)'
+    ports:
+      - "9100:9100"

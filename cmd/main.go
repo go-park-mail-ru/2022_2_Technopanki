@@ -74,6 +74,7 @@ func main() {
 	go cron.ClearDBFromUnconfirmedUser(db, &mainConfig)
 
 	router := network.InitRoutes(handler, sessionMiddleware, &mainConfig)
+
 	runErr := router.Run(mainConfig.Port)
 	if runErr != nil {
 		logrus.Fatal(runErr)

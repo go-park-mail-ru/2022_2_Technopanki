@@ -7,12 +7,19 @@ import (
 	"HeadHunter/internal/network/middleware"
 	"HeadHunter/pkg/errorHandler"
 	"github.com/gin-gonic/gin"
+	"github.com/penglongli/gin-metrics/ginmetrics"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, cfg *configs.Config) *gin.Engine {
 	router := gin.Default()
+
+	monitor := ginmetrics.GetMonitor()
+	monitor.SetMetricPath(cfg.MetricPath)
+	monitor.SetSlowTime(10)
+	monitor.Use(router)
+
 	router.NoRoute(func(c *gin.Context) {
 		c.AbortWithStatusJSON(404, gin.H{"error": "invalid route (check HTTP Methods)"})
 	})
