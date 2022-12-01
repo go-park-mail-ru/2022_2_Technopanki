@@ -192,7 +192,7 @@ func (uh *UserHandler) GetAllApplicants(c *gin.Context) {
 
 	search := c.Query("search")
 	if search != "" {
-		if strings.Index(search, "_") != -1 {
+		if strings.Index(search, " ") != -1 {
 			split := strings.Split(search, " ")
 			filters.ApplicantName = split[0]
 			filters.ApplicantSurname = split[1]

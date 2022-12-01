@@ -9,7 +9,7 @@ type Resume struct {
 	Description       string           `json:"description" gorm:"not null;"`
 	CreatedTime       time.Time        `json:"created_date" gorm:"autoCreateTime"`
 	Location          string           `json:"location,omitempty"`
-	ExperienceInYears uint             `json:"experience_in_years,omitempty"`
+	ExperienceInYears string           `json:"experience,omitempty"`
 	Salary            uint             `json:"salary,omitempty"`
 	EducationDetail   EducationDetail  `json:"education_detail" gorm:"foreignKey:ResumeId;constraint:OnDelete:CASCADE;"`
 	ExperienceDetail  ExperienceDetail `json:"experience_detail" gorm:"foreignKey:ResumeId;constraint:OnDelete:CASCADE;"`
