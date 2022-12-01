@@ -4,14 +4,12 @@ import (
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/pkg/errorHandler"
 	"fmt"
-	"regexp"
-	"testing"
-	"time"
-
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"regexp"
+	"testing"
 )
 
 func CreateResumeMock() (*ResumePostgres, sqlmock.Sqlmock, error) {
