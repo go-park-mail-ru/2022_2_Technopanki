@@ -4,14 +4,13 @@ import (
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/pkg/errorHandler"
 	"fmt"
-	"regexp"
-	"testing"
-	"time"
-
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"regexp"
+	"testing"
+	"time"
 )
 
 func CreateResumeMock() (*ResumePostgres, sqlmock.Sqlmock, error) {
@@ -325,7 +324,7 @@ func TestResumePostgres_CreateResume(t *testing.T) {
 				Title:             "title",
 				Description:       "desc",
 				Location:          "loc",
-				ExperienceInYears: 1,
+				ExperienceInYears: "1",
 				Salary:            1,
 				UserAccountId:     1,
 				ExperienceDetail: models.ExperienceDetail{
@@ -386,7 +385,7 @@ func TestResumePostgres_CreateResume(t *testing.T) {
 				Description:       "desc",
 				CreatedTime:       timeNow,
 				Location:          "loc",
-				ExperienceInYears: 1,
+				ExperienceInYears: "1",
 				Salary:            1,
 			}
 
