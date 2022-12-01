@@ -1067,3 +1067,60 @@ func TestUserService_GetUserId(t *testing.T) {
 		})
 	}
 } //100%
+
+func TestUserService_GetAllEmployers(t *testing.T) {
+	type mockBehavior func(r *mock_repository.MockUserRepository, conditions interface{}, filterValues interface{}, filters models.UserFilter)
+	testTable := []struct {
+		name          string
+		conditions    interface{}
+		filterValues  interface{}
+		mockBehavior  mockBehavior
+		expectedUsers []*models.UserAccount
+		filters       models.UserFilter
+		expectedErr   error
+	}{
+		{
+			name: "ok",
+			mockBehavior: func(r *mock_repository.MockUserRepository, conditions interface{}, filterValues interface{}, filters models.UserFilter) {
+				expected := []*models.UserAccount{
+					{
+						CompanyName: "Job",
+					},
+				}
+				r.EXPECT().GetAllUsers(conditions, filterValues, "employer").Return(expected, nil)
+			},
+			expectedUsers: []*models.UserAccount{
+				{
+					CompanyName: "Job",
+				},
+			},
+			expectedErr: nil,
+		},
+		{
+			name: "cannot get employers",
+			mockBehavior: func(r *mock_repository.MockUserRepository, conditions interface{}, filterValues interface{}, filters models.UserFilter) {
+				r.EXPECT().GetAllUsers(conditions, filterValues, "employer").Return([]*models.UserAccount{}, errorHandler.ErrBadRequest)
+			},
+			expectedUsers: []*models.UserAccount{},
+			expectedErr:   errorHandler.ErrBadRequest,
+		},
+	}
+	for _, test := range testTable {
+		testCase := test
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			userRep := mock_repository.NewMockUserRepository(c)
+			testCase.mockBehavior(userRep, testCase.conditions, testCase.filterValues, testCase.filters)
+			userService := UserService{userRep: userRep}
+			user, err := userService.GetAllEmployers(testCase.filters)
+			if testCase.expectedErr == nil {
+				assert.Equal(t, testCase.expectedUsers, user)
+			}
+			assert.Equal(t, testCase.expectedErr, err)
+		})
+
+	}
+}
