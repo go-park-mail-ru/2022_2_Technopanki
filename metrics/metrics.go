@@ -9,3 +9,11 @@ var SessionRequest = prometheus.NewCounterVec(prometheus.CounterOpts{
 var SessionRequestDuration = prometheus.NewHistogramVec(prometheus.HistogramOpts{
 	Name: "session_request_duration",
 }, []string{"method"})
+
+var MailRequest = prometheus.NewCounterVec(prometheus.CounterOpts{
+	Name: "mail",
+}, []string{"status", "msg"})
+
+var MailRequestDuration = prometheus.NewHistogramVec(prometheus.HistogramOpts{
+	Name: "mail_request_duration",
+}, []string{"method"})
