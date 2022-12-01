@@ -13,6 +13,7 @@ import (
 	"HeadHunter/internal/usecases/mail"
 	mail_handler "HeadHunter/mail_microservice/handler"
 	repositorypkg "HeadHunter/pkg/repository"
+	"github.com/penglongli/gin-metrics/ginmetrics"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -74,6 +75,12 @@ func main() {
 	go cron.ClearDBFromUnconfirmedUser(db, &mainConfig)
 
 	router := network.InitRoutes(handler, sessionMiddleware, &mainConfig)
+
+	monitor := ginmetrics.GetMonitor()
+	monitor.SetMetricPath(mainConfig.MetricPath)
+	monitor.SetSlowTime(10)
+	monitor.Use(router)
+
 	runErr := router.Run(mainConfig.Port)
 	if runErr != nil {
 		logrus.Fatal(runErr)
