@@ -1,6 +1,6 @@
 package usecase
 
-//go:generate mockgen -source repository.go -destination=mocks/mock.go
+//go:generate mockgen -source usecase.go -destination=mocks/mock.go
 
 type Repository interface {
 	NewSession(email string) (string, error)
