@@ -70,6 +70,9 @@ services:
       - prometheus
     volumes:
       - ./data/grafana:/var/lib/grafana
+    command:
+      - 'git clone https://github.com/grafana/piechart-panel.git --branch release-1.6.2'
+      - 'sudo service grafana-server restart'
     ports:
       - "3000:3000"
 
