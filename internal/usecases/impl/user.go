@@ -295,8 +295,6 @@ func (us *UserService) DeleteUserImage(user *models.UserAccount) error {
 	}
 	user.Image = fmt.Sprintf("basic_%s_avatar.webp", user.UserType)
 	return us.UpdateUser(user)
-	return nil
-
 }
 
 func (us *UserService) ConfirmUser(code, email string) (*models.UserAccount, string, error) {
