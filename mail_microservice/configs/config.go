@@ -12,6 +12,8 @@ type Config struct {
 	Mail       MailConfig `yaml:"mail"`
 	AuthMsHost string     `yaml:"authMsHost"`
 	AuthMsPort string     `yaml:"authMsPort"`
+	MetricPath string     `yaml:"metricPath"`
+	MetricPort string     `yaml:"metricPort"`
 }
 
 type MailConfig struct {

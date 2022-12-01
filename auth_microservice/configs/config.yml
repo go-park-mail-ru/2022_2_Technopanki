@@ -3,6 +3,8 @@ port: ":8081"
 confirmationTime: 600
 getConfirmInterval: 60
 defaultExpiringSession: 259200
+metricPath: "/metrics"
+metricPort: ":8091"
 redis:
   host: "jfRedis"
   port: "6379"
