@@ -206,6 +206,18 @@ func (uh *UserHandler) GetAllApplicants(c *gin.Context) {
 		filters.Location = city
 	}
 
+	age := c.Query("age")
+	if age != "" {
+		if strings.Index(age, ":") != -1 {
+			split := strings.Split(age, ":")
+			filters.FirstAgeValue = split[0]
+			filters.SecondAgeValue = split[1]
+		} else {
+			c.Error(errorHandler.ErrBadRequest)
+			return
+		}
+	}
+
 	applicants, getAllErr = uh.userUseCase.GetAllApplicants(filters)
 	if getAllErr != nil {
 		_ = c.Error(getAllErr)

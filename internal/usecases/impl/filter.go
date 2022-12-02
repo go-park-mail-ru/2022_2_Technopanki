@@ -40,6 +40,8 @@ func ApplicantFilterQueries(filterName string) string {
 		return "applicant_surname LIKE ? AND user_type = 'applicant'"
 	case "Location":
 		return "location = ? AND user_type = 'applicant'"
+	case "FirstAgeValue":
+		return "age BETWEEN ? AND ?"
 	default:
 		return ""
 	}
