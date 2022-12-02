@@ -12,6 +12,7 @@ type UserAccount struct {
 	Description            string            `json:"description" gorm:"not null;"`
 	Image                  string            `json:"image"`
 	DateOfBirth            time.Time         `json:"date_of_birth" gorm:"not null"`
+	Age                    uint              `json:"age,omitempty"`
 	CreatedTime            time.Time         `json:"created_time" gorm:"autoCreateTime"`
 	ApplicantName          string            `json:"applicant_name,omitempty"`
 	ApplicantSurname       string            `json:"applicant_surname,omitempty"`
