@@ -132,6 +132,8 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 	input.PublicFields = "email contact_number applicant_current_salary" //TODO после РК3 убрать для добавления фичи с доступом
 	input.IsConfirmed = !us.cfg.Security.ConfirmAccountMode
 
+	input.Age = uint(Age(input.DateOfBirth))
+
 	createErr := us.userRep.CreateUser(input)
 
 	if createErr != nil {
@@ -191,6 +193,8 @@ func (us *UserService) UpdateUser(input *models.UserAccount) error {
 		input.Image = oldUser.Image
 	}
 	input.IsConfirmed = oldUser.IsConfirmed
+
+	input.Age = uint(Age(input.DateOfBirth))
 
 	dbError := us.userRep.UpdateUser(input)
 	if dbError != nil {
