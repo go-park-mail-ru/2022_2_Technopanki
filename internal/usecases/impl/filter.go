@@ -37,7 +37,7 @@ func ApplicantFilterQueries(filterName string) string {
 	case "ApplicantName":
 		return "applicant_name LIKE ? AND user_type = 'applicant'"
 	case "ApplicantSurname":
-		return "applicant_surname LIKE ?"
+		return "applicant_surname LIKE ? AND user_type = 'applicant'"
 	case "Location":
 		return "location = ? AND user_type = 'applicant'"
 	default:
