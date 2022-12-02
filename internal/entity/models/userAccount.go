@@ -39,7 +39,8 @@ type UserFilter struct {
 	BusinessType           string
 	FirstCompanySizeValue  string
 	SecondCompanySizeValue string
-	DateOfBirth            string
+	FirstAgeValue          string
+	SecondAgeValue         string
 }
 type GetAllUsersResponcePointer struct {
 	Data []*UserAccount `json:"data"`
