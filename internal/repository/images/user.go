@@ -68,11 +68,10 @@ func Average(img image.Image) string {
 	count := uint64(max.Y-min.Y) * uint64(max.X-min.X)
 	for y := min.Y; y < max.Y; y++ {
 		for x := min.X; x < max.X; x++ {
-			SR, SG, SB, _ := img.At(x, y).RGBA()
-			r, g, b := uint8(SR), uint8(SG), uint8(SB)
-			sumR += uint64(r)
-			sumG += uint64(g)
-			sumB += uint64(b)
+			r, g, b, _ := img.At(x, y).RGBA()
+			sumR += uint64(r / 257)
+			sumG += uint64(g / 257)
+			sumB += uint64(b / 257)
 		}
 	}
 	result := color.RGBA{
