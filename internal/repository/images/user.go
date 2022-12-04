@@ -69,9 +69,9 @@ func Average(img image.Image) string {
 	for y := min.Y; y < max.Y; y++ {
 		for x := min.X; x < max.X; x++ {
 			r, g, b, _ := img.At(x, y).RGBA()
-			sumR += uint64(r / 257)
-			sumG += uint64(g / 257)
-			sumB += uint64(b / 257)
+			sumR += uint64(r / 256)
+			sumG += uint64(g / 256)
+			sumB += uint64(b / 256)
 		}
 	}
 	result := color.RGBA{
