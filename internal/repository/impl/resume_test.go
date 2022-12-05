@@ -374,7 +374,6 @@ func TestResumePostgres_CreateResume(t *testing.T) {
 					"desc",
 					timeNow,
 					"loc",
-					1,
 					"1",
 					1).
 				WillReturnRows(sqlmock.NewRows([]string{"1"}))
