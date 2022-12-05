@@ -137,7 +137,7 @@ func TestResumePostgres_GetPreviewResumeByApplicant(t *testing.T) {
 
 			resumeRows := sqlmock.NewRows([]string{"id", "title", "applicant_name", "applicant_surname"})
 			if len(testCase.expected) > 0 {
-				resumeRows = resumeRows.AddRow(testCase.expected[0].Id, testCase.expected[0].Title,
+				resumeRows.AddRow(testCase.expected[0].Id, testCase.expected[0].Title,
 					testCase.expected[0].ApplicantName, testCase.expected[0].ApplicantSurname)
 			}
 			mock.
@@ -203,7 +203,7 @@ func TestResumePostgres_GetResumeByApplicant(t *testing.T) {
 
 			resumeRows := sqlmock.NewRows([]string{"id", "title", "description", "user_account_id"})
 			if len(testCase.expected) > 0 {
-				resumeRows = resumeRows.AddRow(testCase.expected[0].ID, testCase.expected[0].Title,
+				resumeRows.AddRow(testCase.expected[0].ID, testCase.expected[0].Title,
 					testCase.expected[0].Description, testCase.expected[0].UserAccountId)
 			}
 			mock.
@@ -279,7 +279,7 @@ func TestResumePostgres_DeleteResume(t *testing.T) {
 
 			resumeRows := sqlmock.NewRows([]string{"id", "title", "description", "user_account_id"})
 			if len(testCase.expected) > 0 {
-				resumeRows = resumeRows.AddRow(testCase.expected[0].ID, testCase.expected[0].Title,
+				resumeRows.AddRow(testCase.expected[0].ID, testCase.expected[0].Title,
 					testCase.expected[0].Description, testCase.expected[0].UserAccountId)
 			}
 			mock.ExpectBegin()
@@ -344,7 +344,7 @@ func TestResumePostgres_CreateResume(t *testing.T) {
 
 			resumeRows := sqlmock.NewRows([]string{"id", "title", "description", "location", "experience_in_years", "user_account_id", "salary"})
 			if len(testCase.expected) > 0 {
-				resumeRows = resumeRows.AddRow(testCase.expected[0].ID, testCase.expected[0].Title,
+				resumeRows.AddRow(testCase.expected[0].ID, testCase.expected[0].Title,
 					testCase.expected[0].Description, testCase.expected[0].Location, testCase.expected[0].ExperienceInYears, testCase.expected[0].UserAccountId, testCase.expected[0].Salary)
 			}
 

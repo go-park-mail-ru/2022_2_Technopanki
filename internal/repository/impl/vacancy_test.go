@@ -60,12 +60,12 @@ func TestVacancyPostgres_GetById(t *testing.T) {
 		testCase := tc
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			resumeRows := sqlmock.NewRows([]string{"id", "title", "description"})
-			resumeRows = resumeRows.AddRow(testCase.expectedVacancy.ID, testCase.expectedVacancy.Title,
+			vacancyRows := sqlmock.NewRows([]string{"id", "title", "description"})
+			vacancyRows.AddRow(testCase.expectedVacancy.ID, testCase.expectedVacancy.Title,
 				testCase.expectedVacancy.Description)
 			mock.
 				ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "vacancies" WHERE id = $1`)).
-				WithArgs(1).WillReturnRows(resumeRows)
+				WithArgs(1).WillReturnRows(vacancyRows)
 
 			actualResume, getErr := ResumeDB.GetById(1)
 
@@ -113,13 +113,13 @@ func TestVacancyPostgres_GetPreviewVacanciesByEmployer(t *testing.T) {
 		testCase := tc
 		t.Run(testCase.name, func(t *testing.T) {
 
-			resumeRows := sqlmock.NewRows([]string{"id", "title"})
+			vacancyRows := sqlmock.NewRows([]string{"id", "title"})
 			if len(testCase.expected) > 0 {
-				resumeRows = resumeRows.AddRow(testCase.expected[0].Id, testCase.expected[0].Title)
+				vacancyRows.AddRow(testCase.expected[0].Id, testCase.expected[0].Title)
 			}
 			mock.
 				ExpectQuery(regexp.QuoteMeta(`SELECT user_accounts.image,vacancies.id, vacancies.title, vacancies.salary, vacancies.location, vacancies.format, vacancies.hours, vacancies.description FROM "vacancies" left join user_accounts on vacancies.posted_by_user_id = user_accounts.id WHERE posted_by_user_id = $1`)).
-				WithArgs(1).WillReturnRows(resumeRows)
+				WithArgs(1).WillReturnRows(vacancyRows)
 
 			actualResume, getErr := VacancyDB.GetPreviewVacanciesByEmployer(1)
 
@@ -171,14 +171,14 @@ func TestVacancyPostgres_GetByUserId(t *testing.T) {
 		testCase := tc
 		t.Run(testCase.name, func(t *testing.T) {
 
-			resumeRows := sqlmock.NewRows([]string{"id", "title", "description"})
+			vacancyRows := sqlmock.NewRows([]string{"id", "title", "description"})
 			if len(testCase.expected) > 0 {
-				resumeRows = resumeRows.AddRow(testCase.expected[0].ID, testCase.expected[0].Title,
+				vacancyRows.AddRow(testCase.expected[0].ID, testCase.expected[0].Title,
 					testCase.expected[0].Description)
 			}
 			mock.
 				ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "vacancies" WHERE posted_by_user_id = $1`)).
-				WithArgs(1).WillReturnRows(resumeRows)
+				WithArgs(1).WillReturnRows(vacancyRows)
 
 			actualVacancies, getErr := VacancyDB.GetByUserId(1)
 
@@ -224,9 +224,9 @@ func TestResumePostgres_DeleteVacancy(t *testing.T) {
 		testCase := tc
 		t.Run(testCase.name, func(t *testing.T) {
 
-			resumeRows := sqlmock.NewRows([]string{"id", "title", "description"})
+			vacancyRows := sqlmock.NewRows([]string{"id", "title", "description"})
 			if len(testCase.expected) > 0 {
-				resumeRows = resumeRows.AddRow(testCase.expected[0].ID, testCase.expected[0].Title,
+				vacancyRows.AddRow(testCase.expected[0].ID, testCase.expected[0].Title,
 					testCase.expected[0].Description)
 			}
 			mock.ExpectBegin()
@@ -282,16 +282,16 @@ func TestResumePostgres_CreateVacancy(t *testing.T) {
 		testCase := tc
 		t.Run(testCase.name, func(t *testing.T) {
 
-			resumeRows := sqlmock.NewRows([]string{"id", "posted_by_user_id", "title", "description", "tasks", "requirements", "extra", "created_date", "salary", "location", "is_active", "experience", "format", "hours", "image"})
+			vacancyRows := sqlmock.NewRows([]string{"id", "posted_by_user_id", "title", "description", "tasks", "requirements", "extra", "created_date", "salary", "location", "is_active", "experience", "format", "hours", "image"})
 			if len(testCase.expected) > 0 {
-				resumeRows = resumeRows.AddRow(testCase.expected[0].ID, testCase.expected[0].PostedByUserId, testCase.expected[0].Title,
+				vacancyRows.AddRow(testCase.expected[0].ID, testCase.expected[0].PostedByUserId, testCase.expected[0].Title,
 					testCase.expected[0].Description, testCase.expected[0].Tasks, testCase.expected[0].Requirements, testCase.expected[0].Extra,
 					testCase.expected[0].CreatedDate, testCase.expected[0].Salary, testCase.expected[0].Location, testCase.expected[0].IsActive, testCase.expected[0].Experience, testCase.expected[0].Format, testCase.expected[0].Hours, testCase.expected[0].Image)
 			}
 
 			mock.
 				ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "user_accounts" WHERE id = $1`)).
-				WithArgs(1).WillReturnRows(resumeRows)
+				WithArgs(1).WillReturnRows(vacancyRows)
 
 			timeNow := time.Now()
 

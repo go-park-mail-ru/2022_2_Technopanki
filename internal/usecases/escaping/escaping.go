@@ -2,12 +2,9 @@ package escaping
 
 import (
 	"HeadHunter/internal/entity/models"
-	"github.com/microcosm-cc/bluemonday"
 	"html"
 	"reflect"
 )
-
-var policy = bluemonday.UGCPolicy()
 
 type allowedModels interface {
 	*models.Resume | *models.UserAccount | *models.Vacancy

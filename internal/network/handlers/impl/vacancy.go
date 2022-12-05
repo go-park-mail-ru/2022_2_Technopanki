@@ -46,12 +46,12 @@ func (vh *VacancyHandler) GetAllVacancies(c *gin.Context) {
 
 	salary := c.Query("salary")
 	if salary != "" {
-		if strings.Index(salary, ":") != -1 {
+		if strings.Contains(salary, ":") {
 			split := strings.Split(salary, ":")
 			filters.FirstSalaryValue = split[0]
 			filters.SecondSalaryValue = split[1]
 		} else {
-			c.Error(errorHandler.ErrBadRequest)
+			_ = c.Error(errorHandler.ErrBadRequest)
 			return
 		}
 	}
