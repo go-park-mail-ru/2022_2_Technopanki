@@ -11,6 +11,5 @@ func Middleware() gin.HandlerFunc {
 			rawErr := c.Errors.Last()
 			Response(c, rawErr.Err)
 		}
-		return
 	}
 }

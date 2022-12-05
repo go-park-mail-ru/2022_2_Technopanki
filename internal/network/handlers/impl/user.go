@@ -160,12 +160,12 @@ func (uh *UserHandler) GetAllEmployers(c *gin.Context) {
 
 	size := c.Query("size")
 	if size != "" {
-		if strings.Index(size, ":") != -1 {
+		if strings.Contains(size, ":") {
 			split := strings.Split(size, ":")
 			filters.FirstCompanySizeValue = split[0]
 			filters.SecondCompanySizeValue = split[1]
 		} else {
-			c.Error(errorHandler.ErrBadRequest)
+			_ = c.Error(errorHandler.ErrBadRequest)
 			return
 		}
 	}
@@ -192,7 +192,7 @@ func (uh *UserHandler) GetAllApplicants(c *gin.Context) {
 
 	search := c.Query("search")
 	if search != "" {
-		if strings.Index(search, "_") != -1 {
+		if strings.Contains(search, "_") {
 			split := strings.Split(search, " ")
 			filters.ApplicantName = split[0]
 			filters.ApplicantSurname = split[1]
