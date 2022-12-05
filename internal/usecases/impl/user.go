@@ -135,7 +135,7 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 	input.IsConfirmed = !us.cfg.Security.ConfirmAccountMode
 
 	input.Age = uint(Age(input.DateOfBirth))
-	input.AverageColor = "98 126 138"
+	input.AverageColor = us.cfg.Image.DefaultAverageColor
 
 	createErr := us.userRep.CreateUser(input)
 

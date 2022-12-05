@@ -78,7 +78,6 @@ func Average(img image.Image) string {
 		R: uint8(sumR / count),
 		G: uint8(sumG / count),
 		B: uint8(sumB / count),
-		A: 255,
 	}
 	resultStr := fmt.Sprintf("%d %d %d", result.R, result.G, result.B)
 	return resultStr
