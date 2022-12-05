@@ -213,7 +213,7 @@ func (uh *UserHandler) GetAllApplicants(c *gin.Context) {
 			filters.FirstAgeValue = split[0]
 			filters.SecondAgeValue = split[1]
 		} else {
-			c.Error(errorHandler.ErrBadRequest)
+			_ = c.Error(errorHandler.ErrBadRequest)
 			return
 		}
 	}
