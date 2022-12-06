@@ -20,7 +20,7 @@ func main() {
 	client.SetToken(token)
 	secretValues, err := client.Logical().Read("secret/data/jf")
 	if err != nil {
-		log.Println(err)
+		log.Fatalln(err)
 	}
 	for name, value := range secretValues.Data {
 		valueStr, ok := value.(string)
