@@ -31,6 +31,7 @@ func main() {
 	}
 
 	data := make([]string, 0, len(secretValues.Data))
+
 	for name, value := range secretValues.Data {
 		valueStr, ok := value.(string)
 		if !ok {
