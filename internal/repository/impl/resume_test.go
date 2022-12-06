@@ -10,6 +10,10 @@ import (
 	"gorm.io/gorm"
 	"regexp"
 	"testing"
+<<<<<<< HEAD
+=======
+	"time"
+>>>>>>> 4b3b4ffc165f9fc21abae0a030304f582c72fa28
 )
 
 func CreateResumeMock() (*ResumePostgres, sqlmock.Sqlmock, error) {
@@ -28,8 +32,8 @@ func CreateResumeMock() (*ResumePostgres, sqlmock.Sqlmock, error) {
 		return nil, nil, closeErr
 	}
 
-	repoBoard := NewResumePostgres(gormDB)
-	return repoBoard, mock, nil
+	repoResume := NewResumePostgres(gormDB)
+	return repoResume, mock, nil
 }
 
 func TestResumePostgres_GetResume(t *testing.T) {
@@ -135,7 +139,7 @@ func TestResumePostgres_GetPreviewResumeByApplicant(t *testing.T) {
 
 			resumeRows := sqlmock.NewRows([]string{"id", "title", "applicant_name", "applicant_surname"})
 			if len(testCase.expected) > 0 {
-				resumeRows = resumeRows.AddRow(testCase.expected[0].Id, testCase.expected[0].Title,
+				resumeRows.AddRow(testCase.expected[0].Id, testCase.expected[0].Title,
 					testCase.expected[0].ApplicantName, testCase.expected[0].ApplicantSurname)
 			}
 			mock.
@@ -201,7 +205,7 @@ func TestResumePostgres_GetResumeByApplicant(t *testing.T) {
 
 			resumeRows := sqlmock.NewRows([]string{"id", "title", "description", "user_account_id"})
 			if len(testCase.expected) > 0 {
-				resumeRows = resumeRows.AddRow(testCase.expected[0].ID, testCase.expected[0].Title,
+				resumeRows.AddRow(testCase.expected[0].ID, testCase.expected[0].Title,
 					testCase.expected[0].Description, testCase.expected[0].UserAccountId)
 			}
 			mock.
@@ -277,7 +281,7 @@ func TestResumePostgres_DeleteResume(t *testing.T) {
 
 			resumeRows := sqlmock.NewRows([]string{"id", "title", "description", "user_account_id"})
 			if len(testCase.expected) > 0 {
-				resumeRows = resumeRows.AddRow(testCase.expected[0].ID, testCase.expected[0].Title,
+				resumeRows.AddRow(testCase.expected[0].ID, testCase.expected[0].Title,
 					testCase.expected[0].Description, testCase.expected[0].UserAccountId)
 			}
 			mock.ExpectBegin()
@@ -301,6 +305,7 @@ func TestResumePostgres_DeleteResume(t *testing.T) {
 	}
 }
 
+<<<<<<< HEAD
 //func TestResumePostgres_CreateResume(t *testing.T) {
 //	t.Parallel()
 //	ResumeDB, mock, mockErr := CreateResumeMock()
@@ -397,3 +402,101 @@ func TestResumePostgres_DeleteResume(t *testing.T) {
 //		})
 //	}
 //}
+=======
+func TestResumePostgres_CreateResume(t *testing.T) {
+	t.Parallel()
+	ResumeDB, mock, mockErr := CreateResumeMock()
+	if mockErr != nil {
+		t.Errorf("error with creating mock: %s", mockErr)
+	}
+
+	testTable := []struct {
+		name        string
+		id          uint
+		expectedErr error
+		expected    []*models.Resume
+	}{
+		{
+			name:        "ok",
+			id:          1,
+			expectedErr: nil,
+			expected: []*models.Resume{{
+				ID:                1,
+				Title:             "title",
+				Description:       "desc",
+				Location:          "loc",
+				ExperienceInYears: "1",
+				Salary:            1,
+				UserAccountId:     1,
+				ExperienceDetail: models.ExperienceDetail{
+					ResumeId: 1,
+				},
+				EducationDetail: models.EducationDetail{
+					ResumeId: 1,
+				},
+			}},
+		},
+	}
+
+	for _, tc := range testTable {
+		testCase := tc
+		t.Run(testCase.name, func(t *testing.T) {
+
+			resumeRows := sqlmock.NewRows([]string{"id", "title", "description", "location", "experience_in_years", "user_account_id", "salary"})
+			if len(testCase.expected) > 0 {
+				resumeRows.AddRow(testCase.expected[0].ID, testCase.expected[0].Title,
+					testCase.expected[0].Description, testCase.expected[0].Location, testCase.expected[0].ExperienceInYears, testCase.expected[0].UserAccountId, testCase.expected[0].Salary)
+			}
+
+			mock.
+				ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "user_accounts" WHERE id = $1`)).
+				WithArgs(1).WillReturnRows(resumeRows)
+
+			timeNow := time.Now()
+
+			mock.ExpectBegin()
+			mock.
+				ExpectQuery(regexp.QuoteMeta(`INSERT INTO "resumes" ("user_account_id","title","description","created_time","location","experience_in_years","salary") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "id"`)).
+				WithArgs(1,
+					"title",
+					"desc",
+					timeNow,
+					"loc",
+					"1",
+					1).
+				WillReturnRows(sqlmock.NewRows([]string{"1"}))
+			mock.ExpectCommit()
+
+			mock.ExpectBegin()
+			mock.
+				ExpectQuery(regexp.QuoteMeta(`INSERT INTO "resumes" ("user_account_id","title","description","created_time","location","experience_in_years","salary") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "id"`)).
+				WithArgs(1,
+					"title",
+					"desc",
+					timeNow,
+					"loc",
+					"1",
+					1).
+				WillReturnRows(sqlmock.NewRows([]string{"1"}))
+			mock.ExpectCommit()
+
+			resume := &models.Resume{
+				UserAccountId:     1,
+				Title:             "title",
+				Description:       "desc",
+				CreatedTime:       timeNow,
+				Location:          "loc",
+				ExperienceInYears: "1",
+				Salary:            1,
+			}
+
+			createErr := ResumeDB.CreateResume(resume, 1)
+			assert.Equal(t, testCase.expectedErr, createErr)
+
+			if err := mock.ExpectationsWereMet(); err != nil {
+				t.Errorf("there were unfulfilled expectations: %s", err)
+			}
+		})
+	}
+}
+>>>>>>> 4b3b4ffc165f9fc21abae0a030304f582c72fa28

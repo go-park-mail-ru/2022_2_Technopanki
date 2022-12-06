@@ -708,3 +708,91 @@ func TestResumeHandler_DeleteResume(t *testing.T) {
 		})
 	}
 }
+
+func TestResumeHandler_GetAllResumes(t *testing.T) {
+	type mockBehavior func(r *mock_usecases.MockResume, filters models.ResumeFilter)
+	//type sessionRepBehavior func(r *mock_session.MockRepository, token string)
+
+	testTable := []struct {
+		name                 string
+		inputId              uint
+		inputToken           string
+		requestParam         string
+		emailFromToken       string
+		filters              models.ResumeFilter
+		mockBehavior         mockBehavior
+		expectedStatusCode   int
+		expectedResponseBody string
+	}{
+		{
+			name:           "valid",
+			inputId:        42,
+			requestParam:   "42",
+			emailFromToken: "test@gmail.com",
+			mockBehavior: func(r *mock_usecases.MockResume, filters models.ResumeFilter) {
+				expectedResume := []*models.Resume{
+					{
+						ID:    42,
+						Title: "some resume",
+					},
+				}
+				r.EXPECT().GetAllResumes(filters).Return(expectedResume, nil)
+			},
+			expectedStatusCode:   200,
+			expectedResponseBody: "{\"data\":[{\"id\":42,\"user_account_id\":0,\"title\":\"some resume\",\"description\":\"\",\"created_date\":\"0001-01-01T00:00:00Z\",\"education_detail\":{\"resume_id\":0,\"certificate_degree_name\":\"\",\"major\":\"\",\"university_name\":\"\",\"starting_date\":\"0001-01-01T00:00:00Z\",\"completion_date\":\"0001-01-01T00:00:00Z\"},\"experience_detail\":{\"resume_id\":0,\"is_current_job\":\"\",\"start_date\":\"0001-01-01T00:00:00Z\",\"end_date\":\"0001-01-01T00:00:00Z\",\"job_title\":\"\",\"company_name\":\"\",\"job_location_city\":\"\",\"description\":\"\"},\"applicant_skills\":null}]}",
+		},
+		{
+			name:           "not found",
+			inputId:        42,
+			requestParam:   "42",
+			emailFromToken: "test@gmail.com",
+			mockBehavior: func(r *mock_usecases.MockResume, filters models.ResumeFilter) {
+				expectedResume := []*models.Resume{
+					{
+						ID:    42,
+						Title: "some resume",
+					},
+				}
+				r.EXPECT().GetAllResumes(filters).Return(expectedResume, errorHandler.ErrResumeNotFound)
+			},
+			expectedStatusCode:   404,
+			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Резюме не найдено\"}",
+		},
+	}
+	for _, test := range testTable {
+		testCase := test
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			mockUseCase := mock_usecases.NewMockResume(c)
+
+			if testCase.emailFromToken != "" {
+				testCase.mockBehavior(mockUseCase, testCase.filters)
+			}
+
+			handler := ResumeHandler{
+				resumeUseCase: mockUseCase,
+			}
+
+			r := gin.New()
+			r.GET("/", handler.GetAllResumes, errorHandler.Middleware())
+
+			cookie := &http.Cookie{
+				Name:  "session",
+				Value: testCase.inputToken,
+			}
+
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest("GET", "/",
+				bytes.NewBufferString(""))
+
+			req.AddCookie(cookie)
+			r.ServeHTTP(w, req)
+
+			assert.Equal(t, testCase.expectedStatusCode, w.Code)
+			assert.Equal(t, testCase.expectedResponseBody, w.Body.String())
+		})
+	}
+}

@@ -51,7 +51,7 @@ func TestUserPostgres_CreateUser(t *testing.T) {
 		ApplicantSurname: "Urvancev"}
 	mock.ExpectBegin()
 	mock.
-		ExpectQuery(regexp.QuoteMeta(`INSERT INTO "user_accounts" ("user_type","email","password","contact_number","status","description","image","date_of_birth","created_time","applicant_name","applicant_surname","applicant_current_salary","company_name","business_type","company_website_url","location","company_size","public_fields","is_confirmed","two_factor_sign_in","mailing_approval") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21) RETURNING "id"`)).
+		ExpectQuery(regexp.QuoteMeta(`INSERT INTO "user_accounts" ("user_type","email","password","contact_number","status","description","image","date_of_birth","age","created_time","applicant_name","applicant_surname","applicant_current_salary","company_name","business_type","company_website_url","location","company_size","public_fields","is_confirmed","two_factor_sign_in","mailing_approval") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22) RETURNING "id"`)).
 		WithArgs(
 			user.UserType,
 			user.Email,
@@ -61,6 +61,7 @@ func TestUserPostgres_CreateUser(t *testing.T) {
 			user.Description,
 			user.Image,
 			user.DateOfBirth,
+			user.Age,
 			AnyTime{},
 			user.ApplicantName,
 			user.ApplicantSurname,
@@ -90,7 +91,7 @@ func TestUserPostgres_CreateUser(t *testing.T) {
 
 	mock.ExpectBegin()
 	mock.
-		ExpectQuery(regexp.QuoteMeta(`INSERT INTO "user_accounts" ("user_type","email","password","contact_number","status","description","image","date_of_birth","created_time","applicant_name","applicant_surname","applicant_current_salary","company_name","business_type","company_website_url","location","company_size","public_fields","is_confirmed","two_factor_sign_in","mailing_approval") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21) RETURNING "id"`)).
+		ExpectQuery(regexp.QuoteMeta(`INSERT INTO "user_accounts" ("user_type","email","password","contact_number","status","description","image","date_of_birth","age","created_time","applicant_name","applicant_surname","applicant_current_salary","company_name","business_type","company_website_url","location","company_size","public_fields","is_confirmed","two_factor_sign_in","mailing_approval") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22) RETURNING "id"`)).
 		WithArgs(
 			user.UserType,
 			user.Email,
@@ -100,6 +101,7 @@ func TestUserPostgres_CreateUser(t *testing.T) {
 			user.Description,
 			user.Image,
 			user.DateOfBirth,
+			user.Age,
 			AnyTime{},
 			user.ApplicantName,
 			user.ApplicantSurname,

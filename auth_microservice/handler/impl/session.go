@@ -2,6 +2,7 @@ package impl
 
 import (
 	"HeadHunter/auth_microservice/handler"
+	"HeadHunter/auth_microservice/usecase"
 	"HeadHunter/auth_microservice/usecase/impl"
 	"HeadHunter/metrics"
 	"HeadHunter/pkg/errorHandler"
@@ -10,11 +11,11 @@ import (
 )
 
 type SessionHandler struct {
-	sessionUseCase impl.SessionUseCase
+	sessionUseCase usecase.Repository
 	handler.UnimplementedAuthCheckerServer
 }
 
-func NewSessionHandler(_sus impl.SessionUseCase) *SessionHandler {
+func NewSessionHandler(_sus *impl.SessionUseCase) *SessionHandler {
 	return &SessionHandler{sessionUseCase: _sus}
 }
 
