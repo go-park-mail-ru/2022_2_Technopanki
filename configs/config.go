@@ -86,5 +86,6 @@ func InitConfig(config *Config) error {
 		return marshalErr
 	}
 
+	config.DB.Password = os.Getenv("DB_PASSWORD")
 	return nil
 }
