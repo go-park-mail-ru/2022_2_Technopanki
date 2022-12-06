@@ -26,7 +26,7 @@ func EmployerFilterQueries(filterName string) string {
 	case "BusinessType":
 		return "business_type = ?"
 	case "FirstCompanySizeValue":
-		return "company_size BETWEEN ? AND ?"
+		return "company_size BETWEEN ? AND ? AND user_type = 'employer'"
 	default:
 		return ""
 	}

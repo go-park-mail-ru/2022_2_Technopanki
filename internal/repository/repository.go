@@ -48,8 +48,8 @@ type VacancyRepository interface {
 
 type VacancyActivityRepository interface {
 	ApplyForVacancy(*models.VacancyActivity) error
-	GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivity, error)
-	GetAllUserApplies(userId uint) ([]*models.VacancyActivity, error)
+	GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivityPreview, error)
+	GetAllUserApplies(userId uint) ([]*models.VacancyActivityPreview, error)
 	DeleteUserApply(userId, applyId uint) error
 }
 
