@@ -6,14 +6,16 @@ import (
 	"github.com/joho/godotenv"
 	"log"
 	"os"
+	"strings"
 )
 
 func main() {
-	client, err := api.NewClient(&api.Config{
+	client, clientErr := api.NewClient(&api.Config{
 		Address: fmt.Sprintf("http://localhost:8200"),
 	})
-	if err != nil {
-		log.Fatalln(err)
+
+	if clientErr != nil {
+		log.Fatalln(clientErr)
 	}
 
 	if envErr := godotenv.Load(); envErr != nil {
@@ -30,15 +32,31 @@ func main() {
 	if err != nil {
 		log.Fatalln("get", err)
 	}
+
+	data := fmt.Sprintf("TOKEN=%s\n", token)
 	for name, value := range secretValues.Data {
 		valueStr, ok := value.(string)
 		if !ok {
 			log.Fatalln("invalid data in vault")
 		}
 
-		setErr := os.Setenv(name, valueStr)
-		if setErr != nil {
-			log.Fatalln(setErr)
+		strings.Join([]string{data, fmt.Sprintf("%s=%s", name, valueStr)}, "")
+	}
+
+	fileEnv, OpenErr := os.Create("../.env")
+	if OpenErr != nil {
+		log.Fatalln("Unable to create/open file:", OpenErr)
+	}
+
+	defer func(fileEnv *os.File) {
+		closeErr := fileEnv.Close()
+		if closeErr != nil {
+			log.Fatalln("Cannot close file:", closeErr)
 		}
+	}(fileEnv)
+
+	_, writeErr := fileEnv.Write([]byte(data))
+	if writeErr != nil {
+		log.Fatalln("Unable to write data:", writeErr)
 	}
 }
