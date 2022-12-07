@@ -24,15 +24,15 @@ func (sh *SessionHandler) NewSession(ctx context.Context, in *handler.Email) (*h
 	defer timer.ObserveDuration()
 
 	if in == nil {
-		metrics.SessionRequest.WithLabelValues("400", "bad request NewSession")
+		metrics.SessionRequest.WithLabelValues("400", "bad request", "NewSession").Inc()
 		return &handler.Token{}, errorHandler.ErrBadRequest
 	}
 	token, createErr := sh.sessionUseCase.NewSession(in.Value)
 	if createErr != nil {
-		metrics.SessionRequest.WithLabelValues("500", "cannot create session")
+		metrics.SessionRequest.WithLabelValues("500", "cannot create session", "NewSession").Inc()
 		return &handler.Token{}, createErr
 	}
-	metrics.SessionRequest.WithLabelValues("200", "success NewSession")
+	metrics.SessionRequest.WithLabelValues("200", "success", "NewSession").Inc()
 	return &handler.Token{Value: token}, nil
 }
 
@@ -41,15 +41,15 @@ func (sh *SessionHandler) GetSession(ctx context.Context, in *handler.Token) (*h
 	defer timer.ObserveDuration()
 
 	if in == nil {
-		metrics.SessionRequest.WithLabelValues("400", "bad request GetSession")
+		metrics.SessionRequest.WithLabelValues("400", "bad request", "GetSession").Inc()
 		return &handler.Email{}, errorHandler.ErrBadRequest
 	}
 	email, getErr := sh.sessionUseCase.GetSession(in.Value)
 	if getErr != nil {
-		metrics.SessionRequest.WithLabelValues("404", "session not found")
+		metrics.SessionRequest.WithLabelValues("404", "session not found", "GetSession").Inc()
 		return &handler.Email{}, getErr
 	}
-	metrics.SessionRequest.WithLabelValues("200", "success GetSession")
+	metrics.SessionRequest.WithLabelValues("200", "success GetSession", "GetSession").Inc()
 	return &handler.Email{Value: email}, nil
 }
 
@@ -58,15 +58,15 @@ func (sh *SessionHandler) DeleteSession(ctx context.Context, in *handler.Token) 
 	defer timer.ObserveDuration()
 
 	if in == nil {
-		metrics.SessionRequest.WithLabelValues("400", "bad request DeleteSession")
+		metrics.SessionRequest.WithLabelValues("400", "bad request", "DeleteSession").Inc()
 		return &handler.Nothing{}, errorHandler.ErrBadRequest
 	}
 	deleteErr := sh.sessionUseCase.DeleteSession(in.Value)
 	if deleteErr != nil {
-		metrics.SessionRequest.WithLabelValues("500", "cannot delete session")
+		metrics.SessionRequest.WithLabelValues("500", "cannot delete session", "DeleteSession").Inc()
 		return &handler.Nothing{}, deleteErr
 	}
-	metrics.SessionRequest.WithLabelValues("200", "success DeleteSession")
+	metrics.SessionRequest.WithLabelValues("200", "success", "DeleteSession").Inc()
 	return &handler.Nothing{}, nil
 }
 
@@ -75,15 +75,15 @@ func (sh *SessionHandler) CreateConfirmationCode(ctx context.Context, in *handle
 	defer timer.ObserveDuration()
 
 	if in == nil {
-		metrics.SessionRequest.WithLabelValues("400", "bad request CreateConfirmationCode")
+		metrics.SessionRequest.WithLabelValues("400", "bad request", "CreateConfirmationCode").Inc()
 		return &handler.Token{}, errorHandler.ErrBadRequest
 	}
 	code, createErr := sh.sessionUseCase.CreateConfirmationCode(in.Value)
 	if createErr != nil {
-		metrics.SessionRequest.WithLabelValues("500", "cannot create confirmation code")
+		metrics.SessionRequest.WithLabelValues("500", "cannot create confirmation code", "CreateConfirmationCode").Inc()
 		return &handler.Token{}, createErr
 	}
-	metrics.SessionRequest.WithLabelValues("200", "success CreateConfirmationCode")
+	metrics.SessionRequest.WithLabelValues("200", "success", "CreateConfirmationCode").Inc()
 	return &handler.Token{Value: code}, nil
 }
 
@@ -92,14 +92,14 @@ func (sh *SessionHandler) GetCodeFromEmail(ctx context.Context, in *handler.Emai
 	defer timer.ObserveDuration()
 
 	if in == nil {
-		metrics.SessionRequest.WithLabelValues("400", "bad request GetCodeFromEmail")
+		metrics.SessionRequest.WithLabelValues("400", "bad request", "GetCodeFromEmail")
 		return &handler.Token{}, errorHandler.ErrBadRequest
 	}
 	code, getErr := sh.sessionUseCase.GetCodeFromEmail(in.Value)
 	if getErr != nil {
-		metrics.SessionRequest.WithLabelValues("404", "code not found")
+		metrics.SessionRequest.WithLabelValues("404", "code not found", "GetCodeFromEmail")
 		return &handler.Token{}, getErr
 	}
-	metrics.SessionRequest.WithLabelValues("200", "success GetCodeFromEmail")
+	metrics.SessionRequest.WithLabelValues("200", "success", "GetCodeFromEmail")
 	return &handler.Token{Value: code}, nil
 }

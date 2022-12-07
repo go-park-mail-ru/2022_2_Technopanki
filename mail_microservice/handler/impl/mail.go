@@ -4,8 +4,10 @@ import (
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/mail_microservice/handler"
 	"HeadHunter/mail_microservice/usecase"
+	"HeadHunter/metrics"
 	"HeadHunter/pkg/errorHandler"
 	"context"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 type MailHandler struct {
@@ -18,18 +20,26 @@ func NewMailHandler(_mail usecase.Mail) *MailHandler {
 }
 
 func (mh *MailHandler) SendConfirmCode(ctx context.Context, in *handler.Email) (*handler.Nothing, error) {
+	timer := prometheus.NewTimer(metrics.MailRequestDuration.WithLabelValues("SendConfirmCode"))
+	defer timer.ObserveDuration()
 	if in == nil {
+		metrics.MailRequest.WithLabelValues("400", "bad request", "SendConfirmCode").Inc()
 		return &handler.Nothing{}, errorHandler.ErrBadRequest
 	}
 	sendErr := mh.mailUseCase.SendConfirmCode(in.Value)
 	if sendErr != nil {
+		metrics.MailRequest.WithLabelValues("500", "send message error", "SendConfirmCode").Inc()
 		return &handler.Nothing{}, sendErr
 	}
+	metrics.MailRequest.WithLabelValues("200", "success", "SendConfirmCode").Inc()
 	return &handler.Nothing{}, nil
 }
 
 func (mh *MailHandler) SendApplicantMailing(ctx context.Context, in *handler.ApplicantMailingData) (*handler.Nothing, error) {
+	timer := prometheus.NewTimer(metrics.MailRequestDuration.WithLabelValues("SendApplicantMailing"))
+	defer timer.ObserveDuration()
 	if in == nil {
+		metrics.MailRequest.WithLabelValues("400", "bad request", "SendApplicantMailing").Inc()
 		return &handler.Nothing{}, errorHandler.ErrBadRequest
 	}
 	vacancies := make([]*models.Vacancy, len(in.Vac))
@@ -40,13 +50,18 @@ func (mh *MailHandler) SendApplicantMailing(ctx context.Context, in *handler.App
 	}
 	sendErr := mh.mailUseCase.SendApplicantMailing(in.Emails, vacancies)
 	if sendErr != nil {
+		metrics.MailRequest.WithLabelValues("500", "send message error", "SendApplicantMailing").Inc()
 		return &handler.Nothing{}, sendErr
 	}
+	metrics.MailRequest.WithLabelValues("200", "success", "SendApplicantMailing").Inc()
 	return &handler.Nothing{}, nil
 }
 
 func (mh *MailHandler) SendEmployerMailing(ctx context.Context, in *handler.EmployerMailingData) (*handler.Nothing, error) {
+	timer := prometheus.NewTimer(metrics.MailRequestDuration.WithLabelValues("SendEmployerMailing"))
+	defer timer.ObserveDuration()
 	if in == nil {
+		metrics.MailRequest.WithLabelValues("400", "bad request", "SendEmployerMailing").Inc()
 		return &handler.Nothing{}, errorHandler.ErrBadRequest
 	}
 	applicants := make([]*models.UserAccount, len(in.Emp))
@@ -60,7 +75,9 @@ func (mh *MailHandler) SendEmployerMailing(ctx context.Context, in *handler.Empl
 	}
 	sendErr := mh.mailUseCase.SendEmployerMailing(in.Emails, applicants)
 	if sendErr != nil {
+		metrics.MailRequest.WithLabelValues("500", "send message error", "SendEmployerMailing").Inc()
 		return &handler.Nothing{}, sendErr
 	}
+	metrics.MailRequest.WithLabelValues("200", "success", "SendEmployerMailing").Inc()
 	return &handler.Nothing{}, nil
 }
