@@ -3,9 +3,11 @@ package images
 import (
 	"HeadHunter/configs"
 	"HeadHunter/pkg/errorHandler"
+	"fmt"
 	"github.com/kolesa-team/go-webp/encoder"
 	"github.com/kolesa-team/go-webp/webp"
 	"image"
+	"image/color"
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
@@ -57,4 +59,28 @@ func DeleteUserAvatar(name string, cfg *configs.ImageConfig) error {
 		return removeErr
 	}
 	return nil
+}
+
+func Average(img image.Image) string {
+	max := img.Bounds().Max
+	min := img.Bounds().Min
+	var sumR, sumG, sumB uint64
+	count := uint64(max.Y-min.Y) * uint64(max.X-min.X)
+	for y := min.Y; y < max.Y; y++ {
+		for x := min.X; x < max.X; x++ {
+			SR, SG, SB, _ := img.At(x, y).RGBA()
+			r, g, b := uint8(SR), uint8(SG), uint8(SB)
+			sumR += uint64(r)
+			sumG += uint64(g)
+			sumB += uint64(b)
+		}
+	}
+	result := color.RGBA{
+		R: uint8(sumR / count),
+		G: uint8(sumG / count),
+		B: uint8(sumB / count),
+		A: 255,
+	}
+	resultStr := fmt.Sprintf("%d %d %d", result.R, result.G, result.B)
+	return resultStr
 }

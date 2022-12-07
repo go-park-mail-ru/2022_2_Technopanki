@@ -11,6 +11,7 @@ type UserAccount struct {
 	Status                 string            `json:"status" gorm:"not null"`
 	Description            string            `json:"description" gorm:"not null;"`
 	Image                  string            `json:"image"`
+	AverageColor           string            `json:"average_color" gorm:"not null"`
 	DateOfBirth            time.Time         `json:"date_of_birth" gorm:"not null"`
 	Age                    uint              `json:"age,omitempty"`
 	CreatedTime            time.Time         `json:"created_time" gorm:"autoCreateTime"`
