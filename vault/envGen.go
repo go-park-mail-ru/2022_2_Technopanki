@@ -27,7 +27,6 @@ func main() {
 		log.Fatalln("token not found")
 	}
 	client.SetToken(token)
-	fmt.Println(token)
 	secretValues, err := client.Logical().Read("jobflow/passwords")
 	if err != nil {
 		log.Fatalln("get", err)
@@ -40,7 +39,7 @@ func main() {
 			log.Fatalln("invalid data in vault")
 		}
 
-		data = strings.Join([]string{data, fmt.Sprintf("%s=%s", name, valueStr)}, "")
+		data = strings.Join([]string{data, fmt.Sprintf("%s=%s\n", name, valueStr)}, "")
 	}
 
 	fileEnv, OpenErr := os.Create(".env")
