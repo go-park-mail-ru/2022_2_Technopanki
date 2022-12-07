@@ -4,42 +4,40 @@ import (
 	"flag"
 	"fmt"
 	"github.com/hashicorp/vault/api"
-	"github.com/joho/godotenv"
 	"log"
 	"os"
 	"strings"
 )
 
+var secretPath = "jobflow/passwords"
+var vaultAddress = "http://localhost:8200"
+
 func main() {
 	client, clientErr := api.NewClient(&api.Config{
-		Address: fmt.Sprintf("http://localhost:8200"),
+		Address: fmt.Sprintf(vaultAddress),
 	})
 
 	if clientErr != nil {
 		log.Fatalln(clientErr)
 	}
 
-	if envErr := godotenv.Load(); envErr != nil {
-		log.Fatalln("error with load .env: ", envErr)
-	}
-
 	var token string
 	flag.StringVar(&token, "token", "", "token for vault connecting")
 	flag.Parse()
 	client.SetToken(token)
-	secretValues, err := client.Logical().Read("jobflow/passwords")
+	secretValues, err := client.Logical().Read(secretPath)
 	if err != nil {
 		log.Fatalln("get", err)
 	}
 
-	data := ""
+	data := make([]string, 0, len(secretValues.Data))
 	for name, value := range secretValues.Data {
 		valueStr, ok := value.(string)
 		if !ok {
 			log.Fatalln("invalid data in vault")
 		}
 
-		data = strings.Join([]string{data, fmt.Sprintf("%s=%s\n", name, valueStr)}, "")
+		data = append(data, fmt.Sprintf("%s=%s\n", name, valueStr))
 	}
 
 	fileEnv, OpenErr := os.Create(".env")
@@ -48,13 +46,18 @@ func main() {
 	}
 
 	defer func(fileEnv *os.File) {
+		syncErr := fileEnv.Sync()
+		if syncErr != nil {
+			log.Fatalln("Error with sync file", syncErr)
+		}
+
 		closeErr := fileEnv.Close()
 		if closeErr != nil {
 			log.Fatalln("Cannot close file:", closeErr)
 		}
 	}(fileEnv)
 
-	_, writeErr := fileEnv.Write([]byte(data))
+	_, writeErr := fileEnv.Write([]byte(strings.Join(data, "")))
 	if writeErr != nil {
 		log.Fatalln("Unable to write data:", writeErr)
 	}
