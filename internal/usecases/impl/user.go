@@ -68,6 +68,7 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 		if sendErr != nil {
 			return "", sendErr
 		}
+		input.TwoFactorSignIn = true
 		return "", nil
 	}
 

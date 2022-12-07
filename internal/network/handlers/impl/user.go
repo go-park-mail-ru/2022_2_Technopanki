@@ -7,7 +7,6 @@ import (
 	"HeadHunter/internal/network/response"
 	"HeadHunter/internal/usecases"
 	"HeadHunter/pkg/errorHandler"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -35,7 +34,6 @@ func (uh *UserHandler) SignIn(c *gin.Context) {
 		_ = c.Error(err)
 		return
 	}
-	fmt.Println(input)
 	if !input.TwoFactorSignIn {
 		c.SetCookie("session", token, uh.cfg.DefaultExpiringSession, "/", uh.cfg.Domain,
 			uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
