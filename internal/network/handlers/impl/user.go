@@ -40,7 +40,7 @@ func (uh *UserHandler) SignIn(c *gin.Context) {
 			uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
 		response.SendSuccessData(c, &input)
 	} else {
-		c.Status(http.StatusOK)
+		c.Status(http.StatusAccepted)
 	}
 }
 
