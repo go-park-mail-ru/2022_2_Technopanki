@@ -28,7 +28,7 @@ func main() {
 	}
 	client.SetToken(token)
 	fmt.Println(token)
-	secretValues, err := client.Logical().Read("secret/jobflow")
+	secretValues, err := client.Logical().Read("jobflow/passwords")
 	if err != nil {
 		log.Fatalln("get", err)
 	}
@@ -40,10 +40,10 @@ func main() {
 			log.Fatalln("invalid data in vault")
 		}
 
-		strings.Join([]string{data, fmt.Sprintf("%s=%s", name, valueStr)}, "")
+		data = strings.Join([]string{data, fmt.Sprintf("%s=%s", name, valueStr)}, "")
 	}
 
-	fileEnv, OpenErr := os.Create("../.env")
+	fileEnv, OpenErr := os.Create(".env")
 	if OpenErr != nil {
 		log.Fatalln("Unable to create/open file:", OpenErr)
 	}
