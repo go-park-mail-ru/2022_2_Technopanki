@@ -27,13 +27,14 @@ var (
 	ErrSessionNotFound     = errors.New("Сессия с данным токеном не найдена")
 	ErrCannotDeleteSession = errors.New("Невозможно удалить сессию")
 
-	ErrVacancyNotFound     = errors.New("Вакансия не найдена")
-	ErrCannotDeleteAvatar  = errors.New("Невозможно удалить аватар")
-	ErrForbidden           = errors.New("Запрещено")
-	ErrWrongPassword       = errors.New("Неправильный пароль")
-	ErrInvalidFileFormat   = errors.New("Некорректный формат файла")
-	IncorrectNameLength    = errors.New("Длина имени должна быть между 2 и 30 символами")
-	IncorrectSurnameLength = errors.New("Длина фамилии должна быть между 2 и 30 символами")
+	ErrVacancyNotFound      = errors.New("Вакансия не найдена")
+	ErrVacancyApplyNotFound = errors.New("Отклики на вакансию не найдены")
+	ErrCannotDeleteAvatar   = errors.New("Невозможно удалить аватар")
+	ErrForbidden            = errors.New("Запрещено")
+	ErrWrongPassword        = errors.New("Неправильный пароль")
+	ErrInvalidFileFormat    = errors.New("Некорректный формат файла")
+	IncorrectNameLength     = errors.New("Длина имени должна быть между 2 и 30 символами")
+	IncorrectSurnameLength  = errors.New("Длина фамилии должна быть между 2 и 30 символами")
 
 	InvalidEmailFormat   = errors.New("Email должен содержать @")
 	IncorrectEmailLength = errors.New("Длина email должна быть между 8 and 30 символами")
@@ -83,6 +84,7 @@ var errorToCode = map[error]int{
 	ErrCSRFTokenMismatched: http.StatusForbidden,
 
 	ErrVacancyNotFound:         http.StatusNotFound,
+	ErrVacancyApplyNotFound:    http.StatusNotFound,
 	ErrUpdateStructHasNoValues: http.StatusInternalServerError,
 
 	ErrForbidden:           http.StatusForbidden,

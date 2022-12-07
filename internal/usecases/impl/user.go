@@ -132,7 +132,9 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 	input.PublicFields = "email contact_number applicant_current_salary" //TODO после РК3 убрать для добавления фичи с доступом
 	input.IsConfirmed = !us.cfg.Security.ConfirmAccountMode
 
-	input.Age = uint(Age(input.DateOfBirth))
+	if input.DateOfBirth.IsZero() {
+		input.Age = 0
+	}
 
 	createErr := us.userRep.CreateUser(input)
 
@@ -194,7 +196,9 @@ func (us *UserService) UpdateUser(input *models.UserAccount) error {
 	}
 	input.IsConfirmed = oldUser.IsConfirmed
 
-	input.Age = uint(Age(input.DateOfBirth))
+	if !input.DateOfBirth.IsZero() {
+		input.Age = uint(Age(input.DateOfBirth))
+	}
 
 	dbError := us.userRep.UpdateUser(input)
 	if dbError != nil {
@@ -271,9 +275,7 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 
 	user = escaping.EscapingObject[*models.UserAccount](user)
 	imageName := fmt.Sprintf("%d.webp", user.ID)
-
 	user.Image = fmt.Sprintf("%d.webp?%d", user.ID, time.Now().Unix())
-
 	updateErr := us.userRep.UpdateUser(&models.UserAccount{ID: user.ID, Image: user.Image})
 	if updateErr != nil {
 		return "", updateErr
