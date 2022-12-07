@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/hashicorp/vault/api"
 	"github.com/joho/godotenv"
@@ -22,17 +23,14 @@ func main() {
 		log.Fatalln("error with load .env: ", envErr)
 	}
 
-	token, ok := os.LookupEnv("TOKEN")
-	if !ok {
-		log.Fatalln("token not found")
-	}
-	client.SetToken(token)
+	var token string
+	flag.StringVar(&token, "token", "", "token for vault connecting")
 	secretValues, err := client.Logical().Read("jobflow/passwords")
 	if err != nil {
 		log.Fatalln("get", err)
 	}
 
-	data := fmt.Sprintf("TOKEN=%s\n", token)
+	data := ""
 	for name, value := range secretValues.Data {
 		valueStr, ok := value.(string)
 		if !ok {
