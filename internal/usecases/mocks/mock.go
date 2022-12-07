@@ -435,10 +435,10 @@ func (mr *MockVacancyActivityMockRecorder) DeleteUserApply(email, apply interfac
 }
 
 // GetAllUserApplies mocks base method.
-func (m *MockVacancyActivity) GetAllUserApplies(userid uint) ([]*models.VacancyActivity, error) {
+func (m *MockVacancyActivity) GetAllUserApplies(userid uint) ([]*models.VacancyActivityPreview, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllUserApplies", userid)
-	ret0, _ := ret[0].([]*models.VacancyActivity)
+	ret0, _ := ret[0].([]*models.VacancyActivityPreview)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -450,10 +450,10 @@ func (mr *MockVacancyActivityMockRecorder) GetAllUserApplies(userid interface{})
 }
 
 // GetAllVacancyApplies mocks base method.
-func (m *MockVacancyActivity) GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivity, error) {
+func (m *MockVacancyActivity) GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivityPreview, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllVacancyApplies", vacancyId)
-	ret0, _ := ret[0].([]*models.VacancyActivity)
+	ret0, _ := ret[0].([]*models.VacancyActivityPreview)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
