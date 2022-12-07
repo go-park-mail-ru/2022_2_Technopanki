@@ -181,7 +181,7 @@ func TestUserService_SignIn(t *testing.T) { //%100
 			mailBehavior: func(r *mock_usecase.MockMail, email string) {
 				r.EXPECT().SendConfirmCode(email).Return(nil)
 			},
-			expectedErr: errorHandler.ErrForbidden,
+			expectedErr: nil,
 		},
 		{
 			name: "send error (two-factor)",
