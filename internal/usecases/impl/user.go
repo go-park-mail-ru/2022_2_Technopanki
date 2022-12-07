@@ -68,7 +68,7 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 		if sendErr != nil {
 			return "", sendErr
 		}
-		return "", errorHandler.ErrForbidden
+		return "", nil
 	}
 
 	token, newSessionErr := us.sessionRepo.NewSession(input.Email)
