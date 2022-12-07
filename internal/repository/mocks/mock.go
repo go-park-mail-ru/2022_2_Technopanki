@@ -345,10 +345,10 @@ func (mr *MockVacancyActivityRepositoryMockRecorder) DeleteUserApply(userId, app
 }
 
 // GetAllUserApplies mocks base method.
-func (m *MockVacancyActivityRepository) GetAllUserApplies(userId uint) ([]*models.VacancyActivity, error) {
+func (m *MockVacancyActivityRepository) GetAllUserApplies(userId uint) ([]*models.VacancyActivityPreview, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllUserApplies", userId)
-	ret0, _ := ret[0].([]*models.VacancyActivity)
+	ret0, _ := ret[0].([]*models.VacancyActivityPreview)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -360,10 +360,10 @@ func (mr *MockVacancyActivityRepositoryMockRecorder) GetAllUserApplies(userId in
 }
 
 // GetAllVacancyApplies mocks base method.
-func (m *MockVacancyActivityRepository) GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivity, error) {
+func (m *MockVacancyActivityRepository) GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivityPreview, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllVacancyApplies", vacancyId)
-	ret0, _ := ret[0].([]*models.VacancyActivity)
+	ret0, _ := ret[0].([]*models.VacancyActivityPreview)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
