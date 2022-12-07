@@ -26,7 +26,7 @@ func main() {
 	var token string
 	flag.StringVar(&token, "token", "", "token for vault connecting")
 	flag.Parse()
-	
+	client.SetToken(token)
 	secretValues, err := client.Logical().Read("jobflow/passwords")
 	if err != nil {
 		log.Fatalln("get", err)
