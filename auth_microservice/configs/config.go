@@ -1,6 +1,7 @@
 package configs
 
 import (
+	"github.com/joho/godotenv"
 	"gopkg.in/yaml.v2"
 	"os"
 	"path/filepath"
@@ -25,6 +26,11 @@ type RedisConfig struct {
 }
 
 func InitConfig(config *SessionConfig) error {
+	envErr := godotenv.Load("../.env")
+	if envErr != nil {
+		return envErr
+	}
+
 	filename, fileErr := filepath.Abs("./auth_microservice/configs/config.yml")
 	if fileErr != nil {
 		return fileErr
