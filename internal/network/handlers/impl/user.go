@@ -40,7 +40,6 @@ func (uh *UserHandler) SignIn(c *gin.Context) {
 		response.SendSuccessData(c, &input)
 	} else {
 		c.Status(http.StatusAccepted)
-		return
 	}
 }
 
