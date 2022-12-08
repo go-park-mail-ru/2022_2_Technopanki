@@ -1,0 +1,70 @@
+name: Deploy
+
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.18
+
+      - name: Download library
+        run: sudo apt-get update; sudo apt-get install libwebp-dev;
+
+      - name: Verify dependencies
+        run: go mod verify
+
+      - name: Build
+        run: go build -v ./...
+
+      - name: Run go vet
+        run: go vet ./...
+        
+      - name: Install golangci-lint
+        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.45.2
+
+      - name: Run linter
+        run: golangci-lint run
+
+      - name: Run go test
+        run: go test $(go list ./... | grep -v vendor) -race -coverprofile=coverage.out
+
+      - name: Coverage report
+        run: go tool cover -func=coverage.out
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download files
+        uses: actions/download-artifact@v2
+        with:
+          name: my-artifact
+          path: .
+      - name: Send files
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_IP }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "./*"
+          target: "/home/ubuntu/backend/"
+      - name: Docker-compose up
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_IP }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: cd /home/ubuntu/backend/;sudo docker build --no-cache;sudo docker-compose up -d;
+      
