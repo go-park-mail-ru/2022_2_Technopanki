@@ -5,7 +5,6 @@ import (
 	"HeadHunter/mail_microservice/handler"
 	"HeadHunter/pkg/errorHandler"
 	"context"
-	"errors"
 )
 
 type MailService struct {
@@ -22,13 +21,10 @@ func NewMailService(_client handler.MailServiceClient) *MailService {
 
 func (ms *MailService) SendConfirmCode(email string) error {
 	_, err := ms.client.SendConfirmCode(ms.ctx, &handler.Email{Value: email})
-	if errors.Is(err, errorHandler.ErrCodeAlreadyExists) {
+	if err != nil && err.Error() == "rpc error: code = Unknown desc = Код уже отправлен" { //TODO переделать
 		return errorHandler.ErrCodeAlreadyExists
 	}
-	if err != nil {
-		return errors.Unwrap(err)
-	}
-	return nil
+	return err
 }
 
 func (ms *MailService) SendApplicantMailing(emails []string, vacancies []*models.Vacancy) error {
