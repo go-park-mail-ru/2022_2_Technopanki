@@ -26,7 +26,7 @@ type RedisConfig struct {
 }
 
 func InitConfig(config *SessionConfig) error {
-	envErr := godotenv.Load("../.env")
+	envErr := godotenv.Load(".env")
 	if envErr != nil {
 		return envErr
 	}

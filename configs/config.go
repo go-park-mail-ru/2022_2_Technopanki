@@ -72,7 +72,7 @@ type SecurityConfig struct {
 }
 
 func InitConfig(config *Config) error {
-	envErr := godotenv.Load("../.env")
+	envErr := godotenv.Load(".env")
 	if envErr != nil {
 		return envErr
 	}
