@@ -9,8 +9,8 @@ import (
 	"strings"
 )
 
-var secretPath = "jobflow/passwords"
-var vaultAddress = "http://localhost:8200"
+const secretPath = "jobflow/passwords"
+const vaultAddress = "http://localhost:8200"
 
 func main() {
 	client, clientErr := api.NewClient(&api.Config{

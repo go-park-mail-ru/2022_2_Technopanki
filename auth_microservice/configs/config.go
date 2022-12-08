@@ -25,6 +25,8 @@ type RedisConfig struct {
 	DBName   string `yaml:"dbname"`
 }
 
+const redisPasswordName = "REDIS_PASSWORD"
+
 func InitConfig(config *SessionConfig) error {
 	envErr := godotenv.Load(".env")
 	if envErr != nil {
@@ -46,6 +48,6 @@ func InitConfig(config *SessionConfig) error {
 		return marshalErr
 	}
 
-	config.Redis.Password = os.Getenv("REDIS_PASSWORD")
+	config.Redis.Password = os.Getenv(redisPasswordName)
 	return nil
 }

@@ -71,6 +71,8 @@ type SecurityConfig struct {
 	ConfirmAccountMode bool   `yaml:"confirmAccountMode"`
 }
 
+const dbPasswordName = "DB_PASSWORD"
+
 func InitConfig(config *Config) error {
 	envErr := godotenv.Load(".env")
 	if envErr != nil {
@@ -92,6 +94,6 @@ func InitConfig(config *Config) error {
 		return marshalErr
 	}
 
-	config.DB.Password = os.Getenv("DB_PASSWORD")
+	config.DB.Password = os.Getenv(dbPasswordName)
 	return nil
 }
