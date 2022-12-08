@@ -9,6 +9,7 @@ func FillUser(user, reference *models.UserAccount) error {
 	user.ID = reference.ID
 	user.UserType = reference.UserType
 	user.Image = reference.Image
+	user.TwoFactorSignIn = reference.TwoFactorSignIn
 	if reference.UserType == "applicant" {
 		user.ApplicantName = reference.ApplicantName
 		user.ApplicantSurname = reference.ApplicantSurname

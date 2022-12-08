@@ -68,6 +68,7 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 		if sendErr != nil {
 			return "", sendErr
 		}
+		input.TwoFactorSignIn = true
 		return "", nil
 	}
 
@@ -275,6 +276,7 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 
 	user = escaping.EscapingObject[*models.UserAccount](user)
 	imageName := fmt.Sprintf("%d.webp", user.ID)
+
 	user.Image = fmt.Sprintf("%d.webp?%d", user.ID, time.Now().Unix())
 	updateErr := us.userRep.UpdateUser(&models.UserAccount{ID: user.ID, Image: user.Image})
 	if updateErr != nil {

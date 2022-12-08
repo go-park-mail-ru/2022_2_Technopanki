@@ -122,14 +122,26 @@ func TestVacancyActivityService_GetAllVacancyApplies(t *testing.T) {
 			mockBehavior: func(r *mock_repository.MockVacancyActivityRepository, ur *mock_repository.MockUserRepository, vacancyId uint) {
 				expected := []*models.VacancyActivityPreview{
 					{
+<<<<<<< HEAD
 						ResumeId: 1,
+=======
+						ResumeId:         1,
+						ApplicantName:    "User",
+						ApplicantSurname: "User",
+>>>>>>> 75bb56da72f4e9f46501bcb78aee505853ebf387
 					},
 				}
 				r.EXPECT().GetAllVacancyApplies(vacancyId).Return(expected, nil)
 			},
 			expectedApplies: []*models.VacancyActivityPreview{
 				{
+<<<<<<< HEAD
 					ResumeId: 1,
+=======
+					ResumeId:         1,
+					ApplicantName:    "User",
+					ApplicantSurname: "User",
+>>>>>>> 75bb56da72f4e9f46501bcb78aee505853ebf387
 				},
 			},
 			expectedErr: nil,
@@ -177,14 +189,26 @@ func TestVacancyActivityService_GetAllUserApplies(t *testing.T) {
 			mockBehavior: func(r *mock_repository.MockVacancyActivityRepository, ur *mock_repository.MockUserRepository, userId uint) {
 				expected := []*models.VacancyActivityPreview{
 					{
+<<<<<<< HEAD
 						ResumeId: 1,
+=======
+						ResumeId:         1,
+						ApplicantName:    "User",
+						ApplicantSurname: "User",
+>>>>>>> 75bb56da72f4e9f46501bcb78aee505853ebf387
 					},
 				}
 				r.EXPECT().GetAllUserApplies(userId).Return(expected, nil)
 			},
 			expectedApplies: []*models.VacancyActivityPreview{
 				{
+<<<<<<< HEAD
 					ResumeId: 1,
+=======
+					ResumeId:         1,
+					ApplicantName:    "User",
+					ApplicantSurname: "User",
+>>>>>>> 75bb56da72f4e9f46501bcb78aee505853ebf387
 				},
 			},
 			expectedErr: nil,
