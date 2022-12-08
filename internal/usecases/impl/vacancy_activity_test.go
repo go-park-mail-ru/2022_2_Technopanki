@@ -122,14 +122,18 @@ func TestVacancyActivityService_GetAllVacancyApplies(t *testing.T) {
 			mockBehavior: func(r *mock_repository.MockVacancyActivityRepository, ur *mock_repository.MockUserRepository, vacancyId uint) {
 				expected := []*models.VacancyActivityPreview{
 					{
-						ResumeId: 1,
+						ResumeId:         1,
+						ApplicantName:    "User",
+						ApplicantSurname: "User",
 					},
 				}
 				r.EXPECT().GetAllVacancyApplies(vacancyId).Return(expected, nil)
 			},
 			expectedApplies: []*models.VacancyActivityPreview{
 				{
-					ResumeId: 1,
+					ResumeId:         1,
+					ApplicantName:    "User",
+					ApplicantSurname: "User",
 				},
 			},
 			expectedErr: nil,
@@ -177,14 +181,18 @@ func TestVacancyActivityService_GetAllUserApplies(t *testing.T) {
 			mockBehavior: func(r *mock_repository.MockVacancyActivityRepository, ur *mock_repository.MockUserRepository, userId uint) {
 				expected := []*models.VacancyActivityPreview{
 					{
-						ResumeId: 1,
+						ResumeId:         1,
+						ApplicantName:    "User",
+						ApplicantSurname: "User",
 					},
 				}
 				r.EXPECT().GetAllUserApplies(userId).Return(expected, nil)
 			},
 			expectedApplies: []*models.VacancyActivityPreview{
 				{
-					ResumeId: 1,
+					ResumeId:         1,
+					ApplicantName:    "User",
+					ApplicantSurname: "User",
 				},
 			},
 			expectedErr: nil,
