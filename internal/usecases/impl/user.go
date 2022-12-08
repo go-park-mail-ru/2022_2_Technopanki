@@ -65,10 +65,11 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 
 	if user.TwoFactorSignIn {
 		sendErr := us.mail.SendConfirmCode(user.Email)
+		input.TwoFactorSignIn = true
 		if sendErr != nil {
 			return "", sendErr
 		}
-		return "", errorHandler.ErrForbidden
+		return "", nil
 	}
 
 	token, newSessionErr := us.sessionRepo.NewSession(input.Email)
@@ -132,6 +133,10 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 	input.PublicFields = "email contact_number applicant_current_salary" //TODO после РК3 убрать для добавления фичи с доступом
 	input.IsConfirmed = !us.cfg.Security.ConfirmAccountMode
 
+	if input.DateOfBirth.IsZero() {
+		input.Age = 0
+	}
+
 	createErr := us.userRep.CreateUser(input)
 
 	if createErr != nil {
@@ -191,6 +196,10 @@ func (us *UserService) UpdateUser(input *models.UserAccount) error {
 		input.Image = oldUser.Image
 	}
 	input.IsConfirmed = oldUser.IsConfirmed
+
+	if !input.DateOfBirth.IsZero() {
+		input.Age = uint(Age(input.DateOfBirth))
+	}
 
 	dbError := us.userRep.UpdateUser(input)
 	if dbError != nil {
@@ -267,6 +276,7 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 
 	user = escaping.EscapingObject[*models.UserAccount](user)
 	imageName := fmt.Sprintf("%d.webp", user.ID)
+
 	user.Image = fmt.Sprintf("%d.webp?%d", user.ID, time.Now().Unix())
 
 	updateErr := us.userRep.UpdateUser(&models.UserAccount{ID: user.ID, Image: user.Image})
@@ -322,6 +332,11 @@ func (us *UserService) ConfirmUser(code, email string) (*models.UserAccount, str
 	token, newSessionErr := us.sessionRepo.NewSession(email)
 	if newSessionErr != nil {
 		return nil, "", newSessionErr
+	}
+
+	deleteErr := us.sessionRepo.Delete(email)
+	if deleteErr != nil {
+		return nil, "", deleteErr
 	}
 
 	return confirmedUser, token, us.userRep.UpdateUser(confirmedUser)

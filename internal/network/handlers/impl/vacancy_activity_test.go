@@ -38,13 +38,13 @@ func TestVacancyActivityHandler_ApplyForVacancy(t *testing.T) {
 			vacancyId:      1,
 			requestParam:   "1",
 			createdApply: &models.VacancyActivity{
-				ResumeTitle: "some title",
+				ResumeId: 1,
 			},
 			inputBody: `{
-				"title": "some title"
+				"id": 1
 }`,
 			mockBehavior: func(r *mock_usecases.MockVacancyActivity, vacancyActivity *models.VacancyActivity, vacancyId uint) {
-				createdApply := &models.VacancyActivity{ResumeTitle: "some title"}
+				createdApply := &models.VacancyActivity{ResumeId: 1}
 				r.EXPECT().ApplyForVacancy("test@gmail.com", vacancyId, createdApply).Return(nil)
 			},
 			sessionRepBehavior: func(sessionRep *mock_session.MockRepository, token string) {
@@ -59,13 +59,13 @@ func TestVacancyActivityHandler_ApplyForVacancy(t *testing.T) {
 			vacancyId:      1,
 			requestParam:   "1",
 			createdApply: &models.VacancyActivity{
-				ResumeTitle: "some title",
+				ResumeId: 1,
 			},
 			inputBody: `{
-    			"title": "some title"
+    			"id": 1
 }`,
 			mockBehavior: func(r *mock_usecases.MockVacancyActivity, vacancy *models.VacancyActivity, vacancyId uint) {
-				createdApply := &models.VacancyActivity{ResumeTitle: "some title"}
+				createdApply := &models.VacancyActivity{ResumeId: 1}
 				r.EXPECT().ApplyForVacancy("test@gmail.com", vacancyId, createdApply).Return(errorHandler.ErrBadRequest)
 			},
 			sessionRepBehavior: func(sessionRep *mock_session.MockRepository, token string) {
@@ -239,10 +239,10 @@ func TestVacancyActivityHandler_GetAllUserApplies(t *testing.T) {
 			requestParam:   "42",
 			emailFromToken: "test@gmail.com",
 			mockBehavior: func(r *mock_usecases.MockVacancyActivity, id uint) {
-				expectedApply := []*models.VacancyActivity{
+				expectedApply := []*models.VacancyActivityPreview{
 					{
 						UserAccountId: 42,
-						ResumeTitle:   "some vacancy",
+						ResumeId:      1,
 					},
 				}
 				r.EXPECT().GetAllUserApplies(id).Return(expectedApply, nil)
@@ -251,7 +251,7 @@ func TestVacancyActivityHandler_GetAllUserApplies(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"data\":[{\"user_account_id\":42,\"id\":0,\"vacancy_id\":0,\"applicant_name\":\"\",\"applicant_surname\":\"\",\"title\":\"some vacancy\",\"image\":\"\",\"created_date\":\"0001-01-01T00:00:00Z\"}]}",
+			expectedResponseBody: "{\"data\":[{\"user_account_id\":42,\"id\":1,\"vacancy_id\":0,\"applicant_name\":\"\",\"applicant_surname\":\"\",\"title\":\"\",\"image\":\"\",\"created_date\":\"0001-01-01T00:00:00Z\"}]}",
 		},
 		{
 			name:           "user not found",
@@ -259,10 +259,10 @@ func TestVacancyActivityHandler_GetAllUserApplies(t *testing.T) {
 			requestParam:   "42",
 			emailFromToken: "test@gmail.com",
 			mockBehavior: func(r *mock_usecases.MockVacancyActivity, id uint) {
-				expectedVacancy := []*models.VacancyActivity{
+				expectedVacancy := []*models.VacancyActivityPreview{
 					{
 						UserAccountId: 42,
-						ResumeTitle:   "some vacancy",
+						ResumeId:      1,
 					},
 				}
 				r.EXPECT().GetAllUserApplies(id).Return(expectedVacancy, errorHandler.ErrBadRequest)
@@ -337,10 +337,10 @@ func TestVacancyActivityHandler_GetAllVacancyApplies(t *testing.T) {
 			requestParam:   "42",
 			emailFromToken: "test@gmail.com",
 			mockBehavior: func(r *mock_usecases.MockVacancyActivity, id uint) {
-				expectedApply := []*models.VacancyActivity{
+				expectedApply := []*models.VacancyActivityPreview{
 					{
 						UserAccountId: 42,
-						ResumeTitle:   "some vacancy",
+						ResumeId:      1,
 					},
 				}
 				r.EXPECT().GetAllVacancyApplies(id).Return(expectedApply, nil)
@@ -349,7 +349,7 @@ func TestVacancyActivityHandler_GetAllVacancyApplies(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"data\":[{\"user_account_id\":42,\"id\":0,\"vacancy_id\":0,\"applicant_name\":\"\",\"applicant_surname\":\"\",\"title\":\"some vacancy\",\"image\":\"\",\"created_date\":\"0001-01-01T00:00:00Z\"}]}",
+			expectedResponseBody: "{\"data\":[{\"user_account_id\":42,\"id\":1,\"vacancy_id\":0,\"applicant_name\":\"\",\"applicant_surname\":\"\",\"title\":\"\",\"image\":\"\",\"created_date\":\"0001-01-01T00:00:00Z\"}]}",
 		},
 		{
 			name:           "user not found",
@@ -357,10 +357,10 @@ func TestVacancyActivityHandler_GetAllVacancyApplies(t *testing.T) {
 			requestParam:   "42",
 			emailFromToken: "test@gmail.com",
 			mockBehavior: func(r *mock_usecases.MockVacancyActivity, id uint) {
-				expectedVacancy := []*models.VacancyActivity{
+				expectedVacancy := []*models.VacancyActivityPreview{
 					{
 						UserAccountId: 42,
-						ResumeTitle:   "some vacancy",
+						ResumeId:      1,
 					},
 				}
 				r.EXPECT().GetAllVacancyApplies(id).Return(expectedVacancy, errorHandler.ErrBadRequest)

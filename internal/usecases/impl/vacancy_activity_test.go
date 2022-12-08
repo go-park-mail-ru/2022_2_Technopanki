@@ -27,8 +27,7 @@ func TestVacancyActivityService_ApplyForVacancy(t *testing.T) {
 				r.EXPECT().ApplyForVacancy(input).Return(nil)
 			},
 			input: &models.VacancyActivity{
-				ApplicantName:    "User",
-				ApplicantSurname: "User",
+				ResumeId: 1,
 			},
 			expectedErr: nil,
 		},
@@ -38,8 +37,7 @@ func TestVacancyActivityService_ApplyForVacancy(t *testing.T) {
 				ur.EXPECT().GetUserByEmail(email).Return(nil, errorHandler.ErrUserNotExists)
 			},
 			input: &models.VacancyActivity{
-				ApplicantName:    "User",
-				ApplicantSurname: "User",
+				ResumeId: 1,
 			},
 			expectedErr: errorHandler.ErrUserNotExists,
 		},
@@ -116,22 +114,24 @@ func TestVacancyActivityService_GetAllVacancyApplies(t *testing.T) {
 		name            string
 		vacancyId       uint
 		mockBehavior    mockBehavior
-		expectedApplies []*models.VacancyActivity
+		expectedApplies []*models.VacancyActivityPreview
 		expectedErr     error
 	}{
 		{
 			name: "ok",
 			mockBehavior: func(r *mock_repository.MockVacancyActivityRepository, ur *mock_repository.MockUserRepository, vacancyId uint) {
-				expected := []*models.VacancyActivity{
+				expected := []*models.VacancyActivityPreview{
 					{
+						ResumeId:         1,
 						ApplicantName:    "User",
 						ApplicantSurname: "User",
 					},
 				}
 				r.EXPECT().GetAllVacancyApplies(vacancyId).Return(expected, nil)
 			},
-			expectedApplies: []*models.VacancyActivity{
+			expectedApplies: []*models.VacancyActivityPreview{
 				{
+					ResumeId:         1,
 					ApplicantName:    "User",
 					ApplicantSurname: "User",
 				},
@@ -173,22 +173,24 @@ func TestVacancyActivityService_GetAllUserApplies(t *testing.T) {
 		name            string
 		userId          uint
 		mockBehavior    mockBehavior
-		expectedApplies []*models.VacancyActivity
+		expectedApplies []*models.VacancyActivityPreview
 		expectedErr     error
 	}{
 		{
 			name: "ok",
 			mockBehavior: func(r *mock_repository.MockVacancyActivityRepository, ur *mock_repository.MockUserRepository, userId uint) {
-				expected := []*models.VacancyActivity{
+				expected := []*models.VacancyActivityPreview{
 					{
+						ResumeId:         1,
 						ApplicantName:    "User",
 						ApplicantSurname: "User",
 					},
 				}
 				r.EXPECT().GetAllUserApplies(userId).Return(expected, nil)
 			},
-			expectedApplies: []*models.VacancyActivity{
+			expectedApplies: []*models.VacancyActivityPreview{
 				{
+					ResumeId:         1,
 					ApplicantName:    "User",
 					ApplicantSurname: "User",
 				},

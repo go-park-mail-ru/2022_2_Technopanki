@@ -89,6 +89,8 @@ func (rp *ResumePostgres) CreateResume(resume *models.Resume, userId uint) error
 		return queryUser.Error
 	}
 
+	resume.Location = user.Location
+
 	creatingErr := rp.db.Create(resume).Save(resume).Error
 
 	if creatingErr != nil {

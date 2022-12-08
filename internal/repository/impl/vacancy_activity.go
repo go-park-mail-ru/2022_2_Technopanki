@@ -14,64 +14,37 @@ func NewVacancyActivityPostgres(db *gorm.DB) *VacancyActivityPostgres {
 	return &VacancyActivityPostgres{db: db}
 }
 
-func (vap *VacancyActivityPostgres) GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivity, error) { //TODO Переделать
-	var applies []*models.VacancyActivity
-	query := vap.db.Where("vacancy_id = ?", vacancyId).Find(&applies)
-	if query.Error != nil {
-		return applies, query.Error
-	}
-	var user models.UserAccount
-	if len(applies) > 0 {
-		queryUser := vap.db.Where("id = ?", applies[0].UserAccountId).Find(&user)
-		if queryUser.Error != nil {
-			return applies, queryUser.Error
-		}
-	}
-	for _, elem := range applies {
-		elem.Image = user.Image
-		elem.ApplicantName = user.ApplicantName
-		elem.ApplicantSurname = user.ApplicantSurname
-	}
-	return applies, nil
+func (vap *VacancyActivityPostgres) GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivityPreview, error) {
+	var appliesPreview []*models.VacancyActivityPreview
+	query := vap.db.Table("vacancy_activities").
+		Select("user_accounts.applicant_name, user_accounts.applicant_surname, user_accounts.image,"+
+			"vacancy_activities.user_account_id, vacancy_activities.resume_id, vacancy_activities.vacancy_id, vacancy_activities.apply_date,"+
+			"resumes.title").
+		Joins("left join user_accounts on user_account.id = vacancy_activities.user_account_id").
+		Joins("left join resumes on resumes.id = vacancy_activities.resume_id").
+		Where("vacancy_id = ?", vacancyId).
+		Scan(&appliesPreview)
+
+	return appliesPreview, QueryValidation(query, "vacancy_applies")
 }
 
-func (vap *VacancyActivityPostgres) ApplyForVacancy(apply *models.VacancyActivity) error { //TODO переделать
-	var user models.UserAccount
-	queryUser := vap.db.Where("id = ?", apply.UserAccountId).Find(&user)
-	if queryUser.Error != nil {
-		return queryUser.Error
-	}
-	var resume models.Vacancy
-	queryVacancy := vap.db.Where("id = ?", apply.ResumeId).Find(&resume)
-	if queryVacancy.Error != nil {
-		return queryVacancy.Error
-	}
-
-	apply.ResumeTitle = resume.Title
-	apply.Image = user.Image
+func (vap *VacancyActivityPostgres) ApplyForVacancy(apply *models.VacancyActivity) error {
 	query := vap.db.Create(&apply)
 	return QueryValidation(query, "vacancy_activity")
 }
 
-func (vap *VacancyActivityPostgres) GetAllUserApplies(userId uint) ([]*models.VacancyActivity, error) { //TODO переделать
-	var applies []*models.VacancyActivity
-	var user models.UserAccount
-	queryUser := vap.db.Where("id = ?", userId).Find(&user)
-	if queryUser.Error != nil {
-		return applies, queryUser.Error
-	}
+func (vap *VacancyActivityPostgres) GetAllUserApplies(userId uint) ([]*models.VacancyActivityPreview, error) {
+	var appliesPreview []*models.VacancyActivityPreview
+	query := vap.db.Table("vacancy_activities").
+		Select("user_accounts.applicant_name, user_accounts.applicant_surname, user_accounts.image,"+
+			"vacancy_activities.user_account_id, vacancy_activities.resume_id, vacancy_activities.vacancy_id, vacancy_activities.apply_date,"+
+			"resumes.title").
+		Joins("left join user_accounts on user_account.id = vacancy_activities.user_account_id").
+		Joins("left join resumes on resumes.id = vacancy_activities.resume_id").
+		Where("user_account_id = ?", userId).
+		Scan(&appliesPreview)
 
-	query := vap.db.Where("user_account_id = ?", userId).Find(&applies)
-	if query.Error != nil {
-		return applies, query.Error
-	}
-
-	for _, elem := range applies {
-		elem.Image = user.Image
-		elem.ApplicantName = user.ApplicantName
-		elem.ApplicantSurname = user.ApplicantSurname
-	}
-	return applies, nil
+	return appliesPreview, QueryValidation(query, "vacancy_applies")
 }
 
 func (vap *VacancyActivityPostgres) DeleteUserApply(userId uint, applyId uint) error {

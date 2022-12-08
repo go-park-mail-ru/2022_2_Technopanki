@@ -4,6 +4,7 @@ import (
 	"HeadHunter/common/session"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/mail_microservice/usecase/sender"
+	"HeadHunter/pkg/errorHandler"
 )
 
 type MailService struct {
@@ -16,6 +17,11 @@ func NewMailService(_sessionRepo session.Repository, _sender sender.Sender) *Mai
 }
 
 func (ms *MailService) SendConfirmCode(email string) error {
+	_, getErr := ms.sessionRepo.GetCodeFromEmail(email)
+	if getErr == nil {
+		return errorHandler.ErrCodeAlreadyExists
+	}
+
 	code, createErr := ms.sessionRepo.CreateConfirmationCode(email)
 	if createErr != nil {
 		return createErr

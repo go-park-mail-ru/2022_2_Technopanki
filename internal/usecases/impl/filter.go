@@ -20,13 +20,13 @@ func VacancyFilterQueries(filterName string) string {
 func EmployerFilterQueries(filterName string) string {
 	switch filterName {
 	case "CompanyName":
-		return "company_name LIKE ?"
+		return "company_name LIKE ? AND user_type = 'employer'"
 	case "Location":
 		return "location = ? AND user_type = 'employer'"
 	case "BusinessType":
 		return "business_type = ?"
 	case "FirstCompanySizeValue":
-		return "company_size BETWEEN ? AND ?"
+		return "company_size BETWEEN ? AND ? AND user_type = 'employer'"
 	default:
 		return ""
 	}
@@ -35,11 +35,13 @@ func EmployerFilterQueries(filterName string) string {
 func ApplicantFilterQueries(filterName string) string {
 	switch filterName {
 	case "ApplicantName":
-		return "applicant_name LIKE ?"
+		return "applicant_name LIKE ? AND user_type = 'applicant'"
 	case "ApplicantSurname":
-		return "applicant_surname LIKE ?"
+		return "applicant_surname LIKE ? AND user_type = 'applicant'"
 	case "Location":
 		return "location = ? AND user_type = 'applicant'"
+	case "FirstAgeValue":
+		return "age BETWEEN ? AND ?"
 	default:
 		return ""
 	}

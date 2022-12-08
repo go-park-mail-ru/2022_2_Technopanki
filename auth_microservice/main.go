@@ -6,11 +6,15 @@ import (
 	handler "HeadHunter/auth_microservice/handler/impl"
 	repository "HeadHunter/auth_microservice/repository/impl"
 	usecase "HeadHunter/auth_microservice/usecase/impl"
+	"HeadHunter/metrics"
 	repositorypkg "HeadHunter/pkg/repository"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"log"
 	"net"
+	"net/http"
 )
 
 func main() {
@@ -31,6 +35,13 @@ func main() {
 
 	grpcSrv := grpc.NewServer()
 	proto.RegisterAuthCheckerServer(grpcSrv, sessionHandler)
+
+	prometheus.MustRegister(metrics.SessionRequest)
+	prometheus.MustRegister(metrics.SessionRequestDuration)
+	http.Handle(sessionConfig.MetricPath, promhttp.Handler())
+	go func() {
+		log.Fatal(http.ListenAndServe(sessionConfig.MetricPort, nil))
+	}()
 
 	listener, listenErr := net.Listen("tcp", sessionConfig.Port)
 	if listenErr != nil {

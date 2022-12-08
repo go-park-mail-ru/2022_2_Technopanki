@@ -34,13 +34,13 @@ func (uh *UserHandler) SignIn(c *gin.Context) {
 		_ = c.Error(err)
 		return
 	}
-
 	if !input.TwoFactorSignIn {
 		c.SetCookie("session", token, uh.cfg.DefaultExpiringSession, "/", uh.cfg.Domain,
 			uh.cfg.Cookie.Secure, uh.cfg.Cookie.HTTPOnly)
 		response.SendSuccessData(c, &input)
 	} else {
-		c.Status(http.StatusOK)
+		c.Status(http.StatusAccepted)
+		return
 	}
 }
 
@@ -204,6 +204,18 @@ func (uh *UserHandler) GetAllApplicants(c *gin.Context) {
 	city := c.Query("city")
 	if city != "" {
 		filters.Location = city
+	}
+
+	age := c.Query("age")
+	if age != "" {
+		if strings.Contains(age, ":") {
+			split := strings.Split(age, ":")
+			filters.FirstAgeValue = split[0]
+			filters.SecondAgeValue = split[1]
+		} else {
+			_ = c.Error(errorHandler.ErrBadRequest)
+			return
+		}
 	}
 
 	applicants, getAllErr = uh.userUseCase.GetAllApplicants(filters)
