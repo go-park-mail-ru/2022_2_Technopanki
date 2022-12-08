@@ -14,7 +14,6 @@ db:
   dbname: "jobflowDB"
   sslmode: "disable"
   password: "pgjf12345RTY"
-
 validation:
   minNameLength: 2
   maxNameLength: 30
