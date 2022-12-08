@@ -46,14 +46,14 @@ func main() {
 	}
 
 	defer func(fileEnv *os.File) {
-		syncErr := fileEnv.Sync()
-		if syncErr != nil {
-			log.Fatalln("Error with sync file", syncErr)
+		err = fileEnv.Sync()
+		if err != nil {
+			log.Fatalln("Error with sync file", err)
 		}
 
-		closeErr := fileEnv.Close()
-		if closeErr != nil {
-			log.Fatalln("Cannot close file:", closeErr)
+		err = fileEnv.Close()
+		if err != nil {
+			log.Fatalln("Cannot close file:", err)
 		}
 	}(fileEnv)
 
