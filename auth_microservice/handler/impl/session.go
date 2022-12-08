@@ -80,7 +80,7 @@ func (sh *SessionHandler) CreateConfirmationCode(ctx context.Context, in *handle
 	}
 	code, createErr := sh.sessionUseCase.CreateConfirmationCode(in.Value)
 	if createErr != nil {
-		metrics.SessionRequest.WithLabelValues("500", "cannot create confirmation code", "CreateConfirmationCode").Inc()
+		metrics.SessionRequest.WithLabelValues("500", "cannot create", "CreateConfirmationCode").Inc()
 		return &handler.Token{}, createErr
 	}
 	metrics.SessionRequest.WithLabelValues("200", "success", "CreateConfirmationCode").Inc()
@@ -92,14 +92,14 @@ func (sh *SessionHandler) GetCodeFromEmail(ctx context.Context, in *handler.Emai
 	defer timer.ObserveDuration()
 
 	if in == nil {
-		metrics.SessionRequest.WithLabelValues("400", "bad request", "GetCodeFromEmail")
+		metrics.SessionRequest.WithLabelValues("400", "bad request", "GetCodeFromEmail").Inc()
 		return &handler.Token{}, errorHandler.ErrBadRequest
 	}
 	code, getErr := sh.sessionUseCase.GetCodeFromEmail(in.Value)
 	if getErr != nil {
-		metrics.SessionRequest.WithLabelValues("404", "code not found", "GetCodeFromEmail")
+		metrics.SessionRequest.WithLabelValues("404", "code not found", "GetCodeFromEmail").Inc()
 		return &handler.Token{}, getErr
 	}
-	metrics.SessionRequest.WithLabelValues("200", "success", "GetCodeFromEmail")
+	metrics.SessionRequest.WithLabelValues("200", "success", "GetCodeFromEmail").Inc()
 	return &handler.Token{Value: code}, nil
 }
