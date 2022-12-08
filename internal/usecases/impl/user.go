@@ -65,10 +65,10 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 
 	if user.TwoFactorSignIn {
 		sendErr := us.mail.SendConfirmCode(user.Email)
+		input.TwoFactorSignIn = true
 		if sendErr != nil {
 			return "", sendErr
 		}
-		input.TwoFactorSignIn = true
 		return "", nil
 	}
 
@@ -332,6 +332,11 @@ func (us *UserService) ConfirmUser(code, email string) (*models.UserAccount, str
 	token, newSessionErr := us.sessionRepo.NewSession(email)
 	if newSessionErr != nil {
 		return nil, "", newSessionErr
+	}
+
+	deleteErr := us.sessionRepo.Delete(email)
+	if deleteErr != nil {
+		return nil, "", deleteErr
 	}
 
 	return confirmedUser, token, us.userRep.UpdateUser(confirmedUser)
