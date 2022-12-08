@@ -208,7 +208,7 @@ func (uh *UserHandler) GetAllApplicants(c *gin.Context) {
 
 	age := c.Query("age")
 	if age != "" {
-		if strings.Index(age, ":") != -1 {
+		if strings.Contains(age, ":") {
 			split := strings.Split(age, ":")
 			filters.FirstAgeValue = split[0]
 			filters.SecondAgeValue = split[1]
