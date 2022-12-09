@@ -53,7 +53,7 @@ var PrivateUserFields = []string{"email", "contact_number",
 
 // SafeUserFields Поля, доступ к которым доступен всегда
 var SafeUserFields = []string{"id", "user_type", "description", "status", "date_of_birth", "image",
-	"applicant_name", "applicant_surname", "company_name", "location", "company_size",
+	"applicant_name", "applicant_surname", "company_name", "location", "company_size", "average_color",
 	"company_website_url", "public_fields", "is_confirmed", "business_type", "two_factor_sign_in"}
 
 const NoPublicFields string = "null"
