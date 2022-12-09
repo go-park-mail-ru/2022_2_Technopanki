@@ -61,4 +61,5 @@ func main() {
 	if writeErr != nil {
 		log.Fatalln("Unable to write data:", writeErr)
 	}
+	log.Println("The env. file was created successfully.")
 }
