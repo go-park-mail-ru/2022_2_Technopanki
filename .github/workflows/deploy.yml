@@ -67,11 +67,19 @@ jobs:
           source: "./*"
           target: "/home/ubuntu/backend/"
           
+      - name: Install go
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_IP }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: sudo apt-get install go
+  
       - name: Docker-compose up
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_IP }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          script: cd /home/ubuntu/backend/;go run vault/envGen.go --token=${{ secrets.VAULT_TOKEN}};sudo docker build --no-cache;sudo docker-compose up -d;
+          script: cd /home/ubuntu/backend/;go run vault/envGen.go --token=${{ secrets.VAULT_TOKEN}};sudo docker-compose build --no-cache;sudo docker-compose up -d;
       
