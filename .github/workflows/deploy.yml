@@ -66,12 +66,12 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           source: "./*"
           target: "/home/ubuntu/backend/"
-          
+  
       - name: Docker-compose up
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_IP }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          script: cd /home/ubuntu/backend/;go run vault/envGen.go --token=${{ secrets.VAULT_TOKEN}};sudo docker build --no-cache;sudo docker-compose up -d;
+          script: sudo apt-get install go;cd /home/ubuntu/backend/;go run vault/envGen.go --token=${{ secrets.VAULT_TOKEN}};sudo docker-compose build --no-cache;sudo docker-compose up -d;
       
