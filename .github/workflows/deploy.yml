@@ -75,5 +75,5 @@ jobs:
           host: ${{ secrets.SSH_IP }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          script: sudo apt-get install go;cd /home/ubuntu/backend/;go run vault/envGen.go --token=${{ secrets.VAULT_TOKEN}};sudo docker-compose build --parallel --no-cache;sudo docker-compose up -d;
+          script: sudo apt update && sudo apt install golang;cd /home/ubuntu/backend/;go run vault/envGen.go --token=${{ secrets.VAULT_TOKEN}};sudo docker-compose build --parallel --no-cache;sudo docker-compose up -d;
       
