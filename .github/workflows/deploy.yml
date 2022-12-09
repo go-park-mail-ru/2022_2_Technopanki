@@ -41,6 +41,15 @@ jobs:
 
       - name: Coverage report
         run: go tool cover -func=coverage.out
+        
+      - name: Generate .env
+        run: go run vault\envGen.go
+        
+      - name: Upload files
+        uses: actions/upload-artifact@v2
+        with:
+          name: my-artifact
+          path: .
   deploy:
     needs: build
     runs-on: ubuntu-latest
