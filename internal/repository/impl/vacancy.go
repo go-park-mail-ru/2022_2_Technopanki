@@ -96,3 +96,28 @@ func (vp *VacancyPostgres) Update(userId uint, vacancyId uint, oldVacancy *model
 	query := vp.db.Model(oldVacancy).Where("id = ? AND posted_by_user_id = ?", vacancyId, userId).Updates(updates)
 	return QueryValidation(query, "vacancy")
 }
+
+func (vp *VacancyPostgres) AddVacancyToFavorites(user *models.UserAccount, vacancy *models.Vacancy) error {
+	err := vp.db.Model(user).Association("FavoriteVacancies").Append(&vacancy)
+	if err != nil {
+		return errorHandler.ErrCannotAddFavoriteVacancy
+	}
+	return nil
+}
+
+func (vp *VacancyPostgres) GetUserFavoriteVacancies(user *models.UserAccount) ([]*models.Vacancy, error) {
+	var favoriteVacancies []*models.Vacancy
+	err := vp.db.Model(user).Association("FavoriteVacancies").Find(&favoriteVacancies)
+	if err != nil {
+		return nil, errorHandler.ErrCannotGetFavoriteVacancy
+	}
+	return favoriteVacancies, nil
+}
+
+func (vp *VacancyPostgres) DeleteVacancyFromFavorites(user *models.UserAccount, vacancy *models.Vacancy) error {
+	err := vp.db.Model(user).Association("FavoriteVacancies").Delete(vacancy)
+	if err != nil {
+		return errorHandler.ErrCannotDeleteVacancyFromFavorites
+	}
+	return nil
+}

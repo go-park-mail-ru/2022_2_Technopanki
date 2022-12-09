@@ -40,10 +40,7 @@ func (uh *UserHandler) SignIn(c *gin.Context) {
 		response.SendSuccessData(c, &input)
 	} else {
 		c.Status(http.StatusAccepted)
-<<<<<<< HEAD
-=======
 		return
->>>>>>> 75bb56da72f4e9f46501bcb78aee505853ebf387
 	}
 }
 
@@ -211,11 +208,7 @@ func (uh *UserHandler) GetAllApplicants(c *gin.Context) {
 
 	age := c.Query("age")
 	if age != "" {
-<<<<<<< HEAD
-		if strings.Index(age, ":") != -1 {
-=======
 		if strings.Contains(age, ":") {
->>>>>>> 75bb56da72f4e9f46501bcb78aee505853ebf387
 			split := strings.Split(age, ":")
 			filters.FirstAgeValue = split[0]
 			filters.SecondAgeValue = split[1]

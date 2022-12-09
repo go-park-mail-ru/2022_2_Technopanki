@@ -28,6 +28,7 @@ type UserAccount struct {
 	MailingApproval        bool              `json:"mailing_approval"`
 	Resumes                []Resume          `json:"resumes" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`
 	Vacancies              []Vacancy         `json:"vacancies" gorm:"foreignKey:PostedByUserId;constraint:OnDelete:CASCADE;"`
+	FavoriteVacancies      []Vacancy         `json:"favourite_vacancies" gorm:"many2many:favourite_vacancies"`
 	VacancyActivities      []VacancyActivity `json:"vacancy_activities" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`
 }
 

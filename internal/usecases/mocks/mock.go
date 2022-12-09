@@ -280,6 +280,20 @@ func (m *MockVacancy) EXPECT() *MockVacancyMockRecorder {
 	return m.recorder
 }
 
+// AddVacancyToFavorites mocks base method.
+func (m *MockVacancy) AddVacancyToFavorites(email string, vacancyId uint) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddVacancyToFavorites", email, vacancyId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddVacancyToFavorites indicates an expected call of AddVacancyToFavorites.
+func (mr *MockVacancyMockRecorder) AddVacancyToFavorites(email, vacancyId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddVacancyToFavorites", reflect.TypeOf((*MockVacancy)(nil).AddVacancyToFavorites), email, vacancyId)
+}
+
 // Create mocks base method.
 func (m *MockVacancy) Create(email string, input *models.Vacancy) (uint, error) {
 	m.ctrl.T.Helper()
@@ -307,6 +321,20 @@ func (m *MockVacancy) Delete(email string, vacancyId uint) error {
 func (mr *MockVacancyMockRecorder) Delete(email, vacancyId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockVacancy)(nil).Delete), email, vacancyId)
+}
+
+// DeleteVacancyFromFavorites mocks base method.
+func (m *MockVacancy) DeleteVacancyFromFavorites(email string, vacancyId uint) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteVacancyFromFavorites", email, vacancyId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteVacancyFromFavorites indicates an expected call of DeleteVacancyFromFavorites.
+func (mr *MockVacancyMockRecorder) DeleteVacancyFromFavorites(email, vacancyId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteVacancyFromFavorites", reflect.TypeOf((*MockVacancy)(nil).DeleteVacancyFromFavorites), email, vacancyId)
 }
 
 // GetAll mocks base method.
@@ -367,6 +395,21 @@ func (m *MockVacancy) GetPreviewVacanciesByEmployer(userId uint) ([]*models.Vaca
 func (mr *MockVacancyMockRecorder) GetPreviewVacanciesByEmployer(userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPreviewVacanciesByEmployer", reflect.TypeOf((*MockVacancy)(nil).GetPreviewVacanciesByEmployer), userId)
+}
+
+// GetUserFavoriteVacancies mocks base method.
+func (m *MockVacancy) GetUserFavoriteVacancies(email string) ([]*models.Vacancy, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserFavoriteVacancies", email)
+	ret0, _ := ret[0].([]*models.Vacancy)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserFavoriteVacancies indicates an expected call of GetUserFavoriteVacancies.
+func (mr *MockVacancyMockRecorder) GetUserFavoriteVacancies(email interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserFavoriteVacancies", reflect.TypeOf((*MockVacancy)(nil).GetUserFavoriteVacancies), email)
 }
 
 // Update mocks base method.

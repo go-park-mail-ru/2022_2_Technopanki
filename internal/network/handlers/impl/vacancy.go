@@ -180,3 +180,64 @@ func (vh *VacancyHandler) UpdateVacancy(c *gin.Context) {
 	}
 	c.Status(http.StatusOK)
 }
+
+func (vh *VacancyHandler) AddVacancyToFavorites(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		_ = c.Error(errorHandler.ErrInvalidParam)
+		return
+	}
+
+	email, contextErr := utils.GetEmailFromContext(c)
+	if contextErr != nil {
+		_ = c.Error(contextErr)
+		return
+	}
+
+	addErr := vh.vacancyUseCase.AddVacancyToFavorites(email, uint(id))
+
+	if addErr != nil {
+		_ = c.Error(addErr)
+		return
+	}
+	c.Status(http.StatusOK)
+}
+
+func (vh *VacancyHandler) GetUserFavoriteVacancies(c *gin.Context) {
+
+	email, contextErr := utils.GetEmailFromContext(c)
+	if contextErr != nil {
+		_ = c.Error(contextErr)
+		return
+	}
+
+	vacancies, GetErr := vh.vacancyUseCase.GetUserFavoriteVacancies(email)
+	if GetErr != nil {
+		_ = c.Error(GetErr)
+		return
+	}
+	c.JSON(http.StatusOK, models.GetAllVacanciesResponcePointer{
+		Data: vacancies,
+	})
+}
+
+func (vh *VacancyHandler) DeleteVacancyFromFavorites(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		_ = c.Error(errorHandler.ErrInvalidParam)
+		return
+	}
+	email, contextErr := utils.GetEmailFromContext(c)
+	if contextErr != nil {
+		_ = c.Error(contextErr)
+		return
+	}
+
+	deleteErr := vh.vacancyUseCase.DeleteVacancyFromFavorites(email, uint(id))
+	if deleteErr != nil {
+		_ = c.Error(deleteErr)
+		return
+	}
+	c.Status(http.StatusOK)
+
+}
