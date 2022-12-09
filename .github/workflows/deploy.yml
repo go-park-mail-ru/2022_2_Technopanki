@@ -50,6 +50,7 @@ jobs:
         with:
           name: my-artifact
           path: .
+          
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -59,6 +60,7 @@ jobs:
         with:
           name: my-artifact
           path: .
+          
       - name: Send files
         uses: appleboy/scp-action@master
         with:
@@ -67,6 +69,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           source: "./*"
           target: "/home/ubuntu/backend/"
+          
       - name: Docker-compose up
         uses: appleboy/ssh-action@master
         with:
