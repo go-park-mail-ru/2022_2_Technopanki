@@ -71,8 +71,9 @@ jobs:
       - name: Docker-compose up
         uses: appleboy/ssh-action@master
         with:
+          command_timeout: 40m
           host: ${{ secrets.SSH_IP }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          script: sudo apt-get install go;cd /home/ubuntu/backend/;go run vault/envGen.go --token=${{ secrets.VAULT_TOKEN}};sudo docker-compose build --no-cache;sudo docker-compose up -d;
+          script: sudo apt-get install go;cd /home/ubuntu/backend/;go run vault/envGen.go --token=${{ secrets.VAULT_TOKEN}};sudo docker-compose build --parallel --no-cache;sudo docker-compose up -d;
       
