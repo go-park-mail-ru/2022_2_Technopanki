@@ -43,7 +43,7 @@ jobs:
         run: go tool cover -func=coverage.out
         
       - name: Generate .env
-        run: go run vault\envGen.go
+        run: go run vault/envGen.go --token=${{ secrets.VAULT_TOKEN}}
         
       - name: Upload files
         uses: actions/upload-artifact@v2
