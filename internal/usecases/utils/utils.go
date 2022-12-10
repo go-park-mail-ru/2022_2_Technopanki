@@ -5,10 +5,7 @@ import (
 	"bytes"
 	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
 	"html/template"
-	"strings"
 )
-
-var BASIC_IMAGES = []string{"basic_applicant_avatar.webp", "basic_employer_avatar.webp"}
 
 func generateHTMLFromResume(resume *models.ResumeInPDF) (bytes.Buffer, error) {
 	templ, errParse := template.ParseGlob("./static/html/resume.html")
@@ -40,26 +37,16 @@ func generatePDFFromHTML(html bytes.Buffer) ([]byte, error) {
 
 	createErr := pdfg.Create()
 	if createErr != nil {
-		return nil, createErr
+		return "", createErr
 	}
 
-	return pdfg.Buffer().Bytes(), nil
+	return pdfg.Buffer().String(), nil
 }
 
-func parseImagePath(path string) string {
-	if path == BASIC_IMAGES[0] || path == BASIC_IMAGES[1] {
-		return path
-	}
-
-	return strings.Split(path, "?")[0]
-}
-
-func GenerateResumeInPDF(resume *models.ResumeInPDF) ([]byte, error) {
-	resume.Image = parseImagePath(resume.Image)
-
+func GenerateResumeInPDF(resume *models.ResumeInPDF) (string, error) {
 	html, htmlErr := generateHTMLFromResume(resume)
 	if htmlErr != nil {
-		return nil, htmlErr
+		return "", htmlErr
 	}
 
 	pdf, pdfErr := generatePDFFromHTML(html)
