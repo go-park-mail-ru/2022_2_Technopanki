@@ -73,6 +73,7 @@ type Resume interface {
 	GetAllResumes(filters models.ResumeFilter) ([]*models.Resume, error)
 	GetResumeByApplicant(userId uint) ([]*models.Resume, error)
 	GetPreviewResumeByApplicant(userId uint) ([]*models.ResumePreview, error)
+	GetResumeInPDF(resumeId uint) (string, error)
 	CreateResume(resume *models.Resume, email string) error
 	UpdateResume(id uint, resume *models.Resume, email string) error
 	DeleteResume(id uint, email string) error

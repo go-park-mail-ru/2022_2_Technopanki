@@ -109,6 +109,22 @@ func (rh *ResumeHandler) GetPreviewResumeByApplicant(c *gin.Context) {
 	c.JSON(http.StatusOK, resumes)
 }
 
+func (rh *ResumeHandler) GetResumeInPDF(c *gin.Context) {
+	id, idErr := strconv.Atoi(c.Param("id"))
+	if idErr != nil {
+		_ = c.Error(errorHandler.ErrInvalidParam)
+		return
+	}
+
+	resumeInPDF, generateErr := rh.resumeUseCase.GetResumeInPDF(uint(id))
+	if generateErr != nil {
+		_ = c.Error(generateErr)
+		return
+	}
+
+	c.Data(http.StatusOK, "application/pdf", []byte(resumeInPDF))
+}
+
 func (rh *ResumeHandler) CreateResume(c *gin.Context) {
 
 	email, contextErr := utils.GetEmailFromContext(c)
