@@ -6,6 +6,7 @@ import (
 	"HeadHunter/internal/entity/validation"
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/usecases/escaping"
+	"HeadHunter/internal/usecases/utils"
 	"HeadHunter/pkg/errorHandler"
 	"errors"
 	"reflect"
@@ -62,6 +63,20 @@ func (rs *ResumeService) GetPreviewResumeByApplicant(userId uint) ([]*models.Res
 		return []*models.ResumePreview{}, nil
 	}
 	return resumesPreview, getErr
+}
+
+func (rs *ResumeService) GetResumeInPDF(resumeId uint) (string, error) {
+	resumeInPDFModel, getErr := rs.resumeRep.GetResumeInPDF(resumeId)
+	if getErr != nil {
+		return "", getErr
+	}
+
+	resumeInPDF, generateErr := utils.GenerateResumeInPDF(resumeInPDFModel)
+	if generateErr != nil {
+		return "", generateErr
+	}
+
+	return resumeInPDF, nil
 }
 
 func (rs *ResumeService) CreateResume(resume *models.Resume, email string) error {
