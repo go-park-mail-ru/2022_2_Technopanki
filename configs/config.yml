@@ -35,7 +35,7 @@ image:
   path: "data/image/"
   defaultEmployerAvatar: "basic_employer_avatar"
   defaultApplicantAvatar: "basic_applicant_avatar"
-  defaultAverageColor: "28 52 236"
+  defaultAverageColor: "28, 52, 236"
 security:
   csrfSecret: "jobFlowSecretWorld112351235125"
   csrfMode: false

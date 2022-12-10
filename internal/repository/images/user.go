@@ -61,6 +61,8 @@ func DeleteUserAvatar(name string, cfg *configs.ImageConfig) error {
 	return nil
 }
 
+const alphaDivider = 260
+
 func Average(img image.Image) string {
 	max := img.Bounds().Max
 	min := img.Bounds().Min
@@ -69,9 +71,9 @@ func Average(img image.Image) string {
 	for y := min.Y; y < max.Y; y++ {
 		for x := min.X; x < max.X; x++ {
 			r, g, b, _ := img.At(x, y).RGBA()
-			sumR += uint64(r / 256)
-			sumG += uint64(g / 256)
-			sumB += uint64(b / 256)
+			sumR += uint64(r / alphaDivider)
+			sumG += uint64(g / alphaDivider)
+			sumB += uint64(b / alphaDivider)
 		}
 	}
 	result := color.RGBA{
@@ -79,6 +81,6 @@ func Average(img image.Image) string {
 		G: uint8(sumG / count),
 		B: uint8(sumB / count),
 	}
-	resultStr := fmt.Sprintf("%d %d %d", result.R, result.G, result.B)
+	resultStr := fmt.Sprintf("%d, %d, %d", result.R, result.G, result.B)
 	return resultStr
 }

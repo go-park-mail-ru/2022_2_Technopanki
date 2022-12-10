@@ -279,18 +279,18 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 
 	img, _, decodeErr := image.Decode(file)
 
-	uploadErr := images.UploadUserAvatar(imageName, &img, &us.cfg.Image)
-	if uploadErr != nil {
-		return "", uploadErr
+	err := images.UploadUserAvatar(imageName, &img, &us.cfg.Image)
+	if err != nil {
+		return "", err
 	}
 
 	user.Image = fmt.Sprintf("%s?%d", imageName, time.Now().Unix())
 	user.AverageColor = images.Average(img)
-	updateErr := us.userRep.UpdateUser(&models.UserAccount{ID: user.ID,
+	err = us.userRep.UpdateUser(&models.UserAccount{ID: user.ID,
 		Image: user.Image, AverageColor: user.AverageColor})
 
-	if updateErr != nil {
-		return "", updateErr
+	if err != nil {
+		return "", err
 	}
 
 	if decodeErr != nil {
