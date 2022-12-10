@@ -1,6 +1,7 @@
 package configs
 
 import (
+	"github.com/joho/godotenv"
 	"gopkg.in/yaml.v2"
 	"os"
 	"path/filepath"
@@ -71,7 +72,14 @@ type SecurityConfig struct {
 	ConfirmAccountMode bool   `yaml:"confirmAccountMode"`
 }
 
+const dbPasswordName = "DB_PASSWORD"
+
 func InitConfig(config *Config) error {
+	envErr := godotenv.Load(".env")
+	if envErr != nil {
+		return envErr
+	}
+
 	filename, fileErr := filepath.Abs("./configs/config.yml")
 	if fileErr != nil {
 		return fileErr
@@ -87,5 +95,6 @@ func InitConfig(config *Config) error {
 		return marshalErr
 	}
 
+	config.DB.Password = os.Getenv(dbPasswordName)
 	return nil
 }
