@@ -38,6 +38,8 @@ func generateUserResponse(user *models.UserAccount, fields []string) (models.Use
 			if user.UserType == "employer" {
 				result.CompanySize = user.CompanySize
 			}
+		case "average_color":
+			result.AverageColor = user.AverageColor
 		}
 	}
 	return result, nil
@@ -54,13 +56,13 @@ func sendUserResponse(c *gin.Context, user *models.UserAccount, fields []string)
 }
 
 func SendSuccessData(c *gin.Context, user *models.UserAccount) {
-	sendUserResponse(c, user, []string{"id", "user_type", "name_data", "image", "email", "company_size"})
+	sendUserResponse(c, user, []string{"id", "user_type", "name_data", "image", "average_color", "email", "company_size"})
 }
 
 func SendPreviewData(c *gin.Context, user *models.UserAccount) {
-	sendUserResponse(c, user, []string{"id", "user_type", "name_data", "image", "status"})
+	sendUserResponse(c, user, []string{"id", "user_type", "name_data", "image", "average_color", "status"})
 }
 
 func SendUploadImageData(c *gin.Context, user *models.UserAccount) {
-	sendUserResponse(c, user, []string{"image"})
+	sendUserResponse(c, user, []string{"image", "average_color"})
 }

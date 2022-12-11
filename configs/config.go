@@ -62,6 +62,7 @@ type ImageConfig struct {
 	Path                   string `yaml:"path"`
 	DefaultEmployerAvatar  string `yaml:"defaultEmployerAvatar"`
 	DefaultApplicantAvatar string `yaml:"defaultApplicantAvatar"`
+	DefaultAverageColor    string `yaml:"defaultAverageColor"`
 }
 
 type SecurityConfig struct {

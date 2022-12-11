@@ -48,7 +48,7 @@ func TestUserHandler_SignUp(t *testing.T) {
 				r.EXPECT().SignUp(user).Return(gomock.Any().String(), nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":0,\"user_type\":\"applicant\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"applicant_name\":\"Zakhar\",\"applicant_surname\":\"Urvancev\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":0,\"user_type\":\"applicant\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"applicant_name\":\"Zakhar\",\"applicant_surname\":\"Urvancev\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name: "confirmation mode",
@@ -110,7 +110,7 @@ func TestUserHandler_SignUp(t *testing.T) {
 				r.EXPECT().SignUp(user).Return(gomock.Any().String(), nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":0,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":0,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name: "user already exists",
@@ -406,7 +406,7 @@ func TestUserHandler_AuthCheck(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":0,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":0,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name:           "invalid cookie",
@@ -506,7 +506,7 @@ func TestUserHandler_GetUser(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":42,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":42,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name:           "not found",
@@ -627,7 +627,7 @@ func TestUserHandler_GetUserSafety(t *testing.T) {
 				r.EXPECT().GetUserSafety(id).Return(expectedUser, nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":42,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":42,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name:         "not found",
@@ -710,7 +710,7 @@ func TestUserHandler_GetPreview(t *testing.T) {
 				r.EXPECT().GetUserSafety(id).Return(expectedUser, nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":42,\"user_type\":\"employer\",\"email\":\"\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":42,\"user_type\":\"employer\",\"email\":\"\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name:         "not found",
@@ -808,7 +808,7 @@ func TestUserHandler_UpdateUser(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":0,\"user_type\":\"applicant\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"applicant_name\":\"Ivan\",\"applicant_surname\":\"Kozirev\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":0,\"user_type\":\"applicant\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"applicant_name\":\"Ivan\",\"applicant_surname\":\"Kozirev\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name:           "error",
@@ -1101,7 +1101,7 @@ func TestUserHandler_GetAllApplicants(t *testing.T) {
 				r.EXPECT().GetAllApplicants(filters).Return(expectedResume, nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"data\":[{\"id\":42,\"user_type\":\"\",\"email\":\"\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"applicant_name\":\"some name\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}]}",
+			expectedResponseBody: "{\"data\":[{\"id\":42,\"user_type\":\"\",\"email\":\"\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"applicant_name\":\"some name\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}]}",
 		},
 		{
 			name:           "not found",
@@ -1189,7 +1189,7 @@ func TestUserHandler_GetAllEmployers(t *testing.T) {
 				r.EXPECT().GetAllEmployers(filters).Return(expectedResume, nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"data\":[{\"id\":42,\"user_type\":\"\",\"email\":\"\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"some name\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}]}",
+			expectedResponseBody: "{\"data\":[{\"id\":42,\"user_type\":\"\",\"email\":\"\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"some name\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}]}",
 		},
 		{
 			name:           "not found",
