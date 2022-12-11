@@ -17,6 +17,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"strings"
+	"time"
 )
 
 // @title Jobflow API
@@ -26,6 +27,7 @@ import (
 // @host      95.163.208.72:8080
 // @BasePath  /
 func main() {
+	time.Sleep(5 * time.Second)
 	var mainConfig configs.Config
 	if configErr := configs.InitConfig(&mainConfig); configErr != nil {
 		logrus.Fatal(configErr)

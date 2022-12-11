@@ -286,8 +286,14 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 
 	user.Image = fmt.Sprintf("%s?%d", imageName, time.Now().Unix())
 	user.AverageColor = images.Average(img)
-	err = us.userRep.UpdateUser(&models.UserAccount{ID: user.ID,
-		Image: user.Image, AverageColor: user.AverageColor})
+
+	oldUser, getErr := us.userRep.GetUserByEmail(user.Email)
+	if getErr != nil {
+		return "", getErr
+	}
+
+	err = us.userRep.UpdateUser(&models.UserAccount{ID: user.ID, Image: user.Image,
+		TwoFactorSignIn: oldUser.TwoFactorSignIn, Description: oldUser.Description})
 
 	if err != nil {
 		return "", err
