@@ -22,10 +22,10 @@ func generateHTMLFromResume(resume *models.ResumeInPDF) (bytes.Buffer, error) {
 	return buffer, nil
 }
 
-func generatePDFFromHTML(html bytes.Buffer) (string, error) {
+func generatePDFFromHTML(html bytes.Buffer) ([]byte, error) {
 	pdfg, generatorErr := wkhtmltopdf.NewPDFGenerator()
 	if generatorErr != nil {
-		return "", generatorErr
+		return nil, generatorErr
 	}
 
 	page := wkhtmltopdf.NewPageReader(&html)
@@ -37,21 +37,21 @@ func generatePDFFromHTML(html bytes.Buffer) (string, error) {
 
 	createErr := pdfg.Create()
 	if createErr != nil {
-		return "", createErr
+		return nil, createErr
 	}
 
-	return pdfg.Buffer().String(), nil
+	return pdfg.Buffer().Bytes(), nil
 }
 
-func GenerateResumeInPDF(resume *models.ResumeInPDF) (string, error) {
+func GenerateResumeInPDF(resume *models.ResumeInPDF) ([]byte, error) {
 	html, htmlErr := generateHTMLFromResume(resume)
 	if htmlErr != nil {
-		return "", htmlErr
+		return nil, htmlErr
 	}
 
 	pdf, pdfErr := generatePDFFromHTML(html)
 	if pdfErr != nil {
-		return "", pdfErr
+		return nil, pdfErr
 	}
 
 	return pdf, nil

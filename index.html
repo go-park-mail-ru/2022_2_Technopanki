@@ -16,6 +16,21 @@
             position: relative;
         }
 
+        h5 {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li:not(:last-child) {
+            margin-bottom: 16px;
+        }
+
+        ul, li { margin-left: 0; padding-left: 0}
+
         .profile {
             display: flex;
             gap: 16px;
@@ -26,17 +41,6 @@
         .profile-name {
             font-size: 36px;
         }
-
-        ul {
-            list-style: none;
-        }
-
-        li:not(:last-child) {
-            margin-bottom: 16px;
-            font-size: 14px;
-        }
-
-        ul, li { margin-left: 0; padding-left: 0}
 
         .svg {
             position: absolute;
@@ -51,22 +55,24 @@
 </head>
 <body>
 <div class="profile">
-    <img src="../../data/avatar/{{ .Image }}" height="32" width="32" />
-    <h1 class="profile-name">{{ .Name }} {{ .Surname }}</h1>
-    <h2>{{ .Title }}</h2>
+    <img src="../../data/image/avatar/{{ .Image }}" height="120" width="120" />
+    <div>
+        <h1 class="profile-name">{{ .Name }} {{ .Surname }}</h1>
+        <h5>{{ .Title }}</h5>
+    </div>
 </div>
 <ul>
     <li>Проживает: {{ .Location }}</li>
-    <li>Возраст: {{ .Age }} год</li>
+    <li>Возраст: {{ .Age }} лет</li>
     <li>{{ .ContactNumber }}</li>
     <li>{{ .Email }}</li>
 </ul>
-<h2>
-    Опыт работы: {{ .ExperienceInYears }}
-</h2>
-<div>
-    <h2>Дополнительная информация о себе</h2>
-    <p>{{ .Description }}</p>
+<h5 class="header">
+    Опыт работы: {{ .ExperienceInYears }}6 лет
+</h5>
+<div>"
+    <h5 class="header">Дополнительная информация о себе</h5>
+    <p>{{ .Description }}Hello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello worldHello world</p>
 </div>
 <div class="svg">
     <svg height="16" viewBox="0 0 41 9" fill="none" xmlns="http://www.w3.org/2000/svg">

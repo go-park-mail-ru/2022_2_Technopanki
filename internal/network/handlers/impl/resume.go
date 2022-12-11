@@ -146,7 +146,7 @@ func (rh *ResumeHandler) GetResumeInPDF(c *gin.Context) {
 		return
 	}
 
-	c.Data(http.StatusOK, "application/pdf", []byte(resumeInPDF))
+	c.Data(http.StatusOK, "application/pdf", resumeInPDF)
 }
 
 func (rh *ResumeHandler) CreateResume(c *gin.Context) {

@@ -4,7 +4,7 @@ COPY . .
 RUN apk add --update musl-dev libwebp-dev gcc
 RUN go mod tidy
 RUN go build -o main cmd/main.go
-FROM alpine
+FROM alpine:3.8
 # Needed for wkhtmltopdf
 RUN apk add --no-cache \
  libstdc++ \

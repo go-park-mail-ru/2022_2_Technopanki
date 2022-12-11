@@ -65,15 +65,15 @@ func (rs *ResumeService) GetPreviewResumeByApplicant(userId uint) ([]*models.Res
 	return resumesPreview, getErr
 }
 
-func (rs *ResumeService) GetResumeInPDF(resumeId uint) (string, error) {
+func (rs *ResumeService) GetResumeInPDF(resumeId uint) ([]byte, error) {
 	resumeInPDFModel, getErr := rs.resumeRep.GetResumeInPDF(resumeId)
 	if getErr != nil {
-		return "", getErr
+		return nil, getErr
 	}
 
 	resumeInPDF, generateErr := utils.GenerateResumeInPDF(resumeInPDFModel)
 	if generateErr != nil {
-		return "", generateErr
+		return nil, generateErr
 	}
 
 	return resumeInPDF, nil
