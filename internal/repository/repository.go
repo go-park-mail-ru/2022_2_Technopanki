@@ -67,6 +67,7 @@ type ResumeRepository interface {
 }
 
 type NotificationRepository interface {
-	GetNotifications(id uint) ([]*models.Notification, error)
+	GetNotificationsApply(id uint) ([]*models.NotificationPreview, error)
+	GetNotificationsDownloadPDF(id uint) ([]*models.NotificationPreview, error)
 	CreateNotification(notification *models.Notification) error
 }

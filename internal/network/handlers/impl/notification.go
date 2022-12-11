@@ -11,8 +11,8 @@ type NotificationHandler struct {
 	notificationUseCase usecases.Notification
 }
 
-func NewNotificationHandler(notificationUseCase usecases.Notification) *NotificationHandler {
-	return &NotificationHandler{notificationUseCase: notificationUseCase}
+func NewNotificationHandler(UseCase *usecases.UseCases) *NotificationHandler {
+	return &NotificationHandler{notificationUseCase: UseCase.Notification}
 }
 
 func (nh *NotificationHandler) GetNotifications(c *gin.Context) {

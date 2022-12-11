@@ -9,10 +9,14 @@ import (
 type VacancyActivityService struct {
 	vacancyActivityRep repository.VacancyActivityRepository
 	userRep            repository.UserRepository
+	vacancyRep         repository.VacancyRepository
+	notificationRep    repository.NotificationRepository
 }
 
-func NewVacancyActivityService(vacancyActivityRepos repository.VacancyActivityRepository, _userRep repository.UserRepository) *VacancyActivityService {
-	return &VacancyActivityService{vacancyActivityRep: vacancyActivityRepos, userRep: _userRep}
+func NewVacancyActivityService(vacancyActivityRepos repository.VacancyActivityRepository, _userRep repository.UserRepository,
+	_vacancyRep repository.VacancyRepository, _notificationRep repository.NotificationRepository) *VacancyActivityService {
+	return &VacancyActivityService{vacancyActivityRep: vacancyActivityRepos, userRep: _userRep,
+		vacancyRep: _vacancyRep, notificationRep: _notificationRep}
 }
 
 func (vas *VacancyActivityService) GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivityPreview, error) {
@@ -30,7 +34,23 @@ func (vas *VacancyActivityService) ApplyForVacancy(email string, vacancyId uint,
 
 	input.UserAccountId = user.ID
 	input.VacancyId = vacancyId
-	return vas.vacancyActivityRep.ApplyForVacancy(input)
+	err := vas.vacancyActivityRep.ApplyForVacancy(input)
+	if err != nil {
+		return err
+	}
+
+	vacancy, getVacancyErr := vas.vacancyRep.GetById(vacancyId)
+	if getVacancyErr != nil {
+		return getVacancyErr
+	}
+
+	notification := &models.Notification{
+		UserFromID: user.ID,
+		UserToID:   vacancy.PostedByUserId,
+		Type:       "apply",
+	}
+	err = vas.notificationRep.CreateNotification(notification)
+	return err
 }
 
 func (vas *VacancyActivityService) GetAllUserApplies(userId uint) ([]*models.VacancyActivityPreview, error) {

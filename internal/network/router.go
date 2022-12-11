@@ -86,6 +86,11 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 			resumes.PUT("/:id", sessionMW.Session, h.ResumeHandler.UpdateResume, errorHandler.Middleware())
 			resumes.DELETE("/:id", sessionMW.Session, h.ResumeHandler.DeleteResume, errorHandler.Middleware())
 		}
+
+		notifications := api.Group("/notification")
+		{
+			notifications.GET("/", sessionMW.Session, h.NotificationHandler.GetNotifications, errorHandler.Middleware())
+		}
 	}
 
 	return router

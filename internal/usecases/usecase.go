@@ -26,7 +26,7 @@ func NewUseCases(repos *repository.Repository, session session.Repository, _cfg 
 		User:            impl.NewUserService(repos.UserRepository, session, _mail, _cfg),
 		Resume:          impl.NewResumeService(repos.ResumeRepository, _cfg, repos.UserRepository),
 		Vacancy:         impl.NewVacancyService(repos.VacancyRepository, repos.UserRepository),
-		VacancyActivity: impl.NewVacancyActivityService(repos.VacancyActivityRepository, repos.UserRepository),
+		VacancyActivity: impl.NewVacancyActivityService(repos.VacancyActivityRepository, repos.UserRepository, repos.VacancyRepository, repos.NotificationRepository),
 		Notification:    impl.NewNotificationService(repos.NotificationRepository, repos.UserRepository),
 		Mail:            _mail,
 	}
@@ -79,6 +79,6 @@ type Resume interface {
 }
 
 type Notification interface {
-	GetNotification(email string) ([]*models.Notification, error)
+	GetNotification(email string) ([]*models.NotificationPreview, error)
 	CreateNotification(notification *models.Notification) error
 }

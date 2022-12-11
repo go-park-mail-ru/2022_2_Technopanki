@@ -17,15 +17,20 @@ func NewNotificationService(notificationRepo repository.NotificationRepository, 
 	return &NotificationService{notificationRepo: notificationRepo, userRepo: userRepo}
 }
 
-func (ns *NotificationService) GetNotification(email string) ([]*models.Notification, error) {
+func (ns *NotificationService) GetNotification(email string) ([]*models.NotificationPreview, error) {
 	user, getErr := ns.userRepo.GetUserByEmail(email)
 	if getErr != nil {
-		return []*models.Notification{}, getErr
+		return []*models.NotificationPreview{}, getErr
+	}
+	var notifications []*models.NotificationPreview
+	if user.UserType == "employer" {
+		notifications, getErr = ns.notificationRepo.GetNotificationsApply(user.ID)
+	} else {
+		notifications, getErr = ns.notificationRepo.GetNotificationsDownloadPDF(user.ID)
 	}
 
-	notifications, getErr := ns.notificationRepo.GetNotifications(user.ID)
 	if errors.Is(getErr, errorHandler.ErrNotificationNotFound) {
-		return []*models.Notification{}, nil
+		return []*models.NotificationPreview{}, nil
 	}
 	return notifications, getErr
 }
