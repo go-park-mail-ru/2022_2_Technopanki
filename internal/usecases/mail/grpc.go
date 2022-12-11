@@ -5,6 +5,9 @@ import (
 	"HeadHunter/mail_microservice/handler"
 	"HeadHunter/pkg/errorHandler"
 	"context"
+	"fmt"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type MailService struct {
@@ -21,6 +24,11 @@ func NewMailService(_client handler.MailServiceClient) *MailService {
 
 func (ms *MailService) SendConfirmCode(email string) error {
 	_, err := ms.client.SendConfirmCode(ms.ctx, &handler.Email{Value: email})
+	st := status.Convert(err)
+	fmt.Println(st.Code())
+	fmt.Println(st.Code() == codes.AlreadyExists)
+	fe, _ := status.FromError(err)
+	fmt.Println(fe.Code(), fe.String())
 	if err != nil && err.Error() == "rpc error: code = Unknown desc = Код уже отправлен" { //TODO переделать
 		return errorHandler.ErrCodeAlreadyExists
 	}
