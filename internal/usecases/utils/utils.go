@@ -43,7 +43,8 @@ func generatePDFFromHTML(html bytes.Buffer) ([]byte, error) {
 	return pdfg.Buffer().String(), nil
 }
 
-func GenerateResumeInPDF(resume *models.ResumeInPDF) (string, error) {
+func GenerateResumeInPDF(resume *models.ResumeInPDF) ([]byte, error) {
+	resume.Image = strings.Split(resume.Image, "?")[0]
 	html, htmlErr := generateHTMLFromResume(resume)
 	if htmlErr != nil {
 		return "", htmlErr
