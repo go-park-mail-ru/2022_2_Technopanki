@@ -7,6 +7,8 @@ import (
 	"HeadHunter/pkg/errorHandler"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"testing"
 )
 
@@ -52,7 +54,7 @@ func TestMailService_SendConfirmCode(t *testing.T) {
 		{
 			name:        "code already exists",
 			email:       "example@gmail.com",
-			expectedErr: errorHandler.ErrCodeAlreadyExists,
+			expectedErr: status.Error(codes.AlreadyExists, errorHandler.ErrCodeAlreadyExists.Error()),
 			mockBehavior: func(sender *mock_sender.MockSender, session *mock_session.MockRepository, email string) {
 				session.EXPECT().GetCodeFromEmail(email).Return("", nil)
 			},

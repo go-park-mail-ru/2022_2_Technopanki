@@ -40,7 +40,10 @@ func generateUserResponse(user *models.UserAccount, fields []string) (models.Use
 			}
 		case "average_color":
 			result.AverageColor = user.AverageColor
+		case "two_factor_sign_in":
+			result.TwoFactorSignIn = user.TwoFactorSignIn
 		}
+
 	}
 	return result, nil
 }
@@ -56,7 +59,7 @@ func sendUserResponse(c *gin.Context, user *models.UserAccount, fields []string)
 }
 
 func SendSuccessData(c *gin.Context, user *models.UserAccount) {
-	sendUserResponse(c, user, []string{"id", "user_type", "name_data", "image", "average_color", "email", "company_size"})
+	sendUserResponse(c, user, []string{"id", "user_type", "name_data", "image", "average_color", "email", "company_size", "two_factor_sign_in"})
 }
 
 func SendPreviewData(c *gin.Context, user *models.UserAccount) {

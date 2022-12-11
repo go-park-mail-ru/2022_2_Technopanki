@@ -3,7 +3,10 @@ package mail
 import (
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/mail_microservice/handler"
+	"HeadHunter/pkg/errorHandler"
 	"context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type MailService struct {
@@ -20,10 +23,11 @@ func NewMailService(_client handler.MailServiceClient) *MailService {
 
 func (ms *MailService) SendConfirmCode(email string) error {
 	_, err := ms.client.SendConfirmCode(ms.ctx, &handler.Email{Value: email})
-	if err != nil {
-		return err
+	st := status.Convert(err)
+	if st.Code() == codes.AlreadyExists {
+		return errorHandler.ErrCodeAlreadyExists
 	}
-	return nil
+	return st.Err()
 }
 
 func (ms *MailService) SendApplicantMailing(emails []string, vacancies []*models.Vacancy) error {
