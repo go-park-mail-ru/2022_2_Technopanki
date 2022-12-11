@@ -17,6 +17,7 @@ type UseCases struct {
 	Vacancy         Vacancy
 	VacancyActivity VacancyActivity
 	Resume          Resume
+	Notification    Notification
 	Mail            mail.Mail
 }
 
@@ -26,6 +27,7 @@ func NewUseCases(repos *repository.Repository, session session.Repository, _cfg 
 		Resume:          impl.NewResumeService(repos.ResumeRepository, _cfg, repos.UserRepository),
 		Vacancy:         impl.NewVacancyService(repos.VacancyRepository, repos.UserRepository),
 		VacancyActivity: impl.NewVacancyActivityService(repos.VacancyActivityRepository, repos.UserRepository),
+		Notification:    impl.NewNotificationService(repos.NotificationRepository, repos.UserRepository),
 		Mail:            _mail,
 	}
 }
@@ -74,4 +76,9 @@ type Resume interface {
 	CreateResume(resume *models.Resume, email string) error
 	UpdateResume(id uint, resume *models.Resume, email string) error
 	DeleteResume(id uint, email string) error
+}
+
+type Notification interface {
+	GetNotification(email string) ([]*models.Notification, error)
+	CreateNotification(notification *models.Notification) error
 }

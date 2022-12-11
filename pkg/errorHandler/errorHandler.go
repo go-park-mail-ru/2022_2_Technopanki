@@ -46,6 +46,8 @@ var (
 	ErrIsNotConfirmed    = errors.New("Пользователь не подтвержден")
 	ErrCodeNotFound      = errors.New("Подходящий код не найден")
 	ErrCodeAlreadyExists = errors.New("Код уже отправлен")
+
+	ErrNotificationNotFound = errors.New("Уведомление не найдено")
 )
 
 var errorToCode = map[error]int{
@@ -103,6 +105,8 @@ var errorToCode = map[error]int{
 	ErrIsNotConfirmed:       http.StatusForbidden,
 	ErrCodeNotFound:         http.StatusNotFound,
 	ErrCodeAlreadyExists:    http.StatusBadRequest,
+
+	ErrNotificationNotFound: http.StatusNotFound,
 }
 
 func ConvertError(err error) int {
