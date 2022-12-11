@@ -61,7 +61,7 @@ func DeleteUserAvatar(name string, cfg *configs.ImageConfig) error {
 	return nil
 }
 
-const alphaDivider = 260
+const alphaDivider = 256
 
 func Average(img image.Image) string {
 	max := img.Bounds().Max
