@@ -65,6 +65,7 @@ func (us *UserService) SignIn(input *models.UserAccount) (string, error) {
 
 	if user.TwoFactorSignIn {
 		sendErr := us.mail.SendConfirmCode(user.Email)
+		input.TwoFactorSignIn = true
 		if sendErr != nil {
 			return "", sendErr
 		}
@@ -133,9 +134,8 @@ func (us *UserService) SignUp(input *models.UserAccount) (string, error) {
 	input.PublicFields = "email contact_number applicant_current_salary" //TODO после РК3 убрать для добавления фичи с доступом
 	input.IsConfirmed = !us.cfg.Security.ConfirmAccountMode
 
-	if input.DateOfBirth.IsZero() {
-		input.Age = 0
-	}
+	input.Age = uint(Age(input.DateOfBirth))
+	input.AverageColor = us.cfg.Image.DefaultAverageColor
 
 	createErr := us.userRep.CreateUser(input)
 
@@ -277,19 +277,34 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 	user = escaping.EscapingObject[*models.UserAccount](user)
 	imageName := fmt.Sprintf("%d.webp", user.ID)
 
-	user.Image = fmt.Sprintf("%d.webp?%d", user.ID, time.Now().Unix())
-	updateErr := us.userRep.UpdateUser(&models.UserAccount{ID: user.ID, Image: user.Image})
-	if updateErr != nil {
-		return "", updateErr
+	img, _, decodeErr := image.Decode(file)
+
+	err := images.UploadUserAvatar(imageName, &img, &us.cfg.Image)
+	if err != nil {
+		return "", err
 	}
 
-	img, _, decodeErr := image.Decode(file)
+	user.Image = fmt.Sprintf("%s?%d", imageName, time.Now().Unix())
+	user.AverageColor = images.Average(img)
+
+	oldUser, getErr := us.userRep.GetUserByEmail(user.Email)
+	if getErr != nil {
+		return "", getErr
+	}
+
+	err = us.userRep.UpdateUser(&models.UserAccount{ID: user.ID, Image: user.Image,
+		TwoFactorSignIn: oldUser.TwoFactorSignIn, Description: oldUser.Description})
+
+	if err != nil {
+		return "", err
+	}
+
 	if decodeErr != nil {
 		fmt.Println("Error in decoding (UploadUserImage)")
 		return "", errorHandler.ErrBadRequest
 	}
 
-	return user.Image, images.UploadUserAvatar(imageName, &img, &us.cfg.Image)
+	return user.Image, nil
 }
 
 func (us *UserService) DeleteUserImage(user *models.UserAccount) error {
@@ -331,6 +346,11 @@ func (us *UserService) ConfirmUser(code, email string) (*models.UserAccount, str
 	token, newSessionErr := us.sessionRepo.NewSession(email)
 	if newSessionErr != nil {
 		return nil, "", newSessionErr
+	}
+
+	deleteErr := us.sessionRepo.Delete(email)
+	if deleteErr != nil {
+		return nil, "", deleteErr
 	}
 
 	return confirmedUser, token, us.userRep.UpdateUser(confirmedUser)
