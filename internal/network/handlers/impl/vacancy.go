@@ -194,10 +194,10 @@ func (vh *VacancyHandler) AddVacancyToFavorites(c *gin.Context) {
 		return
 	}
 
-	addErr := vh.vacancyUseCase.AddVacancyToFavorites(email, uint(id))
+	err = vh.vacancyUseCase.AddVacancyToFavorites(email, uint(id))
 
-	if addErr != nil {
-		_ = c.Error(addErr)
+	if err != nil {
+		_ = c.Error(err)
 		return
 	}
 	c.Status(http.StatusOK)
@@ -211,9 +211,9 @@ func (vh *VacancyHandler) GetUserFavoriteVacancies(c *gin.Context) {
 		return
 	}
 
-	vacancies, GetErr := vh.vacancyUseCase.GetUserFavoriteVacancies(email)
-	if GetErr != nil {
-		_ = c.Error(GetErr)
+	vacancies, getErr := vh.vacancyUseCase.GetUserFavoriteVacancies(email)
+	if getErr != nil {
+		_ = c.Error(getErr)
 		return
 	}
 	c.JSON(http.StatusOK, models.GetAllVacanciesResponcePointer{

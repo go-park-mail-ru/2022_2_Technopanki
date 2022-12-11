@@ -98,7 +98,7 @@ func (vp *VacancyPostgres) Update(userId uint, vacancyId uint, oldVacancy *model
 }
 
 func (vp *VacancyPostgres) AddVacancyToFavorites(user *models.UserAccount, vacancy *models.Vacancy) error {
-	err := vp.db.Model(user).Association("FavoriteVacancies").Append(&vacancy)
+	err := vp.db.Model(user).Association("FavoriteVacancies").Append(vacancy)
 	if err != nil {
 		return errorHandler.ErrCannotAddFavoriteVacancy
 	}
