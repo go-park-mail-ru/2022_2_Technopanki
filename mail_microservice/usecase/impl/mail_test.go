@@ -7,6 +7,8 @@ import (
 	"HeadHunter/pkg/errorHandler"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"testing"
 )
 
@@ -24,6 +26,7 @@ func TestMailService_SendConfirmCode(t *testing.T) {
 			expectedErr: nil,
 			mockBehavior: func(sender *mock_sender.MockSender, session *mock_session.MockRepository, email string) {
 				code := "some_code"
+				session.EXPECT().GetCodeFromEmail(email).Return("", errorHandler.ErrBadRequest)
 				session.EXPECT().CreateConfirmationCode(email).Return(code, nil)
 				sender.EXPECT().SendConfirmCode(email, code).Return(nil)
 			},
@@ -33,6 +36,7 @@ func TestMailService_SendConfirmCode(t *testing.T) {
 			email:       "example@gmail.com",
 			expectedErr: errorHandler.ErrBadRequest,
 			mockBehavior: func(sender *mock_sender.MockSender, session *mock_session.MockRepository, email string) {
+				session.EXPECT().GetCodeFromEmail(email).Return("", errorHandler.ErrBadRequest)
 				session.EXPECT().CreateConfirmationCode(email).Return("", errorHandler.ErrBadRequest)
 			},
 		},
@@ -42,8 +46,17 @@ func TestMailService_SendConfirmCode(t *testing.T) {
 			expectedErr: errorHandler.ErrBadRequest,
 			mockBehavior: func(sender *mock_sender.MockSender, session *mock_session.MockRepository, email string) {
 				code := "some_code"
+				session.EXPECT().GetCodeFromEmail(email).Return("", errorHandler.ErrBadRequest)
 				session.EXPECT().CreateConfirmationCode(email).Return(code, nil)
 				sender.EXPECT().SendConfirmCode(email, code).Return(errorHandler.ErrBadRequest)
+			},
+		},
+		{
+			name:        "code already exists",
+			email:       "example@gmail.com",
+			expectedErr: status.Error(codes.AlreadyExists, errorHandler.ErrCodeAlreadyExists.Error()),
+			mockBehavior: func(sender *mock_sender.MockSender, session *mock_session.MockRepository, email string) {
+				session.EXPECT().GetCodeFromEmail(email).Return("", nil)
 			},
 		},
 	}
