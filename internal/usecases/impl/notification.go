@@ -35,9 +35,13 @@ func (ns *NotificationService) GetNotification(email string) ([]*models.Notifica
 	return notifications, getErr
 }
 
-func (ns *NotificationService) CreateNotification(notification *models.Notification) error {
+func (ns *NotificationService) CreateNotification(notification *models.Notification) (*models.NotificationPreview, error) {
 	if !utils.HasStringArrayElement(notification.Type, models.AllowedNotificationTypes) {
-		return errorHandler.ErrBadRequest
+		return nil, errorHandler.ErrBadRequest
 	}
-	return ns.notificationRepo.CreateNotification(notification)
+	createErr := ns.notificationRepo.CreateNotification(notification)
+	if createErr != nil {
+		return nil, createErr
+	}
+	return ns.notificationRepo.GetNotificationPreviewApply(notification.ID)
 }

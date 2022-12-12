@@ -23,7 +23,7 @@ func (vas *VacancyActivityService) GetAllVacancyApplies(vacancyId uint) ([]*mode
 	return vas.vacancyActivityRep.GetAllVacancyApplies(vacancyId)
 }
 
-func (vas *VacancyActivityService) ApplyForVacancy(email string, vacancyId uint, input *models.VacancyActivity) (*models.NotificationPreview, error) {
+func (vas *VacancyActivityService) ApplyForVacancy(email string, vacancyId uint, input *models.VacancyActivity) (*models.Notification, error) {
 	user, getErr := vas.userRep.GetUserByEmail(email)
 	if getErr != nil {
 		return nil, getErr
@@ -49,8 +49,7 @@ func (vas *VacancyActivityService) ApplyForVacancy(email string, vacancyId uint,
 		UserToID:   vacancy.PostedByUserId,
 		Type:       "apply",
 	}
-	err = vas.notificationRep.CreateNotification(notification) //TODO вот тут надо как-то получать превью уведомления
-	return nil, err
+	return notification, nil
 }
 
 func (vas *VacancyActivityService) GetAllUserApplies(userId uint) ([]*models.VacancyActivityPreview, error) {

@@ -12,10 +12,11 @@ import (
 
 type VacancyActivityHandler struct {
 	vacancyActivityUseCase usecases.VacancyActivity
+	notificationUseCase    usecases.Notification
 }
 
 func NewVacancyActivityHandler(useCases *usecases.UseCases) *VacancyActivityHandler {
-	return &VacancyActivityHandler{vacancyActivityUseCase: useCases.VacancyActivity}
+	return &VacancyActivityHandler{vacancyActivityUseCase: useCases.VacancyActivity, notificationUseCase: useCases.Notification}
 }
 
 func (vah *VacancyActivityHandler) GetAllVacancyApplies(c *gin.Context) {
@@ -59,7 +60,14 @@ func (vah *VacancyActivityHandler) ApplyForVacancy(c *gin.Context) {
 		return
 	}
 
-	c.Set("notification", notification)
+	notificationPreview, notificationErr := vah.notificationUseCase.CreateNotification(notification)
+
+	if notificationErr != nil {
+		_ = c.Error(notificationErr)
+		return
+	}
+
+	c.Set("notification", notificationPreview)
 
 	c.Status(http.StatusOK)
 }

@@ -62,7 +62,7 @@ type Vacancy interface {
 }
 
 type VacancyActivity interface {
-	ApplyForVacancy(email string, vacancyId uint, input *models.VacancyActivity) (*models.NotificationPreview, error)
+	ApplyForVacancy(email string, vacancyId uint, input *models.VacancyActivity) (*models.Notification, error)
 	GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivityPreview, error)
 	GetAllUserApplies(userid uint) ([]*models.VacancyActivityPreview, error)
 	DeleteUserApply(email string, apply uint) error
@@ -80,5 +80,5 @@ type Resume interface {
 
 type Notification interface {
 	GetNotification(email string) ([]*models.NotificationPreview, error)
-	CreateNotification(notification *models.Notification) error
+	CreateNotification(notification *models.Notification) (*models.NotificationPreview, error)
 }
