@@ -79,6 +79,6 @@ type Resume interface {
 }
 
 type Notification interface {
-	GetNotification(email string) ([]*models.NotificationPreview, error)
+	GetNotificationsByEmail(email string) ([]*models.NotificationPreview, error)
 	CreateNotification(notification *models.Notification) (*models.NotificationPreview, error)
 }

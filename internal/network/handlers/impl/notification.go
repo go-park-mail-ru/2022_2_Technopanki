@@ -22,7 +22,7 @@ func (nh *NotificationHandler) GetNotifications(c *gin.Context) {
 		return
 	}
 
-	notifications, getErr := nh.notificationUseCase.GetNotification(email)
+	notifications, getErr := nh.notificationUseCase.GetNotificationsByEmail(email)
 	if getErr != nil {
 		_ = c.Error(getErr)
 		return

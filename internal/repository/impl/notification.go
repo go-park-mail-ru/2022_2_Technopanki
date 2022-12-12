@@ -44,13 +44,13 @@ func (np *NotificationPostgres) GetNotificationPreviewDownloadPDF(id uint) (*mod
 	return result, QueryValidation(query, "notification")
 }
 
-func (np *NotificationPostgres) GetNotificationsApply(id uint) ([]*models.NotificationPreview, error) {
+func (np *NotificationPostgres) GetApplyNotificationsByUser(id uint) ([]*models.NotificationPreview, error) {
 	var result []*models.NotificationPreview
 	query := np.notificationApplyQuery().Where("user_to_id = ?", id).Scan(&result)
 	return result, QueryValidation(query, "notification")
 }
 
-func (np *NotificationPostgres) GetNotificationsDownloadPDF(id uint) ([]*models.NotificationPreview, error) {
+func (np *NotificationPostgres) GetDownloadPDFNotificationsByUser(id uint) ([]*models.NotificationPreview, error) {
 	var result []*models.NotificationPreview
 	query := np.notificationDownloadPDFQuery().Where("user_to_id = ?", id).Scan(&result)
 	return result, QueryValidation(query, "notification")
