@@ -32,8 +32,6 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	wsMiddleware := middleware.NewWebsocketMiddleware(wsPool)
 
-	router.GET("/wsConnect", sessionMW.Session, wsPool.Connect, errorHandler.Middleware())
-
 	auth := router.Group("/auth")
 	{
 		auth.GET("/", sessionMW.Session, h.UserHandler.AuthCheck, errorHandler.Middleware())
@@ -94,7 +92,8 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 
 		notifications := api.Group("/notification")
 		{
-			notifications.GET("/", sessionMW.Session, h.NotificationHandler.GetNotifications, errorHandler.Middleware())
+			router.GET("/", sessionMW.Session, wsPool.Connect, errorHandler.Middleware())
+			notifications.GET("/user", sessionMW.Session, h.NotificationHandler.GetNotifications, errorHandler.Middleware())
 		}
 	}
 
