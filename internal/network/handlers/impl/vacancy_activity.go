@@ -53,11 +53,13 @@ func (vah *VacancyActivityHandler) ApplyForVacancy(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
-	applyErr := vah.vacancyActivityUseCase.ApplyForVacancy(email, uint(id), &input)
+	notification, applyErr := vah.vacancyActivityUseCase.ApplyForVacancy(email, uint(id), &input)
 	if applyErr != nil {
 		_ = c.Error(applyErr)
 		return
 	}
+
+	c.Set("notification", notification)
 
 	c.Status(http.StatusOK)
 }

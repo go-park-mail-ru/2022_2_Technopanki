@@ -53,7 +53,7 @@ func TestVacancyActivityService_ApplyForVacancy(t *testing.T) {
 			userRep := mock_repository.NewMockUserRepository(c)
 			testCase.mockBehavior(vacancyActivityRepository, userRep, testCase.email, testCase.userId, testCase.vacancyId, testCase.input)
 			vacancyActivityService := VacancyActivityService{vacancyActivityRep: vacancyActivityRepository, userRep: userRep}
-			err := vacancyActivityService.ApplyForVacancy(testCase.email, testCase.vacancyId, testCase.input)
+			_, err := vacancyActivityService.ApplyForVacancy(testCase.email, testCase.vacancyId, testCase.input)
 			assert.Equal(t, testCase.expectedErr, err)
 		})
 	}

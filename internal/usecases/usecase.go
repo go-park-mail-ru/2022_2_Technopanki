@@ -62,7 +62,7 @@ type Vacancy interface {
 }
 
 type VacancyActivity interface {
-	ApplyForVacancy(email string, vacancyId uint, input *models.VacancyActivity) error
+	ApplyForVacancy(email string, vacancyId uint, input *models.VacancyActivity) (*models.NotificationPreview, error)
 	GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivityPreview, error)
 	GetAllUserApplies(userid uint) ([]*models.VacancyActivityPreview, error)
 	DeleteUserApply(email string, apply uint) error

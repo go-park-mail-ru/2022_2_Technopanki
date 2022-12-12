@@ -407,11 +407,11 @@ func (m *MockVacancyActivity) EXPECT() *MockVacancyActivityMockRecorder {
 }
 
 // ApplyForVacancy mocks base method.
-func (m *MockVacancyActivity) ApplyForVacancy(email string, vacancyId uint, input *models.VacancyActivity) error {
+func (m *MockVacancyActivity) ApplyForVacancy(email string, vacancyId uint, input *models.VacancyActivity) (*models.NotificationPreview, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ApplyForVacancy", email, vacancyId, input)
 	ret0, _ := ret[0].(error)
-	return ret0
+	return nil, ret0
 }
 
 // ApplyForVacancy indicates an expected call of ApplyForVacancy.

@@ -48,6 +48,9 @@ var (
 	ErrCodeAlreadyExists = errors.New("Код уже отправлен")
 
 	ErrNotificationNotFound = errors.New("Уведомление не найдено")
+
+	ErrInvalidWSInput     = errors.New("Websocket: некорректные входные данные")
+	ErrConnectionNotFound = errors.New("Соединение не найдено")
 )
 
 var errorToCode = map[error]int{
@@ -107,6 +110,9 @@ var errorToCode = map[error]int{
 	ErrCodeAlreadyExists:    http.StatusBadRequest,
 
 	ErrNotificationNotFound: http.StatusNotFound,
+
+	ErrInvalidWSInput:     http.StatusBadRequest,
+	ErrConnectionNotFound: http.StatusNotFound,
 }
 
 func ConvertError(err error) int {
