@@ -92,7 +92,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 
 		notifications := api.Group("/notification")
 		{
-			router.GET("/", sessionMW.Session, wsPool.Connect, errorHandler.Middleware())
+			notifications.GET("/", sessionMW.Session, wsPool.Connect, errorHandler.Middleware())
 			notifications.GET("/user", sessionMW.Session, h.NotificationHandler.GetNotifications, errorHandler.Middleware())
 		}
 	}
