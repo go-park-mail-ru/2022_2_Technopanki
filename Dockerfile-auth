@@ -1,11 +1,4 @@
-FROM golang:alpine as builder
-WORKDIR /auth
-COPY . .
-RUN go mod tidy
-RUN go build -o main auth_microservice/main.go
 FROM alpine
 WORKDIR /auth
-COPY --from=builder /auth/main /auth/main
-COPY --from=builder /auth/auth_microservice/configs/config.yml /auth/auth_microservice/configs/config.yml
-COPY --from=builder /auth/.env /auth/.env
-CMD ["./main"]
+COPY . .
+CMD ["bin/auth"]

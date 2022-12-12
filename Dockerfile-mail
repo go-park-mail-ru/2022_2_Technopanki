@@ -1,12 +1,4 @@
-FROM golang:alpine as builder
-WORKDIR /mail
-COPY . .
-RUN go mod tidy
-RUN go build -o main mail_microservice/main.go
 FROM alpine
 WORKDIR /mail
-COPY --from=builder /mail/main /mail/main
-COPY --from=builder /mail/data/image /mail/data/image
-COPY --from=builder /mail/static /mail/static
-COPY --from=builder /mail/mail_microservice/configs/config.yml /mail/mail_microservice/configs/config.yml
-CMD ["./main"]
+COPY . .
+CMD ["bin/mail"]

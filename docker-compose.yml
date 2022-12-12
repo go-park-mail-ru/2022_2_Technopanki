@@ -9,6 +9,7 @@ services:
     depends_on:
       - postgres
       - redis
+      - builder
       - auth
       - mail
     volumes:
@@ -38,6 +39,7 @@ services:
     container_name: auth_service
     depends_on:
       - redis
+      - builder
     ports:
       - "8081:8081"
   mail:
@@ -47,6 +49,14 @@ services:
     container_name: mail_service
     depends_on:
       - redis
+      - builder
       - auth
     ports:
       - "8082:8082"
+  builder:
+    build:
+      context: .
+      dockerfile: Dockerfile-builder
+    container_name: builder
+    volumes:
+      - ./bin:/backend/bin

@@ -1,5 +1,6 @@
-FROM alpine
+FROM golang:alpine as builder
 WORKDIR /backend
 COPY . .
 RUN apk add --update musl-dev libwebp-dev gcc
-CMD ["bin/main"]
+RUN go mod tidy
+CMD "sh" "buildScript.sh"
