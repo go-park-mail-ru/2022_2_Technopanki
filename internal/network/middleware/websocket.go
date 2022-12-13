@@ -22,7 +22,7 @@ func (wsm *WebSocketMiddleware) Send(c *gin.Context) {
 	}
 
 	notificationAny, okGet := c.Get("notification")
-	notification, okCast := notificationAny.(*models.Notification)
+	notification, okCast := notificationAny.(*models.NotificationPreview)
 	if !okGet || !okCast {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return

@@ -6,6 +6,7 @@ import (
 	"HeadHunter/pkg/errorHandler"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"log"
 	"net/http"
 	"sync"
 )
@@ -21,7 +22,11 @@ func NewWSPool(userUseCase usecases.User) *Pool {
 	return &Pool{
 		connections: make(map[uint][]*websocket.Conn),
 		mutex:       new(sync.Mutex),
-		upgrader:    websocket.Upgrader{},
+		upgrader: websocket.Upgrader{
+			CheckOrigin: func(r *http.Request) bool {
+				return true
+			},
+		},
 		userUseCase: userUseCase,
 	}
 }
@@ -62,6 +67,7 @@ func (p *Pool) Connect(c *gin.Context) {
 	for {
 		_, _, readErr = conn.ReadMessage()
 		if readErr != nil {
+			log.Println(readErr)
 			if !isNormalClosure(readErr) {
 				_ = c.Error(readErr)
 				return
