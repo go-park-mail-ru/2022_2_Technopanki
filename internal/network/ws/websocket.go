@@ -48,9 +48,9 @@ func (p *Pool) Connect(c *gin.Context) {
 		_ = c.Error(upgradeErr)
 		return
 	}
-
+	var err error
 	defer func(conn *websocket.Conn) {
-		err := conn.Close()
+		err = conn.Close()
 		err = p.Delete(user.ID, conn)
 		if err != nil {
 			_ = c.Error(err)
