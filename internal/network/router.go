@@ -73,7 +73,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 			vacancies.POST("/", sessionMW.Session, h.VacancyHandler.CreateVacancy, errorHandler.Middleware())
 			vacancies.PUT("/:id", sessionMW.Session, h.VacancyHandler.UpdateVacancy, errorHandler.Middleware())
 			vacancies.DELETE("/:id", sessionMW.Session, h.VacancyHandler.DeleteVacancy, errorHandler.Middleware())
-			vacancies.POST("/apply/:id", sessionMW.Session, h.VacancyActivityHandler.ApplyForVacancy, errorHandler.Middleware(), wsMiddleware.Send)
+			vacancies.POST("/apply/:id", sessionMW.Session, h.VacancyActivityHandler.ApplyForVacancy, wsMiddleware.Send, errorHandler.Middleware())
 			vacancies.GET("/applies/:id", h.VacancyActivityHandler.GetAllVacancyApplies, errorHandler.Middleware())
 			vacancies.GET("/user_applies/:id", h.VacancyActivityHandler.GetAllUserApplies, errorHandler.Middleware())
 

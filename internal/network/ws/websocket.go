@@ -27,6 +27,10 @@ func NewWSPool(userUseCase usecases.User) *Pool {
 }
 
 func (p *Pool) Connect(c *gin.Context) {
+	if len(c.Errors) > 0 {
+		return
+	}
+
 	email, contextErr := utils.GetEmailFromContext(c)
 	if contextErr != nil {
 		_ = c.Error(contextErr)

@@ -33,7 +33,7 @@ func (wsm *WebSocketMiddleware) Send(c *gin.Context) {
 		return
 	}
 
-	getErr := wsm.pool.Send(notification.UserFromID, data)
+	getErr := wsm.pool.Send(notification.UserToID, data)
 	if getErr != nil {
 		_ = c.Error(getErr)
 		return

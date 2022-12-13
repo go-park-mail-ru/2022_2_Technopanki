@@ -47,9 +47,5 @@ func (ns *NotificationService) CreateNotification(notification *models.Notificat
 	if notification.Type == "apply" {
 		return ns.notificationRepo.GetNotificationPreviewApply(notification.ID)
 	}
-
-	if notification.Type == "download resume" {
-		return ns.notificationRepo.GetNotificationPreviewDownloadPDF(notification.ID)
-	}
-	return nil, errorHandler.ErrBadRequest
+	return ns.notificationRepo.GetNotificationPreviewDownloadPDF(notification.ID)
 }
