@@ -233,9 +233,9 @@ func (vh *VacancyHandler) DeleteVacancyFromFavorites(c *gin.Context) {
 		return
 	}
 
-	deleteErr := vh.vacancyUseCase.DeleteVacancyFromFavorites(email, uint(id))
-	if deleteErr != nil {
-		_ = c.Error(deleteErr)
+	err = vh.vacancyUseCase.DeleteVacancyFromFavorites(email, uint(id))
+	if err != nil {
+		_ = c.Error(err)
 		return
 	}
 	c.Status(http.StatusOK)
