@@ -17,7 +17,7 @@ import (
 )
 
 func TestVacancyActivityHandler_ApplyForVacancy(t *testing.T) {
-	type mockBehavior func(r *mock_usecases.MockVacancyActivity, vacancyActivity *models.VacancyActivity, vacancyId uint)
+	type mockBehavior func(r *mock_usecases.MockVacancyActivity, n *mock_usecases.MockNotification, vacancyActivity *models.VacancyActivity, vacancyId uint)
 	type sessionRepBehavior func(r *mock_session.MockRepository, token string)
 	testTable := []struct {
 		name                 string
@@ -43,9 +43,11 @@ func TestVacancyActivityHandler_ApplyForVacancy(t *testing.T) {
 			inputBody: `{
 				"id": 1
 }`,
-			mockBehavior: func(r *mock_usecases.MockVacancyActivity, vacancyActivity *models.VacancyActivity, vacancyId uint) {
+			mockBehavior: func(r *mock_usecases.MockVacancyActivity, n *mock_usecases.MockNotification, vacancyActivity *models.VacancyActivity, vacancyId uint) {
 				createdApply := &models.VacancyActivity{ResumeId: 1}
-				r.EXPECT().ApplyForVacancy("test@gmail.com", vacancyId, createdApply).Return(nil)
+				expected := &models.Notification{}
+				r.EXPECT().ApplyForVacancy("test@gmail.com", vacancyId, createdApply).Return(expected, nil)
+				n.EXPECT().CreateNotification(expected).Return(&models.NotificationPreview{}, nil)
 			},
 			sessionRepBehavior: func(sessionRep *mock_session.MockRepository, token string) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
@@ -64,7 +66,7 @@ func TestVacancyActivityHandler_ApplyForVacancy(t *testing.T) {
 			inputBody: `{
     			"id": 1
 }`,
-			mockBehavior: func(r *mock_usecases.MockVacancyActivity, vacancy *models.VacancyActivity, vacancyId uint) {
+			mockBehavior: func(r *mock_usecases.MockVacancyActivity, n *mock_usecases.MockNotification, vacancyActivity *models.VacancyActivity, vacancyId uint) {
 				createdApply := &models.VacancyActivity{ResumeId: 1}
 				r.EXPECT().ApplyForVacancy("test@gmail.com", vacancyId, createdApply).Return(errorHandler.ErrBadRequest)
 			},
@@ -83,17 +85,19 @@ func TestVacancyActivityHandler_ApplyForVacancy(t *testing.T) {
 			defer c.Finish()
 
 			mockUseCase := mock_usecases.NewMockVacancyActivity(c)
+			notificationUseCase := mock_usecases.NewMockNotification(c)
 			sessionRep := mock_session.NewMockRepository(c)
 			sessionMiddlware := middleware.NewSessionMiddleware(sessionRep)
 
 			if testCase.emailFromToken != "" {
-				testCase.mockBehavior(mockUseCase, testCase.createdApply, testCase.vacancyId)
+				testCase.mockBehavior(mockUseCase, notificationUseCase, testCase.createdApply, testCase.vacancyId)
 			}
 
 			testCase.sessionRepBehavior(sessionRep, testCase.inputToken)
 
 			handler := VacancyActivityHandler{
 				vacancyActivityUseCase: mockUseCase,
+				notificationUseCase:    notificationUseCase,
 			}
 
 			r := gin.New()
