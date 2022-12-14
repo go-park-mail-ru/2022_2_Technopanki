@@ -20,7 +20,7 @@ func (vap *VacancyActivityPostgres) GetAllVacancyApplies(vacancyId uint) ([]*mod
 		Select("user_accounts.applicant_name, user_accounts.applicant_surname, user_accounts.image,"+
 			"vacancy_activities.user_account_id, vacancy_activities.resume_id, vacancy_activities.vacancy_id, vacancy_activities.apply_date,"+
 			"resumes.title").
-		Joins("left join user_accounts on user_account.id = vacancy_activities.user_account_id").
+		Joins("left join user_accounts on user_accounts.id = vacancy_activities.user_account_id").
 		Joins("left join resumes on resumes.id = vacancy_activities.resume_id").
 		Where("vacancy_id = ?", vacancyId).
 		Scan(&appliesPreview)
@@ -39,9 +39,9 @@ func (vap *VacancyActivityPostgres) GetAllUserApplies(userId uint) ([]*models.Va
 		Select("user_accounts.applicant_name, user_accounts.applicant_surname, user_accounts.image,"+
 			"vacancy_activities.user_account_id, vacancy_activities.resume_id, vacancy_activities.vacancy_id, vacancy_activities.apply_date,"+
 			"resumes.title").
-		Joins("left join user_accounts on user_account.id = vacancy_activities.user_account_id").
+		Joins("left join user_accounts on user_accounts.id = vacancy_activities.user_account_id").
 		Joins("left join resumes on resumes.id = vacancy_activities.resume_id").
-		Where("user_account_id = ?", userId).
+		Where("user_accounts.id = ?", userId).
 		Scan(&appliesPreview)
 
 	return appliesPreview, QueryValidation(query, "vacancy_applies")
