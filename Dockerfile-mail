@@ -1,4 +1,4 @@
 FROM alpine
 WORKDIR /mail
-COPY . .
+COPY /bin/mail /bin/mail
 CMD ["bin/mail"]

@@ -1,4 +1,4 @@
 FROM alpine
 WORKDIR /auth
-COPY . .
+COPY /bin/auth /bin/auth
 CMD ["bin/auth"]
