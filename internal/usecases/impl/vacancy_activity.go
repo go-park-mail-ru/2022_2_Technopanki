@@ -48,6 +48,7 @@ func (vas *VacancyActivityService) ApplyForVacancy(email string, vacancyId uint,
 		UserFromID: user.ID,
 		UserToID:   vacancy.PostedByUserId,
 		Type:       models.AllowedNotificationTypes[0], //apply
+		ObjectId:   vacancy.ID,
 	}
 	return notification, nil
 }
