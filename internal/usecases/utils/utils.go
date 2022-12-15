@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
 	"html/template"
+	"strings"
 )
 
 func generateHTMLFromResume(resume *models.ResumeInPDF) (bytes.Buffer, error) {
@@ -29,25 +30,24 @@ func generatePDFFromHTML(html bytes.Buffer) ([]byte, error) {
 	}
 
 	page := wkhtmltopdf.NewPageReader(&html)
-	page.FooterRight.Set("[page]")
 	page.FooterFontSize.Set(10)
-	page.Zoom.Set(0.95)
+	page.Zoom.Set(1)
 
 	pdfg.AddPage(page)
 
 	createErr := pdfg.Create()
 	if createErr != nil {
-		return "", createErr
+		return nil, createErr
 	}
 
-	return pdfg.Buffer().String(), nil
+	return pdfg.Buffer().Bytes(), nil
 }
 
 func GenerateResumeInPDF(resume *models.ResumeInPDF) ([]byte, error) {
 	resume.Image = strings.Split(resume.Image, "?")[0]
 	html, htmlErr := generateHTMLFromResume(resume)
 	if htmlErr != nil {
-		return "", htmlErr
+		return nil, htmlErr
 	}
 
 	pdf, pdfErr := generatePDFFromHTML(html)

@@ -40,8 +40,6 @@ func generateUserResponse(user *models.UserAccount, fields []string) (models.Use
 			}
 		case "average_color":
 			result.AverageColor = user.AverageColor
-		case "two_factor_sign_in":
-			result.TwoFactorSignIn = user.TwoFactorSignIn
 		}
 
 	}
