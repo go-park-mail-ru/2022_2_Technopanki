@@ -6,6 +6,7 @@ type Notification struct {
 	UserToID   uint   `json:"user_to_id"`
 	UserFromID uint   `json:"user_from_id"`
 	ObjectId   uint   `json:"object_id"` //id вакансии либо резюме
+	IsViewed   bool   `json:"is_viewed"`
 }
 
 var AllowedNotificationTypes = []string{"apply", "download resume"}
@@ -18,6 +19,6 @@ type NotificationPreview struct {
 	ObjectId      uint   `json:"object_id"` //id вакансии либо резюме
 	ApplicantName string `json:"applicant_name"`
 	Title         string `json:"title"`
-
-	CompanyName string `json:"company_name"`
+	CompanyName   string `json:"company_name"`
+	IsViewed      bool   `json:"is_viewed"`
 }

@@ -49,3 +49,36 @@ func (ns *NotificationService) CreateNotification(notification *models.Notificat
 	}
 	return ns.notificationRepo.GetNotificationPreviewDownloadPDF(notification.ID)
 }
+
+func (ns *NotificationService) ReadNotification(email string, id uint) error {
+	notif, getNotifErr := ns.notificationRepo.GetNotification(id)
+
+	if getNotifErr != nil {
+		return getNotifErr
+	}
+
+	if notif.IsViewed {
+		return errorHandler.ErrBadRequest
+	}
+
+	user, getUserErr := ns.userRepo.GetUserByEmail(email)
+
+	if getUserErr != nil {
+		return getUserErr
+	}
+
+	if user.ID != notif.UserToID {
+		return errorHandler.ErrForbidden
+	}
+
+	return ns.notificationRepo.ReadNotification(id)
+}
+
+func (ns *NotificationService) ClearNotifications(email string) error {
+	user, getErr := ns.userRepo.GetUserByEmail(email)
+	if getErr != nil {
+		return getErr
+	}
+
+	return ns.notificationRepo.DeleteNotificationsFromUser(user.ID)
+}

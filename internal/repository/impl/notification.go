@@ -16,7 +16,7 @@ func NewNotificationPostgres(db *gorm.DB) *NotificationPostgres {
 
 func (np *NotificationPostgres) notificationApplyQuery() *gorm.DB {
 	/*select notifications.id, notifications.type, notifications.user_to_id, notifications.user_from_id, company.company_name,
-	applicant.applicant_name, vacancies.title, notifications.object_id
+	applicant.applicant_name, vacancies.title, notifications.object_id, notifications.is_viewed
 	from notifications
 	left join user_accounts as company on
 	notifications.user_to_id = company.id
@@ -25,8 +25,8 @@ func (np *NotificationPostgres) notificationApplyQuery() *gorm.DB {
 	where notifications.user_to_id = 1;
 	*/
 	return np.db.Table("notifications").
-		Select("notifications.id,notifications.type, notifications.user_to_id, notifications.user_from_id, applicant.applicant_name," +
-			"company.company_name, vacancies.title, notifications.object_id").
+		Select("notifications.id,notifications.type, notifications.user_to_id, notifications.user_from_id, applicant.applicant_name, " +
+			"notifications.is_viewed, company.company_name, vacancies.title, notifications.object_id").
 		Joins("left join user_accounts as applicant on notifications.user_from_id =applicant.id").
 		Joins("left join user_accounts as company on notifications.user_to_id = company.id").
 		Joins("left join vacancies on vacancies.id = notifications.object_id")
@@ -35,8 +35,8 @@ func (np *NotificationPostgres) notificationApplyQuery() *gorm.DB {
 
 func (np *NotificationPostgres) notificationDownloadPDFQuery() *gorm.DB {
 	return np.db.Table("notifications").
-		Select("notifications.id,notifications.type, notifications.user_to_id, notifications.user_from_id, applicant.applicant_name," +
-			"company.company_name, resumes.title, resumes.id as object_id").
+		Select("notifications.id,notifications.type, notifications.user_to_id, notifications.user_from_id, notifications.is_viewed " +
+			"applicant.applicant_name, company.company_name, resumes.title, resumes.id as object_id").
 		Joins("left join user_accounts as applicant on notifications.user_to_id =applicant.id").
 		Joins("left join user_accounts as company on notifications.user_from_id = company.id").
 		Joins("left join resumes on resumes.user_account_id = applicant.id")
@@ -75,4 +75,17 @@ func (np *NotificationPostgres) CreateNotification(notification *models.Notifica
 	}
 
 	return nil
+}
+func (np *NotificationPostgres) ReadNotification(id uint) error {
+	return np.db.Model(&models.Notification{ID: id}).Update("is_viewed", true).Error
+}
+
+func (np *NotificationPostgres) GetNotification(id uint) (*models.Notification, error) {
+	var result *models.Notification
+	query := np.db.Where("id = ?", id).Find(&result)
+	return result, QueryValidation(query, "notification")
+}
+
+func (np *NotificationPostgres) DeleteNotificationsFromUser(userId uint) error {
+	return np.db.Where("user_to_id = ?", userId).Delete(&models.Notification{}).Error
 }

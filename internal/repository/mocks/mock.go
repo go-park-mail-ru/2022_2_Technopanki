@@ -551,6 +551,20 @@ func (mr *MockNotificationRepositoryMockRecorder) CreateNotification(notificatio
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNotification", reflect.TypeOf((*MockNotificationRepository)(nil).CreateNotification), notification)
 }
 
+// DeleteNotificationsFromUser mocks base method.
+func (m *MockNotificationRepository) DeleteNotificationsFromUser(userId uint) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteNotificationsFromUser", userId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteNotificationsFromUser indicates an expected call of DeleteNotificationsFromUser.
+func (mr *MockNotificationRepositoryMockRecorder) DeleteNotificationsFromUser(userId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteNotificationsFromUser", reflect.TypeOf((*MockNotificationRepository)(nil).DeleteNotificationsFromUser), userId)
+}
+
 // GetApplyNotificationsByUser mocks base method.
 func (m *MockNotificationRepository) GetApplyNotificationsByUser(id uint) ([]*models.NotificationPreview, error) {
 	m.ctrl.T.Helper()
@@ -581,6 +595,21 @@ func (mr *MockNotificationRepositoryMockRecorder) GetDownloadPDFNotificationsByU
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDownloadPDFNotificationsByUser", reflect.TypeOf((*MockNotificationRepository)(nil).GetDownloadPDFNotificationsByUser), id)
 }
 
+// GetNotification mocks base method.
+func (m *MockNotificationRepository) GetNotification(id uint) (*models.Notification, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetNotification", id)
+	ret0, _ := ret[0].(*models.Notification)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetNotification indicates an expected call of GetNotification.
+func (mr *MockNotificationRepositoryMockRecorder) GetNotification(id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNotification", reflect.TypeOf((*MockNotificationRepository)(nil).GetNotification), id)
+}
+
 // GetNotificationPreviewApply mocks base method.
 func (m *MockNotificationRepository) GetNotificationPreviewApply(id uint) (*models.NotificationPreview, error) {
 	m.ctrl.T.Helper()
@@ -609,4 +638,18 @@ func (m *MockNotificationRepository) GetNotificationPreviewDownloadPDF(id uint) 
 func (mr *MockNotificationRepositoryMockRecorder) GetNotificationPreviewDownloadPDF(id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNotificationPreviewDownloadPDF", reflect.TypeOf((*MockNotificationRepository)(nil).GetNotificationPreviewDownloadPDF), id)
+}
+
+// ReadNotification mocks base method.
+func (m *MockNotificationRepository) ReadNotification(id uint) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReadNotification", id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ReadNotification indicates an expected call of ReadNotification.
+func (mr *MockNotificationRepositoryMockRecorder) ReadNotification(id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadNotification", reflect.TypeOf((*MockNotificationRepository)(nil).ReadNotification), id)
 }

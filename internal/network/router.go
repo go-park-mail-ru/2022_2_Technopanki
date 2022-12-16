@@ -94,6 +94,8 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 		{
 			notifications.GET("/", sessionMW.Session, wsPool.Connect, errorHandler.Middleware())
 			notifications.GET("/user", sessionMW.Session, h.NotificationHandler.GetNotifications, errorHandler.Middleware())
+			notifications.PUT("/read/:id", sessionMW.Session, h.NotificationHandler.ReadNotification, errorHandler.Middleware())
+			notifications.DELETE("/clear", sessionMW.Session, h.NotificationHandler.ClearNotifications, errorHandler.Middleware())
 		}
 	}
 
