@@ -1,3 +1,4 @@
+//go:generate easyjson -no_std_marshalers
 package models
 
 import "time"
