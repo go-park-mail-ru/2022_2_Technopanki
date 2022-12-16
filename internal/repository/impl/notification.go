@@ -16,7 +16,7 @@ func NewNotificationPostgres(db *gorm.DB) *NotificationPostgres {
 
 func (np *NotificationPostgres) notificationApplyQuery() *gorm.DB {
 	/*select notifications.id, notifications.type, notifications.user_to_id, notifications.user_from_id, company.company_name,
-	applicant.applicant_name, vacancies.title, notifications.object_id, notifications.is_viewed
+	applicant.applicant_name, vacancies.title, notifications.object_id, notifications.is_viewed, notifications.created_time
 	from notifications
 	left join user_accounts as company on
 	notifications.user_to_id = company.id
@@ -26,7 +26,7 @@ func (np *NotificationPostgres) notificationApplyQuery() *gorm.DB {
 	*/
 	return np.db.Table("notifications").
 		Select("notifications.id,notifications.type, notifications.user_to_id, notifications.user_from_id, applicant.applicant_name, " +
-			"notifications.is_viewed, company.company_name, vacancies.title, notifications.object_id").
+			"notifications.is_viewed, company.company_name, vacancies.title, notifications.object_id, notifications.created_time").
 		Joins("left join user_accounts as applicant on notifications.user_from_id =applicant.id").
 		Joins("left join user_accounts as company on notifications.user_to_id = company.id").
 		Joins("left join vacancies on vacancies.id = notifications.object_id")
@@ -56,7 +56,7 @@ func (np *NotificationPostgres) GetNotificationPreviewDownloadPDF(id uint) (*mod
 
 func (np *NotificationPostgres) GetApplyNotificationsByUser(id uint) ([]*models.NotificationPreview, error) {
 	var result []*models.NotificationPreview
-	query := np.notificationApplyQuery().Where("user_to_id = ?", id).Scan(&result)
+	query := np.notificationApplyQuery().Where("user_to_id = ?", id).Order("created_time desc").Scan(&result)
 	return result, QueryValidation(query, "notification")
 }
 
