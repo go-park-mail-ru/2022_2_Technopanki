@@ -241,3 +241,23 @@ func (vh *VacancyHandler) DeleteVacancyFromFavorites(c *gin.Context) {
 	c.Status(http.StatusOK)
 
 }
+
+func (vh *VacancyHandler) CheckFavoriteVacancy(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		_ = c.Error(errorHandler.ErrInvalidParam)
+		return
+	}
+	email, contextErr := utils.GetEmailFromContext(c)
+	if contextErr != nil {
+		_ = c.Error(contextErr)
+		return
+	}
+
+	result, err := vh.vacancyUseCase.CheckFavoriteVacancy(email, uint(id))
+	if err != nil {
+		_ = c.Error(err)
+		return
+	}
+	c.JSON(http.StatusOK, result)
+}

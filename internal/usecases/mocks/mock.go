@@ -294,6 +294,21 @@ func (mr *MockVacancyMockRecorder) AddVacancyToFavorites(email, vacancyId interf
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddVacancyToFavorites", reflect.TypeOf((*MockVacancy)(nil).AddVacancyToFavorites), email, vacancyId)
 }
 
+// CheckFavoriteVacancy mocks base method.
+func (m *MockVacancy) CheckFavoriteVacancy(email string, vacancyId uint) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CheckFavoriteVacancy", email, vacancyId)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CheckFavoriteVacancy indicates an expected call of CheckFavoriteVacancy.
+func (mr *MockVacancyMockRecorder) CheckFavoriteVacancy(email, vacancyId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckFavoriteVacancy", reflect.TypeOf((*MockVacancy)(nil).CheckFavoriteVacancy), email, vacancyId)
+}
+
 // Create mocks base method.
 func (m *MockVacancy) Create(email string, input *models.Vacancy) (uint, error) {
 	m.ctrl.T.Helper()

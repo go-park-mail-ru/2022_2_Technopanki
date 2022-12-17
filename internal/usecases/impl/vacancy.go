@@ -122,3 +122,12 @@ func (vs *VacancyService) DeleteVacancyFromFavorites(email string, vacancyId uin
 	return vs.vacancyRep.DeleteVacancyFromFavorites(user, vacancy)
 
 }
+
+func (vs *VacancyService) CheckFavoriteVacancy(email string, vacancyId uint) (bool, error) {
+	user, getErr := vs.userRep.GetUserByEmail(email)
+	if getErr != nil {
+		return false, getErr
+	}
+	userId := user.ID
+	return vs.vacancyRep.CheckFavoriteVacancy(userId, vacancyId)
+}

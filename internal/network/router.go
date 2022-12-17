@@ -76,6 +76,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 			vacancies.POST("/favorites/:id", sessionMW.Session, h.VacancyHandler.AddVacancyToFavorites, errorHandler.Middleware())
 			vacancies.GET("/favorites", sessionMW.Session, h.VacancyHandler.GetUserFavoriteVacancies, errorHandler.Middleware())
 			vacancies.DELETE("/favorites/:id", sessionMW.Session, h.VacancyHandler.DeleteVacancyFromFavorites, errorHandler.Middleware())
+			vacancies.GET("/favorites/check/:id", sessionMW.Session, h.VacancyHandler.CheckFavoriteVacancy, errorHandler.Middleware())
 
 		}
 

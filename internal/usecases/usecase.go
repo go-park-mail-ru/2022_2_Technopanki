@@ -60,6 +60,7 @@ type Vacancy interface {
 	AddVacancyToFavorites(email string, vacancyId uint) error
 	GetUserFavoriteVacancies(email string) ([]*models.Vacancy, error)
 	DeleteVacancyFromFavorites(email string, vacancyId uint) error
+	CheckFavoriteVacancy(email string, vacancyId uint) (bool, error)
 }
 
 type VacancyActivity interface {

@@ -121,3 +121,15 @@ func (vp *VacancyPostgres) DeleteVacancyFromFavorites(user *models.UserAccount, 
 	}
 	return nil
 }
+
+func (vp *VacancyPostgres) CheckFavoriteVacancy(userId uint, vacancyId uint) (bool, error) {
+	var result int64
+	query := vp.db.Table("favourite_vacancies").Where("user_account_id = ? AND vacancy_id = ?", userId, vacancyId).Count(&result)
+	if query.Error != nil {
+		return false, query.Error
+	}
+	if result > 0 {
+		return true, nil
+	}
+	return false, nil
+}

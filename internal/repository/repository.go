@@ -47,6 +47,7 @@ type VacancyRepository interface {
 	AddVacancyToFavorites(user *models.UserAccount, vacancy *models.Vacancy) error
 	GetUserFavoriteVacancies(user *models.UserAccount) ([]*models.Vacancy, error)
 	DeleteVacancyFromFavorites(user *models.UserAccount, vacancy *models.Vacancy) error
+	CheckFavoriteVacancy(userId uint, vacancyId uint) (bool, error)
 }
 
 type VacancyActivityRepository interface {
