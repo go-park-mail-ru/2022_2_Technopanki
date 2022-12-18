@@ -10,7 +10,6 @@ import (
 	"github.com/kolesa-team/go-webp/decoder"
 	"github.com/kolesa-team/go-webp/webp"
 	"html/template"
-	imagepkg "image"
 	"image/png"
 	"io"
 	"net/http"
@@ -21,23 +20,16 @@ import (
 
 func encodeWebpToPng(webpReader io.Reader) ([]byte, error) {
 	img, err := webp.Decode(webpReader, &decoder.Options{
-		BypassFiltering:        false,
-		NoFancyUpsampling:      false,
-		Crop:                   imagepkg.Rectangle{},
-		Scale:                  imagepkg.Rectangle{},
-		UseThreads:             true,
-		Flip:                   false,
-		DitheringStrength:      0,
-		AlphaDitheringStrength: 0,
+		UseThreads: true,
 	})
 	if err != nil {
-		return []byte{}, err
+		return nil, err
 	}
 
 	buffer := bytes.Buffer{}
 	err = png.Encode(&buffer, img)
 	if err != nil {
-		return []byte{}, err
+		return nil, err
 	}
 
 	return buffer.Bytes(), nil
