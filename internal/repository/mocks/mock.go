@@ -572,6 +572,7 @@ func (mr *MockResumeRepositoryMockRecorder) UpdateResume(id, resume interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateResume", reflect.TypeOf((*MockResumeRepository)(nil).UpdateResume), id, resume)
 }
 
+<<<<<<< HEAD
 // MockNotificationRepository is a mock of NotificationRepository interface.
 type MockNotificationRepository struct {
 	ctrl     *gomock.Controller
@@ -724,4 +725,9 @@ func (m *MockNotificationRepository) ReadNotification(id uint) error {
 func (mr *MockNotificationRepositoryMockRecorder) ReadNotification(id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadNotification", reflect.TypeOf((*MockNotificationRepository)(nil).ReadNotification), id)
+=======
+// GetResumeInPDF mocks base nethod.
+func (mr *MockResumeRepository) GetResumeInPDF(resumeId uint) (*models.ResumeInPDF, error) {
+	return nil, nil
+>>>>>>> 6140e1c (fixes)
 }

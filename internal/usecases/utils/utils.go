@@ -142,7 +142,6 @@ func generatePDFFromHTML(html bytes.Buffer) ([]byte, error) {
 		return nil, createErr
 	}
 
-	pdfg.WriteFile("test.pdf")
 	return pdfg.Buffer().Bytes(), nil
 }
 
