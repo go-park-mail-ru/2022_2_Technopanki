@@ -100,7 +100,7 @@ func TestNotificationService_CreateNotification(t *testing.T) {
 	}{
 		{
 			name:       "ok apply",
-			inputNotic: &models.Notification{Type: models.AllowedNotificationTypes[0]},
+			inputNotic: &models.Notification{Type: models.AllowedNotificationTypes["apply"]},
 			mockBehavior: func(r *mock_repository.MockNotificationRepository, notic *models.Notification, expected *models.NotificationPreview) {
 				r.EXPECT().CreateNotification(notic).Return(nil)
 				r.EXPECT().GetNotificationPreviewApply(notic.ID).Return(expected, nil)
@@ -110,7 +110,7 @@ func TestNotificationService_CreateNotification(t *testing.T) {
 		},
 		{
 			name:       "ok download pdf",
-			inputNotic: &models.Notification{Type: models.AllowedNotificationTypes[1]},
+			inputNotic: &models.Notification{Type: models.AllowedNotificationTypes["download resume"]},
 			mockBehavior: func(r *mock_repository.MockNotificationRepository, notic *models.Notification, expected *models.NotificationPreview) {
 				r.EXPECT().CreateNotification(notic).Return(nil)
 				r.EXPECT().GetNotificationPreviewDownloadPDF(notic.ID).Return(expected, nil)
@@ -128,7 +128,7 @@ func TestNotificationService_CreateNotification(t *testing.T) {
 		},
 		{
 			name:       "cannot create",
-			inputNotic: &models.Notification{Type: models.AllowedNotificationTypes[0]},
+			inputNotic: &models.Notification{Type: models.AllowedNotificationTypes["apply"]},
 			mockBehavior: func(r *mock_repository.MockNotificationRepository, notic *models.Notification, expected *models.NotificationPreview) {
 				r.EXPECT().CreateNotification(notic).Return(errorHandler.ErrBadRequest)
 			},
