@@ -115,6 +115,7 @@ var errorToCode = map[error]int{
 	ErrInvalidWSInput:     http.StatusBadRequest,
 	ErrConnectionNotFound: http.StatusNotFound,
 	ErrInvalidMimeType:    http.StatusBadRequest,
+	ErrInvalidMimeType:    http.StatusBadRequest,
 }
 
 func ConvertError(err error) int {
