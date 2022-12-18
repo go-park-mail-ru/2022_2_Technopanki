@@ -48,10 +48,6 @@ func InitConfig(config *SessionConfig) error {
 		return marshalErr
 	}
 
-<<<<<<< HEAD
 	config.Redis.Password = os.Getenv(redisPasswordName)
-=======
-	config.Redis.Password = os.Getenv("REDIS_PASSWORD")
->>>>>>> 486678d (add env + vault)
 	return nil
 }
