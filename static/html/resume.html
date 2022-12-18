@@ -7,47 +7,39 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 </head>
-<doby style="min-height: 100vh;
+<body style="min-height: 100vh;
             font-family: Ubuntu Helvetica Arial, sans-serif;
-            padding: 24px 120px;
+            padding: 24px 64px;
             display: flex;
             flex-direction: column;
             gap: 24px;
             position: relative;">
 <div>
-    <img src="../backend/data/image/avatar/{{ .Image }}" height="64" width="64" />
-    <div style="margin-top: 24px">
-        <h3 style="font-size: 64px; font-weight: 500">{{ .Name }} {{ .Surname }}</h3>
-        <h5 style="font-size: 32px; margin-top: 24px; font-weight: bold; color: #6D6D7A">{{ .Title }}</h5>
+    <img src="{{ .ImageBase64 }}" height="80" width="80" style="border-radius: 8px"/>
+    <div style="margin-top: 40px">
+        <h3 style="font-size: 48px; line-height: 10%; font-weight: 600; letter-spacing: -0.03em;">{{ .Resume.ApplicantName }} {{ .Resume.ApplicantSurname }}</h3>
+        <h4 style="font-size: 32px; margin-top: 8px; font-weight: 500">{{ .Resume.Title }}</h4>
     </div>
-    <h4 style="font-size: 32px; margin-top: 40px">Опыт работы: {{ .ExperienceInYears }}</h4>
+    <h5 style="font-size: 16px; font-weight: 500; color: #4e4e56">Опыт работы: {{ .Resume.ExperienceInYears }} {{ .ExperiencePostfix }}</h5>
 </div>
-<hr style="margin-top: 40px; margin-bottom: 24px; color: #F0F0F0; background-color: #F0F0F0; border-color: #F0F0F0" />
-<table style="width: 100%">
+<table style="width: 100%; margin: 40px 0 16px 0; border: 1.5px solid #efefef; border-radius: 24px; padding: 24px">
     <tbody>
         <tr>
-            <td style="color: " colspan="1">Проживает: {{ .Location }}</td>
-            <td colspan="1">Возраст: {{ .Age }} год</td>
+            <td colspan="1">{{ .Resume.Location }}</td>
+            <td colspan="1">{{ .Resume.Age }} {{ .AgePostfix }}</td>
         </tr>
         <tr>
-            <td>{{ .ContactNumber }}</td>
-            <td>{{ .Email }}</td>
+            <td style="padding-top: 16px">{{ .Resume.ContactNumber }}</td>
+            <td style="padding-top: 16px">{{ .Resume.Email }}</td>
         </tr>
     </tbody>
 </table>
-<hr style="margin-top: 24px; margin-bottom: 24px; color: #F0F0F0; background-color: #F0F0F0; border-color: #F0F0F0" />
-<div>
-    <h5 style="font-size: 16px">Дополнительная информация о себе</h5>
-    <p style="font-size: 24px; font-weight: 500">{{ .Description }}</p>
+<div style="border: 1.5px solid #efefef; border-radius: 24px; padding: 8px 24px; margin-bottom: 40px;">
+    <h5 style="font-size: 16px; font-weight: 500; color: #4e4e56">Дополнительная информация о себе</h5>
+    <p style="font-size: 16px; font-weight: 500; line-height: 28px">{{ .Resume.Description }}</p>
 </div>
-<div style="position: absolute;
-            bottom: 0;
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            left: 0;
-            right: 0;">
-    <svg height="16" viewBox="0 0 41 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+<div style="bottom: 0; left: 0; right: 0">
+    <svg style="bottom: 0" height="16" viewBox="0 0 41 9" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M2.7767 9C1.93752 9 1.26288 8.76639 0.752794 8.29918C0.250931 7.82377 0 7.15164 0 6.28279H1.57963C1.58786 6.68443 1.68247 7.0041 1.86347 7.2418C2.04447 7.47951 2.33654 7.59836 2.73968 7.59836C3.11813 7.59836 3.39374 7.48771 3.56652 7.26639C3.73929 7.03689 3.82567 6.7377 3.82567 6.36885V1.08L5.40531 0V6.36885C5.40531 7.21311 5.16672 7.86475 4.68954 8.32377C4.22058 8.77459 3.58297 9 2.7767 9Z" fill="#DEDEE9"/>
         <path d="M8.82688 9C8.23452 9 7.69975 8.86475 7.22257 8.59426C6.75361 8.32377 6.37927 7.95082 6.09955 7.47541C5.82805 6.9918 5.6923 6.43443 5.6923 5.80328C5.6923 5.17213 5.83216 4.61885 6.11189 4.14344C6.39162 3.65984 6.76595 3.28279 7.23491 3.0123C7.71209 2.7418 8.24686 2.60656 8.83922 2.60656C9.42336 2.60656 9.9499 2.7418 10.4189 3.0123C10.896 3.28279 11.2704 3.65984 11.5419 4.14344C11.8216 4.61885 11.9615 5.17213 11.9615 5.80328C11.9615 6.43443 11.8216 6.9918 11.5419 7.47541C11.2704 7.95082 10.896 8.32377 10.4189 8.59426C9.94168 8.86475 9.41102 9 8.82688 9ZM8.82688 7.63525C9.23825 7.63525 9.59613 7.48361 9.90054 7.18033C10.2049 6.86885 10.3572 6.40984 10.3572 5.80328C10.3572 5.19672 10.2049 4.7418 9.90054 4.43852C9.59613 4.12705 9.24236 3.97131 8.83922 3.97131C8.41963 3.97131 8.05763 4.12705 7.75323 4.43852C7.45704 4.7418 7.30895 5.19672 7.30895 5.80328C7.30895 6.40984 7.45704 6.86885 7.75323 7.18033C8.05763 7.48361 8.41552 7.63525 8.82688 7.63525Z" fill="#DEDEE9"/>
         <path d="M15.9025 9C15.4417 9 15.0386 8.91393 14.6931 8.7418C14.3475 8.56967 14.0678 8.32787 13.8539 8.01639L13.6811 8.85246H12.2743V0H13.8539V3.62705C14.0513 3.35656 14.3105 3.11885 14.6314 2.91393C14.9605 2.70902 15.3842 2.60656 15.9025 2.60656C16.4784 2.60656 16.9926 2.7459 17.4451 3.02459C17.8976 3.30328 18.2555 3.68443 18.5187 4.16803C18.782 4.65164 18.9137 5.20082 18.9137 5.81557C18.9137 6.43033 18.782 6.97951 18.5187 7.46311C18.2555 7.93852 17.8976 8.31557 17.4451 8.59426C16.9926 8.86475 16.4784 9 15.9025 9ZM15.5693 7.62295C16.0711 7.62295 16.4866 7.45492 16.8157 7.11885C17.1448 6.78279 17.3093 6.34836 17.3093 5.81557C17.3093 5.28279 17.1448 4.84426 16.8157 4.5C16.4866 4.15574 16.0711 3.98361 15.5693 3.98361C15.0592 3.98361 14.6396 4.15574 14.3105 4.5C13.9896 4.83607 13.8292 5.27049 13.8292 5.80328C13.8292 6.33607 13.9896 6.77459 14.3105 7.11885C14.6396 7.45492 15.0592 7.62295 15.5693 7.62295Z" fill="#DEDEE9"/>
