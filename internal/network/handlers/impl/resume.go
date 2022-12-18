@@ -5,6 +5,7 @@ import (
 	"HeadHunter/internal/network/handlers/utils"
 	"HeadHunter/internal/usecases"
 	"HeadHunter/pkg/errorHandler"
+	"HeadHunter/pkg/themes"
 	"github.com/gin-gonic/gin"
 	"github.com/mailru/easyjson"
 	"net/http"
@@ -140,7 +141,15 @@ func (rh *ResumeHandler) GetResumeInPDF(c *gin.Context) {
 		return
 	}
 
-	resumeInPDF, generateErr := rh.resumeUseCase.GetResumeInPDF(uint(id))
+	style := c.Query("style")
+
+	resumeStyle, exists := themes.ThemesMap[style]
+	if !exists {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+
+	resumeInPDF, generateErr := rh.resumeUseCase.GetResumeInPDF(uint(id), resumeStyle)
 	if generateErr != nil {
 		_ = c.Error(generateErr)
 		return
