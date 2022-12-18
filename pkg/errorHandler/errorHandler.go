@@ -6,6 +6,7 @@ import (
 )
 
 var (
+	ErrInvalidMimeType             = errors.New("Данный mime type не поддерживается")
 	ErrResumeNotFound              = errors.New("Резюме не найдено")
 	ErrBadRequest                  = errors.New("Некорректный запрос")
 	ErrUnauthorized                = errors.New("Клиент не авторизован")
@@ -113,6 +114,7 @@ var errorToCode = map[error]int{
 
 	ErrInvalidWSInput:     http.StatusBadRequest,
 	ErrConnectionNotFound: http.StatusNotFound,
+	ErrInvalidMimeType:    http.StatusBadRequest,
 }
 
 func ConvertError(err error) int {
