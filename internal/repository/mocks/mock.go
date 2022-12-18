@@ -640,6 +640,20 @@ func (mr *MockNotificationRepositoryMockRecorder) GetNotificationPreviewDownload
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNotificationPreviewDownloadPDF", reflect.TypeOf((*MockNotificationRepository)(nil).GetNotificationPreviewDownloadPDF), id)
 }
 
+// ReadAllNotifications mocks base method.
+func (m *MockNotificationRepository) ReadAllNotifications(userId uint) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReadAllNotifications", userId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ReadAllNotifications indicates an expected call of ReadAllNotifications.
+func (mr *MockNotificationRepositoryMockRecorder) ReadAllNotifications(userId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadAllNotifications", reflect.TypeOf((*MockNotificationRepository)(nil).ReadAllNotifications), userId)
+}
+
 // ReadNotification mocks base method.
 func (m *MockNotificationRepository) ReadNotification(id uint) error {
 	m.ctrl.T.Helper()

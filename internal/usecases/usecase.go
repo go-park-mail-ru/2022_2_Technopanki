@@ -82,5 +82,6 @@ type Notification interface {
 	GetNotificationsByEmail(email string) ([]*models.NotificationPreview, error)
 	CreateNotification(notification *models.Notification) (*models.NotificationPreview, error)
 	ReadNotification(email string, id uint) error
+	ReadAllNotifications(email string) error
 	ClearNotifications(email string) error
 }

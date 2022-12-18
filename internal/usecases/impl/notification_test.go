@@ -279,3 +279,50 @@ func TestNotificationService_ReadNotification(t *testing.T) {
 		})
 	}
 }
+
+func TestNotificationService_ReadAllNotifications(t *testing.T) {
+	type mockBehavior func(r *mock_repository.MockNotificationRepository, c *mock_repository.MockUserRepository, email string)
+
+	testTable := []struct {
+		name         string
+		email        string
+		mockBehavior mockBehavior
+		expectedErr  error
+	}{
+		{
+			name:  "ok",
+			email: "email@gmail.com",
+			mockBehavior: func(r *mock_repository.MockNotificationRepository, c *mock_repository.MockUserRepository, email string) {
+				var userId uint = 10
+				c.EXPECT().GetUserByEmail(email).Return(&models.UserAccount{ID: userId}, nil)
+				r.EXPECT().ReadAllNotifications(userId).Return(nil)
+			},
+			expectedErr: nil,
+		},
+		{
+			name:  "cannot get user",
+			email: "email@gmail.com",
+			mockBehavior: func(r *mock_repository.MockNotificationRepository, c *mock_repository.MockUserRepository, email string) {
+				c.EXPECT().GetUserByEmail(email).Return(nil, errorHandler.ErrBadRequest)
+			},
+			expectedErr: errorHandler.ErrBadRequest,
+		},
+	}
+
+	for _, test := range testTable {
+		testCase := test
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			mockNotificationRepo := mock_repository.NewMockNotificationRepository(c)
+			mockUserRepo := mock_repository.NewMockUserRepository(c)
+			testCase.mockBehavior(mockNotificationRepo, mockUserRepo, testCase.email)
+			notificationService := NotificationService{notificationRepo: mockNotificationRepo, userRepo: mockUserRepo}
+			err := notificationService.ReadAllNotifications(testCase.email)
+
+			assert.Equal(t, testCase.expectedErr, err)
+		})
+	}
+}

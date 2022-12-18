@@ -657,6 +657,20 @@ func (mr *MockNotificationMockRecorder) GetNotificationsByEmail(email interface{
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNotificationsByEmail", reflect.TypeOf((*MockNotification)(nil).GetNotificationsByEmail), email)
 }
 
+// ReadAllNotifications mocks base method.
+func (m *MockNotification) ReadAllNotifications(email string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReadAllNotifications", email)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ReadAllNotifications indicates an expected call of ReadAllNotifications.
+func (mr *MockNotificationMockRecorder) ReadAllNotifications(email interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadAllNotifications", reflect.TypeOf((*MockNotification)(nil).ReadAllNotifications), email)
+}
+
 // ReadNotification mocks base method.
 func (m *MockNotification) ReadNotification(email string, id uint) error {
 	m.ctrl.T.Helper()

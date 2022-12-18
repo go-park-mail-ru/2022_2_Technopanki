@@ -73,6 +73,7 @@ type NotificationRepository interface {
 	GetDownloadPDFNotificationsByUser(id uint) ([]*models.NotificationPreview, error)
 	CreateNotification(notification *models.Notification) error
 	ReadNotification(id uint) error
+	ReadAllNotifications(userId uint) error
 	GetNotification(id uint) (*models.Notification, error)
 	DeleteNotificationsFromUser(userId uint) error
 }

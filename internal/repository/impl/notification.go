@@ -80,6 +80,10 @@ func (np *NotificationPostgres) ReadNotification(id uint) error {
 	return np.db.Model(&models.Notification{ID: id}).Update("is_viewed", true).Error
 }
 
+func (np *NotificationPostgres) ReadAllNotifications(userId uint) error {
+	return np.db.Model(&models.Notification{}).Where("user_to_id = ?", userId).Update("is_viewed", true).Error
+}
+
 func (np *NotificationPostgres) GetNotification(id uint) (*models.Notification, error) {
 	var result *models.Notification
 	query := np.db.Where("id = ?", id).Find(&result)

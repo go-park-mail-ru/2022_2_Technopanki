@@ -78,5 +78,6 @@ type MailH interface {
 type NotificationH interface {
 	GetNotifications(c *gin.Context)
 	ReadNotification(c *gin.Context)
+	ReadAllNotifications(c *gin.Context)
 	ClearNotifications(c *gin.Context)
 }

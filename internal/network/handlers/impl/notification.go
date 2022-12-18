@@ -55,6 +55,22 @@ func (nh *NotificationHandler) ReadNotification(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
+func (nh *NotificationHandler) ReadAllNotifications(c *gin.Context) {
+	email, emailErr := utils.GetEmailFromContext(c)
+	if emailErr != nil {
+		_ = c.Error(emailErr)
+		return
+	}
+
+	readErr := nh.notificationUseCase.ReadAllNotifications(email)
+	if readErr != nil {
+		_ = c.Error(readErr)
+		return
+	}
+
+	c.Status(http.StatusOK)
+}
+
 func (nh *NotificationHandler) ClearNotifications(c *gin.Context) {
 	email, emailErr := utils.GetEmailFromContext(c)
 	if emailErr != nil {

@@ -261,3 +261,80 @@ func TestNotificationHandler_ReadNotifications(t *testing.T) {
 		})
 	}
 }
+
+func TestNotificationHandler_ReadAllNotifications(t *testing.T) {
+	type mockBehavior func(n *mock_usecases.MockNotification, s *mock_session.MockRepository, token string, email string)
+	testTable := []struct {
+		name                 string
+		inputToken           string
+		emailFromToken       string
+		mockBehavior         mockBehavior
+		expectedStatusCode   int
+		expectedResponseBody string
+	}{
+		{
+			name:           "valid",
+			emailFromToken: "test@gmail.com",
+			mockBehavior: func(n *mock_usecases.MockNotification, s *mock_session.MockRepository, token string, email string) {
+				n.EXPECT().ReadAllNotifications(email).Return(nil)
+				s.EXPECT().GetSession(token).Return(email, nil)
+			},
+			expectedStatusCode:   200,
+			expectedResponseBody: "",
+		},
+		{
+			name:           "unauthorized",
+			emailFromToken: "",
+			mockBehavior: func(n *mock_usecases.MockNotification, s *mock_session.MockRepository, token string, email string) {
+				s.EXPECT().GetSession(token).Return(email, errorHandler2.ErrUnauthorized)
+			},
+			expectedStatusCode:   401,
+			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Клиент не авторизован\"}",
+		},
+		{
+			name:           "cannot read",
+			emailFromToken: "dfsfsf",
+			mockBehavior: func(n *mock_usecases.MockNotification, s *mock_session.MockRepository, token string, email string) {
+				s.EXPECT().GetSession(token).Return(email, nil)
+				n.EXPECT().ReadAllNotifications(email).Return(errorHandler2.ErrBadRequest)
+			},
+			expectedStatusCode:   400,
+			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Некорректный запрос\"}",
+		},
+	}
+	for _, test := range testTable {
+		testCase := test
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			mockUseCase := mock_usecases.NewMockNotification(c)
+			sessionRep := mock_session.NewMockRepository(c)
+			sessionMiddlware := middleware.NewSessionMiddleware(sessionRep)
+
+			testCase.mockBehavior(mockUseCase, sessionRep, testCase.inputToken, testCase.emailFromToken)
+
+			handler := NotificationHandler{
+				notificationUseCase: mockUseCase,
+			}
+
+			r := gin.New()
+			r.PUT("/", sessionMiddlware.Session, handler.ReadAllNotifications, errorHandler2.Middleware())
+
+			cookie := &http.Cookie{
+				Name:  "session",
+				Value: testCase.inputToken,
+			}
+
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest("PUT", "/", bytes.NewBufferString(""))
+
+			req.AddCookie(cookie)
+			r.ServeHTTP(w, req)
+
+			assert.Equal(t, testCase.expectedStatusCode, w.Code)
+			assert.Equal(t, testCase.expectedResponseBody, w.Body.String())
+		})
+	}
+}

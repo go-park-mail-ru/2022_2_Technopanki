@@ -2,7 +2,6 @@ package impl
 
 import (
 	"HeadHunter/internal/entity/models"
-	"HeadHunter/internal/entity/utils"
 	"HeadHunter/internal/repository"
 	"HeadHunter/pkg/errorHandler"
 	"errors"
@@ -36,7 +35,7 @@ func (ns *NotificationService) GetNotificationsByEmail(email string) ([]*models.
 }
 
 func (ns *NotificationService) CreateNotification(notification *models.Notification) (*models.NotificationPreview, error) {
-	if !utils.HasStringArrayElement(notification.Type, models.AllowedNotificationTypes) {
+	if _, ok := models.AllowedNotificationTypes[notification.Type]; !ok {
 		return nil, errorHandler.ErrBadRequest
 	}
 	createErr := ns.notificationRepo.CreateNotification(notification)
@@ -72,6 +71,16 @@ func (ns *NotificationService) ReadNotification(email string, id uint) error {
 	}
 
 	return ns.notificationRepo.ReadNotification(id)
+}
+
+func (ns *NotificationService) ReadAllNotifications(email string) error {
+	user, getUserErr := ns.userRepo.GetUserByEmail(email)
+
+	if getUserErr != nil {
+		return getUserErr
+	}
+
+	return ns.notificationRepo.ReadAllNotifications(user.ID)
 }
 
 func (ns *NotificationService) ClearNotifications(email string) error {

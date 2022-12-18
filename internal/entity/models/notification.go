@@ -12,7 +12,10 @@ type Notification struct {
 	CreatedTime time.Time `json:"created_time" gorm:"autoCreateTime"`
 }
 
-var AllowedNotificationTypes = []string{"apply", "download resume"}
+var AllowedNotificationTypes = map[string]string{
+	"apply":           "apply",
+	"download resume": "download resume",
+}
 
 type NotificationPreview struct {
 	ID            uint      `json:"id"`
