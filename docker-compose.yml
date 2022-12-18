@@ -21,7 +21,6 @@ services:
       retries: 8
     volumes:
       - ./data/image/avatar:/backend/data/image/avatar
-#      - ./bin:/backend/bin
   postgres:
     image: postgres:latest
     container_name: jfPostgres
@@ -52,8 +51,6 @@ services:
     - redis
     ports:
       - "8081:8081"
-#    volumes:
-#      - ./bin:/backend/bin
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:22222/" ]
       interval: 10s
@@ -72,8 +69,6 @@ services:
     - auth
     ports:
       - "8082:8082"
-#    volumes:
-#      - ./bin:/backend/bin
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:22222/" ]
       interval: 10s

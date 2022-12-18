@@ -1,8 +1,6 @@
 FROM alpine
 WORKDIR /mail
-COPY bin/mail bin/mail
-COPY scripts/runMail.sh scripts/runMail.sh
+COPY bin/ bin/
 COPY .env .env
 COPY mail_microservice/configs/ mail_microservice/configs/
-RUN sed -i 's/\r//g' scripts/runMail.sh
-CMD ["sh", "scripts/runMail.sh"]
+CMD ["bin/mail"]

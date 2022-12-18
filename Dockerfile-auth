@@ -1,8 +1,6 @@
 FROM alpine
 WORKDIR /auth
-COPY bin/auth bin/auth
-COPY scripts/runAuth.sh scripts/runAuth.sh
+COPY bin/ bin/
 COPY .env .env
 COPY auth_microservice/configs/ auth_microservice/configs/
-RUN sed -i 's/\r//g' scripts/runAuth.sh
-CMD ["sh", "scripts/runAuth.sh"]
+CMD ["bin/auth"]
