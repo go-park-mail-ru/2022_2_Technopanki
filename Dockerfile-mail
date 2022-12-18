@@ -3,4 +3,5 @@ WORKDIR /mail
 COPY bin/ bin/
 COPY .env .env
 COPY mail_microservice/configs/ mail_microservice/configs/
+COPY static/ static/
 CMD ["bin/mail"]

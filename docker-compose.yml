@@ -15,7 +15,7 @@ services:
     - auth
     - mail
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:22222/" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:8085/" ]
       interval: 10s
       timeout: 5s
       retries: 8
@@ -52,7 +52,7 @@ services:
     ports:
       - "8081:8081"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:22222/" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:8085/" ]
       interval: 10s
       timeout: 5s
       retries: 8
@@ -70,11 +70,13 @@ services:
     ports:
       - "8082:8082"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:22222/" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:8085/" ]
       interval: 10s
       timeout: 5s
       retries: 8
   builder:
+    ports:
+      - "8085:8085"
     build:
       context: .
       dockerfile: Dockerfile-builder

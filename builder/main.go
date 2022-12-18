@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-const port = ":22222"
+const port = ":8085"
 
 func execScript() error {
 	cmd := exec.Command("sh", "/backend/builder/buildScript.sh")
@@ -28,7 +28,7 @@ func main() {
 		log.Fatalln("exec script: ", err)
 	}
 
-	router := gin.New()
+	router := gin.Default()
 	router.NoRoute(func(c *gin.Context) {
 		c.Status(http.StatusOK)
 	})
@@ -44,7 +44,7 @@ func main() {
 		}
 	}()
 
-	time.Sleep(30 * time.Minute)
+	time.Sleep(1 * time.Minute)
 	log.Println("Shutdown Server ...")
 	if err = srv.Shutdown(context.Background()); err != nil {
 		log.Fatalln("Server Shutdown: ", err)
