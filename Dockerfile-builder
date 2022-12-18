@@ -3,4 +3,6 @@ WORKDIR /backend
 COPY . .
 RUN apk add --update musl-dev libwebp-dev gcc
 RUN go mod tidy
-CMD "sh" "buildScript.sh"
+RUN sed -i 's/\r//g' scripts/buildScript.sh
+#CMD ["sh", "scripts/buildScript.sh"]
+CMD ["go", "run", "builder/main.go"]

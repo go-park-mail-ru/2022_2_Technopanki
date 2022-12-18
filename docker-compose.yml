@@ -7,13 +7,21 @@ services:
       - '8080:8080'
     container_name: server
     depends_on:
-      - postgres
-      - redis
-      - builder
-      - auth
-      - mail
+      builder:
+        condition: service_healthy
+    depends_on:
+    - postgres
+    - redis
+    - auth
+    - mail
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:22222/" ]
+      interval: 10s
+      timeout: 5s
+      retries: 8
     volumes:
       - ./data/image/avatar:/backend/data/image/avatar
+#      - ./bin:/backend/bin
   postgres:
     image: postgres:latest
     container_name: jfPostgres
@@ -38,21 +46,39 @@ services:
       dockerfile: Dockerfile-auth
     container_name: auth_service
     depends_on:
-      - redis
-      - builder
+      builder:
+        condition: service_healthy
+    depends_on:
+    - redis
     ports:
       - "8081:8081"
+#    volumes:
+#      - ./bin:/backend/bin
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:22222/" ]
+      interval: 10s
+      timeout: 5s
+      retries: 8
   mail:
     build:
       context: .
       dockerfile: Dockerfile-mail
     container_name: mail_service
     depends_on:
-      - redis
-      - builder
-      - auth
+      builder:
+        condition: service_healthy
+    depends_on:
+    - redis
+    - auth
     ports:
       - "8082:8082"
+#    volumes:
+#      - ./bin:/backend/bin
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:22222/" ]
+      interval: 10s
+      timeout: 5s
+      retries: 8
   builder:
     build:
       context: .
