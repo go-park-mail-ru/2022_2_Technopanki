@@ -172,7 +172,7 @@ func TestResumeHandler_GetResumeByApplicant(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "[{\"id\":42,\"user_account_id\":0,\"title\":\"some resume\",\"description\":\"\",\"created_date\":\"0001-01-01T00:00:00Z\",\"education_detail\":{\"resume_id\":0,\"certificate_degree_name\":\"\",\"major\":\"\",\"university_name\":\"\",\"starting_date\":\"0001-01-01T00:00:00Z\",\"completion_date\":\"0001-01-01T00:00:00Z\"},\"experience_detail\":{\"resume_id\":0,\"is_current_job\":\"\",\"start_date\":\"0001-01-01T00:00:00Z\",\"end_date\":\"0001-01-01T00:00:00Z\",\"job_title\":\"\",\"company_name\":\"\",\"job_location_city\":\"\",\"description\":\"\"},\"applicant_skills\":null}]",
+			expectedResponseBody: "{\"data\":[{\"id\":42,\"user_account_id\":0,\"title\":\"some resume\",\"description\":\"\",\"created_date\":\"0001-01-01T00:00:00Z\",\"education_detail\":{\"resume_id\":0,\"certificate_degree_name\":\"\",\"major\":\"\",\"university_name\":\"\",\"starting_date\":\"0001-01-01T00:00:00Z\",\"completion_date\":\"0001-01-01T00:00:00Z\"},\"experience_detail\":{\"resume_id\":0,\"is_current_job\":\"\",\"start_date\":\"0001-01-01T00:00:00Z\",\"end_date\":\"0001-01-01T00:00:00Z\",\"job_title\":\"\",\"company_name\":\"\",\"job_location_city\":\"\",\"description\":\"\"},\"applicant_skills\":null}]}",
 		},
 		{
 			name:           "resume not found",
@@ -278,7 +278,7 @@ func TestResumeHandler_GetPreviewResumeByApplicant(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "[{\"image\":\"\",\"applicant_name\":\"\",\"applicant_surname\":\"\",\"id\":42,\"title\":\"some resume\",\"created_date\":\"0001-01-01T00:00:00Z\"}]",
+			expectedResponseBody: "{\"data\":[{\"image\":\"\",\"applicant_name\":\"\",\"applicant_surname\":\"\",\"id\":42,\"title\":\"some resume\",\"created_date\":\"0001-01-01T00:00:00Z\"}]}",
 		},
 		{
 			name:           "resume not found",

@@ -89,7 +89,7 @@ func TestUserHandler_SignUp(t *testing.T) {
 }`,
 			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
 			},
-			expectedStatusCode:   400,
+			expectedStatusCode:   200,
 			expectedResponseBody: "",
 		},
 		{
