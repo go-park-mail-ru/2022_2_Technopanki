@@ -9,28 +9,48 @@ import (
 type VacancyActivityService struct {
 	vacancyActivityRep repository.VacancyActivityRepository
 	userRep            repository.UserRepository
+	vacancyRep         repository.VacancyRepository
+	notificationRep    repository.NotificationRepository
 }
 
-func NewVacancyActivityService(vacancyActivityRepos repository.VacancyActivityRepository, _userRep repository.UserRepository) *VacancyActivityService {
-	return &VacancyActivityService{vacancyActivityRep: vacancyActivityRepos, userRep: _userRep}
+func NewVacancyActivityService(vacancyActivityRepos repository.VacancyActivityRepository, _userRep repository.UserRepository,
+	_vacancyRep repository.VacancyRepository, _notificationRep repository.NotificationRepository) *VacancyActivityService {
+	return &VacancyActivityService{vacancyActivityRep: vacancyActivityRepos, userRep: _userRep,
+		vacancyRep: _vacancyRep, notificationRep: _notificationRep}
 }
 
 func (vas *VacancyActivityService) GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivityPreview, error) {
 	return vas.vacancyActivityRep.GetAllVacancyApplies(vacancyId)
 }
 
-func (vas *VacancyActivityService) ApplyForVacancy(email string, vacancyId uint, input *models.VacancyActivity) error {
+func (vas *VacancyActivityService) ApplyForVacancy(email string, vacancyId uint, input *models.VacancyActivity) (*models.Notification, error) {
 	user, getErr := vas.userRep.GetUserByEmail(email)
 	if getErr != nil {
-		return getErr
+		return nil, getErr
 	}
 	if user.UserType != "applicant" {
-		return errorHandler.InvalidUserType
+		return nil, errorHandler.InvalidUserType
 	}
 
 	input.UserAccountId = user.ID
 	input.VacancyId = vacancyId
-	return vas.vacancyActivityRep.ApplyForVacancy(input)
+	err := vas.vacancyActivityRep.ApplyForVacancy(input)
+	if err != nil {
+		return nil, err
+	}
+
+	vacancy, getVacancyErr := vas.vacancyRep.GetById(vacancyId)
+	if getVacancyErr != nil {
+		return nil, getVacancyErr
+	}
+
+	notification := &models.Notification{
+		UserFromID: user.ID,
+		UserToID:   vacancy.PostedByUserId,
+		Type:       models.AllowedNotificationTypes[models.ApplyNotificationType],
+		ObjectId:   vacancy.ID,
+	}
+	return notification, nil
 }
 
 func (vas *VacancyActivityService) GetAllUserApplies(userId uint) ([]*models.VacancyActivityPreview, error) {

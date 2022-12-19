@@ -12,10 +12,11 @@ import (
 
 type VacancyActivityHandler struct {
 	vacancyActivityUseCase usecases.VacancyActivity
+	notificationUseCase    usecases.Notification
 }
 
 func NewVacancyActivityHandler(useCases *usecases.UseCases) *VacancyActivityHandler {
-	return &VacancyActivityHandler{vacancyActivityUseCase: useCases.VacancyActivity}
+	return &VacancyActivityHandler{vacancyActivityUseCase: useCases.VacancyActivity, notificationUseCase: useCases.Notification}
 }
 
 func (vah *VacancyActivityHandler) GetAllVacancyApplies(c *gin.Context) {
@@ -53,11 +54,20 @@ func (vah *VacancyActivityHandler) ApplyForVacancy(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
-	applyErr := vah.vacancyActivityUseCase.ApplyForVacancy(email, uint(id), &input)
+	notification, applyErr := vah.vacancyActivityUseCase.ApplyForVacancy(email, uint(id), &input)
 	if applyErr != nil {
 		_ = c.Error(applyErr)
 		return
 	}
+
+	notificationPreview, notificationErr := vah.notificationUseCase.CreateNotification(notification)
+
+	if notificationErr != nil {
+		_ = c.Error(notificationErr)
+		return
+	}
+
+	c.Set("notification", notificationPreview)
 
 	c.Status(http.StatusOK)
 }
