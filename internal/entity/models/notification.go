@@ -12,9 +12,14 @@ type Notification struct {
 	CreatedTime time.Time `json:"created_time" gorm:"autoCreateTime"`
 }
 
+const (
+	ApplyNotificationType = "apply"
+	DownloadResumeType    = "download resume"
+)
+
 var AllowedNotificationTypes = map[string]string{
-	"apply":           "apply",
-	"download resume": "download resume",
+	ApplyNotificationType: ApplyNotificationType,
+	DownloadResumeType:    DownloadResumeType,
 }
 
 type NotificationPreview struct {
