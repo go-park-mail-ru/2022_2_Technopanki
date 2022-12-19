@@ -142,6 +142,11 @@ func (rh *ResumeHandler) GetResumeInPDF(c *gin.Context) {
 	}
 
 	style := c.Query("style")
+	zoomSize, err := strconv.ParseFloat(c.Query("zoom_size"), 64)
+	if err != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
 
 	resumeStyle, exists := themes.ThemesMap[style]
 	if !exists {
@@ -149,7 +154,7 @@ func (rh *ResumeHandler) GetResumeInPDF(c *gin.Context) {
 		return
 	}
 
-	resumeInPDF, generateErr := rh.resumeUseCase.GetResumeInPDF(uint(id), resumeStyle)
+	resumeInPDF, generateErr := rh.resumeUseCase.GetResumeInPDF(uint(id), resumeStyle, zoomSize)
 	if generateErr != nil {
 		_ = c.Error(generateErr)
 		return

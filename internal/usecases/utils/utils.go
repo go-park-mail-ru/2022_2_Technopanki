@@ -125,15 +125,14 @@ func generateHTMLFromResume(resume *models.ResumeInPDF, cfg *configs.ImageConfig
 	return buffer, nil
 }
 
-func generatePDFFromHTML(html bytes.Buffer) ([]byte, error) {
+func generatePDFFromHTML(html bytes.Buffer, zoomSize float64) ([]byte, error) {
 	pdfg, generatorErr := wkhtmltopdf.NewPDFGenerator()
 	if generatorErr != nil {
 		return nil, generatorErr
 	}
 
 	page := wkhtmltopdf.NewPageReader(&html)
-	page.FooterFontSize.Set(10)
-	page.Zoom.Set(1)
+	page.Zoom.Set(zoomSize)
 
 	pdfg.AddPage(page)
 
@@ -145,14 +144,14 @@ func generatePDFFromHTML(html bytes.Buffer) ([]byte, error) {
 	return pdfg.Buffer().Bytes(), nil
 }
 
-func GenerateResumeInPDF(resume *models.ResumeInPDF, cfg *configs.ImageConfig, style string) ([]byte, error) {
+func GenerateResumeInPDF(resume *models.ResumeInPDF, cfg *configs.ImageConfig, style string, zoomSize float64) ([]byte, error) {
 	resume.Image = strings.Split(resume.Image, "?")[0]
 	html, htmlErr := generateHTMLFromResume(resume, cfg, style)
 	if htmlErr != nil {
 		return nil, htmlErr
 	}
 
-	pdf, pdfErr := generatePDFFromHTML(html)
+	pdf, pdfErr := generatePDFFromHTML(html, zoomSize)
 	if pdfErr != nil {
 		return nil, pdfErr
 	}
