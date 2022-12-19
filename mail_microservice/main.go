@@ -56,16 +56,10 @@ func main() {
 	}
 	c := cron.New(cron.WithSeconds())
 
-	_, err := c.AddFunc("@every 20s", mailingCron.Mailing(db, mailService))
+	_, err := c.AddFunc("0 0 9 * * 0", mailingCron.Mailing(db, mailService))
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	_, err = c.AddFunc("0 0 9 * * 0", mailingCron.Mailing(db, mailService))
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	c.Start()
 	defer c.Stop()
 
