@@ -21,17 +21,8 @@ RUN apk add --no-cache \
  ttf-freefont \
  ttf-liberation
 WORKDIR /backend
-<<<<<<< HEAD
 COPY bin/ bin/
 COPY .env .env
 COPY configs/ configs/
-=======
-COPY --from=icalialabs/wkhtmltopdf:alpine /bin/wkhtmltopdf /bin/wkhtmltopdf
-COPY --from=builder /backend/main /backend/main
-COPY --from=builder /backend/configs/config.yml /backend/configs/config.yml
-COPY --from=builder /backend/data/image /backend/data/image
-COPY --from=builder /backend/static /backend/static
-COPY --from=builder /backend/.env /backend/.env
->>>>>>> 8dc5c9e (added resume to pdf convert)
 RUN apk add --update musl-dev libwebp-dev gcc
 CMD ["bin/main"]
