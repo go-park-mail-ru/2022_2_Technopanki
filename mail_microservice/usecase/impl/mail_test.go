@@ -79,11 +79,11 @@ func TestMailService_SendConfirmCode(t *testing.T) {
 }
 
 func TestMailService_SendApplicantMailing(t *testing.T) {
-	type mockBehavior func(sender *mock_sender.MockSender, emails []string, vacancies []*models.Vacancy)
+	type mockBehavior func(sender *mock_sender.MockSender, emails []string, vacancies []models.VacancyPreview)
 	testTable := []struct {
 		name         string
 		emails       []string
-		vacancies    []*models.Vacancy
+		vacancies    []*models.VacancyPreview
 		expectedErr  error
 		mockBehavior mockBehavior
 	}{
@@ -91,7 +91,7 @@ func TestMailService_SendApplicantMailing(t *testing.T) {
 			name:        "ok",
 			emails:      []string{"example@gmail.com"},
 			expectedErr: nil,
-			mockBehavior: func(sender *mock_sender.MockSender, emails []string, vacancies []*models.Vacancy) {
+			mockBehavior: func(sender *mock_sender.MockSender, emails []string, vacancies []models.VacancyPreview) {
 				sender.EXPECT().SendApplicantMailing(emails[0], vacancies).Return(nil)
 			},
 		},
@@ -99,7 +99,7 @@ func TestMailService_SendApplicantMailing(t *testing.T) {
 			name:        "ok 2",
 			emails:      []string{"example@gmail.com", "example2@gmail.com"},
 			expectedErr: nil,
-			mockBehavior: func(sender *mock_sender.MockSender, emails []string, vacancies []*models.Vacancy) {
+			mockBehavior: func(sender *mock_sender.MockSender, emails []string, vacancies []models.VacancyPreview) {
 				sender.EXPECT().SendApplicantMailing(emails[0], vacancies).Return(nil)
 				sender.EXPECT().SendApplicantMailing(emails[1], vacancies).Return(nil)
 			},
@@ -108,13 +108,13 @@ func TestMailService_SendApplicantMailing(t *testing.T) {
 			name:         "ok 3",
 			emails:       []string{},
 			expectedErr:  nil,
-			mockBehavior: func(sender *mock_sender.MockSender, emails []string, vacancies []*models.Vacancy) {},
+			mockBehavior: func(sender *mock_sender.MockSender, emails []string, vacancies []models.VacancyPreview) {},
 		},
 		{
 			name:        "cannot send message",
 			emails:      []string{"example@gmail.com"},
-			expectedErr: errorHandler.ErrBadRequest,
-			mockBehavior: func(sender *mock_sender.MockSender, emails []string, vacancies []*models.Vacancy) {
+			expectedErr: nil,
+			mockBehavior: func(sender *mock_sender.MockSender, emails []string, vacancies []models.VacancyPreview) {
 				sender.EXPECT().SendApplicantMailing(emails[0], vacancies).Return(errorHandler.ErrBadRequest)
 			},
 		},
@@ -128,9 +128,13 @@ func TestMailService_SendApplicantMailing(t *testing.T) {
 
 			sessionRepo := mock_session.NewMockRepository(c)
 			sender := mock_sender.NewMockSender(c)
-
-			testCase.mockBehavior(sender, testCase.emails, testCase.vacancies)
+			objects := make([]models.VacancyPreview, len(testCase.vacancies))
+			for i, elem := range testCase.vacancies {
+				objects[i] = *elem
+			}
+			testCase.mockBehavior(sender, testCase.emails, objects)
 			mailService := MailService{sender: sender, sessionRepo: sessionRepo}
+
 			err := mailService.SendApplicantMailing(testCase.emails, testCase.vacancies)
 			assert.Equal(t, testCase.expectedErr, err)
 		})
@@ -138,11 +142,11 @@ func TestMailService_SendApplicantMailing(t *testing.T) {
 }
 
 func TestMailService_SendEmployerMailing(t *testing.T) {
-	type mockBehavior func(sender *mock_sender.MockSender, emails []string, applicants []*models.UserAccount)
+	type mockBehavior func(sender *mock_sender.MockSender, emails []string, previews []models.ResumePreview)
 	testTable := []struct {
 		name         string
 		emails       []string
-		applicants   []*models.UserAccount
+		previews     []*models.ResumePreview
 		expectedErr  error
 		mockBehavior mockBehavior
 	}{
@@ -150,31 +154,31 @@ func TestMailService_SendEmployerMailing(t *testing.T) {
 			name:        "ok",
 			emails:      []string{"example@gmail.com"},
 			expectedErr: nil,
-			mockBehavior: func(sender *mock_sender.MockSender, emails []string, applicants []*models.UserAccount) {
-				sender.EXPECT().SendEmployerMailing(emails[0], applicants).Return(nil)
+			mockBehavior: func(sender *mock_sender.MockSender, emails []string, previews []models.ResumePreview) {
+				sender.EXPECT().SendEmployerMailing(emails[0], previews).Return(nil)
 			},
 		},
 		{
 			name:        "ok 2",
 			emails:      []string{"example@gmail.com", "example2@gmail.com"},
 			expectedErr: nil,
-			mockBehavior: func(sender *mock_sender.MockSender, emails []string, applicants []*models.UserAccount) {
-				sender.EXPECT().SendEmployerMailing(emails[0], applicants).Return(nil)
-				sender.EXPECT().SendEmployerMailing(emails[1], applicants).Return(nil)
+			mockBehavior: func(sender *mock_sender.MockSender, emails []string, previews []models.ResumePreview) {
+				sender.EXPECT().SendEmployerMailing(emails[0], previews).Return(nil)
+				sender.EXPECT().SendEmployerMailing(emails[1], previews).Return(nil)
 			},
 		},
 		{
 			name:         "ok 3",
 			emails:       []string{},
 			expectedErr:  nil,
-			mockBehavior: func(sender *mock_sender.MockSender, emails []string, applicants []*models.UserAccount) {},
+			mockBehavior: func(sender *mock_sender.MockSender, emails []string, previews []models.ResumePreview) {},
 		},
 		{
 			name:        "cannot send message",
 			emails:      []string{"example@gmail.com"},
-			expectedErr: errorHandler.ErrBadRequest,
-			mockBehavior: func(sender *mock_sender.MockSender, emails []string, applicants []*models.UserAccount) {
-				sender.EXPECT().SendEmployerMailing(emails[0], applicants).Return(errorHandler.ErrBadRequest)
+			expectedErr: nil,
+			mockBehavior: func(sender *mock_sender.MockSender, emails []string, previews []models.ResumePreview) {
+				sender.EXPECT().SendEmployerMailing(emails[0], previews).Return(errorHandler.ErrBadRequest)
 			},
 		},
 	}
@@ -188,9 +192,13 @@ func TestMailService_SendEmployerMailing(t *testing.T) {
 			sessionRepo := mock_session.NewMockRepository(c)
 			sender := mock_sender.NewMockSender(c)
 
-			testCase.mockBehavior(sender, testCase.emails, testCase.applicants)
+			objects := make([]models.ResumePreview, len(testCase.previews))
+			for i, elem := range testCase.previews {
+				objects[i] = *elem
+			}
+			testCase.mockBehavior(sender, testCase.emails, objects)
 			mailService := MailService{sender: sender, sessionRepo: sessionRepo}
-			err := mailService.SendEmployerMailing(testCase.emails, testCase.applicants)
+			err := mailService.SendEmployerMailing(testCase.emails, testCase.previews)
 			assert.Equal(t, testCase.expectedErr, err)
 		})
 	}

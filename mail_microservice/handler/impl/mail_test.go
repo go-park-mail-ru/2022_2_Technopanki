@@ -75,9 +75,9 @@ func TestMailService_SendApplicantMailing(t *testing.T) {
 			in:          &handler.ApplicantMailingData{},
 			expectedErr: nil,
 			mockBehavior: func(service *mock_usecase.MockMail, in *handler.ApplicantMailingData) {
-				vacancies := make([]*models.Vacancy, len(in.Vac))
+				vacancies := make([]*models.VacancyPreview, len(in.Vac))
 				for i, preview := range in.Vac {
-					vacancies[i].ID = uint(preview.Id)
+					vacancies[i].Id = uint(preview.Id)
 					vacancies[i].Title = preview.Title
 					vacancies[i].Image = preview.Image
 				}
@@ -89,9 +89,9 @@ func TestMailService_SendApplicantMailing(t *testing.T) {
 			in:          &handler.ApplicantMailingData{},
 			expectedErr: errorHandler.ErrBadRequest,
 			mockBehavior: func(service *mock_usecase.MockMail, in *handler.ApplicantMailingData) {
-				vacancies := make([]*models.Vacancy, len(in.Vac))
+				vacancies := make([]*models.VacancyPreview, len(in.Vac))
 				for i, preview := range in.Vac {
-					vacancies[i].ID = uint(preview.Id)
+					vacancies[i].Id = uint(preview.Id)
 					vacancies[i].Title = preview.Title
 					vacancies[i].Image = preview.Image
 				}
@@ -137,16 +137,17 @@ func TestMailService_SendEmployerMailing(t *testing.T) {
 			in:          &handler.EmployerMailingData{},
 			expectedErr: nil,
 			mockBehavior: func(service *mock_usecase.MockMail, in *handler.EmployerMailingData) {
-				applicants := make([]*models.UserAccount, len(in.Emp))
+				previews := make([]*models.ResumePreview, len(in.Emp))
 				for i, preview := range in.Emp {
-					applicants[i].ID = uint(preview.Id)
-					applicants[i].ApplicantName = preview.ApplicantName
-					applicants[i].ApplicantSurname = preview.ApplicantSurname
-					applicants[i].Image = preview.Image
-					applicants[i].Status = preview.Status
-					applicants[i].Location = preview.Location
+					previews[i].Id = uint(preview.Id)
+					previews[i].UserAccountId = uint(preview.UserAccountId)
+					previews[i].ApplicantName = preview.ApplicantName
+					previews[i].ApplicantSurname = preview.ApplicantSurname
+					previews[i].Image = preview.Image
+					previews[i].Title = preview.Title
+					previews[i].Location = preview.Location
 				}
-				service.EXPECT().SendEmployerMailing(in.Emails, applicants).Return(nil)
+				service.EXPECT().SendEmployerMailing(in.Emails, previews).Return(nil)
 			},
 		},
 		{
@@ -154,16 +155,17 @@ func TestMailService_SendEmployerMailing(t *testing.T) {
 			in:          &handler.EmployerMailingData{},
 			expectedErr: errorHandler.ErrBadRequest,
 			mockBehavior: func(service *mock_usecase.MockMail, in *handler.EmployerMailingData) {
-				applicants := make([]*models.UserAccount, len(in.Emp))
+				previews := make([]*models.ResumePreview, len(in.Emp))
 				for i, preview := range in.Emp {
-					applicants[i].ID = uint(preview.Id)
-					applicants[i].ApplicantName = preview.ApplicantName
-					applicants[i].ApplicantSurname = preview.ApplicantSurname
-					applicants[i].Image = preview.Image
-					applicants[i].Status = preview.Status
-					applicants[i].Location = preview.Location
+					previews[i].Id = uint(preview.Id)
+					previews[i].UserAccountId = uint(preview.UserAccountId)
+					previews[i].ApplicantName = preview.ApplicantName
+					previews[i].ApplicantSurname = preview.ApplicantSurname
+					previews[i].Image = preview.Image
+					previews[i].Title = preview.Title
+					previews[i].Location = preview.Location
 				}
-				service.EXPECT().SendEmployerMailing(in.Emails, applicants).Return(errorHandler.ErrBadRequest)
+				service.EXPECT().SendEmployerMailing(in.Emails, previews).Return(errorHandler.ErrBadRequest)
 			},
 		},
 		{

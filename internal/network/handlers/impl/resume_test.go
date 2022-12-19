@@ -278,7 +278,7 @@ func TestResumeHandler_GetPreviewResumeByApplicant(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "[{\"image\":\"\",\"applicant_name\":\"\",\"applicant_surname\":\"\",\"id\":42,\"title\":\"some resume\",\"created_date\":\"0001-01-01T00:00:00Z\"}]",
+			expectedResponseBody: "[{\"image\":\"\",\"applicant_name\":\"\",\"applicant_surname\":\"\",\"user_account_id\":0,\"location\":\"\",\"id\":42,\"title\":\"some resume\",\"created_date\":\"0001-01-01T00:00:00Z\"}]",
 		},
 		{
 			name:           "resume not found",

@@ -49,7 +49,6 @@ type User interface {
 	DeleteUserImage(user *models.UserAccount) error
 	ConfirmUser(code, email string) (*models.UserAccount, string, error)
 	UpdatePassword(code, email, password string) error
-	GetApplicants() error //TODO убрать
 }
 
 type Vacancy interface {

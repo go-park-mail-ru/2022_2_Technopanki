@@ -42,7 +42,6 @@ type UserH interface {
 	GetPreview(c *gin.Context)
 	ConfirmUser(c *gin.Context)
 	UpdatePassword(c *gin.Context)
-	GetApplicants(c *gin.Context) //TODO убрать
 }
 
 type VacancyH interface {
