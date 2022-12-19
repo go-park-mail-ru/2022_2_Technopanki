@@ -830,24 +830,6 @@ func TestVacancyHandler_GetUserFavoriteVacancies(t *testing.T) {
 			expectedStatusCode:   200,
 			expectedResponseBody: "{\"data\":[{\"id\":0,\"postedByUserId\":0,\"title\":\"title\",\"description\":\"description\",\"createdDate\":\"0001-01-01T00:00:00Z\",\"vacancyActivities\":null,\"skills\":null}]}",
 		},
-		//{
-		//	name:           "user not found",
-		//	emailFromToken: "test@gmail.com",
-		//	mockBehavior: func(r *mock_usecases.MockVacancy) {
-		//		expectedVacancy := []*models.Vacancy{
-		//			{
-		//				Title:       "title",
-		//				Description: "description",
-		//			},
-		//		}
-		//		r.EXPECT().GetUserFavoriteVacancies("test@gmail.com").Return(expectedVacancy, errorHandler.ErrBadRequest)
-		//	},
-		//	sessionRepBehavior: func(sessionRep *mock_session.MockRepository, token string) {
-		//		sessionRep.EXPECT().GetSession(token).Return("", fmt.Errorf("getting session error:"))
-		//	},
-		//	expectedStatusCode:   401,
-		//	expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Клиент не авторизован\"}",
-		//},
 	}
 	for _, test := range testTable {
 		testCase := test
