@@ -46,8 +46,8 @@ func easyjson4038ac0aDecodeHeadHunterInternalEntityModels(in *jlexer.Lexer, out 
 			out.ApplicantName = string(in.String())
 		case "applicant_surname":
 			out.ApplicantSurname = string(in.String())
-		case "resume_title":
-			out.ResumeTitle = string(in.String())
+		case "title":
+			out.Title = string(in.String())
 		case "image":
 			out.Image = string(in.String())
 		case "created_date":
@@ -94,9 +94,9 @@ func easyjson4038ac0aEncodeHeadHunterInternalEntityModels(out *jwriter.Writer, i
 		out.String(string(in.ApplicantSurname))
 	}
 	{
-		const prefix string = ",\"resume_title\":"
+		const prefix string = ",\"title\":"
 		out.RawString(prefix)
-		out.String(string(in.ResumeTitle))
+		out.String(string(in.Title))
 	}
 	{
 		const prefix string = ",\"image\":"

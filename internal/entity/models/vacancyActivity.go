@@ -10,7 +10,7 @@ type VacancyActivityPreview struct {
 	VacancyId        uint      `json:"vacancy_id"`
 	ApplicantName    string    `json:"applicant_name"`
 	ApplicantSurname string    `json:"applicant_surname"`
-	ResumeTitle      string    `json:"resume_title"`
+	Title            string    `json:"title"`
 	Image            string    `json:"image"`
 	ApplyDate        time.Time `json:"created_date"`
 }
