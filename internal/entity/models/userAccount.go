@@ -34,6 +34,7 @@ type UserAccount struct {
 	FavoriteVacancies      []Vacancy         `json:"favourite_vacancies" gorm:"many2many:favourite_vacancies"`
 	VacancyActivities      []VacancyActivity `json:"vacancy_activities" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`
 }
+
 //easyjson:json
 type UserFilter struct {
 	ApplicantName          string
@@ -46,6 +47,7 @@ type UserFilter struct {
 	FirstAgeValue          string
 	SecondAgeValue         string
 }
+
 //easyjson:json
 type GetAllUsersResponcePointer struct {
 	Data []*UserAccount `json:"data"`
@@ -58,7 +60,7 @@ var PrivateUserFields = []string{"email", "contact_number",
 // SafeUserFields Поля, доступные всегда
 var SafeUserFields = []string{"id", "user_type", "description", "status", "date_of_birth", "image",
 	"applicant_name", "applicant_surname", "company_name", "location", "company_size", "average_color",
-	"company_website_url", "public_fields", "is_confirmed", "business_type", "two_factor_sign_in", "age"}
+	"company_website_url", "public_fields", "is_confirmed", "business_type", "two_factor_sign_in", "age", "mailing_approval"}
 
 const NoPublicFields string = "null"
 

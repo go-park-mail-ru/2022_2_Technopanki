@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--<img alt="" height="42" width="42" src="../png/logo.png">-->
+<h2>Jobflow</h2>
+<div style="color:black">
+    <h3>5 свежих вакансий</h3>
+    {{range .Vacancies}}
+    <div style = "display:flex;flex-direction:row;">
+        <b>{{.Title}}</b>
+        <div style="color:gray">{{.Location}}</div>
+        <a style="color: #0099ee" href = "http://localhost:8080/api/user/safety/{{.PostedByUserId}}">{{.CompanyName}}</a>
+        <a style="color: #0099ee" href = "http://localhost:8080/api/vacancy/{{.Id}}">Узнать подробнее</a>
+    </div>
+    {{end}}
+</div>
+</body>
+</html>

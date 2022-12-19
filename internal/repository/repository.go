@@ -33,6 +33,9 @@ type UserRepository interface {
 	GetUser(id uint) (*models.UserAccount, error)
 	GetAllUsers(conditions []string, filterValues []interface{}, flag string) ([]*models.UserAccount, error)
 	GetUserSafety(id uint, safeFields []string) (*models.UserAccount, error)
+	GetBestVacanciesForApplicant() ([]*models.Vacancy, error)
+	GetBestApplicantForEmployer() ([]*models.UserAccount, error)
+	GetApplicants() error
 }
 
 type VacancyRepository interface {

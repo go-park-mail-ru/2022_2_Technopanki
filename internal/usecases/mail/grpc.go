@@ -30,10 +30,10 @@ func (ms *MailService) SendConfirmCode(email string) error {
 	return st.Err()
 }
 
-func (ms *MailService) SendApplicantMailing(emails []string, vacancies []*models.Vacancy) error {
+func (ms *MailService) SendApplicantMailing(emails []string, vacancies []*models.VacancyPreview) error {
 	vacanciesPreview := make([]*handler.VacancyPreview, len(vacancies))
 	for i, vacancy := range vacancies {
-		vacanciesPreview[i].Id = uint64(vacancy.ID)
+		vacanciesPreview[i].Id = uint64(vacancy.Id)
 		vacanciesPreview[i].Image = vacancy.Image
 		vacanciesPreview[i].Title = vacancy.Title
 	}
@@ -46,15 +46,15 @@ func (ms *MailService) SendApplicantMailing(emails []string, vacancies []*models
 	return nil
 }
 
-func (ms *MailService) SendEmployerMailing(emails []string, applicants []*models.UserAccount) error {
-	applicantPreview := make([]*handler.ApplicantPreview, len(applicants))
-	for i, applicant := range applicants {
-		applicantPreview[i].ApplicantName = applicant.ApplicantName
-		applicantPreview[i].ApplicantSurname = applicant.ApplicantSurname
-		applicantPreview[i].Id = uint64(applicant.ID)
-		applicantPreview[i].Image = applicant.Image
-		applicantPreview[i].Status = applicant.Status
-		applicantPreview[i].Location = applicant.Location
+func (ms *MailService) SendEmployerMailing(emails []string, previews []*models.ResumePreview) error {
+	resumePreviews := make([]*handler.ResumePreview, len(previews))
+	for i, preview := range previews {
+		resumePreviews[i].ApplicantName = preview.ApplicantName
+		resumePreviews[i].ApplicantSurname = preview.ApplicantSurname
+		resumePreviews[i].Id = uint64(preview.Id)
+		resumePreviews[i].Image = preview.Image
+		resumePreviews[i].Title = preview.Title
+		resumePreviews[i].Location = preview.Location
 	}
 	_, err := ms.client.SendEmployerMailing(ms.ctx, &handler.EmployerMailingData{Emails: emails})
 	if err != nil {

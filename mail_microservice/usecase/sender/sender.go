@@ -6,6 +6,6 @@ import "HeadHunter/internal/entity/models"
 
 type Sender interface {
 	SendConfirmCode(email, code string) error
-	SendApplicantMailing(email string, vacancies []*models.Vacancy) error
-	SendEmployerMailing(email string, applicants []*models.UserAccount) error
+	SendApplicantMailing(email string, vacancies []models.VacancyPreview) error
+	SendEmployerMailing(email string, previews []models.ResumePreview) error
 }

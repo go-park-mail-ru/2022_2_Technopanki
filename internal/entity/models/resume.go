@@ -23,6 +23,8 @@ type ResumePreview struct {
 	Image            string    `json:"image"`
 	ApplicantName    string    `json:"applicant_name"`
 	ApplicantSurname string    `json:"applicant_surname"`
+	UserAccountId    uint      `json:"user_account_id"`
+	Location         string    `json:"location"`
 	Id               uint      `json:"id"`
 	Title            string    `json:"title"`
 	CreatedTime      time.Time `json:"created_date" gorm:"autoCreateTime"`

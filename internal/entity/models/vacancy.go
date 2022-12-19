@@ -41,14 +41,16 @@ type VacancyFilter struct {
 
 //easyjson:json
 type VacancyPreview struct {
-	Id          uint   `json:"id"`
-	Title       string `json:"title"`
-	Image       string `json:"image"`
-	Salary      uint   `json:"salary"`
-	Location    string `json:"location"`
-	Format      string `json:"format"`
-	Hours       string `json:"hours"`
-	Description string `json:"description"`
+	Id             uint   `json:"id"`
+	PostedByUserId uint   `json:"postedByUserId"`
+	CompanyName    string `json:"company_name"`
+	Title          string `json:"title"`
+	Image          string `json:"image"`
+	Salary         uint   `json:"salary"`
+	Location       string `json:"location"`
+	Format         string `json:"format"`
+	Hours          string `json:"hours"`
+	Description    string `json:"description"`
 }
 
 //easyjson:json

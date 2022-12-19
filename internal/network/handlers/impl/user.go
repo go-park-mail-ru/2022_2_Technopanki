@@ -374,3 +374,12 @@ func (uh *UserHandler) UpdatePassword(c *gin.Context) {
 
 	c.Status(http.StatusOK)
 }
+
+func (uh *UserHandler) GetApplicants(c *gin.Context) { //TODO убрать
+	err := uh.userUseCase.GetApplicants()
+	if err != nil {
+		_ = c.Error(err)
+		return
+	}
+	c.Status(http.StatusOK)
+}

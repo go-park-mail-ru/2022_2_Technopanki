@@ -44,6 +44,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 	mail := router.Group("/mail")
 	{
 		mail.POST("/code/:email", h.MailHandler.SendConfirmCode, errorHandler.Middleware())
+		mail.GET("/", h.UserHandler.GetApplicants, errorHandler.Middleware()) //TODO убрать
 	}
 
 	api := router.Group("/api")

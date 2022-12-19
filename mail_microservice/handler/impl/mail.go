@@ -42,9 +42,9 @@ func (mh *MailHandler) SendApplicantMailing(ctx context.Context, in *handler.App
 		metrics.MailRequest.WithLabelValues("400", "bad request", "SendApplicantMailing").Inc()
 		return &handler.Nothing{}, errorHandler.ErrBadRequest
 	}
-	vacancies := make([]*models.Vacancy, len(in.Vac))
+	vacancies := make([]*models.VacancyPreview, len(in.Vac))
 	for i, preview := range in.Vac {
-		vacancies[i].ID = uint(preview.Id)
+		vacancies[i].Id = uint(preview.Id)
 		vacancies[i].Title = preview.Title
 		vacancies[i].Image = preview.Image
 	}
@@ -64,16 +64,17 @@ func (mh *MailHandler) SendEmployerMailing(ctx context.Context, in *handler.Empl
 		metrics.MailRequest.WithLabelValues("400", "bad request", "SendEmployerMailing").Inc()
 		return &handler.Nothing{}, errorHandler.ErrBadRequest
 	}
-	applicants := make([]*models.UserAccount, len(in.Emp))
+	previews := make([]*models.ResumePreview, len(in.Emp))
 	for i, preview := range in.Emp {
-		applicants[i].ID = uint(preview.Id)
-		applicants[i].ApplicantName = preview.ApplicantName
-		applicants[i].ApplicantSurname = preview.ApplicantSurname
-		applicants[i].Image = preview.Image
-		applicants[i].Status = preview.Status
-		applicants[i].Location = preview.Location
+		previews[i].Id = uint(preview.Id)
+		previews[i].UserAccountId = uint(preview.UserAccountId)
+		previews[i].ApplicantName = preview.ApplicantName
+		previews[i].ApplicantSurname = preview.ApplicantSurname
+		previews[i].Image = preview.Image
+		previews[i].Title = preview.Title
+		previews[i].Location = preview.Location
 	}
-	sendErr := mh.mailUseCase.SendEmployerMailing(in.Emails, applicants)
+	sendErr := mh.mailUseCase.SendEmployerMailing(in.Emails, previews)
 	if sendErr != nil {
 		metrics.MailRequest.WithLabelValues("500", "send message error", "SendEmployerMailing").Inc()
 		return &handler.Nothing{}, sendErr

@@ -378,3 +378,7 @@ func (us *UserService) UpdatePassword(code, email, password string) error {
 	user.Password = encryptedPassword
 	return us.userRep.UpdateUser(user)
 }
+
+func (us *UserService) GetApplicants() error { //TODO убрать
+	return us.userRep.GetApplicants()
+}
