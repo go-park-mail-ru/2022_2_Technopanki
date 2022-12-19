@@ -1,6 +1,7 @@
 package configs
 
 import (
+	"HeadHunter/pkg/repository"
 	"github.com/joho/godotenv"
 	"gopkg.in/yaml.v2"
 	"os"
@@ -8,30 +9,21 @@ import (
 )
 
 type Config struct {
-	Domain                 string           `yaml:"domain"`
-	Port                   string           `yaml:"port"`
-	AuthMsHost             string           `yaml:"authMsHost"`
-	AuthMsPort             string           `yaml:"authMsPort"`
-	MailMsHost             string           `yaml:"mailMsHost"`
-	MailMsPort             string           `yaml:"mailMsPort"`
-	MetricPath             string           `yaml:"metricPath"`
-	CleaningPeriod         int64            `yaml:"cleaningPeriod"`
-	DefaultExpiringSession int              `yaml:"defaultExpiringSession"`
-	DB                     DBConfig         `yaml:"db"`
-	Validation             ValidationConfig `yaml:"validation"`
-	Cookie                 CookieConfig     `yaml:"cookie"`
-	Crypt                  CryptConfig      `yaml:"crypt"`
-	Image                  ImageConfig      `yaml:"image"`
-	Security               SecurityConfig   `yaml:"security"`
-}
-
-type DBConfig struct {
-	Username string `yaml:"username"`
-	Host     string `yaml:"host"`
-	Port     string `yaml:"port"`
-	DBName   string `yaml:"dbname"`
-	Password string `yaml:"password"`
-	SSLMode  string `yaml:"sslmode"`
+	Domain                 string              `yaml:"domain"`
+	Port                   string              `yaml:"port"`
+	AuthMsHost             string              `yaml:"authMsHost"`
+	AuthMsPort             string              `yaml:"authMsPort"`
+	MailMsHost             string              `yaml:"mailMsHost"`
+	MailMsPort             string              `yaml:"mailMsPort"`
+	MetricPath             string              `yaml:"metricPath"`
+	CleaningPeriod         int64               `yaml:"cleaningPeriod"`
+	DefaultExpiringSession int                 `yaml:"defaultExpiringSession"`
+	DB                     repository.DBConfig `yaml:"db"`
+	Validation             ValidationConfig    `yaml:"validation"`
+	Cookie                 CookieConfig        `yaml:"cookie"`
+	Crypt                  CryptConfig         `yaml:"crypt"`
+	Image                  ImageConfig         `yaml:"image"`
+	Security               SecurityConfig      `yaml:"security"`
 }
 
 type ValidationConfig struct {
