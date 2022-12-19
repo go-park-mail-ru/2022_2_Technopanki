@@ -8,19 +8,19 @@ services:
     container_name: server
     depends_on:
       builder:
+        condition: service_completed_successfully
+      postgres:
         condition: service_healthy
-    depends_on:
-    - postgres
-    - redis
-    - auth
-    - mail
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8085/" ]
-      interval: 10s
-      timeout: 5s
-      retries: 8
+      redis:
+        condition: service_healthy
+      auth:
+        condition: service_started
+      mail:
+        condition: service_started
     volumes:
       - ./data/image/avatar:/backend/data/image/avatar
+      - ./bin:/backend/bin
+
   postgres:
     image: postgres:latest
     container_name: jfPostgres
@@ -28,10 +28,16 @@ services:
       POSTGRES_DB: "jobflowDB"
       POSTGRES_USER: "jobflowAdmin"
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
       - '5432:5432'
     volumes:
       - ./data/db:/var/lib/postgresql/data2
+
   redis:
     image: redis:latest
     container_name: jfRedis
@@ -39,6 +45,12 @@ services:
       - "6379:6379"
     command: >
       --requirepass ${REDIS_PASSWORD}
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli","ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   auth:
     build:
       context: .
@@ -46,16 +58,14 @@ services:
     container_name: auth_service
     depends_on:
       builder:
+        condition: service_completed_successfully
+      redis:
         condition: service_healthy
-    depends_on:
-    - redis
     ports:
       - "8081:8081"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8085/" ]
-      interval: 10s
-      timeout: 5s
-      retries: 8
+    volumes:
+      - ./bin:/auth/bin
+
   mail:
     build:
       context: .
@@ -63,17 +73,16 @@ services:
     container_name: mail_service
     depends_on:
       builder:
+        condition: service_completed_successfully
+      redis:
         condition: service_healthy
-    depends_on:
-    - redis
-    - auth
+      auth:
+        condition: service_started
     ports:
       - "8082:8082"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8085/" ]
-      interval: 10s
-      timeout: 5s
-      retries: 8
+    volumes:
+      - ./bin:/mail/bin
+
   builder:
     ports:
       - "8085:8085"
