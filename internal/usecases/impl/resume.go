@@ -65,13 +65,13 @@ func (rs *ResumeService) GetPreviewResumeByApplicant(userId uint) ([]*models.Res
 	return resumesPreview, getErr
 }
 
-func (rs *ResumeService) GetResumeInPDF(resumeId uint, style string) ([]byte, error) {
+func (rs *ResumeService) GetResumeInPDF(resumeId uint, style string, zoomSize float64) ([]byte, error) {
 	resumeInPDFModel, getErr := rs.resumeRep.GetResumeInPDF(resumeId)
 	if getErr != nil {
 		return nil, getErr
 	}
 
-	resumeInPDF, generateErr := utils.GenerateResumeInPDF(resumeInPDFModel, &rs.cfg.Image, style)
+	resumeInPDF, generateErr := utils.GenerateResumeInPDF(resumeInPDFModel, &rs.cfg.Image, style, zoomSize)
 	if generateErr != nil {
 		return nil, generateErr
 	}
