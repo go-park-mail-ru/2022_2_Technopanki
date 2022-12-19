@@ -1,7 +1,9 @@
+//go:generate easyjson -all vacancy.go
 package models
 
 import "time"
 
+//easyjson:json
 type Vacancy struct {
 	ID                uint              `json:"id" gorm:"primaryKey;"`
 	PostedByUserId    uint              `json:"postedByUserId" gorm:"not null;"`
@@ -22,10 +24,12 @@ type Vacancy struct {
 	Skills            []Skill           `json:"skills" gorm:"many2many:vacancy_skills;"`
 }
 
+//easyjson:json
 type GetAllVacanciesResponcePointer struct {
 	Data []*Vacancy `json:"data"`
 }
 
+//easyjson:json
 type VacancyFilter struct {
 	Title             string
 	Location          string
@@ -35,6 +39,7 @@ type VacancyFilter struct {
 	SecondSalaryValue string
 }
 
+//easyjson:json
 type VacancyPreview struct {
 	Id          uint   `json:"id"`
 	Title       string `json:"title"`
@@ -44,4 +49,9 @@ type VacancyPreview struct {
 	Format      string `json:"format"`
 	Hours       string `json:"hours"`
 	Description string `json:"description"`
+}
+
+//easyjson:json
+type VacancyPreviewsResponse struct {
+	Data []*VacancyPreview `json:"data"`
 }

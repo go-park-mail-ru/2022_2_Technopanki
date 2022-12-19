@@ -1,8 +1,9 @@
-//go:generate easyjson -no_std_marshalers
+//go:generate easyjson -all userAccount.go
 package models
 
 import "time"
 
+//easyjson:json
 type UserAccount struct {
 	ID                     uint              `json:"id" gorm:"primaryKey;"`
 	UserType               string            `json:"user_type" gorm:"not null;"`
@@ -32,7 +33,7 @@ type UserAccount struct {
 	Vacancies              []Vacancy         `json:"vacancies" gorm:"foreignKey:PostedByUserId;constraint:OnDelete:CASCADE;"`
 	VacancyActivities      []VacancyActivity `json:"vacancy_activities" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`
 }
-
+//easyjson:json
 type UserFilter struct {
 	ApplicantName          string
 	ApplicantSurname       string
@@ -44,6 +45,7 @@ type UserFilter struct {
 	FirstAgeValue          string
 	SecondAgeValue         string
 }
+//easyjson:json
 type GetAllUsersResponcePointer struct {
 	Data []*UserAccount `json:"data"`
 }
@@ -59,6 +61,7 @@ var SafeUserFields = []string{"id", "user_type", "description", "status", "date_
 
 const NoPublicFields string = "null"
 
+//easyjson:json
 type ApplicantPreview struct {
 	ID               uint   `json:"id"`
 	Image            string `json:"image"`

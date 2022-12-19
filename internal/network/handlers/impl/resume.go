@@ -6,6 +6,7 @@ import (
 	"HeadHunter/internal/usecases"
 	"HeadHunter/pkg/errorHandler"
 	"github.com/gin-gonic/gin"
+	"github.com/mailru/easyjson"
 	"net/http"
 	"strconv"
 	"strings"
@@ -31,8 +32,12 @@ func (rh *ResumeHandler) GetResume(c *gin.Context) {
 		_ = c.Error(getResumeErr)
 		return
 	}
-
-	c.JSON(http.StatusOK, resume)
+	resumeJson, errJson := resume.MarshalJSON()
+	if errJson != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+	c.Data(http.StatusOK, "application/json; charset=utf-8", resumeJson)
 }
 
 func (rh *ResumeHandler) GetAllResumes(c *gin.Context) {
@@ -72,9 +77,14 @@ func (rh *ResumeHandler) GetAllResumes(c *gin.Context) {
 		_ = c.Error(getAllErr)
 		return
 	}
-	c.JSON(http.StatusOK, models.GetAllResumesResponcePointer{
-		Data: resumes,
-	})
+	var resumesResponse models.GetAllResumesResponcePointer
+	resumesResponse.Data = resumes
+	resumesJson, err := resumesResponse.MarshalJSON()
+	if err != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+	c.Data(http.StatusOK, "application/json; charset=utf-8", resumesJson)
 }
 
 func (rh *ResumeHandler) GetResumeByApplicant(c *gin.Context) {
@@ -90,7 +100,15 @@ func (rh *ResumeHandler) GetResumeByApplicant(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, resumes)
+	var resumesResponse models.GetAllResumesResponcePointer
+	resumesResponse.Data = resumes
+	resumesJson, err := resumesResponse.MarshalJSON()
+	if err != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+
+	c.Data(http.StatusOK, "application/json; charset=utf-8", resumesJson)
 }
 
 func (rh *ResumeHandler) GetPreviewResumeByApplicant(c *gin.Context) {
@@ -106,7 +124,15 @@ func (rh *ResumeHandler) GetPreviewResumeByApplicant(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, resumes)
+	var resumesResponse models.GetAllResumePreviewsPointer
+	resumesResponse.Data = resumes
+	resumesJson, err := resumesResponse.MarshalJSON()
+	if err != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+
+	c.Data(http.StatusOK, "application/json; charset=utf-8", resumesJson)
 }
 
 func (rh *ResumeHandler) CreateResume(c *gin.Context) {
@@ -118,7 +144,7 @@ func (rh *ResumeHandler) CreateResume(c *gin.Context) {
 	}
 
 	var input models.Resume
-	if err := c.BindJSON(&input); err != nil {
+	if err := easyjson.UnmarshalFromReader(c.Request.Body, &input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
@@ -128,8 +154,15 @@ func (rh *ResumeHandler) CreateResume(c *gin.Context) {
 		_ = c.Error(creatingErr)
 		return
 	}
+	var response models.Response
+	response.ID = input.ID
+	responseJson, errJson := response.MarshalJSON()
+	if errJson != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
 
-	c.JSON(http.StatusOK, gin.H{"id": input.ID})
+	c.Data(http.StatusOK, "application/json; charset=utf-8", responseJson)
 }
 
 func (rh *ResumeHandler) UpdateResume(c *gin.Context) {
@@ -146,7 +179,7 @@ func (rh *ResumeHandler) UpdateResume(c *gin.Context) {
 	}
 
 	var input models.Resume
-	if err := c.BindJSON(&input); err != nil {
+	if err := easyjson.UnmarshalFromReader(c.Request.Body, &input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}

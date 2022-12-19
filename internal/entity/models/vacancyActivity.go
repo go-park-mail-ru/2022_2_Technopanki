@@ -1,7 +1,9 @@
+//go:generate easyjson -all vacancyActivity.go
 package models
 
 import "time"
 
+//easyjson:json
 type VacancyActivity struct {
 	UserAccountId uint      `json:"user_account_id" gorm:"primaryKey"`
 	ResumeId      uint      `json:"id" gorm:"primaryKey"`
@@ -9,10 +11,12 @@ type VacancyActivity struct {
 	ApplyDate     time.Time `json:"created_date" gorm:"autoCreateTime"`
 }
 
+//easyjson:json
 type GetAllAppliesResponce struct {
 	Data []*VacancyActivityPreview `json:"data"`
 }
 
+//easyjson:json
 type VacancyActivityPreview struct {
 	UserAccountId    uint      `json:"user_account_id"`
 	ResumeId         uint      `json:"id"`

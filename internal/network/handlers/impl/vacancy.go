@@ -6,6 +6,7 @@ import (
 	"HeadHunter/internal/usecases"
 	"HeadHunter/pkg/errorHandler"
 	"github.com/gin-gonic/gin"
+	"github.com/mailru/easyjson"
 	"net/http"
 	"strconv"
 	"strings"
@@ -61,9 +62,14 @@ func (vh *VacancyHandler) GetAllVacancies(c *gin.Context) {
 		_ = c.Error(getAllErr)
 		return
 	}
-	c.JSON(http.StatusOK, models.GetAllVacanciesResponcePointer{
-		Data: vacancies,
-	})
+	var vacanciesResponse models.GetAllVacanciesResponcePointer
+	vacanciesResponse.Data = vacancies
+	vacanciesJson, err := vacanciesResponse.MarshalJSON()
+	if err != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+	c.Data(http.StatusOK, "application/json; charset=utf-8", vacanciesJson)
 }
 
 func (vh *VacancyHandler) GetVacancyById(c *gin.Context) {
@@ -77,7 +83,12 @@ func (vh *VacancyHandler) GetVacancyById(c *gin.Context) {
 		_ = c.Error(err)
 		return
 	}
-	c.JSON(http.StatusOK, vacancy)
+	vacancyJson, errJson := vacancy.MarshalJSON()
+	if errJson != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+	c.Data(http.StatusOK, "application/json; charset=utf-8", vacancyJson)
 
 }
 
@@ -92,7 +103,15 @@ func (vh *VacancyHandler) GetPreviewVacanciesByEmployer(c *gin.Context) {
 		_ = c.Error(GetErr)
 		return
 	}
-	c.JSON(http.StatusOK, vacancies)
+
+	var vacanciesResponse models.VacancyPreviewsResponse
+	vacanciesResponse.Data = vacancies
+	vacanciesJson, err := vacanciesResponse.MarshalJSON()
+	if err != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+	c.Data(http.StatusOK, "application/json; charset=utf-8", vacanciesJson)
 }
 
 func (vh *VacancyHandler) GetUserVacancies(c *gin.Context) {
@@ -106,9 +125,14 @@ func (vh *VacancyHandler) GetUserVacancies(c *gin.Context) {
 		_ = c.Error(GetErr)
 		return
 	}
-	c.JSON(http.StatusOK, models.GetAllVacanciesResponcePointer{
-		Data: vacancies,
-	})
+	var vacanciesResponse models.GetAllVacanciesResponcePointer
+	vacanciesResponse.Data = vacancies
+	vacanciesJson, err := vacanciesResponse.MarshalJSON()
+	if err != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+	c.Data(http.StatusOK, "application/json; charset=utf-8", vacanciesJson)
 
 }
 
@@ -120,7 +144,7 @@ func (vh *VacancyHandler) CreateVacancy(c *gin.Context) {
 	}
 
 	var input models.Vacancy
-	if err := c.BindJSON(&input); err != nil {
+	if err := easyjson.UnmarshalFromReader(c.Request.Body, &input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
@@ -130,7 +154,15 @@ func (vh *VacancyHandler) CreateVacancy(c *gin.Context) {
 		_ = c.Error(err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"id": id})
+	var response models.Response
+	response.ID = id
+	responseJson, errJson := response.MarshalJSON()
+	if errJson != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+
+	c.Data(http.StatusOK, "application/json; charset=utf-8", responseJson)
 }
 
 func (vh *VacancyHandler) DeleteVacancy(c *gin.Context) {
@@ -168,7 +200,7 @@ func (vh *VacancyHandler) UpdateVacancy(c *gin.Context) {
 	}
 
 	var input models.Vacancy
-	if err := c.BindJSON(&input); err != nil {
+	if err := easyjson.UnmarshalFromReader(c.Request.Body, &input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
