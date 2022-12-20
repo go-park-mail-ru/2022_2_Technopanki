@@ -212,13 +212,14 @@ func TestUserHandler_SignIn(t *testing.T) {
 			inputBody: `{
     			"email": "test@gmail.com",
     			"password": "123456a!",
-				"user_type": "applicant"
+				"user_type": "applicant",
+				"two_factor_sign_in": true
 }`,
 			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
 				r.EXPECT().SignIn(user).Return(gomock.Any().String(), nil)
 			},
-			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":0,\"user_type\":\"applicant\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"company_size\":0,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedStatusCode:   202,
+			expectedResponseBody: "",
 		},
 		{
 			name: "invalid body",
