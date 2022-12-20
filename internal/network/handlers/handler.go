@@ -52,6 +52,10 @@ type VacancyH interface {
 	CreateVacancy(c *gin.Context)
 	UpdateVacancy(c *gin.Context)
 	DeleteVacancy(c *gin.Context)
+	AddVacancyToFavorites(c *gin.Context)
+	GetUserFavoriteVacancies(c *gin.Context)
+	DeleteVacancyFromFavorites(c *gin.Context)
+	CheckFavoriteVacancy(c *gin.Context)
 }
 
 type VacancyActivityH interface {

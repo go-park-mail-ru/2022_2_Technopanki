@@ -89,3 +89,45 @@ func (vs *VacancyService) Update(email string, vacancyId uint, updates *models.V
 	}
 	return vs.vacancyRep.Update(userId, vacancyId, oldVacancy, updates)
 }
+func (vs *VacancyService) AddVacancyToFavorites(email string, vacancyId uint) error {
+	user, getErr := vs.userRep.GetUserByEmail(email)
+	if getErr != nil {
+		return getErr
+	}
+
+	vacancy, vacancyErr := vs.vacancyRep.GetById(vacancyId)
+	if vacancyErr != nil {
+		return vacancyErr
+	}
+	return vs.vacancyRep.AddVacancyToFavorites(user, vacancy)
+}
+
+func (vs *VacancyService) GetUserFavoriteVacancies(email string) ([]*models.Vacancy, error) {
+	user, getErr := vs.userRep.GetUserByEmail(email)
+	if getErr != nil {
+		return nil, getErr
+	}
+	return vs.vacancyRep.GetUserFavoriteVacancies(user)
+}
+
+func (vs *VacancyService) DeleteVacancyFromFavorites(email string, vacancyId uint) error {
+	user, getErr := vs.userRep.GetUserByEmail(email)
+	if getErr != nil {
+		return getErr
+	}
+	vacancy, err := vs.vacancyRep.GetById(vacancyId)
+	if err != nil {
+		return err
+	}
+	return vs.vacancyRep.DeleteVacancyFromFavorites(user, vacancy)
+
+}
+
+func (vs *VacancyService) CheckFavoriteVacancy(email string, vacancyId uint) (bool, error) {
+	user, getErr := vs.userRep.GetUserByEmail(email)
+	if getErr != nil {
+		return false, getErr
+	}
+	userId := user.ID
+	return vs.vacancyRep.CheckFavoriteVacancy(userId, vacancyId)
+}

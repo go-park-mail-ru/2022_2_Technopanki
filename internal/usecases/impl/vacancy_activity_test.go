@@ -144,6 +144,7 @@ func TestVacancyActivityService_GetAllVacancyApplies(t *testing.T) {
 			mockBehavior: func(r *mock_repository.MockVacancyActivityRepository, ur *mock_repository.MockUserRepository, vacancyId uint) {
 				expected := []*models.VacancyActivityPreview{
 					{
+
 						ResumeId:         1,
 						ApplicantName:    "User",
 						ApplicantSurname: "User",

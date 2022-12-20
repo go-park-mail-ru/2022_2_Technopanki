@@ -48,7 +48,7 @@ func TestUserHandler_SignUp(t *testing.T) {
 				r.EXPECT().SignUp(user).Return(gomock.Any().String(), nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":0,\"user_type\":\"applicant\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"applicant_name\":\"Zakhar\",\"applicant_surname\":\"Urvancev\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":0,\"user_type\":\"applicant\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"applicant_name\":\"Zakhar\",\"applicant_surname\":\"Urvancev\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"favourite_vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name: "confirmation mode",
@@ -110,7 +110,7 @@ func TestUserHandler_SignUp(t *testing.T) {
 				r.EXPECT().SignUp(user).Return(gomock.Any().String(), nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":0,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":0,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"favourite_vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name: "user already exists",
@@ -191,15 +191,15 @@ func TestUserHandler_SignIn(t *testing.T) {
 				UserType: "applicant",
 			},
 			inputBody: `{
-    			"email": "test@gmail.com",
-    			"password": "123456a!",
+   			"email": "test@gmail.com",
+   			"password": "123456a!",
 				"user_type": "applicant"
 }`,
 			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
 				r.EXPECT().SignIn(user).Return(gomock.Any().String(), nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":0,\"user_type\":\"applicant\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"company_size\":0,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":0,\"user_type\":\"applicant\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"favourite_vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name: "valid applicant(two factor)",
@@ -212,13 +212,14 @@ func TestUserHandler_SignIn(t *testing.T) {
 			inputBody: `{
     			"email": "test@gmail.com",
     			"password": "123456a!",
-				"user_type": "applicant"
+				"user_type": "applicant",
+				"two_factor_sign_in": true
 }`,
 			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
 				r.EXPECT().SignIn(user).Return(gomock.Any().String(), nil)
 			},
-			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":0,\"user_type\":\"applicant\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"company_size\":0,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedStatusCode:   202,
+			expectedResponseBody: "",
 		},
 		{
 			name: "invalid body",
@@ -230,10 +231,10 @@ func TestUserHandler_SignIn(t *testing.T) {
 				UserType:         "applicant",
 			},
 			inputBody: `{
-    			"email": "test@gmail.com",
-    	ar",
-                "applicant_surname": "Urvancev",
-    			"user_type": "applicant"
+   			"email": "test@gmail.com",
+   	ar",
+               "applicant_surname": "Urvancev",
+   			"user_type": "applicant"
 }`,
 			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
 			},
@@ -247,14 +248,14 @@ func TestUserHandler_SignIn(t *testing.T) {
 				Password: "123456a!",
 			},
 			inputBody: `{
-    			"email": "test@gmail.com",
-    			"password": "123456a!"
+   			"email": "test@gmail.com",
+   			"password": "123456a!"
 }`,
 			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
 				r.EXPECT().SignIn(user).Return(gomock.Any().String(), errorHandler2.InvalidUserType)
 			},
 			expectedStatusCode:   400,
-			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"\"Некорректный входной тип пользователя\"}",
+			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Некорректный входной тип пользователя\"}",
 		},
 		{
 			name: "user not exist",
@@ -263,8 +264,8 @@ func TestUserHandler_SignIn(t *testing.T) {
 				Password: "123456a!",
 			},
 			inputBody: `{
-    			"email": "test@gmail.com",
-    			"password": "123456a!"
+   			"email": "test@gmail.com",
+   			"password": "123456a!"
 }`,
 			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
 				r.EXPECT().SignIn(user).Return("", errorHandler2.ErrUserNotExists)
@@ -274,13 +275,14 @@ func TestUserHandler_SignIn(t *testing.T) {
 		},
 	}
 	for _, test := range testTable {
-		t.Run(test.name, func(t *testing.T) {
+		testCase := test
+		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 			c := gomock.NewController(t)
 			defer c.Finish()
 
 			mockUseCase := mock_usecases.NewMockUser(c)
-			test.mockBehavior(mockUseCase, &test.inputUser)
+			testCase.mockBehavior(mockUseCase, &testCase.inputUser)
 
 			handler := UserHandler{
 				userUseCase: mockUseCase,
@@ -298,12 +300,12 @@ func TestUserHandler_SignIn(t *testing.T) {
 
 			w := httptest.NewRecorder()
 			req := httptest.NewRequest("POST", "/sign-in",
-				bytes.NewBufferString(test.inputBody))
+				bytes.NewBufferString(testCase.inputBody))
 
 			r.ServeHTTP(w, req)
 
-			assert.Equal(t, test.expectedStatusCode, w.Code)
-			assert.Equal(t, test.expectedResponseBody, w.Body.String())
+			assert.Equal(t, testCase.expectedStatusCode, w.Code)
+			assert.Equal(t, testCase.expectedResponseBody, w.Body.String())
 		})
 	}
 }
@@ -406,7 +408,7 @@ func TestUserHandler_AuthCheck(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":0,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":0,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"favourite_vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name:           "invalid cookie",
@@ -506,7 +508,7 @@ func TestUserHandler_GetUser(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":42,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":42,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"favourite_vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name:           "not found",
@@ -627,7 +629,7 @@ func TestUserHandler_GetUserSafety(t *testing.T) {
 				r.EXPECT().GetUserSafety(id).Return(expectedUser, nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":42,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":42,\"user_type\":\"employer\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"favourite_vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name:         "not found",
@@ -710,7 +712,7 @@ func TestUserHandler_GetPreview(t *testing.T) {
 				r.EXPECT().GetUserSafety(id).Return(expectedUser, nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":42,\"user_type\":\"employer\",\"email\":\"\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":42,\"user_type\":\"employer\",\"email\":\"\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"basic_applicant_avatar.webp\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"Some company\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"favourite_vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name:         "not found",
@@ -808,7 +810,7 @@ func TestUserHandler_UpdateUser(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"id\":0,\"user_type\":\"applicant\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"applicant_name\":\"Ivan\",\"applicant_surname\":\"Kozirev\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}",
+			expectedResponseBody: "{\"id\":0,\"user_type\":\"applicant\",\"email\":\"test@gmail.com\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"applicant_name\":\"Ivan\",\"applicant_surname\":\"Kozirev\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"favourite_vacancies\":null,\"vacancy_activities\":null}",
 		},
 		{
 			name:           "error",
@@ -1101,7 +1103,7 @@ func TestUserHandler_GetAllApplicants(t *testing.T) {
 				r.EXPECT().GetAllApplicants(filters).Return(expectedResume, nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"data\":[{\"id\":42,\"user_type\":\"\",\"email\":\"\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"applicant_name\":\"some name\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}]}",
+			expectedResponseBody: "{\"data\":[{\"id\":42,\"user_type\":\"\",\"email\":\"\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"applicant_name\":\"some name\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"favourite_vacancies\":null,\"vacancy_activities\":null}]}",
 		},
 		{
 			name:           "not found",
@@ -1189,7 +1191,7 @@ func TestUserHandler_GetAllEmployers(t *testing.T) {
 				r.EXPECT().GetAllEmployers(filters).Return(expectedResume, nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "{\"data\":[{\"id\":42,\"user_type\":\"\",\"email\":\"\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"some name\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"vacancy_activities\":null}]}",
+			expectedResponseBody: "{\"data\":[{\"id\":42,\"user_type\":\"\",\"email\":\"\",\"password\":\"\",\"contact_number\":\"\",\"status\":\"\",\"description\":\"\",\"image\":\"\",\"average_color\":\"\",\"date_of_birth\":\"0001-01-01T00:00:00Z\",\"created_time\":\"0001-01-01T00:00:00Z\",\"company_name\":\"some name\",\"company_size\":0,\"public_fields\":\"\",\"is_confirmed\":false,\"two_factor_sign_in\":false,\"mailing_approval\":false,\"resumes\":null,\"vacancies\":null,\"favourite_vacancies\":null,\"vacancy_activities\":null}]}",
 		},
 		{
 			name:           "not found",

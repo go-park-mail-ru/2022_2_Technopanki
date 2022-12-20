@@ -97,6 +97,7 @@ func (sh *SessionHandler) GetCodeFromEmail(ctx context.Context, in *handler.Emai
 	}
 	code, getErr := sh.sessionUseCase.GetCodeFromEmail(in.Value)
 	if getErr != nil {
+
 		metrics.SessionRequest.WithLabelValues("404", "code not found", "GetCodeFromEmail").Inc()
 		return &handler.Token{}, getErr
 	}
