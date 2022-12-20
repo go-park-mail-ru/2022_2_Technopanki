@@ -24,6 +24,7 @@ type Config struct {
 	Crypt                  CryptConfig         `yaml:"crypt"`
 	Image                  ImageConfig         `yaml:"image"`
 	Security               SecurityConfig      `yaml:"security"`
+	PDFConfig              PDFConfig           `yaml:"pdf"`
 }
 
 type ValidationConfig struct {
@@ -62,6 +63,11 @@ type SecurityConfig struct {
 	CsrfMode           bool   `yaml:"csrfMode"`
 	ConfirmationTime   int    `yaml:"confirmationTime"`
 	ConfirmAccountMode bool   `yaml:"confirmAccountMode"`
+}
+
+type PDFConfig struct {
+	HTMLPath string  `yaml:"htmlPath"`
+	ZoomSize float64 `yaml:"zoomSize"`
 }
 
 const dbPasswordName = "DB_PASSWORD"
