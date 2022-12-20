@@ -1,14 +1,22 @@
 package repository
 
 import (
-	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func DBConnect(cfg *configs.DBConfig) (*gorm.DB, error) {
+type DBConfig struct {
+	Username string `yaml:"username"`
+	Host     string `yaml:"host"`
+	Port     string `yaml:"port"`
+	DBName   string `yaml:"dbname"`
+	Password string `yaml:"password"`
+	SSLMode  string `yaml:"sslmode"`
+}
+
+func DBConnect(cfg *DBConfig) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
 		cfg.Username,
 		cfg.Password,
