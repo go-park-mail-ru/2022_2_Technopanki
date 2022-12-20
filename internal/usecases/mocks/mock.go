@@ -635,12 +635,12 @@ func (mr *MockResumeMockRecorder) GetResumeByApplicant(userId interface{}) *gomo
 }
 
 // GetResumeInPDF mocks base method.
-func (m *MockResume) GetResumeInPDF(resumeId uint, style string) ([]byte, error) {
+func (m *MockResume) GetResumeInPDF(email string, resumeId uint, style string) (*models.Notification, []byte, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetResumeInPDF", resumeId, style)
 	ret0, _ := ret[0].([]byte)
 	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	return nil, ret0, ret1
 }
 
 // GetResumeInPDF indicates an expected call of GetResumeInPDF.

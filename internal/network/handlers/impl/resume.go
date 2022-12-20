@@ -13,11 +13,12 @@ import (
 )
 
 type ResumeHandler struct {
-	resumeUseCase usecases.Resume
+	resumeUseCase       usecases.Resume
+	notificationUseCase usecases.Notification
 }
 
 func NewResumeHandler(useCases *usecases.UseCases) *ResumeHandler {
-	return &ResumeHandler{resumeUseCase: useCases.Resume}
+	return &ResumeHandler{resumeUseCase: useCases.Resume, notificationUseCase: useCases.Notification}
 }
 
 func (rh *ResumeHandler) GetResume(c *gin.Context) {
@@ -111,6 +112,12 @@ func (rh *ResumeHandler) GetPreviewResumeByApplicant(c *gin.Context) {
 }
 
 func (rh *ResumeHandler) GetResumeInPDF(c *gin.Context) {
+	email, contextErr := utils.GetEmailFromContext(c)
+	if contextErr != nil {
+		_ = c.Error(contextErr)
+		return
+	}
+
 	id, idErr := strconv.Atoi(c.Param("id"))
 	if idErr != nil {
 		_ = c.Error(errorHandler.ErrInvalidParam)
@@ -125,11 +132,20 @@ func (rh *ResumeHandler) GetResumeInPDF(c *gin.Context) {
 		return
 	}
 
-	resumeInPDF, generateErr := rh.resumeUseCase.GetResumeInPDF(uint(id), resumeStyle)
+	notification, resumeInPDF, generateErr := rh.resumeUseCase.GetResumeInPDF(email, uint(id), resumeStyle)
 	if generateErr != nil {
 		_ = c.Error(generateErr)
 		return
 	}
+
+	notificationPreview, notificationErr := rh.notificationUseCase.CreateNotification(notification)
+
+	if notificationErr != nil {
+		_ = c.Error(notificationErr)
+		return
+	}
+
+	c.Set("notification", notificationPreview)
 
 	c.Data(http.StatusOK, "application/pdf", resumeInPDF)
 }
