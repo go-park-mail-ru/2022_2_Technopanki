@@ -8,6 +8,7 @@ import (
 	"HeadHunter/internal/network"
 	"HeadHunter/internal/network/handlers"
 	"HeadHunter/internal/network/middleware"
+	"HeadHunter/internal/network/ws"
 	"HeadHunter/internal/repository"
 	"HeadHunter/internal/usecases"
 	"HeadHunter/internal/usecases/mail"
@@ -71,11 +72,13 @@ func main() {
 		mailService,
 	)
 
+	wsPool := ws.NewWSPool(useCase.User)
+
 	handler := handlers.NewHandlers(useCase, &mainConfig)
 
 	go cron.ClearDBFromUnconfirmedUser(db, &mainConfig)
 
-	router := network.InitRoutes(handler, sessionMiddleware, &mainConfig)
+	router := network.InitRoutes(handler, sessionMiddleware, &mainConfig, wsPool)
 
 	runErr := router.Run(mainConfig.Port)
 	if runErr != nil {

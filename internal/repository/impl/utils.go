@@ -19,6 +19,8 @@ func notFound(object string) error {
 		return errorHandler.ErrResumeNotFound
 	case "vacancy_applies":
 		return errorHandler.ErrVacancyApplyNotFound
+	case "notification":
+		return errorHandler.ErrNotificationNotFound
 	default:
 		return fmt.Errorf("%s not found", object)
 	}

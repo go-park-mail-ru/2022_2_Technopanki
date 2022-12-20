@@ -5,6 +5,7 @@ import (
 	_ "HeadHunter/docs"
 	"HeadHunter/internal/network/handlers"
 	"HeadHunter/internal/network/middleware"
+	"HeadHunter/internal/network/ws"
 	"HeadHunter/pkg/errorHandler"
 	"github.com/gin-gonic/gin"
 	"github.com/penglongli/gin-metrics/ginmetrics"
@@ -12,7 +13,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, cfg *configs.Config) *gin.Engine {
+func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, cfg *configs.Config, wsPool *ws.Pool) *gin.Engine {
 	router := gin.Default()
 
 	monitor := ginmetrics.GetMonitor()
@@ -29,6 +30,8 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 	initCSRF(router, cfg.Security)
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	wsMiddleware := middleware.NewWebsocketMiddleware(wsPool)
+
 	auth := router.Group("/auth")
 	{
 		auth.GET("/", sessionMW.Session, h.UserHandler.AuthCheck, errorHandler.Middleware())
@@ -70,7 +73,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 			vacancies.POST("/", sessionMW.Session, h.VacancyHandler.CreateVacancy, errorHandler.Middleware())
 			vacancies.PUT("/:id", sessionMW.Session, h.VacancyHandler.UpdateVacancy, errorHandler.Middleware())
 			vacancies.DELETE("/:id", sessionMW.Session, h.VacancyHandler.DeleteVacancy, errorHandler.Middleware())
-			vacancies.POST("/apply/:id", sessionMW.Session, h.VacancyActivityHandler.ApplyForVacancy, errorHandler.Middleware())
+			vacancies.POST("/apply/:id", sessionMW.Session, h.VacancyActivityHandler.ApplyForVacancy, wsMiddleware.Send, errorHandler.Middleware())
 			vacancies.GET("/applies/:id", h.VacancyActivityHandler.GetAllVacancyApplies, errorHandler.Middleware())
 			vacancies.GET("/user_applies/:id", h.VacancyActivityHandler.GetAllUserApplies, errorHandler.Middleware())
 			vacancies.POST("/favorites/:id", sessionMW.Session, h.VacancyHandler.AddVacancyToFavorites, errorHandler.Middleware())
@@ -89,6 +92,15 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 			resumes.POST("/", sessionMW.Session, h.ResumeHandler.CreateResume, errorHandler.Middleware())
 			resumes.PUT("/:id", sessionMW.Session, h.ResumeHandler.UpdateResume, errorHandler.Middleware())
 			resumes.DELETE("/:id", sessionMW.Session, h.ResumeHandler.DeleteResume, errorHandler.Middleware())
+		}
+
+		notifications := api.Group("/notification")
+		{
+			notifications.GET("/", sessionMW.Session, wsPool.Connect, errorHandler.Middleware())
+			notifications.GET("/user", sessionMW.Session, h.NotificationHandler.GetNotifications, errorHandler.Middleware())
+			notifications.PUT("/read", sessionMW.Session, h.NotificationHandler.ReadAllNotifications, errorHandler.Middleware())
+			notifications.PUT("/read/:id", sessionMW.Session, h.NotificationHandler.ReadNotification, errorHandler.Middleware())
+			notifications.DELETE("/clear", sessionMW.Session, h.NotificationHandler.ClearNotifications, errorHandler.Middleware())
 		}
 	}
 

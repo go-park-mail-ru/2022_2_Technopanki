@@ -17,6 +17,7 @@ type UseCases struct {
 	Vacancy         Vacancy
 	VacancyActivity VacancyActivity
 	Resume          Resume
+	Notification    Notification
 	Mail            mail.Mail
 }
 
@@ -25,7 +26,8 @@ func NewUseCases(repos *repository.Repository, session session.Repository, _cfg 
 		User:            impl.NewUserService(repos.UserRepository, session, _mail, _cfg),
 		Resume:          impl.NewResumeService(repos.ResumeRepository, _cfg, repos.UserRepository),
 		Vacancy:         impl.NewVacancyService(repos.VacancyRepository, repos.UserRepository),
-		VacancyActivity: impl.NewVacancyActivityService(repos.VacancyActivityRepository, repos.UserRepository),
+		VacancyActivity: impl.NewVacancyActivityService(repos.VacancyActivityRepository, repos.UserRepository, repos.VacancyRepository, repos.NotificationRepository),
+		Notification:    impl.NewNotificationService(repos.NotificationRepository, repos.UserRepository),
 		Mail:            _mail,
 	}
 }
@@ -64,7 +66,7 @@ type Vacancy interface {
 }
 
 type VacancyActivity interface {
-	ApplyForVacancy(email string, vacancyId uint, input *models.VacancyActivity) error
+	ApplyForVacancy(email string, vacancyId uint, input *models.VacancyActivity) (*models.Notification, error)
 	GetAllVacancyApplies(vacancyId uint) ([]*models.VacancyActivityPreview, error)
 	GetAllUserApplies(userid uint) ([]*models.VacancyActivityPreview, error)
 	DeleteUserApply(email string, apply uint) error
@@ -78,4 +80,12 @@ type Resume interface {
 	CreateResume(resume *models.Resume, email string) error
 	UpdateResume(id uint, resume *models.Resume, email string) error
 	DeleteResume(id uint, email string) error
+}
+
+type Notification interface {
+	GetNotificationsByEmail(email string) ([]*models.NotificationPreview, error)
+	CreateNotification(notification *models.Notification) (*models.NotificationPreview, error)
+	ReadNotification(email string, id uint) error
+	ReadAllNotifications(email string) error
+	ClearNotifications(email string) error
 }

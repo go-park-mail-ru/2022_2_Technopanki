@@ -465,11 +465,12 @@ func (m *MockVacancyActivity) EXPECT() *MockVacancyActivityMockRecorder {
 }
 
 // ApplyForVacancy mocks base method.
-func (m *MockVacancyActivity) ApplyForVacancy(email string, vacancyId uint, input *models.VacancyActivity) error {
+func (m *MockVacancyActivity) ApplyForVacancy(email string, vacancyId uint, input *models.VacancyActivity) (*models.Notification, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ApplyForVacancy", email, vacancyId, input)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(*models.Notification)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // ApplyForVacancy indicates an expected call of ApplyForVacancy.
@@ -645,4 +646,99 @@ func (m *MockResume) UpdateResume(id uint, resume *models.Resume, email string) 
 func (mr *MockResumeMockRecorder) UpdateResume(id, resume, email interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateResume", reflect.TypeOf((*MockResume)(nil).UpdateResume), id, resume, email)
+}
+
+// MockNotification is a mock of Notification interface.
+type MockNotification struct {
+	ctrl     *gomock.Controller
+	recorder *MockNotificationMockRecorder
+}
+
+// MockNotificationMockRecorder is the mock recorder for MockNotification.
+type MockNotificationMockRecorder struct {
+	mock *MockNotification
+}
+
+// NewMockNotification creates a new mock instance.
+func NewMockNotification(ctrl *gomock.Controller) *MockNotification {
+	mock := &MockNotification{ctrl: ctrl}
+	mock.recorder = &MockNotificationMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockNotification) EXPECT() *MockNotificationMockRecorder {
+	return m.recorder
+}
+
+// ClearNotifications mocks base method.
+func (m *MockNotification) ClearNotifications(email string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ClearNotifications", email)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ClearNotifications indicates an expected call of ClearNotifications.
+func (mr *MockNotificationMockRecorder) ClearNotifications(email interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ClearNotifications", reflect.TypeOf((*MockNotification)(nil).ClearNotifications), email)
+}
+
+// CreateNotification mocks base method.
+func (m *MockNotification) CreateNotification(notification *models.Notification) (*models.NotificationPreview, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateNotification", notification)
+	ret0, _ := ret[0].(*models.NotificationPreview)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateNotification indicates an expected call of CreateNotification.
+func (mr *MockNotificationMockRecorder) CreateNotification(notification interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNotification", reflect.TypeOf((*MockNotification)(nil).CreateNotification), notification)
+}
+
+// GetNotificationsByEmail mocks base method.
+func (m *MockNotification) GetNotificationsByEmail(email string) ([]*models.NotificationPreview, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetNotificationsByEmail", email)
+	ret0, _ := ret[0].([]*models.NotificationPreview)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetNotificationsByEmail indicates an expected call of GetNotificationsByEmail.
+func (mr *MockNotificationMockRecorder) GetNotificationsByEmail(email interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNotificationsByEmail", reflect.TypeOf((*MockNotification)(nil).GetNotificationsByEmail), email)
+}
+
+// ReadAllNotifications mocks base method.
+func (m *MockNotification) ReadAllNotifications(email string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReadAllNotifications", email)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ReadAllNotifications indicates an expected call of ReadAllNotifications.
+func (mr *MockNotificationMockRecorder) ReadAllNotifications(email interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadAllNotifications", reflect.TypeOf((*MockNotification)(nil).ReadAllNotifications), email)
+}
+
+// ReadNotification mocks base method.
+func (m *MockNotification) ReadNotification(email string, id uint) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReadNotification", email, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ReadNotification indicates an expected call of ReadNotification.
+func (mr *MockNotificationMockRecorder) ReadNotification(email, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadNotification", reflect.TypeOf((*MockNotification)(nil).ReadNotification), email, id)
 }

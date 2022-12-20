@@ -14,7 +14,7 @@ const vaultAddress = "http://localhost:8200"
 
 func main() {
 	client, clientErr := api.NewClient(&api.Config{
-		Address: fmt.Sprintf(vaultAddress),
+		Address: vaultAddress,
 	})
 
 	if clientErr != nil {

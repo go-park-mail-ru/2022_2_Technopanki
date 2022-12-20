@@ -20,7 +20,7 @@ func DBConnect(cfg *configs.DBConfig) (*gorm.DB, error) {
 		return nil, err
 	}
 	err = db.AutoMigrate(&models.UserAccount{}, &models.Resume{}, &models.EducationDetail{}, &models.ExperienceDetail{},
-		&models.Vacancy{}, &models.Skill{}, &models.VacancyActivity{}, &models.BusinessType{})
+		&models.Vacancy{}, &models.Skill{}, &models.VacancyActivity{}, &models.BusinessType{}, &models.Notification{})
 	if err != nil {
 		return nil, err
 	}

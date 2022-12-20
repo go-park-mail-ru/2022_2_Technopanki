@@ -11,6 +11,7 @@ type Repository struct {
 	VacancyRepository         VacancyRepository
 	VacancyActivityRepository VacancyActivityRepository
 	ResumeRepository          ResumeRepository
+	NotificationRepository    NotificationRepository
 }
 
 func NewPostgresRepository(db *gorm.DB) *Repository {
@@ -19,6 +20,7 @@ func NewPostgresRepository(db *gorm.DB) *Repository {
 		ResumeRepository:          impl.NewResumePostgres(db),
 		VacancyRepository:         impl.NewVacancyPostgres(db),
 		VacancyActivityRepository: impl.NewVacancyActivityPostgres(db),
+		NotificationRepository:    impl.NewNotificationPostgres(db),
 	}
 }
 
@@ -66,4 +68,16 @@ type ResumeRepository interface {
 	UpdateResume(id uint, resume *models.Resume) error
 	DeleteResume(id uint) error
 	GetEmployerIdByVacancyActivity(id uint) (uint, error)
+}
+
+type NotificationRepository interface {
+	GetNotificationPreviewApply(id uint) (*models.NotificationPreview, error)
+	GetNotificationPreviewDownloadPDF(id uint) (*models.NotificationPreview, error)
+	GetApplyNotificationsByUser(id uint) ([]*models.NotificationPreview, error)
+	GetDownloadPDFNotificationsByUser(id uint) ([]*models.NotificationPreview, error)
+	CreateNotification(notification *models.Notification) error
+	ReadNotification(id uint) error
+	ReadAllNotifications(userId uint) error
+	GetNotification(id uint) (*models.Notification, error)
+	DeleteNotificationsFromUser(userId uint) error
 }

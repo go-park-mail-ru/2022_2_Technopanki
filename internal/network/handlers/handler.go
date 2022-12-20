@@ -13,6 +13,7 @@ type Handlers struct {
 	VacancyActivityHandler VacancyActivityH
 	ResumeHandler          ResumeH
 	MailHandler            MailH
+	NotificationHandler    NotificationH
 }
 
 func NewHandlers(usecases *usecases.UseCases, _cfg *configs.Config) *Handlers {
@@ -22,6 +23,7 @@ func NewHandlers(usecases *usecases.UseCases, _cfg *configs.Config) *Handlers {
 		VacancyHandler:         impl.NewVacancyHandler(usecases),
 		VacancyActivityHandler: impl.NewVacancyActivityHandler(usecases),
 		MailHandler:            impl.NewMailHandler(usecases),
+		NotificationHandler:    impl.NewNotificationHandler(usecases),
 	}
 }
 
@@ -75,4 +77,11 @@ type ResumeH interface {
 
 type MailH interface {
 	SendConfirmCode(c *gin.Context)
+}
+
+type NotificationH interface {
+	GetNotifications(c *gin.Context)
+	ReadNotification(c *gin.Context)
+	ReadAllNotifications(c *gin.Context)
+	ClearNotifications(c *gin.Context)
 }
