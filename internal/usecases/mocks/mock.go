@@ -576,6 +576,21 @@ func (mr *MockResumeMockRecorder) GetResumeByApplicant(userId interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetResumeByApplicant", reflect.TypeOf((*MockResume)(nil).GetResumeByApplicant), userId)
 }
 
+// GetResumeInPDF mocks base method.
+func (m *MockResume) GetResumeInPDF(resumeId uint, style string) ([]byte, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetResumeInPDF", resumeId, style)
+	ret0, _ := ret[0].([]byte)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetResumeInPDF indicates an expected call of GetResumeInPDF.
+func (mr *MockResumeMockRecorder) GetResumeInPDF(resumeId, style interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetResumeInPDF", reflect.TypeOf((*MockResume)(nil).GetResumeInPDF), resumeId, style)
+}
+
 // UpdateResume mocks base method.
 func (m *MockResume) UpdateResume(id uint, resume *models.Resume, email string) error {
 	m.ctrl.T.Helper()
@@ -590,7 +605,6 @@ func (mr *MockResumeMockRecorder) UpdateResume(id, resume, email interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateResume", reflect.TypeOf((*MockResume)(nil).UpdateResume), id, resume, email)
 }
 
-<<<<<<< HEAD
 // MockNotification is a mock of Notification interface.
 type MockNotification struct {
 	ctrl     *gomock.Controller
@@ -684,9 +698,4 @@ func (m *MockNotification) ReadNotification(email string, id uint) error {
 func (mr *MockNotificationMockRecorder) ReadNotification(email, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadNotification", reflect.TypeOf((*MockNotification)(nil).ReadNotification), email, id)
-=======
-// GetResumeInPDF mocks base method.
-func (m *MockResume) GetResumeInPDF(resumeId uint, style string) ([]byte, error) {
-	return nil, nil
->>>>>>> 6140e1c (fixes)
 }

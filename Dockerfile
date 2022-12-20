@@ -1,10 +1,11 @@
-FROM golang:alpine as builder
-WORKDIR /backend
-COPY . .
-RUN apk add --update musl-dev libwebp-dev gcc
-RUN go mod tidy
-RUN go build -o main cmd/main.go
 FROM alpine:3.8
+WORKDIR /backend
+COPY bin/ bin/
+COPY ./static/html /usr/share/html
+COPY .env .env
+COPY configs/ configs/
+COPY --from=icalialabs/wkhtmltopdf:alpine /bin/wkhtmltopdf /bin/wkhtmltopdf
+RUN apk add --update musl-dev libwebp-dev gcc
 # Needed for wkhtmltopdf
 RUN apk add --no-cache \
  libstdc++ \
@@ -20,9 +21,4 @@ RUN apk add --no-cache \
  ttf-droid \
  ttf-freefont \
  ttf-liberation
-WORKDIR /backend
-COPY bin/ bin/
-COPY .env .env
-COPY configs/ configs/
-RUN apk add --update musl-dev libwebp-dev gcc
 CMD ["bin/main"]

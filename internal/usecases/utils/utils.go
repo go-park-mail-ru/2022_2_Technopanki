@@ -87,15 +87,15 @@ func generateBase64ForImage(imagePath string) (template.URL, error) {
 	return template.URL(strings.Join([]string{base64ImageMimeType, toBase64(image)}, "")), nil
 }
 
-type ResumeTemplate struct {
+type resumeTemplate struct {
 	Resume            *models.ResumeInPDF
 	ExperiencePostfix string
 	AgePostfix        string
 	ImageBase64       template.URL
 }
 
-func generateHTMLFromResume(resume *models.ResumeInPDF, cfg *configs.ImageConfig, style string) (bytes.Buffer, error) {
-	templ, errParse := template.ParseGlob(strings.Join([]string{"./static/html/", style}, ""))
+func generateHTMLFromResume(resume *models.ResumeInPDF, cfg *configs.Config, style string) (bytes.Buffer, error) {
+	templ, errParse := template.ParseGlob(strings.Join([]string{cfg.PDFConfig.HTMLPath, style}, ""))
 	if errParse != nil {
 		return bytes.Buffer{}, errParse
 	}
@@ -105,12 +105,12 @@ func generateHTMLFromResume(resume *models.ResumeInPDF, cfg *configs.ImageConfig
 		return bytes.Buffer{}, errAtoi
 	}
 
-	base64Image, err := generateBase64ForImage(strings.Join([]string{cfg.Path, "avatar/", resume.Image}, ""))
+	base64Image, err := generateBase64ForImage(strings.Join([]string{cfg.Image.Path, "avatar/", resume.Image}, ""))
 	if err != nil {
 		return bytes.Buffer{}, err
 	}
 
-	templateStruct := &ResumeTemplate{
+	templateStruct := &resumeTemplate{
 		Resume:            resume,
 		ExperiencePostfix: YearPostfix(uint(experienceYear)),
 		AgePostfix:        YearPostfix(resume.Age),
@@ -125,14 +125,14 @@ func generateHTMLFromResume(resume *models.ResumeInPDF, cfg *configs.ImageConfig
 	return buffer, nil
 }
 
-func generatePDFFromHTML(html bytes.Buffer, zoomSize float64) ([]byte, error) {
+func generatePDFFromHTML(html bytes.Buffer, cfg *configs.Config) ([]byte, error) {
 	pdfg, generatorErr := wkhtmltopdf.NewPDFGenerator()
 	if generatorErr != nil {
 		return nil, generatorErr
 	}
 
 	page := wkhtmltopdf.NewPageReader(&html)
-	page.Zoom.Set(zoomSize)
+	page.Zoom.Set(cfg.PDFConfig.ZoomSize)
 
 	pdfg.AddPage(page)
 
@@ -144,14 +144,14 @@ func generatePDFFromHTML(html bytes.Buffer, zoomSize float64) ([]byte, error) {
 	return pdfg.Buffer().Bytes(), nil
 }
 
-func GenerateResumeInPDF(resume *models.ResumeInPDF, cfg *configs.ImageConfig, style string, zoomSize float64) ([]byte, error) {
+func GenerateResumeInPDF(resume *models.ResumeInPDF, cfg *configs.Config, style string) ([]byte, error) {
 	resume.Image = strings.Split(resume.Image, "?")[0]
 	html, htmlErr := generateHTMLFromResume(resume, cfg, style)
 	if htmlErr != nil {
 		return nil, htmlErr
 	}
 
-	pdf, pdfErr := generatePDFFromHTML(html, zoomSize)
+	pdf, pdfErr := generatePDFFromHTML(html, cfg)
 	if pdfErr != nil {
 		return nil, pdfErr
 	}
