@@ -79,6 +79,18 @@ func (rp *ResumePostgres) GetPreviewResumeByApplicant(userId uint) ([]*models.Re
 	return resultPreview, QueryValidation(query, "resume")
 }
 
+func (rp *ResumePostgres) GetResumeInPDF(resumeId uint) (*models.ResumeInPDF, error) {
+	var result *models.ResumeInPDF
+	query := rp.db.Table("resumes").
+		Select("user_accounts.applicant_name, user_accounts.applicant_surname, user_accounts.image,"+
+			"user_accounts.contact_number, user_accounts.email, user_accounts.location, resumes.experience_in_years, resumes.title, resumes.description").
+		Joins("left join user_accounts on resumes.user_account_id = user_accounts.id").
+		Where("resumes.id = ?", resumeId).
+		Scan(&result)
+
+	return result, QueryValidation(query, "resume")
+}
+
 func (rp *ResumePostgres) CreateResume(resume *models.Resume, userId uint) error {
 	resume.UserAccountId = userId
 

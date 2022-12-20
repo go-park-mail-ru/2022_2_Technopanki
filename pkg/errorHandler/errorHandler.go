@@ -6,23 +6,24 @@ import (
 )
 
 var (
-	ErrResumeNotFound                   = errors.New("Резюме не найдено")
-	ErrBadRequest                       = errors.New("Некорректный запрос")
-	ErrUnauthorized                     = errors.New("Клиент не авторизован")
-	ErrServiceUnavailable               = errors.New("Сервис недоступен")
-	ErrUserExists                       = errors.New("Пользователь с таким email уже существует")
-	ErrUserNotExists                    = errors.New("Пользователя с таким email не существует")
-	ErrInvalidParam                     = errors.New("Некорректный параметр")
-	ErrCannotCreateUser                 = errors.New("Невозможно создать пользователя")
-	ErrCannotDeleteVacancy              = errors.New("Невозможно удалить вакансию")
 	ErrCannotDeleteVacancyFromFavorites = errors.New("Невозможно удалить вакансию из списка избранных")
-	ErrCannotDeleteVacancyApply         = errors.New("Невозможно удалить отклик на вакансию")
-	ErrCannotUpdateVacancy              = errors.New("Невозможно обновить вакансию")
-	ErrCannotApplyForVacancy            = errors.New("Невозможно откликнуться на вакансию")
-	ErrUpdateStructHasNoValues          = errors.New("Нет значений для обновления")
-	ErrCSRFTokenMismatched              = errors.New("Несоответствие CSRF-токена")
-	InvalidResumeTitleLength            = errors.New("Длина заголовка резюме должна быть от 3 до 30 символов")
-	InvalidResumeDescriptionLength      = errors.New("Описание должно быть более подробным")
+	ErrInvalidMimeType             = errors.New("Данный mime type не поддерживается")
+	ErrResumeNotFound              = errors.New("Резюме не найдено")
+	ErrBadRequest                  = errors.New("Некорректный запрос")
+	ErrUnauthorized                = errors.New("Клиент не авторизован")
+	ErrServiceUnavailable          = errors.New("Сервис недоступен")
+	ErrUserExists                  = errors.New("Пользователь с таким email уже существует")
+	ErrUserNotExists               = errors.New("Пользователя с таким email не существует")
+	ErrInvalidParam                = errors.New("Некорректный параметр")
+	ErrCannotCreateUser            = errors.New("Невозможно создать пользователя")
+	ErrCannotDeleteVacancy         = errors.New("Невозможно удалить вакансию")
+	ErrCannotDeleteVacancyApply    = errors.New("Невозможно удалить отклик на вакансию")
+	ErrCannotUpdateVacancy         = errors.New("Невозможно обновить вакансию")
+	ErrCannotApplyForVacancy       = errors.New("Невозможно откликнуться на вакансию")
+	ErrUpdateStructHasNoValues     = errors.New("Нет значений для обновления")
+	ErrCSRFTokenMismatched         = errors.New("Несоответствие CSRF-токена")
+	InvalidResumeTitleLength       = errors.New("Длина заголовка резюме должна быть от 3 до 30 символов")
+	InvalidResumeDescriptionLength = errors.New("Описание должно быть более подробным")
 
 	ErrCannotCreateSession = errors.New("Невозможно создать сессию")
 	ErrSessionNotFound     = errors.New("Сессия с данным токеном не найдена")
@@ -119,6 +120,8 @@ var errorToCode = map[error]int{
 
 	ErrInvalidWSInput:     http.StatusBadRequest,
 	ErrConnectionNotFound: http.StatusNotFound,
+	ErrInvalidMimeType:    http.StatusBadRequest,
+	ErrInvalidMimeType:    http.StatusBadRequest,
 }
 
 func ConvertError(err error) int {
