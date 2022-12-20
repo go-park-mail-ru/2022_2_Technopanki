@@ -359,3 +359,224 @@ func TestVacancyService_GetAll(t *testing.T) {
 
 	}
 }
+
+func TestVacancyService_AddVacancyToFavorites(t *testing.T) {
+	type mockBehavior func(r *mock_repository.MockVacancyRepository, ur *mock_repository.MockUserRepository, user *models.UserAccount, vacancy *models.Vacancy, email string, vacancyId uint)
+	testTable := []struct {
+		name         string
+		email        string
+		userId       uint
+		vacancyId    uint
+		mockBehavior mockBehavior
+		expectedErr  error
+		user         *models.UserAccount
+		vacancy      *models.Vacancy
+	}{
+		{
+			name: "ok",
+			mockBehavior: func(r *mock_repository.MockVacancyRepository, ur *mock_repository.MockUserRepository, user *models.UserAccount, vacancy *models.Vacancy, email string, vacancyId uint) {
+				ur.EXPECT().GetUserByEmail(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
+				r.EXPECT().GetById(vacancyId).Return(&models.Vacancy{Title: "vacancy"}, nil)
+				r.EXPECT().AddVacancyToFavorites(user, vacancy).Return(nil)
+			},
+			user: &models.UserAccount{
+				UserType: "applicant",
+			},
+			vacancy: &models.Vacancy{
+				Title: "vacancy",
+			},
+			expectedErr: nil,
+		},
+		{
+			name: "user not exists",
+			mockBehavior: func(r *mock_repository.MockVacancyRepository, ur *mock_repository.MockUserRepository, user *models.UserAccount, vacancy *models.Vacancy, email string, vacancyId uint) {
+				ur.EXPECT().GetUserByEmail(email).Return(nil, errorHandler.ErrUserNotExists)
+			},
+			expectedErr: errorHandler.ErrUserNotExists,
+		},
+		{
+			name: "wrong vacancyId",
+			mockBehavior: func(r *mock_repository.MockVacancyRepository, ur *mock_repository.MockUserRepository, user *models.UserAccount, vacancy *models.Vacancy, email string, vacancyId uint) {
+				ur.EXPECT().GetUserByEmail(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
+				r.EXPECT().GetById(vacancyId).Return(nil, errorHandler.ErrBadRequest)
+			},
+			vacancy:     nil,
+			expectedErr: errorHandler.ErrBadRequest,
+		},
+		{
+			name: "cannot add vacancy",
+			mockBehavior: func(r *mock_repository.MockVacancyRepository, ur *mock_repository.MockUserRepository, user *models.UserAccount, vacancy *models.Vacancy, email string, vacancyId uint) {
+				ur.EXPECT().GetUserByEmail(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
+				r.EXPECT().GetById(vacancyId).Return(&models.Vacancy{Title: "vacancy"}, nil)
+				r.EXPECT().AddVacancyToFavorites(user, vacancy).Return(errorHandler.ErrCannotAddFavoriteVacancy)
+			},
+			user: &models.UserAccount{
+				UserType: "applicant",
+			},
+			vacancy: &models.Vacancy{
+				Title: "vacancy",
+			},
+			expectedErr: errorHandler.ErrCannotAddFavoriteVacancy,
+		},
+	}
+	for _, test := range testTable {
+		testCase := test
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			vacancyRepository := mock_repository.NewMockVacancyRepository(c)
+			userRep := mock_repository.NewMockUserRepository(c)
+			testCase.mockBehavior(vacancyRepository, userRep, testCase.user, testCase.vacancy, testCase.email, testCase.vacancyId)
+			vacancyService := VacancyService{vacancyRep: vacancyRepository, userRep: userRep}
+			err := vacancyService.AddVacancyToFavorites(testCase.email, testCase.vacancyId)
+			assert.Equal(t, testCase.expectedErr, err)
+		})
+	}
+}
+
+func TestVacancyService_GetUserFavoriteVacancies(t *testing.T) {
+	type mockBehavior func(r *mock_repository.MockVacancyRepository, ur *mock_repository.MockUserRepository, user *models.UserAccount, vacancies []*models.Vacancy, mail string)
+	testTable := []struct {
+		name         string
+		mockBehavior mockBehavior
+		email        string
+		user         *models.UserAccount
+		expectedErr  error
+		vacancies    []*models.Vacancy
+	}{
+		{
+			name: "ok",
+			mockBehavior: func(r *mock_repository.MockVacancyRepository, ur *mock_repository.MockUserRepository, user *models.UserAccount, vacancies []*models.Vacancy, email string) {
+				expected := []*models.Vacancy{
+					{
+						Title: "Job",
+					},
+				}
+				ur.EXPECT().GetUserByEmail(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
+				r.EXPECT().GetUserFavoriteVacancies(user).Return(expected, nil)
+			},
+			vacancies: []*models.Vacancy{
+				{
+					Title: "Job",
+				},
+			},
+			user: &models.UserAccount{
+				UserType: "applicant",
+			},
+			expectedErr: nil,
+		},
+		{
+			name: "user not exists",
+			mockBehavior: func(r *mock_repository.MockVacancyRepository, ur *mock_repository.MockUserRepository, user *models.UserAccount, vacancies []*models.Vacancy, email string) {
+				ur.EXPECT().GetUserByEmail(email).Return(nil, errorHandler.ErrUserNotExists)
+			},
+			expectedErr: errorHandler.ErrUserNotExists,
+		},
+		{
+			name: "cannot get favorite vacancies",
+			mockBehavior: func(r *mock_repository.MockVacancyRepository, ur *mock_repository.MockUserRepository, user *models.UserAccount, vacancies []*models.Vacancy, email string) {
+				ur.EXPECT().GetUserByEmail(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
+				r.EXPECT().GetUserFavoriteVacancies(user).Return(nil, errorHandler.ErrCannotGetFavoriteVacancy)
+			},
+			user: &models.UserAccount{
+				UserType: "applicant",
+			},
+			expectedErr: errorHandler.ErrCannotGetFavoriteVacancy,
+		},
+	}
+	for _, test := range testTable {
+		testCase := test
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			vacancyRepository := mock_repository.NewMockVacancyRepository(c)
+			userRep := mock_repository.NewMockUserRepository(c)
+			testCase.mockBehavior(vacancyRepository, userRep, testCase.user, testCase.vacancies, testCase.email)
+			vacancyService := VacancyService{vacancyRep: vacancyRepository, userRep: userRep}
+			vacancy, err := vacancyService.GetUserFavoriteVacancies(testCase.email)
+			if testCase.expectedErr == nil {
+				assert.Equal(t, testCase.vacancies, vacancy)
+			}
+			assert.Equal(t, testCase.expectedErr, err)
+		})
+	}
+}
+
+func TestVacancyService_DeleteVacancyFromFavorites(t *testing.T) {
+	type mockBehavior func(r *mock_repository.MockVacancyRepository, ur *mock_repository.MockUserRepository, user *models.UserAccount, vacancy *models.Vacancy, email string, vacancyId uint)
+	testTable := []struct {
+		name         string
+		vacancyId    uint
+		email        string
+		user         *models.UserAccount
+		vacancy      *models.Vacancy
+		mockBehavior mockBehavior
+		expectedErr  error
+	}{
+		{
+			name: "ok",
+			mockBehavior: func(r *mock_repository.MockVacancyRepository, ur *mock_repository.MockUserRepository, user *models.UserAccount, vacancy *models.Vacancy, email string, vacancyId uint) {
+				ur.EXPECT().GetUserByEmail(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
+				r.EXPECT().GetById(vacancyId).Return(&models.Vacancy{Title: "vacancy"}, nil)
+				r.EXPECT().DeleteVacancyFromFavorites(user, vacancy).Return(nil)
+			},
+			user: &models.UserAccount{
+				UserType: "applicant",
+			},
+			vacancy: &models.Vacancy{
+				Title: "vacancy",
+			},
+			expectedErr: nil,
+		},
+		{
+			name: "user not exists",
+			mockBehavior: func(r *mock_repository.MockVacancyRepository, ur *mock_repository.MockUserRepository, user *models.UserAccount, vacancy *models.Vacancy, email string, vacancyId uint) {
+				ur.EXPECT().GetUserByEmail(email).Return(nil, errorHandler.ErrUserNotExists)
+			},
+			expectedErr: errorHandler.ErrUserNotExists,
+		},
+		{
+			name: "wrong vacancyId",
+			mockBehavior: func(r *mock_repository.MockVacancyRepository, ur *mock_repository.MockUserRepository, user *models.UserAccount, vacancy *models.Vacancy, email string, vacancyId uint) {
+				ur.EXPECT().GetUserByEmail(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
+				r.EXPECT().GetById(vacancyId).Return(nil, errorHandler.ErrBadRequest)
+			},
+			vacancy:     nil,
+			expectedErr: errorHandler.ErrBadRequest,
+		},
+		{
+			name: "cannot delete vacancy from favorites",
+			mockBehavior: func(r *mock_repository.MockVacancyRepository, ur *mock_repository.MockUserRepository, user *models.UserAccount, vacancy *models.Vacancy, email string, vacancyId uint) {
+				ur.EXPECT().GetUserByEmail(email).Return(&models.UserAccount{UserType: "applicant"}, nil)
+				r.EXPECT().GetById(vacancyId).Return(&models.Vacancy{Title: "vacancy"}, nil)
+				r.EXPECT().DeleteVacancyFromFavorites(user, vacancy).Return(errorHandler.ErrCannotDeleteVacancyFromFavorites)
+			},
+			user: &models.UserAccount{
+				UserType: "applicant",
+			},
+			vacancy: &models.Vacancy{
+				Title: "vacancy",
+			},
+			expectedErr: errorHandler.ErrCannotDeleteVacancyFromFavorites,
+		},
+	}
+	for _, test := range testTable {
+		testCase := test
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			vacancyRepository := mock_repository.NewMockVacancyRepository(c)
+			userRep := mock_repository.NewMockUserRepository(c)
+			testCase.mockBehavior(vacancyRepository, userRep, testCase.user, testCase.vacancy, testCase.email, testCase.vacancyId)
+			vacancyService := VacancyService{vacancyRep: vacancyRepository, userRep: userRep}
+			err := vacancyService.DeleteVacancyFromFavorites(testCase.email, testCase.vacancyId)
+			assert.Equal(t, testCase.expectedErr, err)
+		})
+	}
+}

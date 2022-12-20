@@ -6,6 +6,7 @@ import (
 )
 
 var (
+	ErrCannotDeleteVacancyFromFavorites = errors.New("Невозможно удалить вакансию из списка избранных")
 	ErrInvalidMimeType             = errors.New("Данный mime type не поддерживается")
 	ErrResumeNotFound              = errors.New("Резюме не найдено")
 	ErrBadRequest                  = errors.New("Некорректный запрос")
@@ -28,14 +29,16 @@ var (
 	ErrSessionNotFound     = errors.New("Сессия с данным токеном не найдена")
 	ErrCannotDeleteSession = errors.New("Невозможно удалить сессию")
 
-	ErrVacancyNotFound      = errors.New("Вакансия не найдена")
-	ErrVacancyApplyNotFound = errors.New("Отклики на вакансию не найдены")
-	ErrCannotDeleteAvatar   = errors.New("Невозможно удалить аватар")
-	ErrForbidden            = errors.New("Запрещено")
-	ErrWrongPassword        = errors.New("Неправильный пароль")
-	ErrInvalidFileFormat    = errors.New("Некорректный формат файла")
-	IncorrectNameLength     = errors.New("Длина имени должна быть между 2 и 30 символами")
-	IncorrectSurnameLength  = errors.New("Длина фамилии должна быть между 2 и 30 символами")
+	ErrVacancyNotFound          = errors.New("Вакансия не найдена")
+	ErrVacancyApplyNotFound     = errors.New("Отклики на вакансию не найдены")
+	ErrCannotAddFavoriteVacancy = errors.New("Невозможно добавить вакансию в избранные")
+	ErrCannotGetFavoriteVacancy = errors.New("Невозможно получить избранные вакансии")
+	ErrCannotDeleteAvatar       = errors.New("Невозможно удалить аватар")
+	ErrForbidden                = errors.New("Запрещено")
+	ErrWrongPassword            = errors.New("Неправильный пароль")
+	ErrInvalidFileFormat        = errors.New("Некорректный формат файла")
+	IncorrectNameLength         = errors.New("Длина имени должна быть между 2 и 30 символами")
+	IncorrectSurnameLength      = errors.New("Длина фамилии должна быть между 2 и 30 символами")
 
 	InvalidEmailFormat   = errors.New("Email должен содержать @")
 	IncorrectEmailLength = errors.New("Длина email должна быть между 8 and 30 символами")
@@ -55,44 +58,47 @@ var (
 )
 
 var errorToCode = map[error]int{
-	ErrResumeNotFound:              http.StatusNotFound,
-	ErrBadRequest:                  http.StatusBadRequest,
-	ErrUnauthorized:                http.StatusUnauthorized,
-	ErrServiceUnavailable:          http.StatusServiceUnavailable,
-	ErrUserExists:                  http.StatusBadRequest,
-	ErrUserNotExists:               http.StatusUnauthorized,
-	ErrInvalidParam:                http.StatusBadRequest,
-	ErrCannotCreateUser:            http.StatusServiceUnavailable,
-	ErrCannotDeleteVacancy:         http.StatusServiceUnavailable,
-	ErrCannotDeleteVacancyApply:    http.StatusServiceUnavailable,
-	ErrCannotUpdateVacancy:         http.StatusServiceUnavailable,
-	ErrCannotCreateSession:         http.StatusInternalServerError,
-	ErrSessionNotFound:             http.StatusUnauthorized,
-	ErrCannotDeleteSession:         http.StatusInternalServerError,
-	ErrCannotDeleteAvatar:          http.StatusBadRequest,
-	ErrResumeNotFound:              http.StatusNotFound,
-	ErrBadRequest:                  http.StatusBadRequest,
-	ErrUnauthorized:                http.StatusUnauthorized,
-	ErrServiceUnavailable:          http.StatusServiceUnavailable,
-	ErrUserExists:                  http.StatusBadRequest,
-	ErrUserNotExists:               http.StatusUnauthorized,
-	ErrInvalidParam:                http.StatusBadRequest,
-	ErrCannotCreateUser:            http.StatusServiceUnavailable,
-	ErrCannotDeleteVacancy:         http.StatusServiceUnavailable,
-	ErrCannotUpdateVacancy:         http.StatusServiceUnavailable,
-	ErrCannotCreateSession:         http.StatusInternalServerError,
-	ErrSessionNotFound:             http.StatusUnauthorized,
-	ErrCannotDeleteSession:         http.StatusInternalServerError,
-	ErrCannotDeleteAvatar:          http.StatusBadRequest,
-	ErrCannotApplyForVacancy:       http.StatusBadRequest,
-	InvalidResumeTitleLength:       http.StatusBadRequest,
-	InvalidResumeDescriptionLength: http.StatusBadRequest,
+	ErrResumeNotFound:                   http.StatusNotFound,
+	ErrBadRequest:                       http.StatusBadRequest,
+	ErrUnauthorized:                     http.StatusUnauthorized,
+	ErrServiceUnavailable:               http.StatusServiceUnavailable,
+	ErrUserExists:                       http.StatusBadRequest,
+	ErrUserNotExists:                    http.StatusUnauthorized,
+	ErrInvalidParam:                     http.StatusBadRequest,
+	ErrCannotCreateUser:                 http.StatusServiceUnavailable,
+	ErrCannotDeleteVacancy:              http.StatusServiceUnavailable,
+	ErrCannotDeleteVacancyFromFavorites: http.StatusServiceUnavailable,
+	ErrCannotDeleteVacancyApply:         http.StatusServiceUnavailable,
+	ErrCannotUpdateVacancy:              http.StatusServiceUnavailable,
+	ErrCannotCreateSession:              http.StatusInternalServerError,
+	ErrSessionNotFound:                  http.StatusUnauthorized,
+	ErrCannotDeleteSession:              http.StatusInternalServerError,
+	ErrCannotDeleteAvatar:               http.StatusBadRequest,
+	ErrResumeNotFound:                   http.StatusNotFound,
+	ErrBadRequest:                       http.StatusBadRequest,
+	ErrUnauthorized:                     http.StatusUnauthorized,
+	ErrServiceUnavailable:               http.StatusServiceUnavailable,
+	ErrUserExists:                       http.StatusBadRequest,
+	ErrUserNotExists:                    http.StatusUnauthorized,
+	ErrInvalidParam:                     http.StatusBadRequest,
+	ErrCannotCreateUser:                 http.StatusServiceUnavailable,
+	ErrCannotDeleteVacancy:              http.StatusServiceUnavailable,
+	ErrCannotUpdateVacancy:              http.StatusServiceUnavailable,
+	ErrCannotCreateSession:              http.StatusInternalServerError,
+	ErrSessionNotFound:                  http.StatusUnauthorized,
+	ErrCannotDeleteSession:              http.StatusInternalServerError,
+	ErrCannotDeleteAvatar:               http.StatusBadRequest,
+	ErrCannotApplyForVacancy:            http.StatusBadRequest,
+	InvalidResumeTitleLength:            http.StatusBadRequest,
+	InvalidResumeDescriptionLength:      http.StatusBadRequest,
 
 	ErrCSRFTokenMismatched: http.StatusForbidden,
 
-	ErrVacancyNotFound:         http.StatusNotFound,
-	ErrVacancyApplyNotFound:    http.StatusNotFound,
-	ErrUpdateStructHasNoValues: http.StatusInternalServerError,
+	ErrVacancyNotFound:          http.StatusNotFound,
+	ErrVacancyApplyNotFound:     http.StatusNotFound,
+	ErrCannotAddFavoriteVacancy: http.StatusBadRequest,
+	ErrCannotGetFavoriteVacancy: http.StatusServiceUnavailable,
+	ErrUpdateStructHasNoValues:  http.StatusInternalServerError,
 
 	ErrForbidden:           http.StatusForbidden,
 	ErrWrongPassword:       http.StatusBadRequest,
