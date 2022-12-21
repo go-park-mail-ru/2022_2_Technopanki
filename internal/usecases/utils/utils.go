@@ -104,6 +104,7 @@ func generateHTMLFromResume(resume *models.ResumeInPDF, cfg *configs.Config, sty
 	if err != nil {
 		return bytes.Buffer{}, err
 	}
+
 	templateStruct := &resumeTemplate{
 		Resume:            resume,
 		ExperiencePostfix: resume.ExperienceInYears,
