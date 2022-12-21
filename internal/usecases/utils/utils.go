@@ -14,7 +14,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -100,11 +99,6 @@ func generateHTMLFromResume(resume *models.ResumeInPDF, cfg *configs.Config, sty
 		return bytes.Buffer{}, errParse
 	}
 
-	experienceYear, errAtoi := strconv.ParseInt(resume.ExperienceInYears, 10, 64)
-	if errAtoi != nil {
-		return bytes.Buffer{}, errAtoi
-	}
-
 	base64Image, err := generateBase64ForImage(strings.Join([]string{cfg.Image.Path, "avatar/", resume.Image}, ""))
 	if err != nil {
 		return bytes.Buffer{}, err
@@ -112,7 +106,7 @@ func generateHTMLFromResume(resume *models.ResumeInPDF, cfg *configs.Config, sty
 
 	templateStruct := &resumeTemplate{
 		Resume:            resume,
-		ExperiencePostfix: YearPostfix(uint(experienceYear)),
+		ExperiencePostfix: resume.ExperienceInYears,
 		AgePostfix:        YearPostfix(resume.Age),
 		ImageBase64:       base64Image,
 	}
