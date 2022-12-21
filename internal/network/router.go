@@ -97,7 +97,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 
 		notifications := api.Group("/notification")
 		{
-			notifications.GET("/", sessionMW.Session, wsPool.Connect, errorHandler.Middleware())
+			notifications.GET("/ws", sessionMW.Session, wsPool.Connect, errorHandler.Middleware())
 			notifications.GET("/user", sessionMW.Session, h.NotificationHandler.GetNotifications, errorHandler.Middleware())
 			notifications.PUT("/read", sessionMW.Session, h.NotificationHandler.ReadAllNotifications, errorHandler.Middleware())
 			notifications.PUT("/read/:id", sessionMW.Session, h.NotificationHandler.ReadNotification, errorHandler.Middleware())

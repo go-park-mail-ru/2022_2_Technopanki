@@ -6,6 +6,7 @@ import (
 )
 
 var (
+	ErrInvalidMimeType                  = errors.New("Данный mime type не поддерживается")
 	ErrCannotDeleteVacancyFromFavorites = errors.New("Невозможно удалить вакансию из списка избранных")
 	ErrInvalidMimeType             = errors.New("Данный mime type не поддерживается")
 	ErrResumeNotFound              = errors.New("Резюме не найдено")
@@ -120,7 +121,6 @@ var errorToCode = map[error]int{
 
 	ErrInvalidWSInput:     http.StatusBadRequest,
 	ErrConnectionNotFound: http.StatusNotFound,
-	ErrInvalidMimeType:    http.StatusBadRequest,
 	ErrInvalidMimeType:    http.StatusBadRequest,
 }
 

@@ -6,6 +6,7 @@ import (
 	"HeadHunter/internal/usecases"
 	"HeadHunter/pkg/errorHandler"
 	"github.com/gin-gonic/gin"
+	"github.com/mailru/easyjson"
 	"net/http"
 	"strconv"
 )
@@ -31,9 +32,14 @@ func (vah *VacancyActivityHandler) GetAllVacancyApplies(c *gin.Context) {
 		_ = c.Error(getAllErr)
 		return
 	}
-	c.JSON(http.StatusOK, models.GetAllAppliesResponce{
-		Data: applies,
-	})
+	var appliesResponse models.GetAllAppliesResponce
+	appliesResponse.Data = applies
+	appliesJson, err := appliesResponse.MarshalJSON()
+	if err != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+	c.Data(http.StatusOK, "application/json; charset=utf-8", appliesJson)
 }
 
 func (vah *VacancyActivityHandler) ApplyForVacancy(c *gin.Context) {
@@ -50,7 +56,7 @@ func (vah *VacancyActivityHandler) ApplyForVacancy(c *gin.Context) {
 	}
 
 	var input models.VacancyActivity
-	if err := c.BindJSON(&input); err != nil {
+	if err := easyjson.UnmarshalFromReader(c.Request.Body, &input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
@@ -84,9 +90,14 @@ func (vah *VacancyActivityHandler) GetAllUserApplies(c *gin.Context) {
 		_ = c.Error(getErr)
 		return
 	}
-	c.JSON(http.StatusOK, models.GetAllAppliesResponce{
-		Data: applies,
-	})
+	var appliesResponse models.GetAllAppliesResponce
+	appliesResponse.Data = applies
+	appliesJson, err := appliesResponse.MarshalJSON()
+	if err != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+	c.Data(http.StatusOK, "application/json; charset=utf-8", appliesJson)
 }
 
 func (vah *VacancyActivityHandler) DeleteUserApply(c *gin.Context) {

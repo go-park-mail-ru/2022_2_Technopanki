@@ -7,6 +7,7 @@ import (
 	"HeadHunter/pkg/errorHandler"
 	"HeadHunter/pkg/themes"
 	"github.com/gin-gonic/gin"
+	"github.com/mailru/easyjson"
 	"net/http"
 	"strconv"
 	"strings"
@@ -33,8 +34,12 @@ func (rh *ResumeHandler) GetResume(c *gin.Context) {
 		_ = c.Error(getResumeErr)
 		return
 	}
-
-	c.JSON(http.StatusOK, resume)
+	resumeJson, errJson := resume.MarshalJSON()
+	if errJson != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+	c.Data(http.StatusOK, "application/json; charset=utf-8", resumeJson)
 }
 
 func (rh *ResumeHandler) GetAllResumes(c *gin.Context) {
@@ -74,9 +79,14 @@ func (rh *ResumeHandler) GetAllResumes(c *gin.Context) {
 		_ = c.Error(getAllErr)
 		return
 	}
-	c.JSON(http.StatusOK, models.GetAllResumesResponcePointer{
-		Data: resumes,
-	})
+	var resumesResponse models.GetAllResumesResponcePointer
+	resumesResponse.Data = resumes
+	resumesJson, err := resumesResponse.MarshalJSON()
+	if err != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+	c.Data(http.StatusOK, "application/json; charset=utf-8", resumesJson)
 }
 
 func (rh *ResumeHandler) GetResumeByApplicant(c *gin.Context) {
@@ -85,6 +95,7 @@ func (rh *ResumeHandler) GetResumeByApplicant(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrInvalidParam)
 		return
 	}
+	var resumes models.Resumes
 
 	resumes, getResumeErr := rh.resumeUseCase.GetResumeByApplicant(uint(userId))
 	if getResumeErr != nil {
@@ -92,7 +103,13 @@ func (rh *ResumeHandler) GetResumeByApplicant(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, resumes)
+	resumesJson, err := resumes.MarshalJSON()
+	if err != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+
+	c.Data(http.StatusOK, "application/json; charset=utf-8", resumesJson)
 }
 
 func (rh *ResumeHandler) GetPreviewResumeByApplicant(c *gin.Context) {
@@ -102,13 +119,44 @@ func (rh *ResumeHandler) GetPreviewResumeByApplicant(c *gin.Context) {
 		return
 	}
 
+	var resumes models.ResumePreviews
 	resumes, getResumeErr := rh.resumeUseCase.GetPreviewResumeByApplicant(uint(userId))
 	if getResumeErr != nil {
 		_ = c.Error(getResumeErr)
 		return
 	}
 
-	c.JSON(http.StatusOK, resumes)
+	resumesJson, err := resumes.MarshalJSON()
+	if err != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+
+	c.Data(http.StatusOK, "application/json; charset=utf-8", resumesJson)
+}
+
+func (rh *ResumeHandler) GetResumeInPDF(c *gin.Context) {
+	id, idErr := strconv.Atoi(c.Param("id"))
+	if idErr != nil {
+		_ = c.Error(errorHandler.ErrInvalidParam)
+		return
+	}
+
+	style := c.Query("style")
+
+	resumeStyle, exists := themes.ThemesMap[style]
+	if !exists {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+
+	resumeInPDF, generateErr := rh.resumeUseCase.GetResumeInPDF(uint(id), resumeStyle)
+	if generateErr != nil {
+		_ = c.Error(generateErr)
+		return
+	}
+
+	c.Data(http.StatusOK, "application/pdf", resumeInPDF)
 }
 
 func (rh *ResumeHandler) GetResumeInPDF(c *gin.Context) {
@@ -159,7 +207,7 @@ func (rh *ResumeHandler) CreateResume(c *gin.Context) {
 	}
 
 	var input models.Resume
-	if err := c.BindJSON(&input); err != nil {
+	if err := easyjson.UnmarshalFromReader(c.Request.Body, &input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
@@ -169,8 +217,15 @@ func (rh *ResumeHandler) CreateResume(c *gin.Context) {
 		_ = c.Error(creatingErr)
 		return
 	}
+	var response models.Response
+	response.ID = input.ID
+	responseJson, errJson := response.MarshalJSON()
+	if errJson != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
 
-	c.JSON(http.StatusOK, gin.H{"id": input.ID})
+	c.Data(http.StatusOK, "application/json; charset=utf-8", responseJson)
 }
 
 func (rh *ResumeHandler) UpdateResume(c *gin.Context) {
@@ -187,7 +242,7 @@ func (rh *ResumeHandler) UpdateResume(c *gin.Context) {
 	}
 
 	var input models.Resume
-	if err := c.BindJSON(&input); err != nil {
+	if err := easyjson.UnmarshalFromReader(c.Request.Body, &input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}

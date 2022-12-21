@@ -55,7 +55,12 @@ func sendUserResponse(c *gin.Context, user *models.UserAccount, fields []string)
 		return
 	}
 
-	c.JSON(http.StatusOK, result)
+	resultJson, errJson := result.MarshalJSON()
+	if errJson != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+	c.Data(http.StatusOK, "application/json; charset=utf-8", resultJson)
 }
 
 func SendSuccessData(c *gin.Context, user *models.UserAccount) {

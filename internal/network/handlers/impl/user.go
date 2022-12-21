@@ -8,6 +8,7 @@ import (
 	"HeadHunter/internal/usecases"
 	"HeadHunter/pkg/errorHandler"
 	"github.com/gin-gonic/gin"
+	"github.com/mailru/easyjson"
 	"net/http"
 	"strconv"
 	"strings"
@@ -46,7 +47,7 @@ func (uh *UserHandler) SignIn(c *gin.Context) {
 
 func (uh *UserHandler) SignUp(c *gin.Context) {
 	var input models.UserAccount
-	if err := c.BindJSON(&input); err != nil {
+	if err := easyjson.UnmarshalFromReader(c.Request.Body, &input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
@@ -104,7 +105,7 @@ func (uh *UserHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 	var input models.UserAccount
-	if err := c.BindJSON(&input); err != nil {
+	if err := easyjson.UnmarshalFromReader(c.Request.Body, &input); err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
@@ -140,7 +141,12 @@ func (uh *UserHandler) GetUser(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrUnauthorized)
 		return
 	}
-	c.JSON(http.StatusOK, user)
+	userJson, errJson := user.MarshalJSON()
+	if errJson != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+	c.Data(http.StatusOK, "application/json; charset=utf-8", userJson)
 }
 
 func (uh *UserHandler) GetAllEmployers(c *gin.Context) {
@@ -180,9 +186,14 @@ func (uh *UserHandler) GetAllEmployers(c *gin.Context) {
 		_ = c.Error(getAllErr)
 		return
 	}
-	c.JSON(http.StatusOK, models.GetAllUsersResponcePointer{
-		Data: employers,
-	})
+	var usersResponse models.GetAllUsersResponcePointer
+	usersResponse.Data = employers
+	employersJson, err := usersResponse.MarshalJSON()
+	if err != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+	c.Data(http.StatusOK, "application/json; charset=utf-8", employersJson)
 }
 
 func (uh *UserHandler) GetAllApplicants(c *gin.Context) {
@@ -223,9 +234,14 @@ func (uh *UserHandler) GetAllApplicants(c *gin.Context) {
 		_ = c.Error(getAllErr)
 		return
 	}
-	c.JSON(http.StatusOK, models.GetAllUsersResponcePointer{
-		Data: applicants,
-	})
+	var usersResponse models.GetAllUsersResponcePointer
+	usersResponse.Data = applicants
+	applicantsJson, err := usersResponse.MarshalJSON()
+	if err != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+	c.Data(http.StatusOK, "application/json; charset=utf-8", applicantsJson)
 }
 
 func (uh *UserHandler) GetUserSafety(c *gin.Context) {
@@ -240,7 +256,12 @@ func (uh *UserHandler) GetUserSafety(c *gin.Context) {
 		_ = c.Error(getErr)
 		return
 	}
-	c.JSON(http.StatusOK, user)
+	userJson, errJson := user.MarshalJSON()
+	if errJson != nil {
+		_ = c.Error(errorHandler.ErrBadRequest)
+		return
+	}
+	c.Data(http.StatusOK, "application/json; charset=utf-8", userJson)
 }
 
 func (uh *UserHandler) UploadUserImage(c *gin.Context) {

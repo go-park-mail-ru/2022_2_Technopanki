@@ -1,7 +1,9 @@
+//go:generate easyjson -all educationDetail.go
 package models
 
 import "time"
 
+//easyjson:json
 type EducationDetail struct {
 	ResumeId              uint      `json:"resume_id" gorm:"primaryKey"`
 	CertificateDegreeName string    `json:"certificate_degree_name" gorm:"primaryKey"`

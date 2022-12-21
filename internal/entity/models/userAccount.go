@@ -1,7 +1,9 @@
+//go:generate easyjson -all userAccount.go
 package models
 
 import "time"
 
+//easyjson:json
 type UserAccount struct {
 	ID                     uint              `json:"id" gorm:"primaryKey;"`
 	UserType               string            `json:"user_type" gorm:"not null;"`
@@ -32,7 +34,7 @@ type UserAccount struct {
 	FavoriteVacancies      []Vacancy         `json:"favourite_vacancies" gorm:"many2many:favourite_vacancies"`
 	VacancyActivities      []VacancyActivity `json:"vacancy_activities" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`
 }
-
+//easyjson:json
 type UserFilter struct {
 	ApplicantName          string
 	ApplicantSurname       string
@@ -44,21 +46,23 @@ type UserFilter struct {
 	FirstAgeValue          string
 	SecondAgeValue         string
 }
+//easyjson:json
 type GetAllUsersResponcePointer struct {
 	Data []*UserAccount `json:"data"`
 }
 
-// PrivateUserFields Поля, доступ к которым по умолчанию не доступен
+// PrivateUserFields Поля, по умолчанию не доступные
 var PrivateUserFields = []string{"email", "contact_number",
 	"applicant_current_salary"}
 
-// SafeUserFields Поля, доступ к которым доступен всегда
+// SafeUserFields Поля, доступные всегда
 var SafeUserFields = []string{"id", "user_type", "description", "status", "date_of_birth", "image",
 	"applicant_name", "applicant_surname", "company_name", "location", "company_size", "average_color",
-	"company_website_url", "public_fields", "is_confirmed", "business_type", "two_factor_sign_in"}
+	"company_website_url", "public_fields", "is_confirmed", "business_type", "two_factor_sign_in", "age"}
 
 const NoPublicFields string = "null"
 
+//easyjson:json
 type ApplicantPreview struct {
 	ID               uint   `json:"id"`
 	Image            string `json:"image"`
