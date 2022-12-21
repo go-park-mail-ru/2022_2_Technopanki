@@ -712,3 +712,250 @@ func TestVacancyHandler_GetPreviewVacanciesByEmployer(t *testing.T) {
 		})
 	}
 }
+
+func TestVacancyHandler_AddVacancyToFavorites(t *testing.T) {
+	type mockBehavior func(r *mock_usecases.MockVacancy, vacancyId uint)
+	type sessionRepBehavior func(r *mock_session.MockRepository, token string)
+
+	testTable := []struct {
+		name                 string
+		vacancyId            uint
+		inputToken           string
+		requestParam         string
+		inputBody            string
+		emailFromToken       string
+		mockBehavior         mockBehavior
+		sessionRepBehavior   sessionRepBehavior
+		expectedStatusCode   int
+		expectedResponseBody string
+	}{
+		{
+			name:           "valid",
+			emailFromToken: "test@gmail.com",
+			vacancyId:      1,
+			requestParam:   "1",
+			mockBehavior: func(r *mock_usecases.MockVacancy, vacancyId uint) {
+				r.EXPECT().AddVacancyToFavorites("test@gmail.com", vacancyId).Return(nil)
+			},
+			sessionRepBehavior: func(sessionRep *mock_session.MockRepository, token string) {
+				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
+			},
+			expectedStatusCode: 200,
+		},
+		{
+			name:           "user not found",
+			emailFromToken: "",
+			vacancyId:      1,
+			requestParam:   "1",
+			mockBehavior: func(r *mock_usecases.MockVacancy, vacancyId uint) {
+				r.EXPECT().AddVacancyToFavorites("test@gmail.com", vacancyId).Return(errorHandler.ErrBadRequest)
+			},
+			sessionRepBehavior: func(sessionRep *mock_session.MockRepository, token string) {
+				sessionRep.EXPECT().GetSession(token).Return("", fmt.Errorf("getting session error:"))
+			},
+			expectedStatusCode:   401,
+			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Клиент не авторизован\"}",
+		},
+	}
+	for _, test := range testTable {
+		testCase := test
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			mockUseCase := mock_usecases.NewMockVacancy(c)
+			sessionRep := mock_session.NewMockRepository(c)
+			sessionMiddlware := middleware.NewSessionMiddleware(sessionRep)
+
+			if testCase.emailFromToken != "" {
+				testCase.mockBehavior(mockUseCase, testCase.vacancyId)
+			}
+
+			testCase.sessionRepBehavior(sessionRep, testCase.inputToken)
+
+			handler := VacancyHandler{
+				vacancyUseCase: mockUseCase,
+			}
+
+			r := gin.New()
+			r.POST("/favorites/:id", sessionMiddlware.Session, handler.AddVacancyToFavorites, errorHandler.Middleware())
+
+			cookie := &http.Cookie{
+				Name:  "session",
+				Value: testCase.inputToken,
+			}
+
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest("POST", "/favorites/"+testCase.requestParam,
+				bytes.NewBufferString(test.inputBody))
+
+			req.AddCookie(cookie)
+			r.ServeHTTP(w, req)
+
+			assert.Equal(t, testCase.expectedStatusCode, w.Code)
+			assert.Equal(t, testCase.expectedResponseBody, w.Body.String())
+		})
+	}
+}
+
+func TestVacancyHandler_GetUserFavoriteVacancies(t *testing.T) {
+	type mockBehavior func(r *mock_usecases.MockVacancy)
+	type sessionRepBehavior func(r *mock_session.MockRepository, token string)
+
+	testTable := []struct {
+		name                 string
+		inputToken           string
+		emailFromToken       string
+		mockBehavior         mockBehavior
+		sessionRepBehavior   sessionRepBehavior
+		expectedStatusCode   int
+		expectedResponseBody string
+	}{
+		{
+			name:           "valid",
+			emailFromToken: "test@gmail.com",
+			mockBehavior: func(r *mock_usecases.MockVacancy) {
+				expectedApply := []*models.Vacancy{
+					{
+						Title:       "title",
+						Description: "description",
+					},
+				}
+				r.EXPECT().GetUserFavoriteVacancies("test@gmail.com").Return(expectedApply, nil)
+			},
+			sessionRepBehavior: func(sessionRep *mock_session.MockRepository, token string) {
+				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
+			},
+			expectedStatusCode:   200,
+			expectedResponseBody: "{\"data\":[{\"id\":0,\"postedByUserId\":0,\"title\":\"title\",\"description\":\"description\",\"createdDate\":\"0001-01-01T00:00:00Z\",\"vacancyActivities\":null,\"skills\":null}]}",
+		},
+	}
+	for _, test := range testTable {
+		testCase := test
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			mockUseCase := mock_usecases.NewMockVacancy(c)
+			sessionRep := mock_session.NewMockRepository(c)
+			sessionMiddlware := middleware.NewSessionMiddleware(sessionRep)
+
+			if testCase.emailFromToken != "" {
+				testCase.mockBehavior(mockUseCase)
+			}
+
+			testCase.sessionRepBehavior(sessionRep, testCase.inputToken)
+
+			handler := VacancyHandler{
+				vacancyUseCase: mockUseCase,
+			}
+
+			r := gin.New()
+			r.GET("/favorites", sessionMiddlware.Session, handler.GetUserFavoriteVacancies, errorHandler.Middleware())
+
+			cookie := &http.Cookie{
+				Name:  "session",
+				Value: testCase.inputToken,
+			}
+
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest("GET", "/favorites",
+				bytes.NewBufferString(""))
+
+			req.AddCookie(cookie)
+			r.ServeHTTP(w, req)
+
+			assert.Equal(t, testCase.expectedStatusCode, w.Code)
+			assert.Equal(t, testCase.expectedResponseBody, w.Body.String())
+		})
+	}
+}
+
+func TestVacancyHandler_DeleteVacancyFromFavorites(t *testing.T) {
+	type mockBehavior func(r *mock_usecases.MockVacancy, id uint)
+	type sessionRepBehavior func(r *mock_session.MockRepository, token string)
+
+	testTable := []struct {
+		name                 string
+		inputId              uint
+		inputToken           string
+		requestParam         string
+		emailFromToken       string
+		mockBehavior         mockBehavior
+		sessionRepBehavior   sessionRepBehavior
+		expectedStatusCode   int
+		expectedResponseBody string
+	}{
+		{
+			name:           "valid",
+			inputId:        42,
+			requestParam:   "42",
+			emailFromToken: "test@gmail.com",
+			mockBehavior: func(r *mock_usecases.MockVacancy, id uint) {
+				r.EXPECT().DeleteVacancyFromFavorites("test@gmail.com", id).Return(nil)
+			},
+			sessionRepBehavior: func(sessionRep *mock_session.MockRepository, token string) {
+				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
+			},
+			expectedStatusCode:   200,
+			expectedResponseBody: "",
+		},
+		{
+			name:           "user not found",
+			emailFromToken: "",
+			inputId:        42,
+			requestParam:   "42",
+			mockBehavior: func(r *mock_usecases.MockVacancy, id uint) {
+				//createdApply := &models.VacancyActivity{ResumeTitle: "some title"}
+				r.EXPECT().DeleteVacancyFromFavorites("test@gmail.com", id).Return(errorHandler.ErrBadRequest)
+			},
+			sessionRepBehavior: func(sessionRep *mock_session.MockRepository, token string) {
+				sessionRep.EXPECT().GetSession(token).Return("", fmt.Errorf("getting session error:"))
+			},
+			expectedStatusCode:   401,
+			expectedResponseBody: "{\"descriptors\":\"\",\"error\":\"Клиент не авторизован\"}",
+		},
+	}
+	for _, test := range testTable {
+		testCase := test
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			mockUseCase := mock_usecases.NewMockVacancy(c)
+			sessionRep := mock_session.NewMockRepository(c)
+			sessionMiddlware := middleware.NewSessionMiddleware(sessionRep)
+
+			if testCase.emailFromToken != "" {
+				testCase.mockBehavior(mockUseCase, testCase.inputId)
+			}
+
+			testCase.sessionRepBehavior(sessionRep, testCase.inputToken)
+
+			handler := VacancyHandler{
+				vacancyUseCase: mockUseCase,
+			}
+
+			r := gin.New()
+			r.DELETE("/:id", sessionMiddlware.Session, handler.DeleteVacancyFromFavorites, errorHandler.Middleware())
+
+			cookie := &http.Cookie{
+				Name:  "session",
+				Value: testCase.inputToken,
+			}
+
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest("DELETE", "/"+testCase.requestParam,
+				bytes.NewBufferString(""))
+
+			req.AddCookie(cookie)
+			r.ServeHTTP(w, req)
+
+			assert.Equal(t, testCase.expectedStatusCode, w.Code)
+			assert.Equal(t, testCase.expectedResponseBody, w.Body.String())
+		})
+	}
+}
