@@ -293,7 +293,7 @@ func (us *UserService) UploadUserImage(user *models.UserAccount, fileHeader *mul
 	}
 
 	err = us.userRep.UpdateUser(&models.UserAccount{ID: user.ID, Image: user.Image,
-		TwoFactorSignIn: oldUser.TwoFactorSignIn, Description: oldUser.Description, AverageColor: user.AverageColor})
+		TwoFactorSignIn: oldUser.TwoFactorSignIn, Description: oldUser.Description})
 
 	if err != nil {
 		return "", err
