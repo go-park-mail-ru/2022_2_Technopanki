@@ -39,7 +39,7 @@ jobs:
         run: golangci-lint run
 
       - name: Run go test
-        run: go test $(go list ./... | grep -v vendor) -race -coverprofile=coverage.out
+        run: go test $(go list ./... | grep -v vendor) -race -coverprofile=coverage.out.tmp; cat coverage.out.tmp | grep -v ".pb.go | grep -v "_easyjson.go"" > coverage.out
 
       - name: Coverage report
         run: go tool cover -func=coverage.out
