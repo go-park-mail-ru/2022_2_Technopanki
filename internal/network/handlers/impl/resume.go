@@ -117,15 +117,14 @@ func (rh *ResumeHandler) GetPreviewResumeByApplicant(c *gin.Context) {
 		return
 	}
 
+	var resumes models.ResumePreviews
 	resumes, getResumeErr := rh.resumeUseCase.GetPreviewResumeByApplicant(uint(userId))
 	if getResumeErr != nil {
 		_ = c.Error(getResumeErr)
 		return
 	}
 
-	var resumesResponse models.GetAllResumePreviewsPointer
-	resumesResponse.Data = resumes
-	resumesJson, err := resumesResponse.MarshalJSON()
+	resumesJson, err := resumes.MarshalJSON()
 	if err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return

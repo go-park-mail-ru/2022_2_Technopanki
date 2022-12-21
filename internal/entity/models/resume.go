@@ -32,13 +32,11 @@ type ResumePreview struct {
 type Resumes []*Resume
 
 //easyjson:json
-type GetAllResumesResponcePointer struct {
-	Data []*Resume `json:"data"`
-}
+type ResumePreviews []*ResumePreview
 
 //easyjson:json
-type GetAllResumePreviewsPointer struct {
-	Data []*ResumePreview `json:"data"`
+type GetAllResumesResponcePointer struct {
+	Data []*Resume `json:"data"`
 }
 
 //easyjson:json
