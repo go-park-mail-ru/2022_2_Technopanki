@@ -73,26 +73,6 @@ func TestUserHandler_SignUp(t *testing.T) {
 			expectedResponseBody: "",
 		},
 		{
-			name: "invalid body",
-			inputUser: models.UserAccount{
-				Email:            "test@gmail.com",
-				Password:         "123456a!",
-				ApplicantSurname: "Urvancev",
-				ApplicantName:    "Zakhar",
-				UserType:         "applicant",
-			},
-			inputBody: `{
-    			"email": "test@gmail.com",
-    	ar",
-                "applicant_surname": "Urvancev",
-    			"user_type": "applicant"
-}`,
-			mockBehavior: func(r *mock_usecases.MockUser, user *models.UserAccount) {
-			},
-			expectedStatusCode:   200,
-			expectedResponseBody: "",
-		},
-		{
 			name: "valid employer",
 			inputUser: models.UserAccount{
 				Email:       "test@gmail.com",
