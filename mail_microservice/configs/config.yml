@@ -9,9 +9,3 @@ mail:
   password: "393hLfdbwzuMxEJ775PC"
   host: "smtp.mail.ru"
   port: 587
-db:
-  username: "jobflowAdmin"
-  host: "jfPostgres"
-  port: "5432"
-  dbname: "jobflowDB"
-  sslmode: "disable"

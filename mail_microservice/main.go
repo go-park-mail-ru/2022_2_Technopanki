@@ -4,16 +4,13 @@ import (
 	auth_handler "HeadHunter/auth_microservice/handler"
 	"HeadHunter/common/session"
 	"HeadHunter/mail_microservice/configs"
-	mailingCron "HeadHunter/mail_microservice/cron"
 	"HeadHunter/mail_microservice/handler"
 	mail_handler "HeadHunter/mail_microservice/handler/impl"
 	usecase "HeadHunter/mail_microservice/usecase/impl"
 	"HeadHunter/mail_microservice/usecase/sender"
 	"HeadHunter/metrics"
-	repositorypkg "HeadHunter/pkg/repository"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -49,19 +46,6 @@ func main() {
 	mailService := usecase.NewMailService(sessionRep, senderService)
 
 	mailHandler := mail_handler.NewMailHandler(mailService)
-
-	db, DBErr := repositorypkg.DBConnect(&mailConfig.DB)
-	if DBErr != nil {
-		logrus.Fatal(DBErr)
-	}
-	c := cron.New(cron.WithSeconds())
-
-	_, err := c.AddFunc("0 0 9 * * 0", mailingCron.Mailing(db, mailService))
-	if err != nil {
-		log.Fatal(err)
-	}
-	c.Start()
-	defer c.Stop()
 
 	grpcSrv := grpc.NewServer()
 	handler.RegisterMailServiceServer(grpcSrv, mailHandler)

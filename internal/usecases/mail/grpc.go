@@ -7,6 +7,7 @@ import (
 	"context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"log"
 )
 
 type MailService struct {
@@ -31,8 +32,12 @@ func (ms *MailService) SendConfirmCode(email string) error {
 }
 
 func (ms *MailService) SendApplicantMailing(emails []string, vacancies []*models.VacancyPreview) error {
+	if len(vacancies) < 5 || len(emails) == 0 {
+		return nil
+	}
 	vacanciesPreview := make([]*handler.VacancyPreview, len(vacancies))
 	for i, vacancy := range vacancies {
+		vacanciesPreview[i] = &handler.VacancyPreview{}
 		vacanciesPreview[i].Id = uint64(vacancy.Id)
 		vacanciesPreview[i].Image = vacancy.Image
 		vacanciesPreview[i].Title = vacancy.Title
@@ -47,14 +52,20 @@ func (ms *MailService) SendApplicantMailing(emails []string, vacancies []*models
 }
 
 func (ms *MailService) SendEmployerMailing(emails []string, previews []*models.ResumePreview) error {
+	if len(previews) < 5 || len(emails) == 0 {
+		return nil
+	}
+
 	resumePreviews := make([]*handler.ResumePreview, len(previews))
 	for i, preview := range previews {
+		resumePreviews[i] = &handler.ResumePreview{}
 		resumePreviews[i].ApplicantName = preview.ApplicantName
 		resumePreviews[i].ApplicantSurname = preview.ApplicantSurname
 		resumePreviews[i].Id = uint64(preview.Id)
 		resumePreviews[i].Image = preview.Image
 		resumePreviews[i].Title = preview.Title
 		resumePreviews[i].Location = preview.Location
+		log.Println(resumePreviews[i])
 	}
 	_, err := ms.client.SendEmployerMailing(ms.ctx, &handler.EmployerMailingData{Emails: emails})
 	if err != nil {

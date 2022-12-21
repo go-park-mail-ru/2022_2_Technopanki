@@ -44,6 +44,7 @@ func (mh *MailHandler) SendApplicantMailing(ctx context.Context, in *handler.App
 	}
 	vacancies := make([]*models.VacancyPreview, len(in.Vac))
 	for i, preview := range in.Vac {
+		vacancies[i] = &models.VacancyPreview{}
 		vacancies[i].Id = uint(preview.Id)
 		vacancies[i].Title = preview.Title
 		vacancies[i].Image = preview.Image
@@ -66,6 +67,7 @@ func (mh *MailHandler) SendEmployerMailing(ctx context.Context, in *handler.Empl
 	}
 	previews := make([]*models.ResumePreview, len(in.Emp))
 	for i, preview := range in.Emp {
+		previews[i] = &models.ResumePreview{}
 		previews[i].Id = uint(preview.Id)
 		previews[i].UserAccountId = uint(preview.UserAccountId)
 		previews[i].ApplicantName = preview.ApplicantName
