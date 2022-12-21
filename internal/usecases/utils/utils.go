@@ -1,14 +1,12 @@
 package utils
 
 import (
-	"HeadHunter/configs"
 	"HeadHunter/internal/entity/models"
 	"HeadHunter/pkg/errorHandler"
 	"bytes"
 	"encoding/base64"
 	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
 	"github.com/kolesa-team/go-webp/decoder"
-	"github.com/kolesa-team/go-webp/webp"
 	"html/template"
 	"image/png"
 	"io"
