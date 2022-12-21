@@ -136,30 +136,6 @@ func (rh *ResumeHandler) GetPreviewResumeByApplicant(c *gin.Context) {
 }
 
 func (rh *ResumeHandler) GetResumeInPDF(c *gin.Context) {
-	id, idErr := strconv.Atoi(c.Param("id"))
-	if idErr != nil {
-		_ = c.Error(errorHandler.ErrInvalidParam)
-		return
-	}
-
-	style := c.Query("style")
-
-	resumeStyle, exists := themes.ThemesMap[style]
-	if !exists {
-		_ = c.Error(errorHandler.ErrBadRequest)
-		return
-	}
-
-	resumeInPDF, generateErr := rh.resumeUseCase.GetResumeInPDF(uint(id), resumeStyle)
-	if generateErr != nil {
-		_ = c.Error(generateErr)
-		return
-	}
-
-	c.Data(http.StatusOK, "application/pdf", resumeInPDF)
-}
-
-func (rh *ResumeHandler) GetResumeInPDF(c *gin.Context) {
 	email, contextErr := utils.GetEmailFromContext(c)
 	if contextErr != nil {
 		_ = c.Error(contextErr)
