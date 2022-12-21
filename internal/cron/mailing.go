@@ -74,11 +74,6 @@ func Mailing(db *gorm.DB, mail mail.Mail) func() {
 			log.Println("errors with getting resumes: ", resumeErr)
 		}
 
-		log.Println("emails: ", employerEmails, "\nnew resumes:")
-		for _, e := range resumes {
-			log.Println(*e)
-		}
-
 		err := mail.SendEmployerMailing(employerEmails, resumes)
 		if err != nil {
 			logrus.Println("send to applicant error: ", err)

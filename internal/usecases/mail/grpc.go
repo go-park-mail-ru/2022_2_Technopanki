@@ -7,7 +7,6 @@ import (
 	"context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"log"
 )
 
 type MailService struct {
@@ -61,13 +60,14 @@ func (ms *MailService) SendEmployerMailing(emails []string, previews []*models.R
 		resumePreviews[i] = &handler.ResumePreview{}
 		resumePreviews[i].ApplicantName = preview.ApplicantName
 		resumePreviews[i].ApplicantSurname = preview.ApplicantSurname
+		resumePreviews[i].UserAccountId = uint64(preview.UserAccountId)
 		resumePreviews[i].Id = uint64(preview.Id)
 		resumePreviews[i].Image = preview.Image
 		resumePreviews[i].Title = preview.Title
 		resumePreviews[i].Location = preview.Location
-		log.Println(resumePreviews[i])
 	}
-	_, err := ms.client.SendEmployerMailing(ms.ctx, &handler.EmployerMailingData{Emails: emails})
+
+	_, err := ms.client.SendEmployerMailing(ms.ctx, &handler.EmployerMailingData{Emails: emails, Emp: resumePreviews})
 	if err != nil {
 		return err
 	}

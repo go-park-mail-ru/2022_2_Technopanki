@@ -53,10 +53,8 @@ func (ms *MailService) SendApplicantMailing(emails []string, vacancies []*models
 
 func (ms *MailService) SendEmployerMailing(emails []string, previews []*models.ResumePreview) error {
 	previewObject := make([]models.ResumePreview, len(previews))
-	log.Println("len(previews):", len(previews))
-	for i, applicant := range previews {
-		previewObject[i] = *applicant
-		log.Println(previewObject[i])
+	for i, preview := range previews {
+		previewObject[i] = *preview
 	}
 
 	for _, email := range emails {

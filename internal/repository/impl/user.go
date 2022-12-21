@@ -20,7 +20,7 @@ func (up *UserPostgres) CreateUser(user *models.UserAccount) error {
 
 func (up *UserPostgres) UpdateUser(newUser *models.UserAccount) error {
 	err := up.db.Model(newUser).Update("two_factor_sign_in", newUser.TwoFactorSignIn).
-		Update("description", newUser.Description).Error
+		Update("description", newUser.Description).Update("mailing_approval", newUser.MailingApproval).Error
 	if err != nil {
 		return err
 	}
