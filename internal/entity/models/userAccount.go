@@ -51,14 +51,14 @@ type GetAllUsersResponcePointer struct {
 	Data []*UserAccount `json:"data"`
 }
 
-// PrivateUserFields Поля, доступ к которым по умолчанию не доступен
+// PrivateUserFields Поля, по умолчанию не доступные
 var PrivateUserFields = []string{"email", "contact_number",
 	"applicant_current_salary"}
 
-// SafeUserFields Поля, доступ к которым доступен всегда
+// SafeUserFields Поля, доступные всегда
 var SafeUserFields = []string{"id", "user_type", "description", "status", "date_of_birth", "image",
 	"applicant_name", "applicant_surname", "company_name", "location", "company_size", "average_color",
-	"company_website_url", "public_fields", "is_confirmed", "business_type", "two_factor_sign_in"}
+	"company_website_url", "public_fields", "is_confirmed", "business_type", "two_factor_sign_in", "age"}
 
 const NoPublicFields string = "null"
 
