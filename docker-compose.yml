@@ -29,7 +29,7 @@ services:
       POSTGRES_USER: "jobflowAdmin"
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready" ]
+      test: [ "CMD-SHELL", "pg_isready -U jobflowAdmin -d jobflowDB" ]
       interval: 10s
       timeout: 5s
       retries: 5
