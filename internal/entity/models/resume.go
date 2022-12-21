@@ -1,7 +1,9 @@
+//go:generate easyjson -all resume.go
 package models
 
 import "time"
 
+//easyjson:json
 type Resume struct {
 	ID                uint             `json:"id" gorm:"primaryKey;"`
 	UserAccountId     uint             `json:"user_account_id" gorm:"not null;"`
@@ -16,6 +18,7 @@ type Resume struct {
 	ApplicantSkills   []Skill          `json:"applicant_skills" gorm:"many2many:resume_skills;"`
 }
 
+//easyjson:json
 type ResumePreview struct {
 	Image            string    `json:"image"`
 	ApplicantName    string    `json:"applicant_name"`
@@ -25,10 +28,23 @@ type ResumePreview struct {
 	CreatedTime      time.Time `json:"created_date" gorm:"autoCreateTime"`
 }
 
+//easyjson:json
+type Resumes []*Resume
+
+//easyjson:json
+type ResumePreviews []*ResumePreview
+
+//easyjson:json
 type GetAllResumesResponcePointer struct {
 	Data []*Resume `json:"data"`
 }
 
+//easyjson:json
+type Response struct {
+	ID uint `json:"id"`
+}
+
+//easyjson:json
 type ResumeFilter struct {
 	Title             string
 	Location          string

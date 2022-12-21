@@ -1,7 +1,9 @@
+//go:generate easyjson -all experienceDetail.go
 package models
 
 import "time"
 
+//easyjson:json
 type ExperienceDetail struct {
 	ResumeId              uint      `json:"resume_id" gorm:"primaryKey"`
 	IsCurrentJob          string    `json:"is_current_job" gorm:"not null;"`
