@@ -38,6 +38,11 @@ func (ns *NotificationService) CreateNotification(notification *models.Notificat
 	if _, ok := models.AllowedNotificationTypes[notification.Type]; !ok {
 		return nil, errorHandler.ErrBadRequest
 	}
+
+	if notification.UserFromID == notification.UserToID {
+		return &models.NotificationPreview{UserToID: notification.UserToID, UserFromID: notification.UserFromID}, nil
+	}
+
 	createErr := ns.notificationRepo.CreateNotification(notification)
 	if createErr != nil {
 		return nil, createErr
