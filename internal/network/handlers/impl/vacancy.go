@@ -98,16 +98,14 @@ func (vh *VacancyHandler) GetPreviewVacanciesByEmployer(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrInvalidParam)
 		return
 	}
+	var vacancies models.VacancyPreviews
 	vacancies, GetErr := vh.vacancyUseCase.GetPreviewVacanciesByEmployer(uint(companyId))
 	if GetErr != nil {
 		_ = c.Error(GetErr)
 		return
 	}
-
-	var vacanciesResponse models.VacancyPreviewsResponse
-	vacanciesResponse.Data = vacancies
-	vacanciesJson, err := vacanciesResponse.MarshalJSON()
-	if err != nil {
+	vacanciesJson, errJson := vacancies.MarshalJSON()
+	if errJson != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}

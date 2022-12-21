@@ -93,6 +93,7 @@ func (rh *ResumeHandler) GetResumeByApplicant(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrInvalidParam)
 		return
 	}
+	var resumes models.Resumes
 
 	resumes, getResumeErr := rh.resumeUseCase.GetResumeByApplicant(uint(userId))
 	if getResumeErr != nil {
@@ -100,9 +101,7 @@ func (rh *ResumeHandler) GetResumeByApplicant(c *gin.Context) {
 		return
 	}
 
-	var resumesResponse models.GetAllResumesResponcePointer
-	resumesResponse.Data = resumes
-	resumesJson, err := resumesResponse.MarshalJSON()
+	resumesJson, err := resumes.MarshalJSON()
 	if err != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return

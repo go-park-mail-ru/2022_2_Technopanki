@@ -52,6 +52,4 @@ type VacancyPreview struct {
 }
 
 //easyjson:json
-type VacancyPreviewsResponse struct {
-	Data []*VacancyPreview `json:"data"`
-}
+type VacancyPreviews []*VacancyPreview

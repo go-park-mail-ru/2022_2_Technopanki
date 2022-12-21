@@ -29,6 +29,9 @@ type ResumePreview struct {
 }
 
 //easyjson:json
+type Resumes []*Resume
+
+//easyjson:json
 type GetAllResumesResponcePointer struct {
 	Data []*Resume `json:"data"`
 }

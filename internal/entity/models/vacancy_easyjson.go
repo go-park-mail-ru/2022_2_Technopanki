@@ -17,114 +17,82 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjson80a4d695DecodeHeadHunterInternalEntityModels(in *jlexer.Lexer, out *VacancyPreviewsResponse) {
+func easyjson80a4d695DecodeHeadHunterInternalEntityModels(in *jlexer.Lexer, out *VacancyPreviews) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
 		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
+		*out = nil
+	} else {
+		in.Delim('[')
+		if *out == nil {
+			if !in.IsDelim(']') {
+				*out = make(VacancyPreviews, 0, 8)
+			} else {
+				*out = VacancyPreviews{}
+			}
+		} else {
+			*out = (*out)[:0]
 		}
-		switch key {
-		case "data":
+		for !in.IsDelim(']') {
+			var v1 *VacancyPreview
 			if in.IsNull() {
 				in.Skip()
-				out.Data = nil
+				v1 = nil
 			} else {
-				in.Delim('[')
-				if out.Data == nil {
-					if !in.IsDelim(']') {
-						out.Data = make([]*VacancyPreview, 0, 8)
-					} else {
-						out.Data = []*VacancyPreview{}
-					}
-				} else {
-					out.Data = (out.Data)[:0]
+				if v1 == nil {
+					v1 = new(VacancyPreview)
 				}
-				for !in.IsDelim(']') {
-					var v1 *VacancyPreview
-					if in.IsNull() {
-						in.Skip()
-						v1 = nil
-					} else {
-						if v1 == nil {
-							v1 = new(VacancyPreview)
-						}
-						(*v1).UnmarshalEasyJSON(in)
-					}
-					out.Data = append(out.Data, v1)
-					in.WantComma()
-				}
-				in.Delim(']')
+				(*v1).UnmarshalEasyJSON(in)
 			}
-		default:
-			in.SkipRecursive()
+			*out = append(*out, v1)
+			in.WantComma()
 		}
-		in.WantComma()
+		in.Delim(']')
 	}
-	in.Delim('}')
 	if isTopLevel {
 		in.Consumed()
 	}
 }
-func easyjson80a4d695EncodeHeadHunterInternalEntityModels(out *jwriter.Writer, in VacancyPreviewsResponse) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	{
-		const prefix string = ",\"data\":"
-		out.RawString(prefix[1:])
-		if in.Data == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
-		} else {
-			out.RawByte('[')
-			for v2, v3 := range in.Data {
-				if v2 > 0 {
-					out.RawByte(',')
-				}
-				if v3 == nil {
-					out.RawString("null")
-				} else {
-					(*v3).MarshalEasyJSON(out)
-				}
+func easyjson80a4d695EncodeHeadHunterInternalEntityModels(out *jwriter.Writer, in VacancyPreviews) {
+	if in == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+		out.RawString("null")
+	} else {
+		out.RawByte('[')
+		for v2, v3 := range in {
+			if v2 > 0 {
+				out.RawByte(',')
 			}
-			out.RawByte(']')
+			if v3 == nil {
+				out.RawString("null")
+			} else {
+				(*v3).MarshalEasyJSON(out)
+			}
 		}
+		out.RawByte(']')
 	}
-	out.RawByte('}')
 }
 
 // MarshalJSON supports json.Marshaler interface
-func (v VacancyPreviewsResponse) MarshalJSON() ([]byte, error) {
+func (v VacancyPreviews) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
 	easyjson80a4d695EncodeHeadHunterInternalEntityModels(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
-func (v VacancyPreviewsResponse) MarshalEasyJSON(w *jwriter.Writer) {
+func (v VacancyPreviews) MarshalEasyJSON(w *jwriter.Writer) {
 	easyjson80a4d695EncodeHeadHunterInternalEntityModels(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
-func (v *VacancyPreviewsResponse) UnmarshalJSON(data []byte) error {
+func (v *VacancyPreviews) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
 	easyjson80a4d695DecodeHeadHunterInternalEntityModels(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
-func (v *VacancyPreviewsResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
+func (v *VacancyPreviews) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson80a4d695DecodeHeadHunterInternalEntityModels(l, v)
 }
 func easyjson80a4d695DecodeHeadHunterInternalEntityModels1(in *jlexer.Lexer, out *VacancyPreview) {
