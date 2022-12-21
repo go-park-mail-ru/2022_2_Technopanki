@@ -64,6 +64,7 @@ type ResumeRepository interface {
 	GetAllResumes(conditions []string, filterValues []interface{}) ([]*models.Resume, error)
 	GetResumeByApplicant(userId uint) ([]*models.Resume, error)
 	GetPreviewResumeByApplicant(userId uint) ([]*models.ResumePreview, error)
+	GetResumeInPDF(resumeId uint) (*models.ResumeInPDF, error)
 	CreateResume(resume *models.Resume, userId uint) error
 	UpdateResume(id uint, resume *models.Resume) error
 	DeleteResume(id uint) error

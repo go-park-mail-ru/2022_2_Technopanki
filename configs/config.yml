@@ -40,3 +40,6 @@ security:
   csrfMode: false
   confirmationTime: 600
   confirmAccountMode: true
+pdf:
+  htmlPath: "/usr/share/html/"
+  zoomSize: 1

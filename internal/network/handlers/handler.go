@@ -70,6 +70,7 @@ type ResumeH interface {
 	GetResumeByApplicant(c *gin.Context)
 	GetAllResumes(c *gin.Context)
 	GetPreviewResumeByApplicant(c *gin.Context)
+	GetResumeInPDF(c *gin.Context)
 	CreateResume(c *gin.Context)
 	UpdateResume(c *gin.Context)
 	DeleteResume(c *gin.Context)
