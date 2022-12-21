@@ -91,6 +91,7 @@ type resumeTemplate struct {
 	ExperiencePostfix string
 	AgePostfix        string
 	ImageBase64       template.URL
+	IsNoZeroYears     bool
 }
 
 func generateHTMLFromResume(resume *models.ResumeInPDF, cfg *configs.Config, style string) (bytes.Buffer, error) {
@@ -103,12 +104,12 @@ func generateHTMLFromResume(resume *models.ResumeInPDF, cfg *configs.Config, sty
 	if err != nil {
 		return bytes.Buffer{}, err
 	}
-
 	templateStruct := &resumeTemplate{
 		Resume:            resume,
 		ExperiencePostfix: resume.ExperienceInYears,
 		AgePostfix:        YearPostfix(resume.Age),
 		ImageBase64:       base64Image,
+		IsNoZeroYears:     resume.Age != 0,
 	}
 
 	buffer := bytes.Buffer{}
