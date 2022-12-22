@@ -73,7 +73,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	_, err = c.AddFunc("@every 20s", myCrons.Mailing(db, mailService))
+	_, err = c.AddFunc("@every 20s", myCrons.Mailing(db, mailService)) //TODO убрать
 	if err != nil {
 		log.Fatal(err)
 	}

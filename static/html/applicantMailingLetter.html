@@ -3,20 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&display=swap');
+
+        h4 {
+            line-height: 0;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .card {
+            grid-area: 1 span;
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            border: 1px solid #DEDEE9;
+            /* grey/small */
+
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.04);
+            border-radius: 16px;
+
+        }
+    </style>
 </head>
-<body>
-<!--<img alt="" height="42" width="42" src="../png/logo.png">-->
-<h2>Jobflow</h2>
+
+<body style="font-family: 'Inter'; margin: 0 120px;">
+<h2 style="text-align: center">Jobflow</h2>
+<p style="font-size: 12px; text-align: center;">Еженедельная рассылка новых вакансий</p>
 <div style="color:black">
-    <h3>5 свежих вакансий</h3>
-    {{range .Vacancies}}
-    <div style = "display:flex;flex-direction:row;">
-        <b>{{.Title}}</b>
-        <div style="color:gray">{{.Location}}</div>
-        <a style="color: #0099ee" href = "http://localhost:8080/api/user/safety/{{.PostedByUserId}}">{{.CompanyName}}</a>
-        <a style="color: #0099ee" href = "http://localhost:8080/api/vacancy/{{.Id}}">Узнать подробнее</a>
+    <h3 style="text-align: center">5 свежих вакансий</h3>
+    <div style="display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;" class="cards">
+        {{range .Vacancies}}
+        <div style=" grid-area: 1 span;
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            border: 1px solid #DEDEE9;
+            /* grey/small */
+
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.04);
+            border-radius: 16px;" class="card">
+            <div style="display: flex; flex-direction: row; justify-content: space-between; align-items: start;">
+                <div style="display: flex; flex-direction: column; gap: 2px;">
+                    <h4>{{.Title}}</h4>
+                    <a style="color: #0099ee;" href="https://jobflow.su/api/user/safety/{{.PostedByUserId}}">{{.CompanyName}}</a>
+                </div>
+                <p style="color:gray; margin-top: 4px">{{.Location}}</p>
+            </div>
+            <a style="color: #0099ee; text-align: center; margin-top: 16px;"
+            href="https://jobflow.su/api/vacancy/{{.Id}}">Узнать подробнее</a>
+        </div>
+        {{end}}
     </div>
-    {{end}}
 </div>
 </body>
 </html>
