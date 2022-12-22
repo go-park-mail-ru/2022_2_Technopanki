@@ -42,6 +42,13 @@ func UploadUserAvatar(name string, image *image.Image, cfg *configs.ImageConfig)
 		return optionErr
 	}
 
+	defer func() {
+		r := recover()
+		if r != nil {
+			err = errorHandler.ErrInvalidFileFormat
+		}
+	}()
+
 	if encodingErr := webp.Encode(resultImage, *image, options); err != nil {
 		return encodingErr
 	}
