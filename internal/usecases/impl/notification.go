@@ -40,7 +40,7 @@ func (ns *NotificationService) CreateNotification(notification *models.Notificat
 	}
 
 	if notification.UserFromID == notification.UserToID {
-		return &models.NotificationPreview{UserToID: notification.UserToID, UserFromID: notification.UserFromID}, nil
+		return nil, nil
 	}
 
 	createErr := ns.notificationRepo.CreateNotification(notification)

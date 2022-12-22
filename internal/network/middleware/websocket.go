@@ -27,8 +27,7 @@ func (wsm *WebSocketMiddleware) Send(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
-	
-	if notification.UserToID == notification.UserFromID {
+	if notification == nil {
 		return
 	}
 
