@@ -1055,7 +1055,6 @@ func TestUserHandler_DeleteUserImage(t *testing.T) {
 
 func TestUserHandler_GetAllApplicants(t *testing.T) {
 	type mockBehavior func(r *mock_usecases.MockUser, filters models.UserFilter)
-	//type sessionRepBehavior func(r *mock_session.MockRepository, token string)
 
 	testTable := []struct {
 		name                 string

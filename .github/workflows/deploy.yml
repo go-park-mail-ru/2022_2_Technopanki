@@ -16,7 +16,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.18
+          go-version: 1.19
 
       - name: Download library
         run: sudo apt-get update; sudo apt-get install libwebp-dev;
@@ -75,5 +75,5 @@ jobs:
           host: ${{ secrets.SSH_IP }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          script: sudo snap install go --channel=1.18/stable --classic;cd /home/ubuntu/backend/;go run vault/envGen.go --token=${{ secrets.VAULT_TOKEN}};sudo docker-compose build --parallel --no-cache;sudo docker-compose up -d;
+          script: sudo snap install go --channel=1.19/stable --classic;cd /home/ubuntu/backend/;go run vault/envGen.go --token=${{ secrets.VAULT_TOKEN}};sudo docker-compose build --parallel --no-cache;sudo docker-compose up -d;
       

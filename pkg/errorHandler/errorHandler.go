@@ -6,6 +6,7 @@ import (
 )
 
 var (
+	ErrCannotDeleteVacancyFromFavorites = errors.New("Невозможно удалить вакансию из списка избранных")
 	ErrInvalidMimeType                  = errors.New("Данный mime type не поддерживается")
 	ErrResumeNotFound                   = errors.New("Резюме не найдено")
 	ErrBadRequest                       = errors.New("Некорректный запрос")
@@ -16,7 +17,6 @@ var (
 	ErrInvalidParam                     = errors.New("Некорректный параметр")
 	ErrCannotCreateUser                 = errors.New("Невозможно создать пользователя")
 	ErrCannotDeleteVacancy              = errors.New("Невозможно удалить вакансию")
-	ErrCannotDeleteVacancyFromFavorites = errors.New("Невозможно удалить вакансию из списка избранных")
 	ErrCannotDeleteVacancyApply         = errors.New("Невозможно удалить отклик на вакансию")
 	ErrCannotUpdateVacancy              = errors.New("Невозможно обновить вакансию")
 	ErrCannotApplyForVacancy            = errors.New("Невозможно откликнуться на вакансию")

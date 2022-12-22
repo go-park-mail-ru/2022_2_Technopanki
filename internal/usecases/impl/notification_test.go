@@ -100,7 +100,7 @@ func TestNotificationService_CreateNotification(t *testing.T) {
 	}{
 		{
 			name:       "ok apply",
-			inputNotic: &models.Notification{Type: models.AllowedNotificationTypes[models.ApplyNotificationType]},
+			inputNotic: &models.Notification{Type: models.AllowedNotificationTypes[models.ApplyNotificationType], UserToID: 5},
 			mockBehavior: func(r *mock_repository.MockNotificationRepository, notic *models.Notification, expected *models.NotificationPreview) {
 				r.EXPECT().CreateNotification(notic).Return(nil)
 				r.EXPECT().GetNotificationPreviewApply(notic.ID).Return(expected, nil)
@@ -110,7 +110,7 @@ func TestNotificationService_CreateNotification(t *testing.T) {
 		},
 		{
 			name:       "ok download pdf",
-			inputNotic: &models.Notification{Type: models.AllowedNotificationTypes[models.DownloadResumeType]},
+			inputNotic: &models.Notification{Type: models.AllowedNotificationTypes[models.DownloadResumeType], UserToID: 5},
 			mockBehavior: func(r *mock_repository.MockNotificationRepository, notic *models.Notification, expected *models.NotificationPreview) {
 				r.EXPECT().CreateNotification(notic).Return(nil)
 				r.EXPECT().GetNotificationPreviewDownloadPDF(notic.ID).Return(expected, nil)
@@ -128,12 +128,20 @@ func TestNotificationService_CreateNotification(t *testing.T) {
 		},
 		{
 			name:       "cannot create",
-			inputNotic: &models.Notification{Type: models.AllowedNotificationTypes[models.ApplyNotificationType]},
+			inputNotic: &models.Notification{Type: models.AllowedNotificationTypes[models.ApplyNotificationType], UserToID: 5},
 			mockBehavior: func(r *mock_repository.MockNotificationRepository, notic *models.Notification, expected *models.NotificationPreview) {
 				r.EXPECT().CreateNotification(notic).Return(errorHandler.ErrBadRequest)
 			},
 			expected:    nil,
 			expectedErr: errorHandler.ErrBadRequest,
+		},
+		{
+			name:       "to = from",
+			inputNotic: &models.Notification{Type: models.AllowedNotificationTypes[models.ApplyNotificationType], UserToID: 5, UserFromID: 5},
+			mockBehavior: func(r *mock_repository.MockNotificationRepository, notic *models.Notification, expected *models.NotificationPreview) {
+			},
+			expected:    nil,
+			expectedErr: nil,
 		},
 	}
 

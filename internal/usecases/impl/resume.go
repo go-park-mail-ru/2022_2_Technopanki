@@ -65,18 +65,34 @@ func (rs *ResumeService) GetPreviewResumeByApplicant(userId uint) ([]*models.Res
 	return resumesPreview, getErr
 }
 
-func (rs *ResumeService) GetResumeInPDF(resumeId uint, style string) ([]byte, error) {
+func (rs *ResumeService) GetResumeInPDF(email string, resumeId uint, style string) (*models.Notification, []byte, error) {
+	user, getErr := rs.userRep.GetUserByEmail(email)
+	if getErr != nil {
+		return nil, nil, getErr
+	}
+
 	resumeInPDFModel, getErr := rs.resumeRep.GetResumeInPDF(resumeId)
 	if getErr != nil {
-		return nil, getErr
+		return nil, nil, getErr
 	}
 
 	resumeInPDF, generateErr := utils.GenerateResumeInPDF(resumeInPDFModel, rs.cfg, style)
 	if generateErr != nil {
-		return nil, generateErr
+		return nil, nil, generateErr
 	}
 
-	return resumeInPDF, nil
+	resume, getResumeErr := rs.resumeRep.GetResume(resumeId)
+	if getResumeErr != nil {
+		return nil, nil, getResumeErr
+	}
+
+	notification := &models.Notification{
+		UserFromID: user.ID,
+		UserToID:   resume.UserAccountId,
+		Type:       models.AllowedNotificationTypes[models.DownloadResumeType],
+		ObjectId:   resume.ID,
+	}
+	return notification, resumeInPDF, nil
 }
 
 func (rs *ResumeService) CreateResume(resume *models.Resume, email string) error {

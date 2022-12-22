@@ -27,6 +27,11 @@ func (wsm *WebSocketMiddleware) Send(c *gin.Context) {
 		_ = c.Error(errorHandler.ErrBadRequest)
 		return
 	}
+
+	if notification == nil {
+		return
+	}
+
 	data, marshallErr := json.Marshal(notification)
 	if marshallErr != nil {
 		_ = c.Error(errorHandler.ErrBadRequest)
