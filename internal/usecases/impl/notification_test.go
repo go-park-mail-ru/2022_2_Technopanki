@@ -140,7 +140,7 @@ func TestNotificationService_CreateNotification(t *testing.T) {
 			inputNotic: &models.Notification{Type: models.AllowedNotificationTypes[models.ApplyNotificationType], UserToID: 5, UserFromID: 5},
 			mockBehavior: func(r *mock_repository.MockNotificationRepository, notic *models.Notification, expected *models.NotificationPreview) {
 			},
-			expected:    &models.NotificationPreview{UserToID: 5, UserFromID: 5},
+			expected:    nil,
 			expectedErr: nil,
 		},
 	}
