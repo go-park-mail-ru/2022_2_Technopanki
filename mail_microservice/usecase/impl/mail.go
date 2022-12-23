@@ -7,6 +7,7 @@ import (
 	"HeadHunter/pkg/errorHandler"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"log"
 )
 
 type MailService struct {
@@ -35,21 +36,31 @@ func (ms *MailService) SendConfirmCode(email string) error {
 	return nil
 }
 
-func (ms *MailService) SendApplicantMailing(emails []string, vacancies []*models.Vacancy) error {
+func (ms *MailService) SendApplicantMailing(emails []string, vacancies []*models.VacancyPreview) error {
+	vacanciesObjects := make([]models.VacancyPreview, len(vacancies))
+	for i, vacancy := range vacancies {
+		vacanciesObjects[i] = *vacancy
+	}
+
 	for _, email := range emails {
-		err := ms.sender.SendApplicantMailing(email, vacancies)
+		err := ms.sender.SendApplicantMailing(email, vacanciesObjects)
 		if err != nil {
-			return err
+			log.Printf("error with send to %s: %s", email, err)
 		}
 	}
 	return nil
 }
 
-func (ms *MailService) SendEmployerMailing(emails []string, applicants []*models.UserAccount) error {
+func (ms *MailService) SendEmployerMailing(emails []string, previews []*models.ResumePreview) error {
+	previewObject := make([]models.ResumePreview, len(previews))
+	for i, preview := range previews {
+		previewObject[i] = *preview
+	}
+
 	for _, email := range emails {
-		err := ms.sender.SendEmployerMailing(email, applicants)
+		err := ms.sender.SendEmployerMailing(email, previewObject)
 		if err != nil {
-			return err
+			log.Printf("error with send to %s: %s", email, err)
 		}
 	}
 	return nil

@@ -24,6 +24,7 @@ type MailConfig struct {
 }
 
 func InitConfig(config *Config) error {
+
 	filename, fileErr := filepath.Abs("./mail_microservice/configs/config.yml")
 	if fileErr != nil {
 		return fileErr

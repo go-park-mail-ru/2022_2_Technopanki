@@ -4,7 +4,7 @@ import (
 	auth_handler "HeadHunter/auth_microservice/handler"
 	"HeadHunter/common/session"
 	"HeadHunter/configs"
-	"HeadHunter/internal/cron"
+	myCrons "HeadHunter/internal/cron"
 	"HeadHunter/internal/network"
 	"HeadHunter/internal/network/handlers"
 	"HeadHunter/internal/network/middleware"
@@ -14,9 +14,11 @@ import (
 	"HeadHunter/internal/usecases/mail"
 	mail_handler "HeadHunter/mail_microservice/handler"
 	repositorypkg "HeadHunter/pkg/repository"
+	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"log"
 	"strings"
 	"time"
 )
@@ -65,6 +67,15 @@ func main() {
 
 	mailService := mail.NewMailService(mailClient)
 
+	c := cron.New(cron.WithSeconds())
+	_, err := c.AddFunc("0 0 9 * * 0", myCrons.Mailing(postgresRepository.UserRepository, mailService))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	c.Start()
+	defer c.Stop()
+
 	useCase := usecases.NewUseCases(
 		postgresRepository,
 		sessionRepository,
@@ -76,7 +87,7 @@ func main() {
 
 	handler := handlers.NewHandlers(useCase, &mainConfig)
 
-	go cron.ClearDBFromUnconfirmedUser(db, &mainConfig)
+	go myCrons.ClearDBFromUnconfirmedUser(db, &mainConfig)
 
 	router := network.InitRoutes(handler, sessionMiddleware, &mainConfig, wsPool)
 

@@ -62,10 +62,42 @@ func (ss *SenderService) SendConfirmCode(email, code string) error {
 	return ss.SendMail([]string{email}, "Подтверждение аккаунта", formBuf.String())
 }
 
-func (ss *SenderService) SendApplicantMailing(email string, vacancies []*models.Vacancy) error {
-	return nil
+func (ss *SenderService) SendApplicantMailing(email string, vacancies []models.VacancyPreview) error {
+	form, parseErr := template.ParseFiles("./static/html/applicantMailingLetter.html")
+	if parseErr != nil {
+		return parseErr
+	}
+
+	data := struct {
+		Vacancies []models.VacancyPreview
+	}{
+		Vacancies: vacancies,
+	}
+
+	formBuf := bytes.NewBuffer([]byte(""))
+	executeErr := form.Execute(formBuf, data)
+	if executeErr != nil {
+		return executeErr
+	}
+	return ss.SendMail([]string{email}, "Свежие вакансии", formBuf.String())
 }
 
-func (ss *SenderService) SendEmployerMailing(email string, applicants []*models.UserAccount) error {
-	return nil
+func (ss *SenderService) SendEmployerMailing(email string, previews []models.ResumePreview) error {
+	form, parseErr := template.ParseFiles("./static/html/employerMailingLetter.html")
+	if parseErr != nil {
+		return parseErr
+	}
+
+	data := struct {
+		Resumes []models.ResumePreview
+	}{
+		Resumes: previews,
+	}
+
+	formBuf := bytes.NewBuffer([]byte(""))
+	executeErr := form.Execute(formBuf, data)
+	if executeErr != nil {
+		return executeErr
+	}
+	return ss.SendMail([]string{email}, "Новые резюме", formBuf.String())
 }

@@ -374,3 +374,19 @@ func (uh *UserHandler) UpdatePassword(c *gin.Context) {
 
 	c.Status(http.StatusOK)
 }
+
+func (uh *UserHandler) GetMailing(c *gin.Context) {
+	email, emailErr := utils.GetEmailFromContext(c)
+	if emailErr != nil {
+		_ = c.Error(emailErr)
+		return
+	}
+
+	err := uh.userUseCase.GetMailing(email)
+	if err != nil {
+		_ = c.Error(err)
+		return
+	}
+
+	c.Status(http.StatusOK)
+}

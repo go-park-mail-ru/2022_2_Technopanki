@@ -35,7 +35,7 @@ func (m *MockMail) EXPECT() *MockMailMockRecorder {
 }
 
 // SendApplicantMailing mocks base method.
-func (m *MockMail) SendApplicantMailing(emails []string, vacancies []*models.Vacancy) error {
+func (m *MockMail) SendApplicantMailing(emails []string, vacancies []*models.VacancyPreview) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SendApplicantMailing", emails, vacancies)
 	ret0, _ := ret[0].(error)
@@ -63,9 +63,9 @@ func (mr *MockMailMockRecorder) SendConfirmCode(email interface{}) *gomock.Call 
 }
 
 // SendEmployerMailing mocks base method.
-func (m *MockMail) SendEmployerMailing(emails []string, applicants []*models.UserAccount) error {
+func (m *MockMail) SendEmployerMailing(emails []string, previews []*models.ResumePreview) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendEmployerMailing", emails, applicants)
+	ret := m.ctrl.Call(m, "SendEmployerMailing", emails, previews)
 	ret0, _ := ret[0].(error)
 	return ret0
 }

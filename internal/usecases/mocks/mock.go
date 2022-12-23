@@ -110,6 +110,20 @@ func (mr *MockUserMockRecorder) GetAllEmployers(filters interface{}) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllEmployers", reflect.TypeOf((*MockUser)(nil).GetAllEmployers), filters)
 }
 
+// GetMailing mocks base method.
+func (m *MockUser) GetMailing(email string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetMailing", email)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// GetMailing indicates an expected call of GetMailing.
+func (mr *MockUserMockRecorder) GetMailing(email interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMailing", reflect.TypeOf((*MockUser)(nil).GetMailing), email)
+}
+
 // GetUser mocks base method.
 func (m *MockUser) GetUser(id uint) (*models.UserAccount, error) {
 	m.ctrl.T.Helper()
@@ -637,16 +651,17 @@ func (mr *MockResumeMockRecorder) GetResumeByApplicant(userId interface{}) *gomo
 // GetResumeInPDF mocks base method.
 func (m *MockResume) GetResumeInPDF(email string, resumeId uint, style string) (*models.Notification, []byte, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetResumeInPDF", resumeId, style)
-	ret0, _ := ret[0].([]byte)
-	ret1, _ := ret[1].(error)
-	return nil, ret0, ret1
+	ret := m.ctrl.Call(m, "GetResumeInPDF", email, resumeId, style)
+	ret0, _ := ret[0].(*models.Notification)
+	ret1, _ := ret[1].([]byte)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // GetResumeInPDF indicates an expected call of GetResumeInPDF.
-func (mr *MockResumeMockRecorder) GetResumeInPDF(resumeId, style interface{}) *gomock.Call {
+func (mr *MockResumeMockRecorder) GetResumeInPDF(email, resumeId, style interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetResumeInPDF", reflect.TypeOf((*MockResume)(nil).GetResumeInPDF), resumeId, style)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetResumeInPDF", reflect.TypeOf((*MockResume)(nil).GetResumeInPDF), email, resumeId, style)
 }
 
 // UpdateResume mocks base method.

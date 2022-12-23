@@ -13,20 +13,24 @@ message Nothing {
   bool dummy = 1;
 }
 
-message ApplicantPreview {
+message ResumePreview {
   uint64 id = 1;
-  string image = 2;
-  string applicantName = 3;
-  string applicantSurname = 4;
-  string status = 5;
-  string location = 6;
+  uint64 user_account_id = 2;
+  string image = 3;
+  string applicantName = 4;
+  string applicantSurname = 5;
+  string title = 6;
+  string location = 7;
 
 }
 
 message VacancyPreview {
   uint64 id = 1;
-  string image = 2;
-  string title = 3;
+  uint64 postedByUserId = 2;
+  string image = 3;
+  string title = 4;
+  string companyName = 5;
+  string location = 6;
 }
 
 message ApplicantMailingData {
@@ -36,7 +40,7 @@ message ApplicantMailingData {
 
 message EmployerMailingData {
   repeated string emails = 1;
-  repeated ApplicantPreview emp = 2;
+  repeated ResumePreview emp = 2;
 }
 
 service MailService {
