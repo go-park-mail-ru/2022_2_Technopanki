@@ -648,7 +648,7 @@ func TestVacancyHandler_GetPreviewVacanciesByEmployer(t *testing.T) {
 				sessionRep.EXPECT().GetSession(token).Return("test@gmail.com", nil)
 			},
 			expectedStatusCode:   200,
-			expectedResponseBody: "[{\"id\":42,\"postedByUserId\":0,\"company_name\":\"\",\"title\":\"some vacancy\",\"image\":\"\",\"salary\":0,\"location\":\"\",\"format\":\"\",\"hours\":\"\",\"description\":\"\"}]",
+			expectedResponseBody: "[{\"id\":42,\"title\":\"some vacancy\",\"image\":\"\",\"salary\":0,\"location\":\"\",\"format\":\"\",\"hours\":\"\",\"description\":\"\"}]",
 		},
 		{
 			name:           "user not found",
