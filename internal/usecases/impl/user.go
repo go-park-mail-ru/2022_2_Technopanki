@@ -173,7 +173,6 @@ func (us *UserService) UpdateUser(input *models.UserAccount) error {
 	}
 
 	input = escaping.EscapingObject[*models.UserAccount](input)
-
 	oldUser, getErr := us.userRep.GetUserByEmail(input.Email)
 	if getErr != nil {
 		return getErr
@@ -205,7 +204,6 @@ func (us *UserService) UpdateUser(input *models.UserAccount) error {
 	if dbError != nil {
 		return dbError
 	}
-
 	return nil
 }
 
@@ -377,4 +375,34 @@ func (us *UserService) UpdatePassword(code, email, password string) error {
 	}
 	user.Password = encryptedPassword
 	return us.userRep.UpdateUser(user)
+}
+
+func (us *UserService) GetMailing(email string) error {
+	user, getErr := us.userRep.GetUserByEmail(email)
+	if getErr != nil {
+		return getErr
+	}
+	if user.UserType == "applicant" {
+		previews, findErr := us.userRep.FindNewVacancies()
+		if findErr != nil {
+			return findErr
+		}
+		err := us.mail.SendApplicantMailing([]string{email}, previews)
+		if err != nil {
+			return err
+		}
+	}
+
+	if user.UserType == "employer" {
+		previews, findErr := us.userRep.FindNewResumes()
+		if findErr != nil {
+			return findErr
+		}
+		err := us.mail.SendEmployerMailing([]string{email}, previews)
+		if err != nil {
+			return err
+		}
+	}
+
+	return errorHandler.InvalidUserType
 }

@@ -64,7 +64,7 @@ func sendUserResponse(c *gin.Context, user *models.UserAccount, fields []string)
 }
 
 func SendSuccessData(c *gin.Context, user *models.UserAccount) {
-	sendUserResponse(c, user, []string{"id", "user_type", "name_data", "image", "average_color", "email", "company_size", "two_factor_sign_in"})
+	sendUserResponse(c, user, []string{"id", "user_type", "name_data", "image", "average_color", "email", "company_size", "two_factor_sign_in", "mailing_approval"})
 }
 
 func SendPreviewData(c *gin.Context, user *models.UserAccount) {

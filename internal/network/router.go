@@ -57,6 +57,7 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 			user.GET("/preview/:id", h.UserHandler.GetPreview, errorHandler.Middleware())
 			user.POST("/", sessionMW.Session, h.UserHandler.UpdateUser, errorHandler.Middleware())
 			user.POST("/password", sessionMW.Session, h.UserHandler.UpdatePassword, errorHandler.Middleware())
+			user.GET("/mailing", sessionMW.Session, h.UserHandler.GetMailing, errorHandler.Middleware())
 			image := user.Group("/image")
 			{
 				image.POST("/", sessionMW.Session, h.UserHandler.UploadUserImage, errorHandler.Middleware())

@@ -42,6 +42,7 @@ type UserH interface {
 	GetPreview(c *gin.Context)
 	ConfirmUser(c *gin.Context)
 	UpdatePassword(c *gin.Context)
+	GetMailing(c *gin.Context)
 }
 
 type VacancyH interface {

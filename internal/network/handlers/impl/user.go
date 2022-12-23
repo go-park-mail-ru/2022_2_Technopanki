@@ -7,6 +7,7 @@ import (
 	"HeadHunter/internal/network/response"
 	"HeadHunter/internal/usecases"
 	"HeadHunter/pkg/errorHandler"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/mailru/easyjson"
 	"net/http"
@@ -110,6 +111,7 @@ func (uh *UserHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 	input.Email = email
+	fmt.Println("user in handler: ", input)
 
 	updateErr := uh.userUseCase.UpdateUser(&input)
 	if updateErr != nil {
@@ -369,6 +371,22 @@ func (uh *UserHandler) UpdatePassword(c *gin.Context) {
 
 	if updatePasswordErr != nil {
 		_ = c.Error(updatePasswordErr)
+		return
+	}
+
+	c.Status(http.StatusOK)
+}
+
+func (uh *UserHandler) GetMailing(c *gin.Context) {
+	email, emailErr := utils.GetEmailFromContext(c)
+	if emailErr != nil {
+		_ = c.Error(emailErr)
+		return
+	}
+
+	err := uh.userUseCase.GetMailing(email)
+	if err != nil {
+		_ = c.Error(err)
 		return
 	}
 

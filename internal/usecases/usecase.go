@@ -39,7 +39,6 @@ type User interface {
 	AuthCheck(email string) (*models.UserAccount, error)
 	UpdateUser(input *models.UserAccount) error
 	GetUser(id uint) (*models.UserAccount, error)
-	//GetAllUsers(filter string) ([]*models.UserAccount, error)
 	GetAllEmployers(filters models.UserFilter) ([]*models.UserAccount, error)
 	GetAllApplicants(filters models.UserFilter) ([]*models.UserAccount, error)
 	GetUserId(email string) (uint, error)
@@ -49,6 +48,7 @@ type User interface {
 	DeleteUserImage(user *models.UserAccount) error
 	ConfirmUser(code, email string) (*models.UserAccount, string, error)
 	UpdatePassword(code, email, password string) error
+	GetMailing(email string) error
 }
 
 type Vacancy interface {
