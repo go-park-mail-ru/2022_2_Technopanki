@@ -68,15 +68,11 @@ func main() {
 	mailService := mail.NewMailService(mailClient)
 
 	c := cron.New(cron.WithSeconds())
-	_, err := c.AddFunc("0 0 9 * * 0", myCrons.Mailing(db, mailService))
+	_, err := c.AddFunc("0 0 9 * * 0", myCrons.Mailing(postgresRepository.UserRepository, mailService))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	_, err = c.AddFunc("@every 20s", myCrons.Mailing(db, mailService)) //TODO убрать
-	if err != nil {
-		log.Fatal(err)
-	}
 	c.Start()
 	defer c.Stop()
 

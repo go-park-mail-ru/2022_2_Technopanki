@@ -391,9 +391,7 @@ func (us *UserService) GetMailing(email string) error {
 		if err != nil {
 			return err
 		}
-	}
-
-	if user.UserType == "employer" {
+	} else if user.UserType == "employer" {
 		previews, findErr := us.userRep.FindNewResumes()
 		if findErr != nil {
 			return findErr
@@ -402,7 +400,8 @@ func (us *UserService) GetMailing(email string) error {
 		if err != nil {
 			return err
 		}
+	} else {
+		return errorHandler.InvalidUserType
 	}
-
-	return errorHandler.InvalidUserType
+	return nil
 }

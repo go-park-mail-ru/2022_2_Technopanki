@@ -48,6 +48,9 @@ func (mh *MailHandler) SendApplicantMailing(ctx context.Context, in *handler.App
 		vacancies[i].Id = uint(preview.Id)
 		vacancies[i].Title = preview.Title
 		vacancies[i].Image = preview.Image
+		vacancies[i].PostedByUserId = uint(preview.PostedByUserId)
+		vacancies[i].CompanyName = preview.CompanyName
+		vacancies[i].Location = preview.Location
 	}
 	sendErr := mh.mailUseCase.SendApplicantMailing(in.Emails, vacancies)
 	if sendErr != nil {

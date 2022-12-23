@@ -26,8 +26,11 @@ message ResumePreview {
 
 message VacancyPreview {
   uint64 id = 1;
-  string image = 2;
-  string title = 3;
+  uint64 postedByUserId = 2;
+  string image = 3;
+  string title = 4;
+  string companyName = 5;
+  string location = 6;
 }
 
 message ApplicantMailingData {

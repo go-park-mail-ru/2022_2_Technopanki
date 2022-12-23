@@ -40,6 +40,9 @@ func (ms *MailService) SendApplicantMailing(emails []string, vacancies []*models
 		vacanciesPreview[i].Id = uint64(vacancy.Id)
 		vacanciesPreview[i].Image = vacancy.Image
 		vacanciesPreview[i].Title = vacancy.Title
+		vacanciesPreview[i].PostedByUserId = uint64(vacancy.PostedByUserId)
+		vacanciesPreview[i].Location = vacancy.Location
+		vacanciesPreview[i].CompanyName = vacancy.CompanyName
 	}
 
 	_, err := ms.client.SendApplicantMailing(ms.ctx,
