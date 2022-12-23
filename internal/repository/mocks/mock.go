@@ -48,6 +48,66 @@ func (mr *MockUserRepositoryMockRecorder) CreateUser(user interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockUserRepository)(nil).CreateUser), user)
 }
 
+// FindApplicantsToMailing mocks base method.
+func (m *MockUserRepository) FindApplicantsToMailing() ([]string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindApplicantsToMailing")
+	ret0, _ := ret[0].([]string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindApplicantsToMailing indicates an expected call of FindApplicantsToMailing.
+func (mr *MockUserRepositoryMockRecorder) FindApplicantsToMailing() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindApplicantsToMailing", reflect.TypeOf((*MockUserRepository)(nil).FindApplicantsToMailing))
+}
+
+// FindEmployersToMailing mocks base method.
+func (m *MockUserRepository) FindEmployersToMailing() ([]string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindEmployersToMailing")
+	ret0, _ := ret[0].([]string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindEmployersToMailing indicates an expected call of FindEmployersToMailing.
+func (mr *MockUserRepositoryMockRecorder) FindEmployersToMailing() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindEmployersToMailing", reflect.TypeOf((*MockUserRepository)(nil).FindEmployersToMailing))
+}
+
+// FindNewResumes mocks base method.
+func (m *MockUserRepository) FindNewResumes() ([]*models.ResumePreview, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindNewResumes")
+	ret0, _ := ret[0].([]*models.ResumePreview)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindNewResumes indicates an expected call of FindNewResumes.
+func (mr *MockUserRepositoryMockRecorder) FindNewResumes() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindNewResumes", reflect.TypeOf((*MockUserRepository)(nil).FindNewResumes))
+}
+
+// FindNewVacancies mocks base method.
+func (m *MockUserRepository) FindNewVacancies() ([]*models.VacancyPreview, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindNewVacancies")
+	ret0, _ := ret[0].([]*models.VacancyPreview)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindNewVacancies indicates an expected call of FindNewVacancies.
+func (mr *MockUserRepositoryMockRecorder) FindNewVacancies() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindNewVacancies", reflect.TypeOf((*MockUserRepository)(nil).FindNewVacancies))
+}
+
 // GetAllUsers mocks base method.
 func (m *MockUserRepository) GetAllUsers(conditions []string, filterValues []interface{}, flag string) ([]*models.UserAccount, error) {
 	m.ctrl.T.Helper()
@@ -61,36 +121,6 @@ func (m *MockUserRepository) GetAllUsers(conditions []string, filterValues []int
 func (mr *MockUserRepositoryMockRecorder) GetAllUsers(conditions, filterValues, flag interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllUsers", reflect.TypeOf((*MockUserRepository)(nil).GetAllUsers), conditions, filterValues, flag)
-}
-
-// GetBestApplicantForEmployer mocks base method.
-func (m *MockUserRepository) GetBestApplicantForEmployer() ([]*models.UserAccount, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetBestApplicantForEmployer")
-	ret0, _ := ret[0].([]*models.UserAccount)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetBestApplicantForEmployer indicates an expected call of GetBestApplicantForEmployer.
-func (mr *MockUserRepositoryMockRecorder) GetBestApplicantForEmployer() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBestApplicantForEmployer", reflect.TypeOf((*MockUserRepository)(nil).GetBestApplicantForEmployer))
-}
-
-// GetBestVacanciesForApplicant mocks base method.
-func (m *MockUserRepository) GetBestVacanciesForApplicant() ([]*models.Vacancy, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetBestVacanciesForApplicant")
-	ret0, _ := ret[0].([]*models.Vacancy)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetBestVacanciesForApplicant indicates an expected call of GetBestVacanciesForApplicant.
-func (mr *MockUserRepositoryMockRecorder) GetBestVacanciesForApplicant() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBestVacanciesForApplicant", reflect.TypeOf((*MockUserRepository)(nil).GetBestVacanciesForApplicant))
 }
 
 // GetUser mocks base method.
