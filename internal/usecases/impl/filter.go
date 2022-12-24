@@ -3,7 +3,7 @@ package impl
 func VacancyFilterQueries(filterName string) string {
 	switch filterName {
 	case "Title":
-		return "title LIKE ?"
+		return "title ILIKE ?"
 	case "Location":
 		return "location = ?"
 	case "Format":
@@ -20,7 +20,7 @@ func VacancyFilterQueries(filterName string) string {
 func EmployerFilterQueries(filterName string) string {
 	switch filterName {
 	case "CompanyName":
-		return "company_name LIKE ? AND user_type = 'employer'"
+		return "company_name ILIKE ? AND user_type = 'employer'"
 	case "Location":
 		return "location = ? AND user_type = 'employer'"
 	case "BusinessType":
@@ -35,9 +35,9 @@ func EmployerFilterQueries(filterName string) string {
 func ApplicantFilterQueries(filterName string) string {
 	switch filterName {
 	case "ApplicantName":
-		return "applicant_name LIKE ? AND user_type = 'applicant'"
+		return "applicant_name ILIKE ? AND user_type = 'applicant'"
 	case "ApplicantSurname":
-		return "applicant_surname LIKE ? AND user_type = 'applicant'"
+		return "applicant_surname ILIKE ? AND user_type = 'applicant'"
 	case "Location":
 		return "location = ? AND user_type = 'applicant'"
 	case "FirstAgeValue":
@@ -50,7 +50,7 @@ func ApplicantFilterQueries(filterName string) string {
 func ResumeFilterQueries(filterName string) string {
 	switch filterName {
 	case "Title":
-		return "title LIKE ?"
+		return "title ILIKE ?"
 	case "Location":
 		return "location = ?"
 	case "ExperienceInYears":
