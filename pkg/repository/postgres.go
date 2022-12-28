@@ -8,12 +8,14 @@ import (
 )
 
 type DBConfig struct {
-	Username string `yaml:"username"`
-	Host     string `yaml:"host"`
-	Port     string `yaml:"port"`
-	DBName   string `yaml:"dbname"`
-	Password string `yaml:"password"`
-	SSLMode  string `yaml:"sslmode"`
+	Username           string `yaml:"username"`
+	Host               string `yaml:"host"`
+	Port               string `yaml:"port"`
+	MaxIdleConnections int    `yaml:"maxConnections"`
+	MaxOpenConnections int    `yaml:"maxOpenConnections"`
+	DBName             string `yaml:"dbname"`
+	Password           string `yaml:"password"`
+	SSLMode            string `yaml:"sslmode"`
 }
 
 func DBConnect(cfg *DBConfig) (*gorm.DB, error) {
@@ -27,6 +29,14 @@ func DBConnect(cfg *DBConfig) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	sqlDB, sqlErr := db.DB()
+	if sqlErr != nil {
+		return nil, sqlErr
+	}
+	sqlDB.SetMaxIdleConns(cfg.MaxIdleConnections)
+	sqlDB.SetMaxOpenConns(cfg.MaxOpenConnections)
+
 	err = db.AutoMigrate(&models.UserAccount{}, &models.Resume{}, &models.EducationDetail{}, &models.ExperienceDetail{},
 		&models.Vacancy{}, &models.Skill{}, &models.VacancyActivity{}, &models.BusinessType{}, &models.Notification{})
 	if err != nil {
