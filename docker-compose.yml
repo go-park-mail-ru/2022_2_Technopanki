@@ -33,7 +33,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    command: postgres -c lock_timeout=1s -c statement_timeout=5s -c listen_addresses='jfPostgres, localhost'
+    command: postgres -c lock_timeout=1s -c statement_timeout=5s -c listen_addresses='jfPostgres'
     ports:
       - '5432:5432'
     volumes:
