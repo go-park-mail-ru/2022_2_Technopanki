@@ -33,7 +33,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    command: postgres -c logging_collector='on' -c log_destination='jsonlog' -c log_directory='/logs' -c log_min_duration_statement=1000 -c log_line_prefix='%t [%p]:' -c log_filename='server_log.%a' -c log_truncate_on_rotation='on' -c log_rotation_age=1440 -c log_checkpoints='on' -c log_connections='on' -c log_disconnections='on' -c log_lock_waits='on' -c log_temp_files=0 -c log_autovacuum_min_duration=0 -c log_error_verbosity='default' -c log_checkpoints='on' -c log_connections='on' -c log_disconnections='on' -c log_lock_waits='on' -c log_temp_files=0 -c log_autovacuum_min_duration=0 -c log_error_verbosity='default' -c lock_timeout=1s -c statement_timeout=5s -c listen_addresses='jfPostgres'
+    command: postgres -c logging_collector='on' -c log_destination='jsonlog' -c log_directory='/logs' -c log_min_duration_statement=1000 -c log_line_prefix='%t [%p]:' -c log_filename='server_log.%a' -c log_truncate_on_rotation='on' -c log_rotation_age=1440 -c log_checkpoints='on' -c log_connections='on' -c log_disconnections='on' -c log_lock_waits='on' -c log_temp_files=0 -c log_autovacuum_min_duration=0 -c log_error_verbosity='default' -c log_checkpoints='on' -c log_connections='on' -c log_disconnections='on' -c log_lock_waits='on' -c log_temp_files=0 -c log_autovacuum_min_duration=0 -c log_error_verbosity='default' -c shared_buffers=256MB -c effective_cache_size=6GB -c work_mem=8MB -c maintenance_work_mem=128MB -c temp_buffers=16MB -c max_stack_depth=3MB -c lock_timeout=1s -c statement_timeout=5s -c listen_addresses='jfPostgres'
     ports:
       - '5432:5432'
     volumes:
