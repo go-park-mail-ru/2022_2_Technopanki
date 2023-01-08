@@ -12,6 +12,8 @@ db:
   host: "jfPostgres"
   port: "5432"
   dbname: "jobflowDB"
+  maxIdleConnections: 10
+  maxOpenConnections: 100
   sslmode: "disable"
 validation:
   minNameLength: 2
