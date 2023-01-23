@@ -30,7 +30,7 @@ func getBody() []byte {
 func main() {
 	rand.Seed(time.Now().Unix())
 	rate := vegeta.Rate{Freq: 5000, Per: time.Second}
-	duration := 2 * time.Second
+	duration := 200 * time.Second
 	header := http.Header{}
 	header.Add("Cookie", session)
 	targeter := vegeta.NewStaticTargeter(vegeta.Target{

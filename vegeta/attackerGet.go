@@ -13,7 +13,7 @@ const getURL = "http://localhost:8080/api/vacancy/%d"
 func main() {
 	rand.Seed(time.Now().Unix())
 	rate := vegeta.Rate{Freq: 10000, Per: time.Second}
-	duration := 2 * time.Second
+	duration := 100 * time.Second
 	targeter := vegeta.NewStaticTargeter(vegeta.Target{
 		Method: http.MethodGet,
 		URL:    fmt.Sprintf(getURL, rand.Int()%1000),
