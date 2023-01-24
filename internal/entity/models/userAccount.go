@@ -7,7 +7,7 @@ import "time"
 type UserAccount struct {
 	ID                     uint              `json:"id" gorm:"primaryKey;"`
 	UserType               string            `json:"user_type" gorm:"not null;"`
-	Email                  string            `json:"email" gorm:"not null;"`
+	Email                  string            `json:"email" gorm:"index:idx_email,not null;"`
 	Password               string            `json:"password" gorm:"not null;"`
 	ContactNumber          string            `json:"contact_number" gorm:"not null;"`
 	Status                 string            `json:"status" gorm:"not null"`
