@@ -11,7 +11,7 @@ import (
 
 const createURL = "http://localhost:8080/api/vacancy"
 
-const session = "session=657f5d3b-c202-4cb7-8861-0ce7d1454b19"
+const session = "session=5168b651-d5c0-4cf0-883f-546a70bba0a8"
 
 func getBody() []byte {
 	title := "aaaa"
@@ -49,4 +49,5 @@ func main() {
 
 	fmt.Printf("99th percentile: %s\n", metrics.Latencies.P99)
 	fmt.Printf("RPS: %f\n", metrics.Rate)
+	fmt.Printf("Errors count: %d\n", len(metrics.Errors))
 }
