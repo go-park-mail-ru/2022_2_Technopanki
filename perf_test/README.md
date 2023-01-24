@@ -1,7 +1,7 @@
 <h3>Нагрузочное тестирование Jobflow</h3>
 В качестве основной сущности была выбрана вакансия. Тестировались следующие end-point:\
 <h4>GET-запрос</h4>
-URL: ```http://localhost:8080/api/vacancy/:id``` \
+URL: `http://localhost:8080/api/vacancy/:id` \
 Нагрузка: <b>20000 Requests per second</b> \
 Запуск: ```go run perf_test/attackerGet.go```
 
