@@ -11,7 +11,7 @@ import (
 
 const createURL = "http://localhost:8080/api/vacancy"
 
-const session = "session=5168b651-d5c0-4cf0-883f-546a70bba0a8"
+const session = "session=b94219cb-ae8f-4fae-8132-708b55e4cbba"
 
 func getBody() []byte {
 	title := "aaaa"
@@ -29,8 +29,8 @@ func getBody() []byte {
 
 func main() {
 	rand.Seed(time.Now().Unix())
-	rate := vegeta.Rate{Freq: 5000, Per: time.Second}
-	duration := 200 * time.Second
+	rate := vegeta.Rate{Freq: 10000, Per: time.Second}
+	duration := 100 * time.Second
 	header := http.Header{}
 	header.Add("Cookie", session)
 	targeter := vegeta.NewStaticTargeter(vegeta.Target{
@@ -49,5 +49,4 @@ func main() {
 
 	fmt.Printf("99th percentile: %s\n", metrics.Latencies.P99)
 	fmt.Printf("RPS: %f\n", metrics.Rate)
-	fmt.Printf("Errors count: %d\n", len(metrics.Errors))
 }
