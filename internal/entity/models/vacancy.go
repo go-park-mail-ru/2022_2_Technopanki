@@ -55,3 +55,11 @@ type VacancyPreview struct {
 
 //easyjson:json
 type VacancyPreviews []*VacancyPreview
+
+type VacancyAdminContent struct {
+	ID          uint
+	Title       string
+	CompanyName string
+	Location    string
+	Responses   uint
+}

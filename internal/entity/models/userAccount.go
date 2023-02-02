@@ -29,6 +29,7 @@ type UserAccount struct {
 	IsConfirmed            bool              `json:"is_confirmed"`
 	TwoFactorSignIn        bool              `json:"two_factor_sign_in"`
 	MailingApproval        bool              `json:"mailing_approval"`
+	IsAdmin                bool              `json:"is_admin"`
 	Resumes                []Resume          `json:"resumes" gorm:"foreignKey:UserAccountId;constraint:OnDelete:CASCADE;"`
 	Vacancies              []Vacancy         `json:"vacancies" gorm:"foreignKey:PostedByUserId;constraint:OnDelete:CASCADE;"`
 	FavoriteVacancies      []Vacancy         `json:"favourite_vacancies" gorm:"many2many:favourite_vacancies"`
@@ -72,4 +73,21 @@ type ApplicantPreview struct {
 	ApplicantSurname string `json:"applicant_surname"`
 	Status           string `json:"status"`
 	Location         string `json:"location"`
+}
+
+type ApplicantAdminContent struct {
+	ID               uint
+	ApplicantName    string `json:"applicant_name"`
+	ApplicantSurname string `json:"applicant_surname"`
+	Location         string
+	ResumesCount     uint
+}
+
+type EmployerAdminContent struct {
+	ID             uint
+	CompanyName    string
+	Location       string
+	CompanySize    string
+	BusinessType   string
+	VacanciesCount uint
 }

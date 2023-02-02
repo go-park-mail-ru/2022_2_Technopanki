@@ -195,6 +195,7 @@ func (us *UserService) UpdateUser(input *models.UserAccount) error {
 		input.Image = oldUser.Image
 	}
 	input.IsConfirmed = oldUser.IsConfirmed
+	input.IsAdmin = oldUser.IsAdmin
 
 	if !input.DateOfBirth.IsZero() {
 		input.Age = uint(Age(input.DateOfBirth))

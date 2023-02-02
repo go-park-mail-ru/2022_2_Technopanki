@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Соискатели</title>
+    <link href="http://localhost:8080/style" rel="stylesheet">
+    <link href="styles/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand navbar-dark bg-dark" style="justify-content: space-between;">
+    <a class="navbar-brand" style="margin-left:10px" href="http://localhost:8080/admin">
+        <div style="display:flex">
+            <div>Jobflow</div>
+            <div class="small" style="color:grey;margin-left:10px;margin-top:3px">Режим администратора</div>
+        </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample02"
+            aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" style="margin-right:30px; " href="#">
+        <div>Выйти</div>
+        </div></a>
+</nav>
+<div style="margin-left: 20px">
+    <h2 style="margin-top:10px;margin-bottom:10px;">Соискатели</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Имя</th>
+            <th scope="col">Фамилия</th>
+            <th scope="col">Местоположение</th>
+            <th scope="col">Количество резюме</th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th scope="row">1</th>
+            <td>Урванцев</td>
+            <td>Захар</td>
+            <td>Москва</td>
+            <td>4</td>
+            <td><button type="button" class="btn btn-sm btn-block btn-outline-primary" style="border-color:red;color:red">Удалить</button></td>
+        </tr>
+        {{range .Applicants}}
+        <tr>
+            <th scope="row">{{.ID}}</th>
+            <td>{{.ApplicantSurname}}</td>
+            <td>{{.ApplicantName}}</td>
+            <td>{{.Location}}</td>
+            <td>{{.ResumesCount}}</td>
+            <td><button type="button" class="btn btn-sm btn-block btn-outline-primary" style="border-color:red;color:red">Удалить</button></td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

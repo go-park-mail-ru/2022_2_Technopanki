@@ -67,12 +67,21 @@ func (vs *VacancyService) GetByUserId(userId uint) ([]*models.Vacancy, error) {
 }
 
 func (vs *VacancyService) Delete(email string, vacancyId uint) error {
-	user, getErr := vs.userRep.GetUserByEmail(email)
+	user, getUserErr := vs.userRep.GetUserByEmail(email)
+	if getUserErr != nil {
+		return getUserErr
+	}
+
+	old, getErr := vs.vacancyRep.GetById(vacancyId)
 	if getErr != nil {
 		return getErr
 	}
-	userId := user.ID
-	return vs.vacancyRep.Delete(userId, vacancyId)
+
+	if user.ID != old.PostedByUserId && !user.IsAdmin {
+		return errorHandler.ErrUnauthorized
+	}
+
+	return vs.vacancyRep.Delete(user.ID, vacancyId)
 }
 
 func (vs *VacancyService) Update(email string, vacancyId uint, updates *models.Vacancy) error {

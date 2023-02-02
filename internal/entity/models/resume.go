@@ -54,3 +54,11 @@ type ResumeFilter struct {
 	FirstSalaryValue  string
 	SecondSalaryValue string
 }
+
+type ResumeAdminContent struct {
+	ID               uint
+	Title            string
+	ApplicantSurname string
+	Location         string
+	Responses        uint
+}

@@ -39,7 +39,7 @@ security:
   csrfSecret: "jobFlowSecretWorld112351235125"
   csrfMode: false
   confirmationTime: 600
-  confirmAccountMode: true
+  confirmAccountMode: false
 pdf:
   htmlPath: "/usr/share/html/"
   zoomSize: 1

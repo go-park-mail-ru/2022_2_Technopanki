@@ -14,6 +14,7 @@ type Handlers struct {
 	ResumeHandler          ResumeH
 	MailHandler            MailH
 	NotificationHandler    NotificationH
+	AdministrationHandler  AdministrationH
 }
 
 func NewHandlers(usecases *usecases.UseCases, _cfg *configs.Config) *Handlers {
@@ -24,6 +25,7 @@ func NewHandlers(usecases *usecases.UseCases, _cfg *configs.Config) *Handlers {
 		VacancyActivityHandler: impl.NewVacancyActivityHandler(usecases),
 		MailHandler:            impl.NewMailHandler(usecases),
 		NotificationHandler:    impl.NewNotificationHandler(usecases),
+		AdministrationHandler:  impl.NewAdministrationHandler(usecases.Admin),
 	}
 }
 
@@ -86,4 +88,15 @@ type NotificationH interface {
 	ReadNotification(c *gin.Context)
 	ReadAllNotifications(c *gin.Context)
 	ClearNotifications(c *gin.Context)
+}
+
+type AdministrationH interface {
+	GetForbiddenPage(c *gin.Context)
+	GetStyles(c *gin.Context)
+	GetMainPage(c *gin.Context)
+	GetAuthPage(c *gin.Context)
+	GetResumesPage(c *gin.Context)
+	GetVacanciesPage(c *gin.Context)
+	GetApplicantsPage(c *gin.Context)
+	GetEmployersPage(c *gin.Context)
 }

@@ -19,6 +19,7 @@ type UseCases struct {
 	Resume          Resume
 	Notification    Notification
 	Mail            mail.Mail
+	Admin           Administration
 }
 
 func NewUseCases(repos *repository.Repository, session session.Repository, _cfg *configs.Config, _mail mail.Mail) *UseCases {
@@ -29,6 +30,7 @@ func NewUseCases(repos *repository.Repository, session session.Repository, _cfg 
 		VacancyActivity: impl.NewVacancyActivityService(repos.VacancyActivityRepository, repos.UserRepository, repos.VacancyRepository, repos.NotificationRepository),
 		Notification:    impl.NewNotificationService(repos.NotificationRepository, repos.UserRepository),
 		Mail:            _mail,
+		Admin:           impl.NewAdministrationService(repos.AdminRepository, repos.UserRepository),
 	}
 }
 
@@ -89,4 +91,13 @@ type Notification interface {
 	ReadNotification(email string, id uint) error
 	ReadAllNotifications(email string) error
 	ClearNotifications(email string) error
+}
+
+type Administration interface {
+	GetMainPage(email string) ([]byte, error)
+	GetAuthPage() ([]byte, error)
+	GetResumesPage(email string) ([]byte, error)
+	GetVacanciesPage(email string) ([]byte, error)
+	GetApplicantsPage(email string) ([]byte, error)
+	GetEmployersPage(email string) ([]byte, error)
 }

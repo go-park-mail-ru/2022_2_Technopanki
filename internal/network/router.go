@@ -46,6 +46,21 @@ func InitRoutes(h *handlers.Handlers, sessionMW *middleware.SessionMiddleware, c
 		mail.POST("/code/:email", h.MailHandler.SendConfirmCode, errorHandler.Middleware())
 	}
 
+	style := router.Group("/style")
+	{
+		style.GET("/", h.AdministrationHandler.GetStyles, errorHandler.Middleware())
+	}
+	admin := router.Group("/admin")
+	{
+		admin.GET("/", sessionMW.Session, h.AdministrationHandler.GetMainPage, errorHandler.Middleware())
+		admin.GET("/auth", h.AdministrationHandler.GetAuthPage, errorHandler.Middleware())
+		admin.GET("/resumes", sessionMW.Session, h.AdministrationHandler.GetResumesPage, errorHandler.Middleware())
+		admin.GET("/vacancies", sessionMW.Session, h.AdministrationHandler.GetVacanciesPage, errorHandler.Middleware())
+		admin.GET("/applicants", sessionMW.Session, h.AdministrationHandler.GetApplicantsPage, errorHandler.Middleware())
+		admin.GET("/employers", sessionMW.Session, h.AdministrationHandler.GetEmployersPage, errorHandler.Middleware())
+		admin.GET("/forbidden", sessionMW.Session, h.AdministrationHandler.GetForbiddenPage, errorHandler.Middleware())
+	}
+
 	api := router.Group("/api")
 	{
 		user := api.Group("/user")

@@ -84,7 +84,7 @@ func (vp *VacancyPostgres) GetPreviewVacanciesByEmployer(userId uint) ([]*models
 
 func (vp *VacancyPostgres) Delete(userId uint, vacancyId uint) error {
 
-	error := vp.db.Where("posted_by_user_id = ?", userId).Delete(&models.Vacancy{}, vacancyId).Error
+	error := vp.db.Delete(&models.Vacancy{}, vacancyId).Error
 	if error != nil {
 		return errorHandler.ErrCannotDeleteVacancy
 	}

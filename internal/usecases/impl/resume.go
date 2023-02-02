@@ -135,7 +135,7 @@ func (rs *ResumeService) UpdateResume(id uint, resume *models.Resume, email stri
 	resume.UserAccountId = old.UserAccountId
 	resume.ID = id
 
-	if userFromContext.ID != old.UserAccountId {
+	if userFromContext.ID != old.UserAccountId && !userFromContext.IsAdmin {
 		return errorHandler.ErrUnauthorized
 	}
 
@@ -155,7 +155,7 @@ func (rs *ResumeService) DeleteResume(id uint, email string) error {
 		return getErr
 	}
 
-	if userFromContext.ID != old.UserAccountId {
+	if userFromContext.ID != old.UserAccountId && !userFromContext.IsAdmin {
 		return errorHandler.ErrUnauthorized
 	}
 
